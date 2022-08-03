@@ -1,16 +1,16 @@
 type PropsType = {
   isLoggedIn: boolean;
 };
-import { Text, View } from "../components/Themed";
+import { Text } from "../components/Themed";
+import { View } from "react-native";
 
 export default ({ isLoggedIn }: PropsType) => {
   return (
     <View
       style={{
-        marginTop: 55,
+        paddingTop: 55,
         paddingHorizontal: 25,
-        marginBottom: 22,
-        backgroundColor: "transparent",
+        paddingBottom: 22,
       }}
     >
       <Text

@@ -3,11 +3,12 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
+import { useEffect, useState } from "react";
 import {
-  TouchableOpacity,
-  TouchableWithoutFeedback,
+  Pressable,
   Text as DefaultText,
   View as DefaultView,
+  Alert,
 } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -27,31 +28,17 @@ export function useThemeColor(
   }
 }
 
-type ThemeProps = {
-  lightColor?: string;
-  darkColor?: string;
-};
-
-export type TextProps = ThemeProps & DefaultText["props"];
-export type ViewProps = ThemeProps & DefaultView["props"];
+export type TextProps = DefaultText["props"];
+export type ViewProps = DefaultView["props"];
 
 export function Text(props: TextProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  const { style, ...otherProps } = props;
 
   return (
     <DefaultText
-      style={[{ color }, { fontFamily: "Roboto", color: "white" }, style]}
+      style={[{ fontFamily: "Roboto", color: "white" }, style]}
       {...otherProps}
     />
-  );
-}
-
-export function View(props: ViewProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-
-  return (
-    <DefaultView style={[{ paddingHorizontal: 20 }, style]} {...otherProps} />
   );
 }
 
@@ -59,33 +46,101 @@ type ButtonType = {
   children: JSX.Element | Array<JSX.Element> | string;
   color?: "blue" | "red";
   style?: "regular" | "ghost";
+  size?: "regular" | "small";
   handleClick?: () => void;
-  type?: "button" | "submit" | "reset";
 };
 
 export const Button = ({
   children,
-  style = "regular",
-  type,
   handleClick,
+  size,
+  style,
+  color,
 }: ButtonType) => {
+  const [pressed, setPressed] = useState(false);
+
+  const handlePress = () => {
+    setPressed(true);
+    if (handleClick) handleClick();
+  };
+
+  useEffect(() => {
+    let timeout: any = null;
+
+    if (pressed) {
+      timeout = setTimeout(() => setPressed(false), 300);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [pressed]);
+
+  let variableProperties = {
+    height: 51,
+    fontSize: 16,
+    backgroundColor: "#1196B0",
+    borderColor: "#58D3EC",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    textColor: "white",
+  };
+
+  switch (size) {
+    case "small":
+      variableProperties.height = 26;
+      variableProperties.paddingVertical = 6;
+      variableProperties.paddingHorizontal = 12;
+      variableProperties.fontSize = 12;
+      break;
+
+    default:
+      break;
+  }
+
+  switch (color) {
+    case "red":
+      variableProperties.borderColor = "#BA3737";
+      variableProperties.backgroundColor = "#FA4F4F";
+      style === "ghost" && (variableProperties.textColor = "#FA4F4F");
+      break;
+    default:
+      style === "ghost" && (variableProperties.textColor = "#15CEF3");
+      break;
+  }
+
+  switch (style) {
+    case "ghost":
+      variableProperties.borderColor = variableProperties.textColor;
+      variableProperties.backgroundColor = "transparent";
+      break;
+    default:
+      break;
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={handleClick}>
+    <Pressable onPress={handlePress}>
       <DefaultView
         style={{
           borderStyle: "solid",
-          borderColor: "#58D3EC",
           borderRadius: 4,
-          padding: 16,
+          borderWidth: 1,
+          borderColor: variableProperties.borderColor,
+          paddingHorizontal: variableProperties.paddingHorizontal,
+          paddingVertical: variableProperties.paddingVertical,
           width: "100%",
-          height: 51,
-          backgroundColor: "#1196B0",
+          alignContent: "center",
+          alignItems: "center",
+          transform: pressed ? [{ scale: 0.99 }] : [],
+          opacity: pressed ? 0.9 : 1,
+          minHeight: variableProperties.height,
+          backgroundColor: variableProperties.backgroundColor,
         }}
       >
         <Text
           style={{
-            color: "white",
-            fontSize: 16,
+            color: variableProperties.textColor,
+            fontSize: variableProperties.fontSize,
             fontWeight: "700",
             textAlign: "center",
           }}
@@ -93,6 +148,6 @@ export const Button = ({
           {children}
         </Text>
       </DefaultView>
-    </TouchableWithoutFeedback>
+    </Pressable>
   );
 };

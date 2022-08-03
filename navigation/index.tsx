@@ -17,11 +17,9 @@ import Header from "../components/Header";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
-import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
-import TabOneScreen from "../screens/TabOneScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -52,10 +50,13 @@ export default function Navigation({
         screenOptions={{
           headerShown: true,
           header: () => <Header isLoggedIn={isLoggedIn} />,
+          contentStyle: {
+            paddingHorizontal: 20,
+          },
         }}
       >
         {isLoggedIn ? (
-          <Stack.Screen name="Dashboard" component={TabOneScreen} />
+          <Stack.Screen name="Dashboard" component={Dashboard} />
         ) : (
           <Stack.Screen name="Login" component={Login} />
         )}
@@ -64,16 +65,6 @@ export default function Navigation({
           component={NotFoundScreen}
           options={{ title: "Oops!" }}
         />
-        <Stack.Group
-          screenOptions={{
-            presentation: "transparentModal",
-            animation: "slide_from_bottom",
-            animationDuration: 5000,
-            header: () => <></>,
-          }}
-        >
-          <Stack.Screen name="Modal" component={ModalScreen} />
-        </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
   );
