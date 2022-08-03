@@ -44,6 +44,7 @@ export default function Navigation({
           ...DefaultTheme.colors,
           background: "#001E24",
           text: "white",
+          card: "red",
         },
       }}
     >

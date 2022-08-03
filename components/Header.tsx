@@ -8,9 +8,9 @@ export default ({ isLoggedIn }: PropsType) => {
     <View
       style={{
         marginTop: 55,
-        padding: "0 25px",
+        paddingHorizontal: 25,
         marginBottom: 22,
-        position: undefined,
+        backgroundColor: "transparent",
       }}
     >
       <Text
