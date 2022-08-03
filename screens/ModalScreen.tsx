@@ -1,35 +1,81 @@
-import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useRef } from "react";
+import {
+  Animated,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+type PropsType = {
+  children: JSX.Element | Array<JSX.Element>;
+  navigation: any;
+};
 
-export default function ModalScreen() {
+export default ({ children, navigation }: PropsType) => {
+  const position = new Animated.Value(1000);
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(position, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [position]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Modal</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/ModalScreen.tsx" />
-
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-    </View>
+    <TouchableWithoutFeedback
+      style={{
+        width: "100%",
+        position: "absolute",
+        top: 0,
+        zIndex: 100,
+        height: "100%",
+        backgroundColor: "rgba(35, 35, 35, 0.8)",
+      }}
+      onPress={() => navigation.goBack()}
+    >
+      <Animated.View
+        style={{
+          backgroundColor: "#001E24",
+          height: "auto",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          width: "100%",
+          position: "absolute",
+          transform: [{ translateY: position }],
+          bottom: 0,
+          zIndex: 2,
+          paddingTop: 30,
+          paddingHorizontal: 20,
+          paddingBottom: 20,
+          borderStyle: "solid",
+          borderWidth: 1,
+          borderColor: "#063943",
+        }}
+      >
+        <Text style={{ color: "white" }}>
+          TESTING
+          {children}
+        </Text>
+        <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+    backgroundColor: "#001E24",
+    height: "auto",
+    borderRadius: 8,
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    padding: "30px 20px 20px",
+    border: "1px solid #063943",
   },
 });
