@@ -3,41 +3,36 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from "@expo/vector-icons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { createContext, useEffect, useState } from "react";
-import { ColorSchemeName, Pressable } from "react-native";
 import Header from "../components/Header";
 
 import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import NotFoundScreen from "../screens/NotFoundScreen";
-
 import LinkingConfiguration from "./LinkingConfiguration";
-export const AuthContext = createContext(false as any);
+export const AuthContext = createContext({} as any);
 import * as SecureStore from "expo-secure-store";
+import * as SplashScreen from "expo-splash-screen";
 
-export default function Navigation({
-  colorScheme,
-}: {
-  colorScheme: ColorSchemeName;
-}) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userID, setUserID] = useState("");
+export default function Navigation() {
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState({});
 
   const login = React.useMemo(
     () => ({
       signIn: async (e: any) => {
-        setIsLoggedIn(true);
-
+        setUserData(e);
         await SecureStore.setItemAsync("userID", e["email"]);
+      },
+      retrieveData: () => {
+        return userData;
+      },
+      signOut: async () => {
+        setUserData({});
+        await SecureStore.deleteItemAsync("userID");
       },
     }),
     []
@@ -45,19 +40,21 @@ export default function Navigation({
 
   useEffect(() => {
     const async = async () => {
-      setIsLoggedIn(false);
       const username = await SecureStore.getItemAsync("userID");
-
-      // if (username) {
-      //   setIsLoggedIn(true);
-      //   setUserID(username);
-      // } else {
-      //   setIsLoggedIn(false);
-      // }
+      if (username) {
+        setUserData(username);
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
     };
-
     async();
   }, []);
+
+  useEffect(() => {
+    if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
+  }, [loading]);
+
   return (
     <NavigationContainer
       theme={{
@@ -74,14 +71,16 @@ export default function Navigation({
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
-            header: () => <Header isLoggedIn={isLoggedIn} />,
+            header: () => (
+              <Header isLoggedIn={Boolean(Object.keys(userData).length)} />
+            ),
             contentStyle: {
               paddingHorizontal: 20,
             },
             animation: "none",
           }}
         >
-          {isLoggedIn ? (
+          {Boolean(Object.keys(userData).length) ? (
             <Stack.Screen name="Dashboard" component={Dashboard} />
           ) : (
             <>

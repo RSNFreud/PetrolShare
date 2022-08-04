@@ -54,12 +54,7 @@ export default ({
   }, [visible]);
 
   return (
-    <Modal
-      animationType="fade"
-      visible={visible}
-      transparent={true}
-      style={{ backgroundColor: "red" }}
-    >
+    <Modal animationType="fade" visible={visible} transparent={true}>
       <Pressable
         onPress={close}
         android_disableSound={true}
@@ -79,7 +74,7 @@ export default ({
           zIndex: 2,
           paddingTop: 30,
           paddingHorizontal: 20,
-          paddingBottom: 20,
+          paddingBottom: 55,
           borderStyle: "solid",
           borderWidth: 1,
           borderColor: "#063943",

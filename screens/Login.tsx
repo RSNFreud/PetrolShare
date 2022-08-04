@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 
 import Input from "../components/Input";
 import { Button, Seperator, Text } from "../components/Themed";
@@ -19,9 +19,10 @@ export default ({ navigation }: any) => {
 
   const { signIn } = useContext(AuthContext);
 
-  // const login = useContext(isLoggedIn);
-
-  const handleSubmit = () => {
+  const handleSubmit = (
+    formData: {},
+    setFormErrors: React.SetStateAction<any>
+  ) => {
     let errors = {
       email: "",
       password: "",
@@ -30,6 +31,14 @@ export default ({ navigation }: any) => {
     Object.keys(formData).map((e) => {
       const value = (formData as any)[e];
       (errors as any)[e] = value ? "" : "Please fill out this field!";
+
+      if (
+        e === "email" &&
+        value &&
+        !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
+      ) {
+        (errors as any)[e] = "Please enter a valid email!";
+      }
     });
     setFormErrors(errors);
 
@@ -45,20 +54,6 @@ export default ({ navigation }: any) => {
       email: "",
     });
     const [isEmailSent, setIsEmailSent] = useState(false);
-
-    const handleSubmit = () => {
-      let errors = {
-        email: "",
-      };
-      Object.keys(formData).map((e) => {
-        const value = (formData as any)[e];
-        (errors as any)[e] = value ? "" : "Please fill out this field!";
-      });
-      setFormErrors(errors);
-      if (Object.values(errors).filter((e) => e.length).length === 0) {
-        setIsEmailSent(true);
-      }
-    };
 
     return (
       <Popup
@@ -92,7 +87,9 @@ export default ({ navigation }: any) => {
               style={{ marginBottom: 15 }}
               errorMessage={formErrors.email}
             />
-            <Button handleClick={handleSubmit}>Send Recovery Email</Button>
+            <Button handleClick={() => handleSubmit(formData, setFormErrors)}>
+              Send Recovery Email
+            </Button>
           </>
         )}
       </Popup>
@@ -103,23 +100,23 @@ export default ({ navigation }: any) => {
     <View>
       <Input
         handleInput={(e) => setFormData({ ...formData, email: e })}
-        placeholder="Enter username"
-        label="Username"
+        placeholder="Enter email address"
+        label="Email:"
         errorMessage={formErrors.email}
-        style={{ marginBottom: 15 }}
+        style={{ marginBottom: 20 }}
       />
       <Input
         password={true}
         placeholder="Enter password"
-        label="Enter password"
+        label="Password:"
         errorMessage={formErrors.password}
-        style={{ marginBottom: 15 }}
+        style={{ marginBottom: 20 }}
         handleInput={(e) => setFormData({ ...formData, password: e })}
       />
       <Pressable onPress={() => setVisible(true)} android_disableSound={true}>
         <Text
           style={{
-            fontSize: 14,
+            fontSize: 18,
             textDecorationLine: "underline",
             marginBottom: 28,
           }}
@@ -127,7 +124,9 @@ export default ({ navigation }: any) => {
           Forgot my password...
         </Text>
       </Pressable>
-      <Button handleClick={handleSubmit}>Submit</Button>
+      <Button handleClick={() => handleSubmit(formData, setFormErrors)}>
+        Submit
+      </Button>
       <Seperator style={{ marginVertical: 25 }} />
       <Button handleClick={() => navigation.navigate("Register")} style="ghost">
         Register

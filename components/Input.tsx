@@ -26,7 +26,7 @@ export default ({
         <Text
           style={{
             fontWeight: "700",
-            fontSize: 14,
+            fontSize: 16,
             lineHeight: 16,
             marginBottom: 6,
             color: "white",
@@ -47,8 +47,8 @@ export default ({
             borderRadius: 4,
             color: "white",
             fontWeight: "400",
-            height: 48,
-            fontSize: 14,
+            height: 53,
+            fontSize: 18,
             paddingHorizontal: 16,
             paddingVertical: 13,
           }}
@@ -57,9 +57,8 @@ export default ({
         {!!errorMessage && (
           <Text
             style={{
-              marginTop: 3,
-              fontSize: 12,
-              minHeight: 12,
+              marginTop: 6,
+              fontSize: 14,
               fontWeight: "400",
               color: "#FA4F4F",
             }}

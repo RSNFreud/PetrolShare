@@ -60,7 +60,7 @@ export const Button = ({
 
   let variableProperties = {
     height: 51,
-    fontSize: 16,
+    fontSize: 18,
     backgroundColor: "#1196B0",
     borderColor: "#58D3EC",
     paddingHorizontal: 16,
