@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 
 import Input from "../components/Input";
-import { Button, Text } from "../components/Themed";
+import { Button, Seperator, Text } from "../components/Themed";
 import Popup from "../components/Popup";
 import { Pressable, View } from "react-native";
+import { AuthContext } from "../navigation";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
@@ -16,16 +17,24 @@ export default ({ navigation }: any) => {
     password: "",
   });
 
+  const { signIn } = useContext(AuthContext);
+
+  // const login = useContext(isLoggedIn);
+
   const handleSubmit = () => {
     let errors = {
       email: "",
       password: "",
     };
+
     Object.keys(formData).map((e) => {
       const value = (formData as any)[e];
       (errors as any)[e] = value ? "" : "Please fill out this field!";
     });
     setFormErrors(errors);
+
+    if (Object.values(errors).filter((e) => e.length).length === 0)
+      signIn({ ...formData });
   };
 
   const ForgotPassword = useCallback(() => {
@@ -83,9 +92,7 @@ export default ({ navigation }: any) => {
               style={{ marginBottom: 15 }}
               errorMessage={formErrors.email}
             />
-            <Button handleClick={handleSubmit}>
-              <Text>Send Recovery Email</Text>
-            </Button>
+            <Button handleClick={handleSubmit}>Send Recovery Email</Button>
           </>
         )}
       </Popup>
@@ -99,16 +106,17 @@ export default ({ navigation }: any) => {
         placeholder="Enter username"
         label="Username"
         errorMessage={formErrors.email}
-        style={{ marginBottom: 10 }}
+        style={{ marginBottom: 15 }}
       />
       <Input
+        password={true}
         placeholder="Enter password"
         label="Enter password"
         errorMessage={formErrors.password}
-        style={{ marginBottom: 10 }}
+        style={{ marginBottom: 15 }}
         handleInput={(e) => setFormData({ ...formData, password: e })}
       />
-      <Pressable onPress={() => setVisible(true)}>
+      <Pressable onPress={() => setVisible(true)} android_disableSound={true}>
         <Text
           style={{
             fontSize: 14,
@@ -119,8 +127,10 @@ export default ({ navigation }: any) => {
           Forgot my password...
         </Text>
       </Pressable>
-      <Button handleClick={handleSubmit}>
-        <Text>Submit</Text>
+      <Button handleClick={handleSubmit}>Submit</Button>
+      <Seperator style={{ marginVertical: 25 }} />
+      <Button handleClick={() => navigation.navigate("Register")} style="ghost">
+        Register
       </Button>
       <ForgotPassword />
     </View>

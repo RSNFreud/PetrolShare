@@ -54,7 +54,7 @@ export default ({
           }}
           value={value}
         />
-        {errorMessage && (
+        {!!errorMessage && (
           <Text
             style={{
               marginTop: 3,

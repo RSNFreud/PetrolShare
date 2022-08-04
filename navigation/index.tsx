@@ -11,21 +11,18 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { ColorSchemeName, Pressable } from "react-native";
 import Header from "../components/Header";
 
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
 import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
+import Register from "../screens/Register";
 import NotFoundScreen from "../screens/NotFoundScreen";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
+
 import LinkingConfiguration from "./LinkingConfiguration";
+export const AuthContext = createContext(false as any);
+import * as SecureStore from "expo-secure-store";
 
 export default function Navigation({
   colorScheme,
@@ -33,7 +30,34 @@ export default function Navigation({
   colorScheme: ColorSchemeName;
 }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userID, setUserID] = useState("");
 
+  const login = React.useMemo(
+    () => ({
+      signIn: async (e: any) => {
+        setIsLoggedIn(true);
+
+        await SecureStore.setItemAsync("userID", e["email"]);
+      },
+    }),
+    []
+  );
+
+  useEffect(() => {
+    const async = async () => {
+      setIsLoggedIn(false);
+      const username = await SecureStore.getItemAsync("userID");
+
+      // if (username) {
+      //   setIsLoggedIn(true);
+      //   setUserID(username);
+      // } else {
+      //   setIsLoggedIn(false);
+      // }
+    };
+
+    async();
+  }, []);
   return (
     <NavigationContainer
       theme={{
@@ -46,26 +70,32 @@ export default function Navigation({
         },
       }}
     >
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: true,
-          header: () => <Header isLoggedIn={isLoggedIn} />,
-          contentStyle: {
-            paddingHorizontal: 20,
-          },
-        }}
-      >
-        {isLoggedIn ? (
-          <Stack.Screen name="Dashboard" component={Dashboard} />
-        ) : (
-          <Stack.Screen name="Login" component={Login} />
-        )}
-        <Stack.Screen
-          name="NotFound"
-          component={NotFoundScreen}
-          options={{ title: "Oops!" }}
-        />
-      </Stack.Navigator>
+      <AuthContext.Provider value={login}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: true,
+            header: () => <Header isLoggedIn={isLoggedIn} />,
+            contentStyle: {
+              paddingHorizontal: 20,
+            },
+            animation: "none",
+          }}
+        >
+          {isLoggedIn ? (
+            <Stack.Screen name="Dashboard" component={Dashboard} />
+          ) : (
+            <>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Register" component={Register} />
+            </>
+          )}
+          <Stack.Screen
+            name="NotFound"
+            component={NotFoundScreen}
+            options={{ title: "Oops!" }}
+          />
+        </Stack.Navigator>
+      </AuthContext.Provider>
     </NavigationContainer>
   );
 }

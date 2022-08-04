@@ -1,3 +1,5 @@
+import { Text } from "react-native";
+
 export default () => {
-  return <></>;
+  return <Text>Hello world</Text>;
 };

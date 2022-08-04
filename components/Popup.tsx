@@ -62,6 +62,7 @@ export default ({
     >
       <Pressable
         onPress={close}
+        android_disableSound={true}
         style={{ backgroundColor: "rgba(35, 35, 35, 0.8)", height: "100%" }}
       />
 
@@ -85,6 +86,7 @@ export default ({
         }}
       >
         <Pressable
+          android_disableSound={true}
           onPress={() => {
             close();
           }}

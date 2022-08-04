@@ -8,25 +8,7 @@ import {
   Pressable,
   Text as DefaultText,
   View as DefaultView,
-  Alert,
 } from "react-native";
-
-import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
-
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme();
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
-  }
-}
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
@@ -119,7 +101,7 @@ export const Button = ({
   }
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={handlePress} android_disableSound={true}>
       <DefaultView
         style={{
           borderStyle: "solid",
@@ -149,5 +131,20 @@ export const Button = ({
         </Text>
       </DefaultView>
     </Pressable>
+  );
+};
+
+export const Seperator = ({ style }: ViewProps) => {
+  return (
+    <DefaultView
+      style={[
+        {
+          height: 1,
+          width: "100%",
+          backgroundColor: "#445C61",
+        },
+        style,
+      ]}
+    />
   );
 };
