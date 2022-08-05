@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import {
   Pressable,
+  StyleProp,
   Text as DefaultText,
   View as DefaultView,
 } from "react-native";
@@ -30,6 +31,7 @@ type ButtonType = {
   style?: "regular" | "ghost";
   size?: "regular" | "small";
   handleClick?: () => void;
+  styles?: ViewProps["style"];
 };
 
 export const Button = ({
@@ -38,6 +40,7 @@ export const Button = ({
   size,
   style,
   color,
+  styles,
 }: ButtonType) => {
   const [pressed, setPressed] = useState(false);
 
@@ -103,21 +106,24 @@ export const Button = ({
   return (
     <Pressable onPress={handlePress} android_disableSound={true}>
       <DefaultView
-        style={{
-          borderStyle: "solid",
-          borderRadius: 4,
-          borderWidth: 1,
-          borderColor: variableProperties.borderColor,
-          paddingHorizontal: variableProperties.paddingHorizontal,
-          paddingVertical: variableProperties.paddingVertical,
-          width: "100%",
-          alignContent: "center",
-          alignItems: "center",
-          transform: pressed ? [{ scale: 0.99 }] : [],
-          opacity: pressed ? 0.9 : 1,
-          minHeight: variableProperties.height,
-          backgroundColor: variableProperties.backgroundColor,
-        }}
+        style={[
+          {
+            borderStyle: "solid",
+            borderRadius: 4,
+            borderWidth: 1,
+            borderColor: variableProperties.borderColor,
+            paddingHorizontal: variableProperties.paddingHorizontal,
+            paddingVertical: variableProperties.paddingVertical,
+            width: "100%",
+            alignContent: "center",
+            alignItems: "center",
+            transform: pressed ? [{ scale: 0.99 }] : [],
+            opacity: pressed ? 0.9 : 1,
+            minHeight: variableProperties.height,
+            backgroundColor: variableProperties.backgroundColor,
+          },
+          styles,
+        ]}
       >
         <Text
           style={{

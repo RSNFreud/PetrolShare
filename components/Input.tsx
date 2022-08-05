@@ -8,6 +8,7 @@ type PropsType = {
   placeholder: string;
   style?: any;
   handleInput?: (e: string) => void;
+  handleBlur?: (e: string) => void;
   errorMessage?: string;
 };
 
@@ -18,6 +19,7 @@ export default ({
   placeholder,
   style,
   handleInput,
+  handleBlur,
   errorMessage,
 }: PropsType) => {
   return (
@@ -36,6 +38,7 @@ export default ({
         </Text>
         <TextInput
           onChangeText={handleInput}
+          onBlur={handleBlur}
           placeholder={placeholder}
           secureTextEntry={password}
           placeholderTextColor="rgba(255,255,255,0.8)"

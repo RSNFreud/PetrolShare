@@ -40,13 +40,15 @@ export default function Navigation() {
 
   useEffect(() => {
     const async = async () => {
-      const username = await SecureStore.getItemAsync("userID");
-      if (username) {
-        setUserData(username);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
+      try {
+        const username = await SecureStore.getItemAsync("userID");
+        if (username) {
+          setUserData(username);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      } catch {}
     };
     async();
   }, []);
