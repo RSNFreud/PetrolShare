@@ -1,6 +1,6 @@
 import React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Input from "../components/Input";
 import { Button } from "../components/Themed";
@@ -117,57 +117,61 @@ export default ({ navigation }: any) => {
     }
   };
 
-  const Stage = useCallback(
-    ({
-      pageNumber,
-      first,
-      children,
-    }: {
-      pageNumber: number;
-      first?: boolean;
-      children: JSX.Element;
-    }) => {
-      const position = new Animated.Value(direction === "left" ? -600 : 600);
-      const [active, setActive] = useState(false);
-      const [previouslyActive, setPreviouslyActive] = useState(false);
+  const Stage = ({
+    pageNumber,
+    first,
+    children,
+  }: {
+    pageNumber: number;
+    first?: boolean;
+    children: JSX.Element;
+  }) => {
+    const windowWidth = Dimensions.get("window").width;
+    const position = new Animated.Value(
+      direction === "left" ? -windowWidth : windowWidth
+    );
+    const [active, setActive] = useState(false);
+    const [previouslyActive, setPreviouslyActive] = useState(false);
 
-      useEffect(() => {
-        if (first && active && isLoading) return position.setValue(0);
-        if (isLoading || (!active && !previouslyActive)) return;
-        if (previouslyActive) position.setValue(0);
+    useEffect(() => {
+      if (first && active && isLoading) return position.setValue(0);
+      if (isLoading || (!active && !previouslyActive)) return;
+      if (previouslyActive) position.setValue(0);
 
-        Animated.sequence([
-          Animated.timing(position, {
-            toValue: active ? 0 : direction === "left" ? 600 : -600,
-            duration: 400,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }, [position]);
+      Animated.sequence([
+        Animated.timing(position, {
+          toValue: active
+            ? 0
+            : direction === "left"
+            ? windowWidth
+            : -windowWidth,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, [position]);
 
-      useEffect(() => {
-        if (stage === pageNumber) setActive(true);
-        if (previousStage === pageNumber) setPreviouslyActive(true);
-      }, [stage]);
+    useEffect(() => {
+      if (stage === pageNumber) setActive(true);
+      if (previousStage === pageNumber) setPreviouslyActive(true);
+    }, [stage]);
 
-      return (
-        <Animated.View
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            height: "100%",
-            position: "absolute",
-            width: "100%",
-            transform: [{ translateX: position }],
-            paddingBottom: 55,
-          }}
-        >
-          {children}
-        </Animated.View>
-      );
-    },
-    [stage]
-  );
+    return (
+      <Animated.View
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+          position: "absolute",
+          width: "100%",
+          transform: [{ translateX: position }],
+          paddingBottom: 55,
+        }}
+      >
+        {children}
+      </Animated.View>
+    );
+  };
 
   const validateStage = (elements: Array<any>, submitAction: () => any) => {
     let errors: any = {};

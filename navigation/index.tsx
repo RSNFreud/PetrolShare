@@ -59,6 +59,7 @@ export default function Navigation() {
 
   return (
     <NavigationContainer
+      linking={LinkingConfiguration}
       theme={{
         dark: true,
         colors: {

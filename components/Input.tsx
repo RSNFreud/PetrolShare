@@ -10,6 +10,7 @@ type PropsType = {
   handleInput?: (e: string) => void;
   handleBlur?: (e: string) => void;
   errorMessage?: string;
+  keyboardType?: TextInput["props"]["keyboardType"];
 };
 
 export default ({
@@ -18,6 +19,7 @@ export default ({
   value,
   placeholder,
   style,
+  keyboardType,
   handleInput,
   handleBlur,
   errorMessage,
@@ -38,9 +40,10 @@ export default ({
         </Text>
         <TextInput
           onChangeText={handleInput}
-          onBlur={handleBlur}
+          onEndEditing={handleBlur}
           placeholder={placeholder}
           secureTextEntry={password}
+          keyboardType={keyboardType}
           placeholderTextColor="rgba(255,255,255,0.8)"
           style={{
             borderColor: "#137B91",
