@@ -89,11 +89,75 @@ const StepBar = ({ stage }: { stage: number }) => {
   );
 };
 
+type StageProps = {
+  pageNumber: number;
+  first?: boolean;
+  children: JSX.Element;
+  stage: number;
+  direction: "left" | "right";
+  isLoading: boolean;
+  previousStage: number;
+};
+
+const Stage = ({
+  pageNumber,
+  first,
+  stage,
+  direction,
+  children,
+  isLoading,
+  previousStage,
+}: StageProps) => {
+  const windowWidth = Dimensions.get("window").width;
+  const position = new Animated.Value(
+    direction === "left" ? -windowWidth : windowWidth
+  );
+  const [active, setActive] = useState(false);
+  const [previouslyActive, setPreviouslyActive] = useState(false);
+
+  useEffect(() => {
+    if (first && active && isLoading) return position.setValue(0);
+    if (isLoading || (!active && !previouslyActive)) return;
+    if (previouslyActive) position.setValue(0);
+
+    Animated.sequence([
+      Animated.timing(position, {
+        toValue: active ? 0 : direction === "left" ? windowWidth : -windowWidth,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [position]);
+
+  useEffect(() => {
+    if (stage === pageNumber) setActive(true);
+    else setActive(false);
+    if (previousStage === pageNumber) setPreviouslyActive(true);
+    else setPreviouslyActive(false);
+  }, [stage]);
+
+  return (
+    <Animated.View
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        height: "100%",
+        position: "absolute",
+        width: "100%",
+        transform: [{ translateX: position }],
+        paddingBottom: 55,
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+};
+
 export default ({ navigation }: any) => {
   const [stage, setStage] = useState(1);
   const [previousStage, setPreviousStage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [direction, setDirection] = useState("left");
+  const [direction, setDirection] = useState("left" as "left" | "right");
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -117,63 +181,8 @@ export default ({ navigation }: any) => {
     }
   };
 
-  const Stage = ({
-    pageNumber,
-    first,
-    children,
-  }: {
-    pageNumber: number;
-    first?: boolean;
-    children: JSX.Element;
-  }) => {
-    const windowWidth = Dimensions.get("window").width;
-    const position = new Animated.Value(
-      direction === "left" ? -windowWidth : windowWidth
-    );
-    const [active, setActive] = useState(false);
-    const [previouslyActive, setPreviouslyActive] = useState(false);
-
-    useEffect(() => {
-      if (first && active && isLoading) return position.setValue(0);
-      if (isLoading || (!active && !previouslyActive)) return;
-      if (previouslyActive) position.setValue(0);
-
-      Animated.sequence([
-        Animated.timing(position, {
-          toValue: active
-            ? 0
-            : direction === "left"
-            ? windowWidth
-            : -windowWidth,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, [position]);
-
-    useEffect(() => {
-      if (stage === pageNumber) setActive(true);
-      if (previousStage === pageNumber) setPreviouslyActive(true);
-    }, [stage]);
-
-    return (
-      <Animated.View
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          height: "100%",
-          position: "absolute",
-          width: "100%",
-          transform: [{ translateX: position }],
-          paddingBottom: 55,
-        }}
-      >
-        {children}
-      </Animated.View>
-    );
-  };
-
   const validateStage = (elements: Array<any>, submitAction: () => any) => {
+    submitAction();
     let errors: any = {};
     for (let i = 0; i < elements.length; i++) {
       const e = elements[i];
@@ -194,11 +203,18 @@ export default ({ navigation }: any) => {
       submitAction();
   };
 
+  const stageProps = {
+    stage: stage,
+    direction: direction,
+    isLoading: isLoading,
+    previousStage: previousStage,
+  };
+
   return (
     <>
       <StepBar stage={stage} />
       <View style={{ position: "relative", height: "100%", flex: 1 }}>
-        <Stage first pageNumber={1}>
+        <Stage {...stageProps} first pageNumber={1}>
           <>
             <View>
               <Input
@@ -240,7 +256,7 @@ export default ({ navigation }: any) => {
             </View>
           </>
         </Stage>
-        <Stage pageNumber={2}>
+        <Stage {...stageProps} pageNumber={2}>
           <>
             <View>
               <Input
@@ -267,7 +283,7 @@ export default ({ navigation }: any) => {
             </View>
           </>
         </Stage>
-        <Stage pageNumber={3}>
+        <Stage {...stageProps} pageNumber={3}>
           <>
             <View>
               <Input
