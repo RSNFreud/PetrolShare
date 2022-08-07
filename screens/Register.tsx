@@ -138,6 +138,9 @@ const Stage = React.memo(
         }),
       ]).start();
     }, [position]);
+    useEffect(() => {
+      console.log("re-rendered");
+    }, []);
 
     useEffect(() => {
       setActive(stage === pageNumber);
@@ -162,7 +165,7 @@ const Stage = React.memo(
   }
 );
 
-export default ({ navigation }: any) => {
+export default React.memo(({ navigation }: any) => {
   const [stage, setStage] = useState(1);
   const [previousStage, setPreviousStage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -222,6 +225,8 @@ export default ({ navigation }: any) => {
       submitAction();
   };
 
+  const Callback = useCallback(({ children }) => <>{children}</>, []);
+
   const stageProps = {
     stage: stage,
     direction: direction,
@@ -240,7 +245,7 @@ export default ({ navigation }: any) => {
         }}
       >
         <Stage {...stageProps} first pageNumber={1}>
-          <>
+          <Callback>
             <View>
               <Input
                 handleInput={(e) => setFormData({ ...formData, fullName: e })}
@@ -280,10 +285,10 @@ export default ({ navigation }: any) => {
                 Cancel
               </Button>
             </View>
-          </>
+          </Callback>
         </Stage>
         <Stage {...stageProps} pageNumber={2}>
-          <>
+          <Callback>
             <View>
               <Input
                 handleInput={(e) => setFormData({ ...formData, password: e })}
@@ -320,7 +325,7 @@ export default ({ navigation }: any) => {
                 Back
               </Button>
             </View>
-          </>
+          </Callback>
         </Stage>
         <Stage {...stageProps} pageNumber={3}>
           <>
@@ -356,4 +361,4 @@ export default ({ navigation }: any) => {
       </View>
     </Layout>
   );
-};
+});
