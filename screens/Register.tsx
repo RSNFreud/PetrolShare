@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Animated, Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Input from "../components/Input";
-import { Button } from "../components/Themed";
+import { Box, Button, Layout, Text } from "../components/Themed";
 
 const StepCircle = ({
   active,
@@ -99,59 +99,68 @@ type StageProps = {
   previousStage: number;
 };
 
-const Stage = ({
-  pageNumber,
-  first,
-  stage,
-  direction,
-  children,
-  isLoading,
-  previousStage,
-}: StageProps) => {
-  const windowWidth = Dimensions.get("window").width;
-  const position = new Animated.Value(
-    direction === "left" ? -windowWidth : windowWidth
-  );
-  const [active, setActive] = useState(false);
-  const [previouslyActive, setPreviouslyActive] = useState(false);
+const Stage = React.memo(
+  ({
+    pageNumber,
+    first,
+    stage,
+    direction,
+    children,
+    isLoading,
+    previousStage,
+  }: StageProps) => {
+    const windowWidth = Dimensions.get("window").width;
 
-  useEffect(() => {
-    if (first && active && isLoading) return position.setValue(0);
-    if (isLoading || (!active && !previouslyActive)) return;
-    if (previouslyActive) position.setValue(0);
+    const position = new Animated.Value(
+      direction === "left" ? -windowWidth : windowWidth
+    );
+    const [active, setActive] = useState(false);
+    const [previouslyActive, setPreviouslyActive] = useState(false);
 
-    Animated.sequence([
-      Animated.timing(position, {
-        toValue: active ? 0 : direction === "left" ? windowWidth : -windowWidth,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [position]);
+    useEffect(() => {
+      if (first && active && isLoading) {
+        position.setValue(0);
+        return position.setValue(0);
+      }
+      if (isLoading || (!active && !previouslyActive))
+        return position.setValue(-windowWidth);
+      if (previouslyActive) position.setValue(0);
 
-  useEffect(() => {
-    if (stage === pageNumber) setActive(true);
-    else setActive(false);
-    if (previousStage === pageNumber) setPreviouslyActive(true);
-    else setPreviouslyActive(false);
-  }, [stage]);
+      Animated.sequence([
+        Animated.timing(position, {
+          toValue: active
+            ? 0
+            : direction === "left"
+            ? windowWidth
+            : -windowWidth,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, [position]);
 
-  return (
-    <Animated.View
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        height: "100%",
-        position: "absolute",
-        width: "100%",
-        transform: [{ translateX: position }],
-        paddingBottom: 55,
-      }}
-    >
-      {children}
-    </Animated.View>
-  );
-};
+    useEffect(() => {
+      setActive(stage === pageNumber);
+      setPreviouslyActive(previousStage === pageNumber);
+    }, [stage]);
+
+    return (
+      <Animated.View
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+          position: "absolute",
+          width: "100%",
+          transform: [{ translateX: position }],
+          paddingBottom: 55,
+        }}
+      >
+        {children}
+      </Animated.View>
+    );
+  }
+);
 
 export default ({ navigation }: any) => {
   const [stage, setStage] = useState(1);
@@ -162,10 +171,14 @@ export default ({ navigation }: any) => {
   const [formData, setFormData] = useState({
     fullName: "",
     emailAddress: "",
+    password: "",
+    confirmPassword: "",
   } as any);
   const [formErrors, setFormErrors] = useState({
     fullName: "",
     emailAddress: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const changePage = (page: number) => {
@@ -182,19 +195,25 @@ export default ({ navigation }: any) => {
   };
 
   const validateStage = (elements: Array<any>, submitAction: () => any) => {
-    submitAction();
     let errors: any = {};
     for (let i = 0; i < elements.length; i++) {
       const e = elements[i];
       if (!(e in formData)) return;
       const value = formData[e];
-      if (!value) errors[e] = "Please complete this field!";
-      if (
-        e === "emailAddress" &&
-        value &&
-        !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
-      ) {
-        errors[e] = "Please enter a valid email!";
+      // if (!value) errors[e] = "Please complete this field!";
+      // if (
+      //   e === "emailAddress" &&
+      //   value &&
+      //   !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
+      // ) {
+      //   errors[e] = "Please enter a valid email!";
+      // }
+
+      if (e === "password" && value.length < 6) {
+        errors[e] = "Please enter a password longer than 6 characters";
+      }
+      if (e === "confirmPassword" && value != formData["password"]) {
+        errors[e] = "The password you entered does not match";
       }
     }
 
@@ -211,9 +230,15 @@ export default ({ navigation }: any) => {
   };
 
   return (
-    <>
+    <Layout>
       <StepBar stage={stage} />
-      <View style={{ position: "relative", height: "100%", flex: 1 }}>
+      <View
+        style={{
+          position: "relative",
+          flex: 1,
+          minHeight: Dimensions.get("window").height - 108 - 87,
+        }}
+      >
         <Stage {...stageProps} first pageNumber={1}>
           <>
             <View>
@@ -231,6 +256,7 @@ export default ({ navigation }: any) => {
                 }
                 placeholder="Enter email address"
                 label="Email:"
+                keyboardType="email-address"
                 style={{ marginBottom: 20 }}
                 value={formData["emailAddress"]}
                 errorMessage={formErrors["emailAddress"]}
@@ -251,7 +277,7 @@ export default ({ navigation }: any) => {
                 style="ghost"
                 handleClick={() => navigation.navigate("Login")}
               >
-                Back
+                Cancel
               </Button>
             </View>
           </>
@@ -260,22 +286,35 @@ export default ({ navigation }: any) => {
           <>
             <View>
               <Input
-                placeholder="Enter your name"
-                label="Full Name:"
+                handleInput={(e) => setFormData({ ...formData, password: e })}
+                value={formData["password"]}
+                errorMessage={formErrors["password"]}
+                placeholder="Enter your password"
+                label="Password:"
+                password
                 style={{ marginBottom: 20 }}
               />
               <Input
-                placeholder="Enter email address"
-                label="Email:"
-                style={{ marginBottom: 20 }}
+                handleInput={(e) =>
+                  setFormData({ ...formData, confirmPassword: e })
+                }
+                value={formData["confirmPassword"]}
+                errorMessage={formErrors["confirmPassword"]}
+                placeholder="Confirm your password"
+                label="Confirm Password:"
+                password
               />
             </View>
             <View>
               <Button
                 styles={{ marginBottom: 20 }}
-                handleClick={() => changePage(3)}
+                handleClick={() =>
+                  validateStage(["password", "confirmPassword"], () =>
+                    changePage(3)
+                  )
+                }
               >
-                Testing 1
+                Submit
               </Button>
               <Button style="ghost" handleClick={() => changePage(1)}>
                 Back
@@ -285,32 +324,36 @@ export default ({ navigation }: any) => {
         </Stage>
         <Stage {...stageProps} pageNumber={3}>
           <>
-            <View>
-              <Input
-                placeholder="Enter your name"
-                label="Full Name:"
-                style={{ marginBottom: 20 }}
-              />
-              <Input
-                placeholder="Enter email address"
-                label="Email:"
-                style={{ marginBottom: 20 }}
-              />
-            </View>
-            <View>
-              <Button
-                styles={{ marginBottom: 20 }}
-                handleClick={() => changePage(3)}
+            <Box>
+              <Text style={{ fontSize: 16, lineHeight: 25 }}>
+                Thank you for registering for PetrolShare{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  {formData["fullName"] || "Username"}
+                </Text>
+                .{"\n"}
+                {"\n"}
+                Your Group ID number is:
+              </Text>
+              <Text
+                style={{ fontWeight: "bold", fontSize: 32, marginVertical: 21 }}
               >
-                Test
-              </Button>
-              <Button style="ghost" handleClick={() => changePage(2)}>
-                Back
-              </Button>
-            </View>
+                243546457575
+              </Text>
+              <Text style={{ fontSize: 16, lineHeight: 25 }}>
+                Share this with other members in your group to add them to your
+                account. You can access this ID number at any time from your
+                dashboard.
+              </Text>
+            </Box>
+            <Button
+              handleClick={() => navigation.navigate("")}
+              styles={{ marginTop: 25 }}
+            >
+              Continue to Dashboard
+            </Button>
           </>
         </Stage>
       </View>
-    </>
+    </Layout>
   );
 };

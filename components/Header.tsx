@@ -9,7 +9,6 @@ export default ({ isLoggedIn }: PropsType) => {
     <View
       style={{
         paddingTop: 55,
-        paddingHorizontal: 25,
         paddingBottom: 22,
       }}
     >

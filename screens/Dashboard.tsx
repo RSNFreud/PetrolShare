@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
-import { Text } from "../components/Themed";
+import { Layout, Text } from "../components/Themed";
 import { AuthContext } from "../navigation";
 
 export default () => {
   const { signOut } = useContext(AuthContext);
 
   return (
-    <View style={{ display: "flex" }}>
+    <Layout style={{ display: "flex" }}>
       <Text>
         Hello world - Click
         <TouchableWithoutFeedback onPress={signOut}>
@@ -15,6 +15,6 @@ export default () => {
         </TouchableWithoutFeedback>
         to log out
       </Text>
-    </View>
+    </Layout>
   );
 };

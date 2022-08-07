@@ -8,7 +8,7 @@ type PropsType = {
   placeholder: string;
   style?: any;
   handleInput?: (e: string) => void;
-  handleBlur?: (e: string) => void;
+  handleBlur?: (e: any) => void;
   errorMessage?: string;
   keyboardType?: TextInput["props"]["keyboardType"];
 };
@@ -40,7 +40,7 @@ export default ({
         </Text>
         <TextInput
           onChangeText={handleInput}
-          onEndEditing={handleBlur}
+          onEndEditing={(e) => handleBlur && handleBlur(e)}
           placeholder={placeholder}
           secureTextEntry={password}
           keyboardType={keyboardType}

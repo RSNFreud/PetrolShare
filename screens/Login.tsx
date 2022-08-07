@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 
 import Input from "../components/Input";
-import { Button, Seperator, Text } from "../components/Themed";
+import { Button, Layout, Seperator, Text } from "../components/Themed";
 import Popup from "../components/Popup";
 import { Pressable, View } from "react-native";
 import { AuthContext } from "../navigation";
@@ -68,11 +68,11 @@ export default ({ navigation }: any) => {
           <View>
             <>
               <Text
-                style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10 }}
+                style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}
               >
                 Thank you for your request
               </Text>
-              <Text style={{ lineHeight: 21, fontSize: 14 }}>
+              <Text style={{ lineHeight: 21, fontSize: 16 }}>
                 Your request has been received and if the email exists in our
                 database you will recieve an email within the next few minutes
                 with password reset instructions.
@@ -84,6 +84,7 @@ export default ({ navigation }: any) => {
             <Input
               placeholder="Enter email address"
               label="Enter email address"
+              keyboardType="email-address"
               handleInput={(e) => setFormData({ email: e })}
               style={{ marginBottom: 20 }}
               errorMessage={formErrors.email}
@@ -104,12 +105,12 @@ export default ({ navigation }: any) => {
   }, [visible]);
 
   return (
-    <View>
+    <Layout>
       <Input
+        keyboardType="email-address"
         handleInput={(e) => setFormData({ ...formData, email: e })}
         placeholder="Enter email address"
         label="Email:"
-        keyboardType="email-address"
         errorMessage={formErrors.email}
         style={{ marginBottom: 20 }}
       />
@@ -147,6 +148,6 @@ export default ({ navigation }: any) => {
         Register
       </Button>
       <ForgotPassword />
-    </View>
+    </Layout>
   );
 };

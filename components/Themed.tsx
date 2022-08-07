@@ -3,13 +3,16 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Pressable,
+  ScrollView,
   StyleProp,
   Text as DefaultText,
   View as DefaultView,
 } from "react-native";
+import { AuthContext } from "../navigation";
+import Header from "./Header";
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
@@ -152,5 +155,33 @@ export const Seperator = ({ style }: ViewProps) => {
         style,
       ]}
     />
+  );
+};
+
+export const Box = ({ children }: any) => {
+  return (
+    <DefaultView
+      style={{
+        backgroundColor: "rgba(7, 95, 113, 0.2)",
+        paddingHorizontal: 29,
+        paddingVertical: 19,
+        borderColor: "#137B91",
+        borderWidth: 1,
+        borderRadius: 4,
+      }}
+    >
+      {children}
+    </DefaultView>
+  );
+};
+
+export const Layout = ({ children }: any) => {
+  const { isLoggedIn } = useContext(AuthContext);
+
+  return (
+    <ScrollView style={{ paddingHorizontal: 20 }}>
+      <Header isLoggedIn={isLoggedIn} />
+      {children}
+    </ScrollView>
   );
 };

@@ -25,7 +25,9 @@ export default function Navigation() {
     () => ({
       signIn: async (e: any) => {
         setUserData(e);
-        await SecureStore.setItemAsync("userID", e["email"]);
+        try {
+          await SecureStore.setItemAsync("userID", e["email"]);
+        } catch {}
       },
       retrieveData: () => {
         return userData;
@@ -34,8 +36,9 @@ export default function Navigation() {
         setUserData({});
         await SecureStore.deleteItemAsync("userID");
       },
+      isLoggedIn: Boolean(Object.keys(userData).length),
     }),
-    []
+    [userData]
   );
 
   useEffect(() => {
@@ -73,13 +76,7 @@ export default function Navigation() {
       <AuthContext.Provider value={login}>
         <Stack.Navigator
           screenOptions={{
-            headerShown: true,
-            header: () => (
-              <Header isLoggedIn={Boolean(Object.keys(userData).length)} />
-            ),
-            contentStyle: {
-              paddingHorizontal: 20,
-            },
+            headerShown: false,
             animation: "none",
           }}
         >
