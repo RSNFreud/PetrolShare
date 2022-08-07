@@ -122,9 +122,11 @@ const Stage = React.memo(
         position.setValue(0);
         return position.setValue(0);
       }
+      if (isLoading && active) return position.setValue(0);
       if (isLoading || (!active && !previouslyActive))
         return position.setValue(-windowWidth);
       if (previouslyActive) position.setValue(0);
+      console.log(active, stage);
 
       Animated.sequence([
         Animated.timing(position, {
@@ -138,9 +140,6 @@ const Stage = React.memo(
         }),
       ]).start();
     }, [position]);
-    useEffect(() => {
-      console.log("re-rendered");
-    }, []);
 
     useEffect(() => {
       setActive(stage === pageNumber);
@@ -195,6 +194,10 @@ export default React.memo(({ navigation }: any) => {
       setDirection("left");
       setPreviousStage(page + 1);
     }
+
+    setTimeout(() => {
+      setIsLoading(true);
+    }, 400);
   };
 
   const validateStage = (elements: Array<any>, submitAction: () => any) => {
@@ -203,14 +206,14 @@ export default React.memo(({ navigation }: any) => {
       const e = elements[i];
       if (!(e in formData)) return;
       const value = formData[e];
-      // if (!value) errors[e] = "Please complete this field!";
-      // if (
-      //   e === "emailAddress" &&
-      //   value &&
-      //   !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
-      // ) {
-      //   errors[e] = "Please enter a valid email!";
-      // }
+      if (!value) errors[e] = "Please complete this field!";
+      if (
+        e === "emailAddress" &&
+        value &&
+        !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
+      ) {
+        errors[e] = "Please enter a valid email!";
+      }
 
       if (e === "password" && value.length < 6) {
         errors[e] = "Please enter a password longer than 6 characters";
@@ -224,8 +227,6 @@ export default React.memo(({ navigation }: any) => {
     if (Object.values(errors).filter((e) => (e as string).length).length === 0)
       submitAction();
   };
-
-  const Callback = useCallback(({ children }) => <>{children}</>, []);
 
   const stageProps = {
     stage: stage,
@@ -245,7 +246,7 @@ export default React.memo(({ navigation }: any) => {
         }}
       >
         <Stage {...stageProps} first pageNumber={1}>
-          <Callback>
+          <>
             <View>
               <Input
                 handleInput={(e) => setFormData({ ...formData, fullName: e })}
@@ -285,10 +286,10 @@ export default React.memo(({ navigation }: any) => {
                 Cancel
               </Button>
             </View>
-          </Callback>
+          </>
         </Stage>
         <Stage {...stageProps} pageNumber={2}>
-          <Callback>
+          <>
             <View>
               <Input
                 handleInput={(e) => setFormData({ ...formData, password: e })}
@@ -325,7 +326,7 @@ export default React.memo(({ navigation }: any) => {
                 Back
               </Button>
             </View>
-          </Callback>
+          </>
         </Stage>
         <Stage {...stageProps} pageNumber={3}>
           <>
