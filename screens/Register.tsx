@@ -126,7 +126,6 @@ const Stage = React.memo(
       if (isLoading || (!active && !previouslyActive))
         return position.setValue(-windowWidth);
       if (previouslyActive) position.setValue(0);
-      console.log(active, stage);
 
       Animated.sequence([
         Animated.timing(position, {
