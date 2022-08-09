@@ -6,14 +6,16 @@ import { Box, Button, Layout, Text } from "../../components/Themed";
 import generateGroupID from "../../hooks/generateGroupID";
 import Stage from "./stage";
 import StepBar from "./stepBar";
-// import * as Clipboard from "expo-clipboard";
+import * as Clipboard from "expo-clipboard";
 import Svg, { Path } from "react-native-svg";
 
+const groupID = generateGroupID();
+
 export default React.memo(({ navigation }: any) => {
-  const [stage, setStage] = useState(2);
+  const [stage, setStage] = useState(1);
   const [previousStage, setPreviousStage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [copied, setCopied] = useState(true);
+  const [copied, setCopied] = useState(false);
   const [direction, setDirection] = useState("left" as "left" | "right");
 
   const [formData, setFormData] = useState({
@@ -92,14 +94,12 @@ export default React.memo(({ navigation }: any) => {
     }, 400);
   };
 
-  const groupID = generateGroupID();
-
   const copyToClipboard = async () => {
-    // Clipboard.setStringAsync(groupID || "test");
+    Clipboard.setStringAsync(groupID || "test");
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
-    }, 300);
+    }, 500);
   };
 
   const Steps = [
@@ -195,7 +195,7 @@ export default React.memo(({ navigation }: any) => {
           >
             {groupID}
           </Text>
-          {/* <TouchableWithoutFeedback onPress={() => copyToClipboard()}>
+          <TouchableWithoutFeedback onPress={() => copyToClipboard()}>
             {copied ? (
               <Svg width="26" height="26" fill="none" viewBox="0 0 26 26">
                 <Path
@@ -218,7 +218,7 @@ export default React.memo(({ navigation }: any) => {
                 ></Path>
               </Svg>
             )}
-          </TouchableWithoutFeedback> */}
+          </TouchableWithoutFeedback>
         </View>
         <Text style={{ fontSize: 16, lineHeight: 25 }}>
           Share this with other members in your group to add them to your
