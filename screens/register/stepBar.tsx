@@ -31,8 +31,8 @@ export default ({ stage }: PropTypes) => {
       }}
     >
       <StepCircle active withBar={false} width={30} />
+      <StepCircle width={width} active={stage >= 1} />
       <StepCircle width={width} active={stage >= 2} />
-      <StepCircle width={width} active={stage >= 3} />
     </View>
   );
 };
