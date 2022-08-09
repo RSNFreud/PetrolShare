@@ -10,7 +10,7 @@ import Header from "../components/Header";
 
 import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
-import Register from "../screens/Register";
+import Register from "../screens/register/Register";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import LinkingConfiguration from "./LinkingConfiguration";
 export const AuthContext = createContext({} as any);
