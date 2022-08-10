@@ -139,7 +139,7 @@ export default ({ navigation }: any) => {
       <Button
         handleClick={() =>
           handleSubmit(formData, setFormErrors, () =>
-            signIn({ email: formData["email"] })
+            signIn({ emailAddress: formData["email"] })
           )
         }
       >

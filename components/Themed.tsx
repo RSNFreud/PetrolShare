@@ -3,14 +3,18 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { useContext, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useContext, useEffect, useRef } from "react";
 import {
-  Pressable,
+  Animated,
   ScrollView,
-  StyleProp,
   Text as DefaultText,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
   View as DefaultView,
 } from "react-native";
+import Svg, { Path } from "react-native-svg";
+
 import { AuthContext } from "../navigation";
 import Header from "./Header";
 
@@ -34,36 +38,19 @@ type ButtonType = {
   style?: "regular" | "ghost";
   size?: "regular" | "small";
   handleClick?: () => void;
-  styles?: ViewProps["style"];
+  styles?: TouchableOpacity["props"]["style"];
+  noText?: boolean;
 };
 
 export const Button = ({
   children,
   handleClick,
+  noText,
   size,
   style,
   color,
   styles,
 }: ButtonType) => {
-  const [pressed, setPressed] = useState(false);
-
-  const handlePress = () => {
-    setPressed(true);
-    if (handleClick) handleClick();
-  };
-
-  useEffect(() => {
-    let timeout: any = null;
-
-    if (pressed) {
-      timeout = setTimeout(() => setPressed(false), 300);
-    }
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [pressed]);
-
   let variableProperties = {
     height: 51,
     fontSize: 18,
@@ -107,27 +94,29 @@ export const Button = ({
   }
 
   return (
-    <Pressable onPress={handlePress} android_disableSound={true}>
-      <DefaultView
-        style={[
-          {
-            borderStyle: "solid",
-            borderRadius: 4,
-            borderWidth: 1,
-            borderColor: variableProperties.borderColor,
-            paddingHorizontal: variableProperties.paddingHorizontal,
-            paddingVertical: variableProperties.paddingVertical,
-            width: "100%",
-            alignContent: "center",
-            alignItems: "center",
-            transform: pressed ? [{ scale: 0.99 }] : [],
-            opacity: pressed ? 0.9 : 1,
-            minHeight: variableProperties.height,
-            backgroundColor: variableProperties.backgroundColor,
-          },
-          styles,
-        ]}
-      >
+    <TouchableOpacity
+      onPress={handleClick}
+      activeOpacity={0.8}
+      style={[
+        {
+          borderStyle: "solid",
+          borderRadius: 4,
+          borderWidth: 1,
+          borderColor: variableProperties.borderColor,
+          paddingHorizontal: variableProperties.paddingHorizontal,
+          paddingVertical: variableProperties.paddingVertical,
+          width: "100%",
+          alignContent: "center",
+          alignItems: "center",
+          minHeight: variableProperties.height,
+          backgroundColor: variableProperties.backgroundColor,
+        },
+        styles,
+      ]}
+    >
+      {noText ? (
+        children
+      ) : (
         <Text
           style={{
             color: variableProperties.textColor,
@@ -138,8 +127,8 @@ export const Button = ({
         >
           {children}
         </Text>
-      </DefaultView>
-    </Pressable>
+      )}
+    </TouchableOpacity>
   );
 };
 
@@ -175,13 +164,111 @@ export const Box = ({ children }: any) => {
   );
 };
 
+import * as SecureStore from "expo-secure-store";
+
 export const Layout = ({ children }: any) => {
+  const navigation = useNavigation();
   const { isLoggedIn } = useContext(AuthContext);
+  const opacity = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (navigation) {
+      navigation.addListener("state", async (e: any) => {
+        try {
+          if (await SecureStore.getItemAsync("firstLoad")) {
+            await SecureStore.deleteItemAsync("firstLoad");
+            return opacity.setValue(1);
+          }
+        } catch {
+          return opacity.setValue(1);
+        }
+
+        opacity.setValue(0);
+        fadeIn();
+      });
+    } else {
+      fadeIn();
+    }
+  }, []);
+
+  const fadeIn = () => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     <ScrollView style={{ paddingHorizontal: 20 }}>
       <Header isLoggedIn={isLoggedIn} />
-      {children}
+      <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
     </ScrollView>
+  );
+};
+
+export const Breadcrumbs = ({
+  links,
+}: {
+  links: Array<{ name: string; screenName?: string }>;
+}) => {
+  const navigation = useNavigation();
+
+  return (
+    <DefaultView
+      style={{
+        display: "flex",
+        marginBottom: 30,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      {links.map((e, c) => {
+        return (
+          <DefaultView
+            key={e.name}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            {c + 1 === links.length ? (
+              <Text style={{ fontWeight: "400", fontSize: 16 }}>{e.name}</Text>
+            ) : (
+              <>
+                <TouchableWithoutFeedback
+                  onPress={
+                    // @ts-ignore
+                    () => navigation.navigate(e.screenName || e.name)
+                  }
+                >
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 16,
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    {e.name}
+                  </Text>
+                </TouchableWithoutFeedback>
+                <Svg
+                  width="7"
+                  height="7"
+                  fill="none"
+                  viewBox="0 0 7 7"
+                  style={{ marginHorizontal: 5 }}
+                >
+                  <Path
+                    fill="#fff"
+                    d="M5.036 3.68L.176 1.786V.48l5.837 2.584v.8l-.977-.184zM.176 5.348L5.05 3.413l.963-.143v.792L.176 6.654V5.348z"
+                  ></Path>
+                </Svg>
+              </>
+            )}
+          </DefaultView>
+        );
+      })}
+    </DefaultView>
   );
 };

@@ -7,7 +7,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { createContext, useEffect, useState } from "react";
 
-import Dashboard from "../screens/Dashboard";
+import Dashboard from "../screens/dashboard/Dashboard";
 import Login from "../screens/Login";
 import Register from "../screens/register/Register";
 import NotFoundScreen from "../screens/NotFoundScreen";
@@ -15,6 +15,7 @@ import LinkingConfiguration from "./LinkingConfiguration";
 export const AuthContext = createContext({} as any);
 import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
+import Settings from "../screens/settings/Settings";
 
 export default function Navigation() {
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ export default function Navigation() {
       signIn: async (e: any) => {
         setUserData(e);
         try {
-          await SecureStore.setItemAsync("userData", e);
+          await SecureStore.setItemAsync("userData", JSON.stringify(e));
         } catch {}
       },
       retrieveData: () => {
@@ -44,8 +45,9 @@ export default function Navigation() {
     const async = async () => {
       try {
         const data = await SecureStore.getItemAsync("userData");
+
         if (data) {
-          setUserData(data);
+          setUserData(JSON.parse(data));
           setLoading(false);
         } else {
           setLoading(false);
@@ -75,12 +77,16 @@ export default function Navigation() {
       <AuthContext.Provider value={login}>
         <Stack.Navigator
           screenOptions={{
+            gestureEnabled: false,
             headerShown: false,
             animation: "none",
           }}
         >
           {Boolean(Object.keys(userData).length) ? (
-            <Stack.Screen name="Dashboard" component={Dashboard} />
+            <>
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+              <Stack.Screen name="Settings" component={Settings} />
+            </>
           ) : (
             <>
               <Stack.Screen name="Login" component={Login} />

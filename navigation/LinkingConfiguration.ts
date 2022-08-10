@@ -15,6 +15,7 @@ const linking: any = {
     screens: {
       Login: 'login',
       Register: 'register',
+      Settings: 'settings',
       Dashboard: '',
       NotFound: '*',
     },

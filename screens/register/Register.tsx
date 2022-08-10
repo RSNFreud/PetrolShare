@@ -111,6 +111,7 @@ export default React.memo(({ navigation }: any) => {
       signIn({
         fullName: formData["fullName"],
         emailAddress: formData["emailAddress"],
+        groupID: groupID,
       });
     navigation.popToTop();
   };
@@ -246,7 +247,7 @@ export default React.memo(({ navigation }: any) => {
   ];
 
   return (
-    <Layout>
+    <Layout navigation={navigation}>
       <StepBar stage={stage} />
       <View
         style={{
