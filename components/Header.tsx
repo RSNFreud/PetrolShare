@@ -8,7 +8,7 @@ type PropsType = {
 };
 
 export default ({ isLoggedIn }: PropsType) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   return (
     <View
       style={{
