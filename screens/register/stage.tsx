@@ -4,7 +4,6 @@ import { Animated, Dimensions } from "react-native";
 
 type PropTypes = {
   pageNumber: number;
-  first?: boolean;
   children: JSX.Element;
   stage: number;
   direction: "left" | "right";
@@ -15,7 +14,6 @@ type PropTypes = {
 export default React.memo(
   ({
     pageNumber,
-    first,
     stage,
     direction,
     children,
@@ -27,14 +25,14 @@ export default React.memo(
     const position = new Animated.Value(
       direction === "left" ? -windowWidth : windowWidth
     );
-    const [active, setActive] = useState(false);
-    const [previouslyActive, setPreviouslyActive] = useState(false);
+    const active = pageNumber === stage;
+    const previouslyActive = previousStage === pageNumber;
 
     useEffect(() => {
       if (isLoading && active) return position.setValue(0);
+      if (previouslyActive) position.setValue(0);
       if (isLoading || (!active && !previouslyActive))
         return position.setValue(-windowWidth);
-      if (previouslyActive) position.setValue(0);
 
       Animated.sequence([
         Animated.timing(position, {
@@ -48,11 +46,6 @@ export default React.memo(
         }),
       ]).start();
     }, [position]);
-
-    useEffect(() => {
-      setActive(stage === pageNumber);
-      setPreviouslyActive(previousStage === pageNumber);
-    }, [stage]);
 
     return (
       <Animated.View

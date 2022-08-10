@@ -6,7 +6,6 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { createContext, useEffect, useState } from "react";
-import Header from "../components/Header";
 
 import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
@@ -26,7 +25,7 @@ export default function Navigation() {
       signIn: async (e: any) => {
         setUserData(e);
         try {
-          await SecureStore.setItemAsync("userID", e["email"]);
+          await SecureStore.setItemAsync("userData", e);
         } catch {}
       },
       retrieveData: () => {
@@ -34,7 +33,7 @@ export default function Navigation() {
       },
       signOut: async () => {
         setUserData({});
-        await SecureStore.deleteItemAsync("userID");
+        await SecureStore.deleteItemAsync("userData");
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
@@ -44,9 +43,9 @@ export default function Navigation() {
   useEffect(() => {
     const async = async () => {
       try {
-        const username = await SecureStore.getItemAsync("userID");
-        if (username) {
-          setUserData(username);
+        const data = await SecureStore.getItemAsync("userData");
+        if (data) {
+          setUserData(data);
           setLoading(false);
         } else {
           setLoading(false);

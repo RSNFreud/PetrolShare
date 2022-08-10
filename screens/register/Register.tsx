@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { View, Dimensions, TouchableWithoutFeedback } from "react-native";
 import Input from "../../components/Input";
@@ -8,11 +8,14 @@ import Stage from "./stage";
 import StepBar from "./stepBar";
 import * as Clipboard from "expo-clipboard";
 import Svg, { Path } from "react-native-svg";
+import { AuthContext } from "../../navigation";
 
 const groupID = generateGroupID();
 
 export default React.memo(({ navigation }: any) => {
-  const [stage, setStage] = useState(1);
+  const { signIn } = useContext(AuthContext);
+
+  const [stage, setStage] = useState(0);
   const [previousStage, setPreviousStage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -33,6 +36,7 @@ export default React.memo(({ navigation }: any) => {
 
   const validateStage = (elements: Array<any>, submitAction: () => any) => {
     let errors: any = {};
+
     for (let i = 0; i < elements.length; i++) {
       const e = elements[i];
       if (!(e in formData)) return;
@@ -100,6 +104,15 @@ export default React.memo(({ navigation }: any) => {
     setTimeout(() => {
       setCopied(false);
     }, 500);
+  };
+
+  const login = () => {
+    signIn &&
+      signIn({
+        fullName: formData["fullName"],
+        emailAddress: formData["emailAddress"],
+      });
+    navigation.popToTop();
   };
 
   const Steps = [
@@ -226,10 +239,7 @@ export default React.memo(({ navigation }: any) => {
           dashboard.
         </Text>
       </Box>
-      <Button
-        handleClick={() => navigation.navigate("")}
-        styles={{ marginTop: 25 }}
-      >
+      <Button handleClick={() => login()} styles={{ marginTop: 25 }}>
         Continue to Dashboard
       </Button>
     </>,

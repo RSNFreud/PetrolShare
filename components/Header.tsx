@@ -1,7 +1,7 @@
 type PropsType = {
   isLoggedIn: boolean;
 };
-import { Text } from "../components/Themed";
+import { Button, Text } from "../components/Themed";
 import { View } from "react-native";
 
 export default ({ isLoggedIn }: PropsType) => {
@@ -9,6 +9,10 @@ export default ({ isLoggedIn }: PropsType) => {
     <View
       style={{
         paddingTop: 55,
+        display: "flex",
+        flexDirection: "row",
+        alignContent: "center",
+        justifyContent: isLoggedIn ? "space-between" : "center",
         paddingBottom: 22,
       }}
     >
@@ -23,6 +27,11 @@ export default ({ isLoggedIn }: PropsType) => {
       >
         PetrolShare
       </Text>
+      {!!isLoggedIn && (
+        <Button size="small" styles={{ width: 103 }}>
+          Settings
+        </Button>
+      )}
     </View>
   );
 };

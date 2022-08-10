@@ -138,7 +138,9 @@ export default ({ navigation }: any) => {
       </Pressable>
       <Button
         handleClick={() =>
-          handleSubmit(formData, setFormErrors, () => signIn({ ...formData }))
+          handleSubmit(formData, setFormErrors, () =>
+            signIn({ email: formData["email"] })
+          )
         }
       >
         Submit
