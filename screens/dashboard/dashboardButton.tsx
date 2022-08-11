@@ -19,7 +19,7 @@ export default ({ children, style, colourTheme, handleClick }: PropTypes) => {
           borderColor: colourTheme !== "red" ? "#22CCEE" : "#BA3737",
           borderStyle: "solid",
           borderRadius: 4,
-          padding: 16,
+          paddingVertical: 16,
           display: "flex",
           alignContent: "center",
           alignItems: "center",
