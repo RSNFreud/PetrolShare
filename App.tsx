@@ -12,7 +12,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   useEffect(() => {
     try {
-      SecureStore.setItemAsync("firstLoad", "true");
+      // SecureStore.setItemAsync("firstLoad", "true");
     } catch {}
   }, []);
 

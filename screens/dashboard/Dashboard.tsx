@@ -1,13 +1,29 @@
-import { useContext } from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
 import { Box, Layout, Text } from "../../components/Themed";
 import generateGroupID from "../../hooks/generateGroupID";
 import { AuthContext } from "../../navigation";
 import SplitRow from "./splitRow";
 import Svg, { Path } from "react-native-svg";
+import axios from "axios";
 
 export default () => {
   const { retrieveData } = useContext(AuthContext);
+  const [currentMileage, setCurrentMileage] = useState(
+    retrieveData ? retrieveData()?.currentMileage : 0
+  );
+
+  useEffect(() => {
+    if (!retrieveData) return;
+    axios
+      .get(
+        "https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=" +
+          retrieveData().emailAddress
+      )
+      .then(({ data }) => setCurrentMileage(data))
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <Layout style={{ display: "flex" }}>
@@ -28,7 +44,7 @@ export default () => {
         </Text>
         <Text style={{ fontSize: 16, marginTop: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
-          10000km
+          {currentMileage}km
         </Text>
       </Box>
 
@@ -79,7 +95,7 @@ export default () => {
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
                   fill="#fff"
-                  d="M.25 1.917h10.542v1.916H.25V1.917zm13.417 0h9.583v1.916h-9.583V1.917zm2.875 5.75h6.708v1.916h-6.708V7.667zm-9.584 0h6.709v1.916H6.958V7.667zm-6.708 0h3.833v1.916H.25V7.667zm0 5.75h23v1.916h-23v-1.916zm0 5.75h16.292v1.916H.25v-1.916zm19.167 0h3.833v1.916h-3.833v-1.916z"
+                  d="M2.188 2.875A2.875 2.875 0 015.062 0h8.625a2.875 2.875 0 012.876 2.875v11.5a2.875 2.875 0 012.875 2.875v.719a.719.719 0 101.437 0V11.5h-.719a.719.719 0 01-.718-.719V6.29a.719.719 0 01.718-.719h2.15c-.017-.684-.077-1.285-.29-1.756a1.394 1.394 0 00-.566-.659c-.264-.158-.667-.28-1.294-.28a.719.719 0 010-1.438c.811 0 1.487.159 2.03.484.55.327.911.792 1.141 1.303.424.942.423 2.106.423 2.992v4.565a.719.719 0 01-.719.719h-.718v6.469a2.157 2.157 0 01-4.313 0v-.719a1.438 1.438 0 00-1.438-1.438v5.75h.72a.719.719 0 110 1.438H1.468a.719.719 0 110-1.438h.718V2.875zm3.593 0a.719.719 0 00-.718.719v7.187a.719.719 0 00.718.719h7.188a.719.719 0 00.719-.719V3.594a.719.719 0 00-.72-.719H5.782z"
                 ></Path>
               </Svg>
             ),

@@ -1,11 +1,138 @@
-import { Breadcrumbs, Layout } from "../../components/Themed";
+import { Breadcrumbs, Button, Layout } from "../../components/Themed";
 import SplitRow from "../dashboard/splitRow";
 import Svg, { Path } from "react-native-svg";
 import { AuthContext } from "../../navigation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import Popup from "../../components/Popup";
+import Input from "../../components/Input";
+import Toast from "react-native-toast-message";
+
+const ChangeEmail = ({ handleClose }: { handleClose: any }) => {
+  const [emailAddress, setEmailAddress] = useState<string>();
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
+
+  const validateForm = () => {
+    if (!emailAddress || !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(emailAddress))
+      return setErrors({
+        emailAddress: "Please enter a valid email address",
+        validation: "",
+      });
+    // Send email with link to confirm email change
+    handleClose();
+    Toast.show({
+      type: "default",
+      text1:
+        "A confirmation email has been sent to your inbox to change your address",
+    });
+  };
+
+  return (
+    <>
+      <Input
+        label="Email address"
+        handleInput={(e) => setEmailAddress(e)}
+        value={emailAddress}
+        errorMessage={errors.emailAddress}
+        placeholder="Enter a new email address"
+        style={{ marginBottom: 20 }}
+      />
+      <Button handleClick={validateForm} loading={loading}>
+        Change email
+      </Button>
+    </>
+  );
+};
+const ChangePassword = ({ handleClose }: { handleClose: any }) => {
+  const [data, setData] = useState({
+    currentPassword: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    currentPassword: "",
+    password: "",
+    confirmPassword: "",
+    validation: "",
+  });
+
+  const validateForm = () => {
+    let errors: any = {};
+
+    for (let i = 0; i < Object.keys(data).length; i++) {
+      const key = Object.keys(data)[i];
+      const value = data[key];
+      if (!value) errors[key] = "Please complete this field!";
+
+      if (key === "password" && value.length < 6) {
+        errors[key] = "Please enter a password longer than 6 characters";
+      }
+      if (key === "confirmPassword" && value != data["password"]) {
+        errors[key] = "The password you entered does not match";
+      }
+    }
+
+    setErrors({ ...errors });
+    if (
+      Object.values(errors).filter((e) => (e as string).length).length === 0
+    ) {
+      // Send email with link to confirm email change
+      handleClose();
+      Toast.show({
+        type: "default",
+        text1:
+          "A confirmation email has been sent to your inbox to change your address",
+      });
+    }
+  };
+
+  return (
+    <>
+      <Input
+        label="Current Password"
+        handleInput={(e) => setData({ ...data, currentPassword: e })}
+        value={data.currentPassword}
+        errorMessage={errors.currentPassword}
+        placeholder="Enter your current password"
+        style={{ marginBottom: 20 }}
+      />
+      <Input
+        label="New Password"
+        handleInput={(e) => setData({ ...data, password: e })}
+        value={data.password}
+        errorMessage={errors.password}
+        placeholder="Enter your new password"
+        style={{ marginBottom: 20 }}
+      />
+      <Input
+        label="Confirm New Password"
+        handleInput={(e) => setData({ ...data, confirmPassword: e })}
+        value={data.confirmPassword}
+        errorMessage={errors.confirmPassword}
+        placeholder="Confirm your new password"
+        style={{ marginBottom: 20 }}
+      />
+      <Button handleClick={validateForm} loading={loading}>
+        Change password
+      </Button>
+    </>
+  );
+};
 
 export default () => {
   const { signOut } = useContext(AuthContext);
+  const [visible, setVisible] = useState(false);
+  const [popupData, setPopupData] = useState(<></>);
+
+  const handlePopup = (data: JSX.Element) => {
+    setPopupData(data);
+    setVisible(true);
+  };
+  const handleClose = () => {
+    setVisible(false);
+    setPopupData(<></>);
+  };
 
   return (
     <Layout>
@@ -31,6 +158,8 @@ export default () => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () =>
+              handlePopup(<ChangeEmail handleClose={handleClose} />),
           },
           {
             text: "Change Password",
@@ -42,6 +171,8 @@ export default () => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () =>
+              handlePopup(<ChangePassword handleClose={handleClose} />),
           },
         ]}
       />
@@ -49,7 +180,7 @@ export default () => {
         style={{ marginVertical: 20 }}
         buttons={[
           {
-            text: "Change Username",
+            text: "Change Name",
             icon: (
               <Svg width="24" height="23" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -62,10 +193,14 @@ export default () => {
           {
             text: "Manage Group",
             icon: (
-              <Svg width="24" height="23" fill="none" viewBox="0 0 24 23">
+              <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
                   fill="#fff"
-                  d="M7.685 6.23a4.318 4.318 0 004.312 4.312 4.318 4.318 0 004.313-4.313 4.318 4.318 0 00-4.313-4.312 4.318 4.318 0 00-4.312 4.312zm11.979 13.895h.958v-.958a6.717 6.717 0 00-6.708-6.709h-3.833c-3.7 0-6.709 3.01-6.709 6.709v.958h16.292z"
+                  d="M8.664 10.312h-.556A5.539 5.539 0 004 11.922l-.153.179v5.29h2.606v-3.003l.352-.396.16-.186a7.028 7.028 0 013.009-1.827 4.21 4.21 0 01-1.31-1.667zM21.02 11.902a5.54 5.54 0 00-4.108-1.61c-.233.001-.465.014-.696.039a4.21 4.21 0 01-1.278 1.565 6.97 6.97 0 013.194 1.917l.16.179.345.396v3.009h2.517V12.08l-.134-.178zM8.089 9.066h.198a4.12 4.12 0 011.987-4.019 2.614 2.614 0 10-2.185 4.044v-.025zM16.605 8.587c.008.147.008.294 0 .44.123.02.247.03.37.032h.122a2.613 2.613 0 10-2.383-3.948 4.171 4.171 0 011.891 3.476zM12.414 11.449a2.856 2.856 0 100-5.712 2.856 2.856 0 000 5.712z"
+                ></Path>
+                <Path
+                  fill="#fff"
+                  d="M12.568 12.97a6.192 6.192 0 00-4.543 1.724l-.16.18v4.043a1.003 1.003 0 001.023.984h7.34a1.004 1.004 0 001.023-.983v-4.032l-.154-.192a6.122 6.122 0 00-4.53-1.725z"
                 ></Path>
               </Svg>
             ),
@@ -100,6 +235,9 @@ export default () => {
           },
         ]}
       />
+      <Popup visible={visible} handleClose={() => setVisible(false)}>
+        {popupData}
+      </Popup>
     </Layout>
   );
 };

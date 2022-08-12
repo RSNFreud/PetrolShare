@@ -9,12 +9,14 @@ import { AuthContext } from "../navigation";
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
+    emailAddress: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({
-    email: "",
+    emailAddress: "",
     password: "",
+    verification: "",
   });
 
   const { signIn } = useContext(AuthContext);
@@ -25,16 +27,17 @@ export default ({ navigation }: any) => {
     submitAction: () => void
   ) => {
     let errors = {
-      email: "",
+      emailAddress: "",
       password: "",
     };
+    submitAction();
 
     Object.keys(formData).map((e) => {
       const value = (formData as any)[e];
       (errors as any)[e] = value ? "" : "Please fill out this field!";
 
       if (
-        e === "email" &&
+        e === "emailAddress" &&
         value &&
         !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
       ) {
@@ -43,16 +46,17 @@ export default ({ navigation }: any) => {
     });
     setFormErrors(errors);
 
-    if (Object.values(errors).filter((e) => e.length).length === 0)
+    if (Object.values(errors).filter((e) => e.length).length === 0) {
       submitAction();
+    }
   };
 
   const ForgotPassword = useCallback(() => {
     const [formData, setFormData] = useState({
-      email: "",
+      emailAddress: "",
     });
     const [formErrors, setFormErrors] = useState({
-      email: "",
+      emailAddress: "",
     });
     const [isEmailSent, setIsEmailSent] = useState(false);
 
@@ -85,9 +89,9 @@ export default ({ navigation }: any) => {
               placeholder="Enter email address"
               label="Enter email address"
               keyboardType="email-address"
-              handleInput={(e) => setFormData({ email: e })}
+              handleInput={(e) => setFormData({ emailAddress: e })}
               style={{ marginBottom: 20 }}
-              errorMessage={formErrors.email}
+              errorMessage={formErrors.emailAddress}
             />
             <Button
               handleClick={() =>
@@ -104,14 +108,24 @@ export default ({ navigation }: any) => {
     );
   }, [visible]);
 
+  const handleLogin = () => {
+    if (!signIn) return;
+    setFormErrors({ emailAddress: "", password: "", verification: "" });
+    setLoading(true);
+    signIn({ ...formData }).catch((err: string) => {
+      setLoading(false);
+      setFormErrors({ emailAddress: "", password: "", verification: err });
+    });
+  };
+
   return (
     <Layout>
       <Input
         keyboardType="email-address"
-        handleInput={(e) => setFormData({ ...formData, email: e })}
+        handleInput={(e) => setFormData({ ...formData, emailAddress: e })}
         placeholder="Enter email address"
         label="Email:"
-        errorMessage={formErrors.email}
+        errorMessage={formErrors.emailAddress}
         style={{ marginBottom: 20 }}
       />
       <Input
@@ -122,6 +136,22 @@ export default ({ navigation }: any) => {
         style={{ marginBottom: 15 }}
         handleInput={(e) => setFormData({ ...formData, password: e })}
       />
+      {!!formErrors.verification && (
+        <View
+          style={{
+            marginTop: 5,
+            marginBottom: 15,
+            backgroundColor: "#EECFCF",
+            borderRadius: 4,
+            paddingHorizontal: 20,
+            paddingVertical: 15,
+          }}
+        >
+          <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+            {formErrors.verification}
+          </Text>
+        </View>
+      )}
       <Pressable
         onPress={() => setVisible(true)}
         style={{ marginBottom: 28 }}
@@ -137,10 +167,9 @@ export default ({ navigation }: any) => {
         </Text>
       </Pressable>
       <Button
+        loading={loading}
         handleClick={() =>
-          handleSubmit(formData, setFormErrors, () =>
-            signIn({ emailAddress: formData["email"] })
-          )
+          handleSubmit(formData, setFormErrors, () => handleLogin())
         }
       >
         Submit

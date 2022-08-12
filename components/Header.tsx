@@ -1,7 +1,7 @@
 import { Button, Text } from "../components/Themed";
 import { View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 type PropsType = {
   isLoggedIn: boolean;
@@ -9,6 +9,7 @@ type PropsType = {
 
 export default ({ isLoggedIn }: PropsType) => {
   const navigation = useNavigation<any>();
+  const route = useRoute();
   return (
     <View
       style={{
@@ -35,7 +36,9 @@ export default ({ isLoggedIn }: PropsType) => {
         <Button
           noText
           size="small"
-          handleClick={() => navigation.navigate("Settings")}
+          handleClick={() =>
+            route.name != "Settings" && navigation.navigate("Settings")
+          }
           styles={{
             paddingHorizontal: 12,
             paddingVertical: 6,

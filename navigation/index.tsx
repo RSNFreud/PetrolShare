@@ -16,6 +16,7 @@ export const AuthContext = createContext({} as any);
 import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import Settings from "../screens/settings/Settings";
+import axios from "axios";
 
 export default function Navigation() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,30 @@ export default function Navigation() {
   const login = React.useMemo(
     () => ({
       signIn: async (e: any) => {
-        setUserData(e);
+        return new Promise((res, rej) => {
+          axios
+            .post("https://petrolshare.freud-online.co.uk/user/login", { ...e })
+            .then(async ({ data }) => {
+              setUserData(data);
+              try {
+                await SecureStore.setItemAsync(
+                  "userData",
+                  JSON.stringify(data)
+                );
+              } catch {}
+              res(data);
+            })
+            .catch(({ response }) => {
+              rej(response.data);
+            });
+        });
+      },
+      register: async (e: any) => {
+        setUserData({
+          fullName: e.fullName,
+          groupID: e.groupID,
+          currentMileage: 0,
+        });
         try {
           await SecureStore.setItemAsync("userData", JSON.stringify(e));
         } catch {}

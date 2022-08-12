@@ -9,11 +9,12 @@ import StepBar from "./stepBar";
 import * as Clipboard from "expo-clipboard";
 import Svg, { Path } from "react-native-svg";
 import { AuthContext } from "../../navigation";
+import axios from "axios";
 
 const groupID = generateGroupID();
 
 export default React.memo(({ navigation }: any) => {
-  const { signIn } = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
 
   const [stage, setStage] = useState(0);
   const [previousStage, setPreviousStage] = useState(0);
@@ -107,13 +108,33 @@ export default React.memo(({ navigation }: any) => {
   };
 
   const login = () => {
-    signIn &&
-      signIn({
-        fullName: formData["fullName"],
-        emailAddress: formData["emailAddress"],
-        groupID: groupID,
-      });
     navigation.popToTop();
+  };
+
+  const handleRegister = async () => {
+    if (register) {
+      axios
+        .post("https://petrolshare.freud-online.co.uk/user/register", {
+          fullName: formData["fullName"],
+          emailAddress: formData["emailAddress"],
+          groupID: groupID,
+          password: formData["password"],
+        })
+        .then(async () => {
+          register({
+            fullName: formData["fullName"],
+            emailAddress: formData["emailAddress"],
+            groupID: groupID,
+          });
+        })
+        .catch((err) => {
+          previousPage();
+          setFormErrors({
+            ...formErrors,
+            emailAddress: "This email address already exists!",
+          });
+        });
+    }
   };
 
   const Steps = [
@@ -175,7 +196,9 @@ export default React.memo(({ navigation }: any) => {
         <Button
           styles={{ marginBottom: 20 }}
           handleClick={() =>
-            validateStage(["password", "confirmPassword"], () => nextPage())
+            validateStage(["password", "confirmPassword"], () =>
+              handleRegister()
+            )
           }
         >
           Submit

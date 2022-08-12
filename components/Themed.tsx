@@ -9,12 +9,13 @@ import {
   Animated,
   ScrollView,
   Text as DefaultText,
+  ActivityIndicator,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View as DefaultView,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-
+import Toast from "react-native-toast-message";
 import { AuthContext } from "../navigation";
 import Header from "./Header";
 
@@ -40,6 +41,7 @@ type ButtonType = {
   handleClick?: () => void;
   styles?: TouchableOpacity["props"]["style"];
   noText?: boolean;
+  loading?: boolean;
 };
 
 export const Button = ({
@@ -49,6 +51,7 @@ export const Button = ({
   size,
   style,
   color,
+  loading,
   styles,
 }: ButtonType) => {
   let variableProperties = {
@@ -114,7 +117,9 @@ export const Button = ({
         styles,
       ]}
     >
-      {noText ? (
+      {loading ? (
+        <ActivityIndicator size="small" color="#fff" />
+      ) : noText ? (
         children
       ) : (
         <Text
@@ -190,6 +195,32 @@ export const Layout = ({ children }: any) => {
     }
   }, []);
 
+  const ToastConfig = {
+    default: ({ text1 }: { text1?: string }) => (
+      <DefaultView
+        style={{
+          backgroundColor: "#0B404A",
+          borderColor: "#1196B0",
+          borderStyle: "solid",
+          borderWidth: 1,
+          borderRadius: 4,
+          padding: 20,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            color: "white",
+            fontWeight: "700",
+            lineHeight: 24,
+          }}
+        >
+          {text1}
+        </Text>
+      </DefaultView>
+    ),
+  };
+
   const fadeIn = () => {
     Animated.timing(opacity, {
       toValue: 1,
@@ -202,6 +233,7 @@ export const Layout = ({ children }: any) => {
     <ScrollView style={{ paddingHorizontal: 20 }}>
       <Header isLoggedIn={isLoggedIn} />
       <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
+      <Toast config={ToastConfig} />
     </ScrollView>
   );
 };
