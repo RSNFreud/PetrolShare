@@ -30,7 +30,6 @@ export default ({ navigation }: any) => {
       emailAddress: "",
       password: "",
     };
-    submitAction();
 
     Object.keys(formData).map((e) => {
       const value = (formData as any)[e];

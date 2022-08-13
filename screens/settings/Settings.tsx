@@ -1,4 +1,9 @@
-import { Breadcrumbs, Button, Layout } from "../../components/Themed";
+import {
+  Breadcrumbs,
+  Button,
+  Layout,
+  Seperator,
+} from "../../components/Themed";
 import SplitRow from "../dashboard/splitRow";
 import Svg, { Path } from "react-native-svg";
 import { AuthContext } from "../../navigation";
@@ -65,7 +70,7 @@ const ChangePassword = ({ handleClose }: { handleClose: any }) => {
       const value = data[key];
       if (!value) errors[key] = "Please complete this field!";
 
-      if (key === "password" && value.length < 6) {
+      if (value && key === "password" && value.length < 6) {
         errors[key] = "Please enter a password longer than 6 characters";
       }
       if (key === "confirmPassword" && value != data["password"]) {
@@ -95,6 +100,7 @@ const ChangePassword = ({ handleClose }: { handleClose: any }) => {
         value={data.currentPassword}
         errorMessage={errors.currentPassword}
         placeholder="Enter your current password"
+        password
         style={{ marginBottom: 20 }}
       />
       <Input
@@ -102,6 +108,7 @@ const ChangePassword = ({ handleClose }: { handleClose: any }) => {
         handleInput={(e) => setData({ ...data, password: e })}
         value={data.password}
         errorMessage={errors.password}
+        password
         placeholder="Enter your new password"
         style={{ marginBottom: 20 }}
       />
@@ -109,10 +116,11 @@ const ChangePassword = ({ handleClose }: { handleClose: any }) => {
         label="Confirm New Password"
         handleInput={(e) => setData({ ...data, confirmPassword: e })}
         value={data.confirmPassword}
+        password
         errorMessage={errors.confirmPassword}
         placeholder="Confirm your new password"
-        style={{ marginBottom: 20 }}
       />
+      <Seperator style={{ marginVertical: 30 }} />
       <Button handleClick={validateForm} loading={loading}>
         Change password
       </Button>

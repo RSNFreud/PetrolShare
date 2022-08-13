@@ -1,4 +1,12 @@
-import { Animated, Modal, Pressable, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
+  Modal,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
 import { useEffect, useState } from "react";
 import Svg, { Path } from "react-native-svg";
 
@@ -58,9 +66,11 @@ export default ({
       <Pressable
         onPress={close}
         android_disableSound={true}
-        style={{ backgroundColor: "rgba(35, 35, 35, 0.8)", height: "100%" }}
+        style={{
+          backgroundColor: "rgba(35, 35, 35, 0.8)",
+          height: Dimensions.get("window").height,
+        }}
       />
-
       <Animated.View
         style={{
           backgroundColor: "#001E24",

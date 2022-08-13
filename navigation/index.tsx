@@ -60,7 +60,7 @@ export default function Navigation() {
         setUserData({});
         await SecureStore.deleteItemAsync("userData");
       },
-      isLoggedIn: Boolean(Object.keys(userData).length),
+      isLoggedIn: true,
     }),
     [userData]
   );
@@ -106,7 +106,7 @@ export default function Navigation() {
             animation: "none",
           }}
         >
-          {Boolean(Object.keys(userData).length) ? (
+          {Boolean(true) ? (
             <>
               <Stack.Screen name="Dashboard" component={Dashboard} />
               <Stack.Screen name="Settings" component={Settings} />
