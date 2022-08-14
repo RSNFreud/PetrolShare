@@ -71,12 +71,20 @@ export default function Navigation() {
         const data = await SecureStore.getItemAsync("userData");
 
         if (data) {
-          setUserData(JSON.parse(data));
+          const parsed = JSON.parse(data);
+          if (!("authenticationKey" in parsed)) {
+            setLoading(false);
+            return login.signOut;
+          }
+
+          setUserData(parsed);
           setLoading(false);
         } else {
           setLoading(false);
         }
-      } catch {}
+      } catch (err) {
+        console.log(err);
+      }
     };
     async();
   }, []);

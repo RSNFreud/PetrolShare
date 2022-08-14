@@ -1,29 +1,69 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Layout, Text } from "../../components/Themed";
+import { Box, Button, Layout, Text } from "../../components/Themed";
 import generateGroupID from "../../hooks/generateGroupID";
 import { AuthContext } from "../../navigation";
 import SplitRow from "./splitRow";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
+import Popup from "../../components/Popup";
+import * as SecureStore from "expo-secure-store";
+import Toast from "react-native-toast-message";
 
-export default () => {
+export default ({ navigation }: any) => {
   const { retrieveData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
-
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    if (!retrieveData) return;
+    navigation.addListener("focus", () => {
+      if (!retrieveData) return;
+      axios
+        .get(
+          `https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=${
+            retrieveData().emailAddress
+          }&authenticationKey=${retrieveData().authenticationKey}`
+        )
+        .then(async ({ data }) => {
+          setCurrentMileage(data);
+          let sessionStorage;
+          try {
+            sessionStorage = await SecureStore.getItemAsync("userData");
+            if (!sessionStorage) return;
+            sessionStorage = JSON.parse(sessionStorage);
+            sessionStorage.currentMileage = data.toString();
+            await SecureStore.setItemAsync(
+              "userData",
+              JSON.stringify(sessionStorage)
+            );
+          } catch (err) {
+            console.log(err);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  });
+
+  const resetDistance = () => {
     axios
-      .get(
-        "https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=" +
-          retrieveData().emailAddress
-      )
-      .then(({ data }) => setCurrentMileage(data))
-      .catch((err) => {
-        console.log(err);
+      .post(`https://petrolshare.freud-online.co.uk/data/reset`, {
+        emailAddress: retrieveData().emailAddress,
+        authenticationKey: retrieveData().authenticationKey,
+      })
+      .then(() => {
+        setCurrentMileage(0);
+        setVisible(false);
+        Toast.show({
+          type: "default",
+          text1: "Successfully reset your distance to 0.",
+        });
+      })
+      .catch(({ response }) => {
+        console.log(response.message);
       });
-  }, []);
+  };
 
   return (
     <Layout style={{ display: "flex" }}>
@@ -88,6 +128,7 @@ export default () => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () => setVisible(true),
           },
           {
             text: "Add Petrol",
@@ -117,6 +158,27 @@ export default () => {
           },
         ]}
       />
+      <Popup visible={visible} handleClose={() => setVisible(false)}>
+        <Text
+          style={{
+            fontSize: 18,
+            marginBottom: 20,
+            fontWeight: "bold",
+            lineHeight: 28,
+          }}
+        >
+          Are you sure you want to reset{"\n"}your distance?
+        </Text>
+        <Button
+          styles={{ marginBottom: 20 }}
+          handleClick={() => resetDistance()}
+        >
+          Yes
+        </Button>
+        <Button style="ghost" handleClick={() => setVisible(false)}>
+          No
+        </Button>
+      </Popup>
     </Layout>
   );
 };
