@@ -152,17 +152,26 @@ export const Seperator = ({ style }: ViewProps) => {
   );
 };
 
-export const Box = ({ children }: any) => {
+export const Box = ({
+  children,
+  style,
+}: {
+  children: JSX.Element;
+  style?: ViewProps["style"];
+}) => {
   return (
     <DefaultView
-      style={{
-        backgroundColor: "rgba(7, 95, 113, 0.2)",
-        paddingHorizontal: 29,
-        paddingVertical: 19,
-        borderColor: "#137B91",
-        borderWidth: 1,
-        borderRadius: 4,
-      }}
+      style={[
+        {
+          backgroundColor: "rgba(7, 95, 113, 0.2)",
+          paddingHorizontal: 29,
+          paddingVertical: 19,
+          borderColor: "#137B91",
+          borderWidth: 1,
+          borderRadius: 4,
+        },
+        style,
+      ]}
     >
       {children}
     </DefaultView>

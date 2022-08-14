@@ -16,6 +16,7 @@ const linking: any = {
       Login: 'login',
       Register: 'register',
       Settings: 'settings',
+      AddDistance: 'add-distance',
       Dashboard: '',
       NotFound: '*',
     },

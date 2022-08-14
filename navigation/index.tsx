@@ -17,6 +17,7 @@ import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import Settings from "../screens/settings/Settings";
 import axios from "axios";
+import distance from "../screens/distance";
 
 export default function Navigation() {
   const [loading, setLoading] = useState(true);
@@ -44,11 +45,7 @@ export default function Navigation() {
         });
       },
       register: async (e: any) => {
-        setUserData({
-          fullName: e.fullName,
-          groupID: e.groupID,
-          currentMileage: 0,
-        });
+        setUserData(e);
         try {
           await SecureStore.setItemAsync("userData", JSON.stringify(e));
         } catch {}
@@ -118,6 +115,7 @@ export default function Navigation() {
             <>
               <Stack.Screen name="Dashboard" component={Dashboard} />
               <Stack.Screen name="Settings" component={Settings} />
+              <Stack.Screen name="AddDistance" component={distance} />
             </>
           ) : (
             <>

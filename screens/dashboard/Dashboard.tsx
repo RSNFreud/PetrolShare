@@ -32,6 +32,7 @@ export default ({ navigation }: any) => {
             if (!sessionStorage) return;
             sessionStorage = JSON.parse(sessionStorage);
             sessionStorage.currentMileage = data.toString();
+
             await SecureStore.setItemAsync(
               "userData",
               JSON.stringify(sessionStorage)
@@ -68,24 +69,26 @@ export default ({ navigation }: any) => {
   return (
     <Layout style={{ display: "flex" }}>
       <Box>
-        <Text style={{ fontSize: 18 }}>
-          Welcome
-          <Text style={{ fontWeight: "bold" }}>
-            &nbsp;
-            {retrieveData ? retrieveData()?.fullName || "User" : "User"}
+        <>
+          <Text style={{ fontSize: 18 }}>
+            Welcome
+            <Text style={{ fontWeight: "bold" }}>
+              &nbsp;
+              {retrieveData ? retrieveData()?.fullName || "User" : "User"}
+            </Text>
+            !
           </Text>
-          !
-        </Text>
-        <Text style={{ fontSize: 16, marginTop: 20 }}>
-          <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
-          {retrieveData
-            ? retrieveData()?.groupID || generateGroupID()
-            : generateGroupID()}
-        </Text>
-        <Text style={{ fontSize: 16, marginTop: 10 }}>
-          <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
-          {currentMileage}km
-        </Text>
+          <Text style={{ fontSize: 16, marginTop: 20 }}>
+            <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
+            {retrieveData
+              ? retrieveData()?.groupID || generateGroupID()
+              : generateGroupID()}
+          </Text>
+          <Text style={{ fontSize: 16, marginTop: 10 }}>
+            <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
+            {currentMileage}km
+          </Text>
+        </>
       </Box>
 
       <SplitRow
@@ -101,6 +104,7 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () => navigation.navigate("AddDistance"),
           },
           {
             text: "View Logs",
