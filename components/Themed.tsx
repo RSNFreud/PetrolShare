@@ -180,7 +180,13 @@ export const Box = ({
 
 import * as SecureStore from "expo-secure-store";
 
-export const Layout = ({ children }: any) => {
+export const Layout = ({
+  children,
+  style,
+}: {
+  children: any;
+  style?: ViewProps["style"];
+}) => {
   const navigation = useNavigation();
   const { isLoggedIn } = useContext(AuthContext);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -239,7 +245,7 @@ export const Layout = ({ children }: any) => {
   };
 
   return (
-    <ScrollView style={{ paddingHorizontal: 20 }}>
+    <ScrollView style={[{ paddingHorizontal: 20 }, style]}>
       <Header isLoggedIn={isLoggedIn} />
       <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
       <Toast config={ToastConfig} />

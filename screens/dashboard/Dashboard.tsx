@@ -9,7 +9,7 @@ import Popup from "../../components/Popup";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
 
-export default ({ navigation }: any) => {
+export default ({ route, navigation }: any) => {
   const { retrieveData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
@@ -17,6 +17,15 @@ export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     navigation.addListener("focus", () => {
+      if (route.params && route.params?.showToast === "distanceUpdated") {
+        console.log("ho", route.params?.showToast);
+
+        navigation.setParams({});
+        Toast.show({
+          type: "default",
+          text1: "Distance successfully updated!",
+        });
+      }
       if (!retrieveData) return;
       axios
         .get(

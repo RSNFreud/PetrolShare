@@ -9,8 +9,57 @@ import {
   Button,
 } from "../../components/Themed";
 import Svg, { Path } from "react-native-svg";
+import { useContext, useState } from "react";
+import axios from "axios";
+import { AuthContext } from "../../navigation";
+import Toast from "react-native-toast-message";
 
-export default () => {
+export default ({ navigation }: any) => {
+  const [data, setData] = useState({
+    startValue: "",
+    endValue: "",
+    distance: "",
+  });
+  const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { retrieveData } = useContext(AuthContext);
+
+  const handleSubmit = () => {
+    setErrors("");
+    if (!data.distance && !data.startValue) {
+      return setErrors("Please enter either a preset, distance or start value");
+    }
+
+    if (data.distance && data.startValue) {
+      return setErrors("Please enter only one option!");
+    }
+
+    let distance;
+    if (!data.distance && !data.endValue) {
+      // store it for later as draft with unique id
+      return;
+    } else if (data.distance) {
+      distance = data.distance;
+    } else {
+      distance = parseInt(data.endValue) - parseInt(data.startValue);
+    }
+
+    if (!retrieveData) return;
+    setLoading(true);
+    axios
+      .post(`https://petrolshare.freud-online.co.uk/data/add`, {
+        distance: distance,
+        authenticationKey: retrieveData().authenticationKey,
+      })
+      .then(() => {
+        setLoading(false);
+        navigation.navigate("Dashboard", { showToast: "distanceUpdated" });
+      })
+      .catch(({ response }) => {
+        console.log(response.message);
+      });
+  };
+
   return (
     <Layout>
       <Breadcrumbs
@@ -26,11 +75,15 @@ export default () => {
       <Input
         placeholder="Enter odemetor start value"
         label="Start Odometer"
+        keyboardType="numeric"
+        handleInput={(e) => setData({ ...data, startValue: e })}
         style={{ marginBottom: 20 }}
       />
       <Input
         placeholder="Enter odemetor end value"
         label="End Odometer"
+        keyboardType="numeric"
+        handleInput={(e) => setData({ ...data, endValue: e })}
         style={{ marginBottom: 30 }}
       />
       <View
@@ -68,6 +121,8 @@ export default () => {
       <Input
         placeholder="Enter total distance"
         label="Distance"
+        keyboardType="numeric"
+        handleInput={(e) => setData({ ...data, distance: e })}
         style={{ marginBottom: 30 }}
       />
       <View
@@ -152,7 +207,29 @@ export default () => {
         </>
       </Box>
       <Seperator style={{ marginVertical: 30 }} />
-      <Button styles={{ marginBottom: 55 }}>Save</Button>
+      <Button
+        loading={loading}
+        styles={{ marginBottom: errors ? 0 : 55 }}
+        handleClick={() => handleSubmit()}
+      >
+        Save
+      </Button>
+      {!!errors && (
+        <View
+          style={{
+            marginTop: 15,
+            marginBottom: 55,
+            backgroundColor: "#EECFCF",
+            borderRadius: 4,
+            paddingHorizontal: 20,
+            paddingVertical: 15,
+          }}
+        >
+          <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+            {errors}
+          </Text>
+        </View>
+      )}
     </Layout>
   );
 };
