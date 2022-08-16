@@ -16,6 +16,7 @@ export default ({ route, navigation }: any) => {
   );
   const [visible, setVisible] = useState(false);
   useEffect(() => {
+    getDistance();
     navigation.addListener("focus", async () => {
       if ((await SecureStore.getItemAsync("showToast")) === "distanceUpdated") {
         await SecureStore.deleteItemAsync("showToast");
@@ -24,35 +25,40 @@ export default ({ route, navigation }: any) => {
           text1: "Distance successfully updated!",
         });
       }
-      if (!retrieveData) return;
-      axios
-        .get(
-          `https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=${
-            retrieveData().emailAddress
-          }&authenticationKey=${retrieveData().authenticationKey}`
-        )
-        .then(async ({ data }) => {
-          setCurrentMileage(data);
-          let sessionStorage;
-          try {
-            sessionStorage = await SecureStore.getItemAsync("userData");
-            if (!sessionStorage) return;
-            sessionStorage = JSON.parse(sessionStorage);
-            sessionStorage.currentMileage = data.toString();
-
-            await SecureStore.setItemAsync(
-              "userData",
-              JSON.stringify(sessionStorage)
-            );
-          } catch (err) {
-            console.log(err);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      getDistance();
     });
   });
+
+  const getDistance = () => {
+    if (!retrieveData) return;
+
+    axios
+      .get(
+        `https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=${
+          retrieveData().emailAddress
+        }&authenticationKey=${retrieveData().authenticationKey}`
+      )
+      .then(async ({ data }) => {
+        setCurrentMileage(data);
+        let sessionStorage;
+        try {
+          sessionStorage = await SecureStore.getItemAsync("userData");
+          if (!sessionStorage) return;
+          sessionStorage = JSON.parse(sessionStorage);
+          sessionStorage.currentMileage = data.toString();
+
+          await SecureStore.setItemAsync(
+            "userData",
+            JSON.stringify(sessionStorage)
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const resetDistance = () => {
     axios
