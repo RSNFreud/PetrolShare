@@ -208,6 +208,7 @@ export default ({ navigation }: any) => {
             type: "default",
             text1: "Preset successfully added!",
           });
+          getPresets();
         })
         .catch(({ response }) => {
           console.log(response.message);
