@@ -16,11 +16,9 @@ export default ({ route, navigation }: any) => {
   );
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    navigation.addListener("focus", () => {
-      if (route.params && route.params?.showToast === "distanceUpdated") {
-        console.log("ho", route.params?.showToast);
-
-        navigation.setParams({});
+    navigation.addListener("focus", async () => {
+      if ((await SecureStore.getItemAsync("showToast")) === "distanceUpdated") {
+        await SecureStore.deleteItemAsync("showToast");
         Toast.show({
           type: "default",
           text1: "Distance successfully updated!",

@@ -245,11 +245,13 @@ export const Layout = ({
   };
 
   return (
-    <ScrollView style={[{ paddingHorizontal: 20 }, style]}>
-      <Header isLoggedIn={isLoggedIn} />
-      <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
+    <>
+      <ScrollView style={[{ paddingHorizontal: 20 }, style]}>
+        <Header isLoggedIn={isLoggedIn} />
+        <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
+      </ScrollView>
       <Toast config={ToastConfig} />
-    </ScrollView>
+    </>
   );
 };
 
@@ -258,7 +260,7 @@ export const Breadcrumbs = ({
 }: {
   links: Array<{ name: string; screenName?: string }>;
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
 
   return (
     <DefaultView
@@ -284,9 +286,10 @@ export const Breadcrumbs = ({
             ) : (
               <>
                 <TouchableWithoutFeedback
-                  onPress={
-                    // @ts-ignore
-                    () => navigation.navigate(e.screenName || e.name)
+                  onPress={() =>
+                    navigation.navigate(e.screenName || e.name, {
+                      showToast: undefined,
+                    })
                   }
                 >
                   <Text

@@ -57,7 +57,7 @@ export default function Navigation() {
         setUserData({});
         await SecureStore.deleteItemAsync("userData");
       },
-      isLoggedIn: Boolean(Object.keys(userData).length),
+      isLoggedIn: true,
     }),
     [userData]
   );
@@ -99,7 +99,6 @@ export default function Navigation() {
           ...DefaultTheme.colors,
           background: "#001E24",
           text: "white",
-          card: "red",
         },
       }}
     >

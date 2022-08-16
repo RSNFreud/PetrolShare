@@ -12,14 +12,14 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   useEffect(() => {
     try {
-      // SecureStore.setItemAsync("firstLoad", "true");
+      SecureStore.setItemAsync("firstLoad", "true");
     } catch {}
   }, []);
 
   return (
     <SafeAreaProvider>
       <Navigation />
-      <StatusBar style="light" />
+      <StatusBar style="light" backgroundColor="#001E24" />
     </SafeAreaProvider>
   );
 }
