@@ -246,7 +246,10 @@ export const Layout = ({
 
   return (
     <>
-      <ScrollView style={[{ paddingHorizontal: 20 }, style]}>
+      <ScrollView
+        keyboardShouldPersistTaps={"handled"}
+        style={[{ paddingHorizontal: 20 }, style]}
+      >
         <Header isLoggedIn={isLoggedIn} />
         <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
       </ScrollView>

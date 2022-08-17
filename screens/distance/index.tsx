@@ -1,4 +1,8 @@
-import { TouchableWithoutFeedback, View } from "react-native";
+import {
+  TouchableWithoutFeedback,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import Input from "../../components/Input";
 import {
   Breadcrumbs,
@@ -15,7 +19,6 @@ import { AuthContext } from "../../navigation";
 import * as SecureStore from "expo-secure-store";
 import Popup from "../../components/Popup";
 import Toast from "react-native-toast-message";
-
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
     startValue: "",
@@ -27,7 +30,7 @@ export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
-  const [presets, setPresets] = useState([]);
+  const [presets, setPresets] = useState<Array<any> | null>(null);
   const [presetFormData, setPresetFormData] = useState({
     presetID: "",
     presetName: "",
@@ -79,7 +82,7 @@ export default ({ navigation }: any) => {
     if (data.startValue && data.endValue) {
       distance = parseInt(data.endValue) - parseInt(data.startValue);
     }
-    if (data.selectedPreset) {
+    if (data.selectedPreset && presets) {
       const filtered: Array<any> = presets.filter(
         (e: any) => e.presetID === data.selectedPreset
       );
@@ -95,7 +98,7 @@ export default ({ navigation }: any) => {
     if (!retrieveData) return;
     setLoading(true);
     axios
-      .post(`https://petrolshare.freud-online.co.uk/data/add`, {
+      .post(`https://petrolshare.freud-online.co.uk/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
@@ -135,53 +138,8 @@ export default ({ navigation }: any) => {
       });
   };
 
-  const PopupContent = () => {
-    if (popupType !== "new")
-      return (
-        <>
-          <Text style={{ marginBottom: 20, fontSize: 18, fontWeight: "bold" }}>
-            Are you sure you want to delete this preset?
-          </Text>
-          <Button
-            handleClick={() => deletePreset()}
-            styles={{ marginBottom: 15 }}
-          >
-            Yes
-          </Button>
-          <Button style="ghost" handleClick={() => setVisible(false)}>
-            No
-          </Button>
-        </>
-      );
-    else
-      return (
-        <>
-          <Input
-            label="Preset Name"
-            handleInput={(e) =>
-              setPresetFormData({ ...presetFormData, presetName: e })
-            }
-            value={presetFormData.presetName}
-            errorMessage={presetFormErrors.presetName}
-            placeholder="Enter name"
-            style={{ marginBottom: 20 }}
-          />
-          <Input
-            label="Preset distance"
-            value={presetFormData.distance.toString()}
-            placeholder="Enter distance"
-            handleInput={(e) =>
-              setPresetFormData({ ...presetFormData, distance: e })
-            }
-            errorMessage={presetFormErrors.distance}
-            style={{ marginBottom: 30 }}
-          />
-          <Button handleClick={handlePresetSubmit}>Save Preset</Button>
-        </>
-      );
-  };
-
   const handleEdit = (id: number) => {
+    if (!presets) return;
     const item: any = presets.filter((e: any) => e.presetID === id);
     if (!item) return;
     setPresetFormData(item[0]);
@@ -192,10 +150,14 @@ export default ({ navigation }: any) => {
     let errors: any = {};
     Object.entries(presetFormData).map(([key, value]) => {
       if (!value) errors[key] = "Please complete this field!";
+
+      if (key === "distance" && !parseInt(value))
+        errors[key] = "Please enter a valid numerical value!";
     });
     setPresetFormErrors(errors);
+    console.log(errors);
 
-    if (!errors.length && retrieveData) {
+    if (!Object.keys(errors).length && retrieveData) {
       axios
         .post("https://petrolshare.freud-online.co.uk/preset/add", {
           presetName: presetFormData.presetName,
@@ -364,7 +326,8 @@ export default ({ navigation }: any) => {
               </View>
             </Button>
           </View>
-          {presets.length ? (
+          {presets === null && <ActivityIndicator size={"large"} />}
+          {presets && Boolean(presets.length) && (
             <View>
               {presets.map((e: any) => {
                 return (
@@ -516,7 +479,8 @@ export default ({ navigation }: any) => {
                 );
               })}
             </View>
-          ) : (
+          )}
+          {presets && Boolean(presets?.length === 0) && (
             <Text style={{ fontSize: 16, lineHeight: 24 }}>
               You have no saved presets! Create some by clicking the button
               above.
@@ -554,7 +518,48 @@ export default ({ navigation }: any) => {
           setVisible(false);
         }}
       >
-        <PopupContent />
+        {popupType !== "new" ? (
+          <>
+            <Text
+              style={{ marginBottom: 20, fontSize: 18, fontWeight: "bold" }}
+            >
+              Are you sure you want to delete this preset?
+            </Text>
+            <Button
+              handleClick={() => deletePreset()}
+              styles={{ marginBottom: 15 }}
+            >
+              Yes
+            </Button>
+            <Button style="ghost" handleClick={() => setVisible(false)}>
+              No
+            </Button>
+          </>
+        ) : (
+          <>
+            <Input
+              label="Preset Name"
+              handleInput={(e) =>
+                setPresetFormData({ ...presetFormData, presetName: e })
+              }
+              value={presetFormData.presetName}
+              errorMessage={presetFormErrors.presetName}
+              placeholder="Enter name"
+              style={{ marginBottom: 20 }}
+            />
+            <Input
+              label="Preset distance"
+              value={presetFormData.distance.toString()}
+              placeholder="Enter distance"
+              handleInput={(e) =>
+                setPresetFormData({ ...presetFormData, distance: e })
+              }
+              errorMessage={presetFormErrors.distance}
+              style={{ marginBottom: 30 }}
+            />
+            <Button handleClick={handlePresetSubmit}>Save Preset</Button>
+          </>
+        )}
       </Popup>
     </Layout>
   );

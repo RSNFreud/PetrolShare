@@ -57,7 +57,7 @@ export default function Navigation() {
         setUserData({});
         await SecureStore.deleteItemAsync("userData");
       },
-      isLoggedIn: true,
+      isLoggedIn: Boolean(Object.keys(userData).length),
     }),
     [userData]
   );

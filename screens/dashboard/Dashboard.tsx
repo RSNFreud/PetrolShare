@@ -34,7 +34,7 @@ export default ({ route, navigation }: any) => {
 
     axios
       .get(
-        `https://petrolshare.freud-online.co.uk/data/mileage?emailAddress=${
+        `https://petrolshare.freud-online.co.uk/distance/get?emailAddress=${
           retrieveData().emailAddress
         }&authenticationKey=${retrieveData().authenticationKey}`
       )
@@ -62,7 +62,7 @@ export default ({ route, navigation }: any) => {
 
   const resetDistance = () => {
     axios
-      .post(`https://petrolshare.freud-online.co.uk/data/reset`, {
+      .post(`https://petrolshare.freud-online.co.uk/distance/reset`, {
         emailAddress: retrieveData().emailAddress,
         authenticationKey: retrieveData().authenticationKey,
       })
