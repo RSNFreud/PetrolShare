@@ -8,7 +8,7 @@ import Stage from "./stage";
 import StepBar from "./stepBar";
 import * as Clipboard from "expo-clipboard";
 import Svg, { Path } from "react-native-svg";
-import { AuthContext } from "../../navigation";
+import { AuthContext } from "../../App";
 import axios from "axios";
 
 const groupID = generateGroupID();
@@ -273,7 +273,7 @@ export default React.memo(({ navigation }: any) => {
   ];
 
   return (
-    <Layout navigation={navigation}>
+    <Layout>
       <StepBar stage={stage} />
       <View
         style={{

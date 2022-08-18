@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Toast from "react-native-toast-message";
-import { AuthContext } from "../navigation";
+import { AuthContext } from "../App";
 import Header from "./Header";
 
 export type TextProps = DefaultText["props"];

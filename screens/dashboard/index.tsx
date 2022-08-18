@@ -1,19 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, Button, Layout, Text } from "../../components/Themed";
 import generateGroupID from "../../hooks/generateGroupID";
-import { AuthContext } from "../../navigation";
+import { AuthContext } from "../../App";
 import SplitRow from "./splitRow";
+import { View, TouchableWithoutFeedback } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import Popup from "../../components/Popup";
 import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
+import * as Clipboard from "expo-clipboard";
 
 export default ({ route, navigation }: any) => {
   const { retrieveData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
+  const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     getDistance();
@@ -23,6 +26,14 @@ export default ({ route, navigation }: any) => {
         Toast.show({
           type: "default",
           text1: "Distance successfully updated!",
+        });
+      }
+      if ((await SecureStore.getItemAsync("showToast")) === "draftSaved") {
+        await SecureStore.deleteItemAsync("showToast");
+        Toast.show({
+          type: "default",
+          text1:
+            "Saved your distance as a draft! Access it by clicking on Add Distance again!",
         });
       }
       getDistance();
@@ -79,6 +90,17 @@ export default ({ route, navigation }: any) => {
       });
   };
 
+  const copyToClipboard = async () => {
+    Clipboard.setStringAsync(
+      retrieveData
+        ? retrieveData()?.groupID || generateGroupID()
+        : generateGroupID()
+    );
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 500);
+  };
   return (
     <Layout style={{ display: "flex" }}>
       <Box>
@@ -91,12 +113,47 @@ export default ({ route, navigation }: any) => {
             </Text>
             !
           </Text>
-          <Text style={{ fontSize: 16, marginTop: 20 }}>
-            <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
-            {retrieveData
-              ? retrieveData()?.groupID || generateGroupID()
-              : generateGroupID()}
-          </Text>
+          <TouchableWithoutFeedback onPress={() => copyToClipboard()}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 20,
+              }}
+            >
+              <Text style={{ fontSize: 16, marginRight: 5 }}>
+                <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
+                {retrieveData
+                  ? retrieveData()?.groupID || generateGroupID()
+                  : generateGroupID()}
+              </Text>
+              <>
+                {copied ? (
+                  <Svg width="18" height="18" fill="none" viewBox="0 0 26 26">
+                    <Path
+                      stroke="#fff"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M4.469 14.219l5.687 5.687L21.531 7.72"
+                    ></Path>
+                  </Svg>
+                ) : (
+                  <Svg width="18" height="18" fill="none" viewBox="0 0 26 26">
+                    <Path
+                      fill="#fff"
+                      d="M21.306 5.056H7.583A1.083 1.083 0 006.5 6.139v17.333a1.084 1.084 0 001.083 1.084h13.723a1.084 1.084 0 001.083-1.084V6.14a1.083 1.083 0 00-1.083-1.083zm-.362 18.055h-13V6.5h13v16.611z"
+                    ></Path>
+                    <Path
+                      fill="#fff"
+                      d="M18.778 2.528a1.083 1.083 0 00-1.083-1.084H3.972A1.083 1.083 0 002.89 2.528V19.86a1.083 1.083 0 001.083 1.083h.361V2.89h14.445v-.361z"
+                    ></Path>
+                  </Svg>
+                )}
+              </>
+            </View>
+          </TouchableWithoutFeedback>
           <Text style={{ fontSize: 16, marginTop: 10 }}>
             <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
             {currentMileage}km
@@ -129,6 +186,7 @@ export default ({ route, navigation }: any) => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () => navigation.navigate("Logs"),
           },
         ]}
       />

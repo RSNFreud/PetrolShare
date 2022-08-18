@@ -4,10 +4,7 @@
  * https://reactnavigation.org/docs/configuring-links
  */
 
-import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
-
-import { RootStackParamList } from '../types';
 
 const linking: any = {
   prefixes: [Linking.createURL('/')],
@@ -17,6 +14,7 @@ const linking: any = {
       Register: 'register',
       Settings: 'settings',
       AddDistance: 'add-distance',
+      Logs: 'logs',
       Dashboard: '',
       NotFound: '*',
     },

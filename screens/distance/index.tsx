@@ -15,7 +15,7 @@ import {
 import Svg, { Path } from "react-native-svg";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { AuthContext } from "../../navigation";
+import { AuthContext } from "../../App";
 import * as SecureStore from "expo-secure-store";
 import Popup from "../../components/Popup";
 import Toast from "react-native-toast-message";
@@ -42,7 +42,12 @@ export default ({ navigation }: any) => {
   });
   const [popupType, setPopupType] = useState("new");
   const selectedToDelete = useRef("");
-  const getPresets = () => {
+  const getPresets = async () => {
+    const currentPresets = await SecureStore.getItemAsync("presets");
+    if (currentPresets) {
+      setPresets(JSON.parse(currentPresets));
+    }
+
     if (retrieveData) {
       axios
         .get(
@@ -50,8 +55,9 @@ export default ({ navigation }: any) => {
             retrieveData().authenticationKey
           }`
         )
-        .then(({ data }) => {
+        .then(async ({ data }) => {
           setPresets(data);
+          await SecureStore.setItemAsync("presets", JSON.stringify(data));
         })
         .catch(({ response }) => {
           console.log(response.message);
@@ -61,9 +67,17 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     getPresets();
+
+    const getDraft = async () => {
+      const draft = await SecureStore.getItemAsync("draft");
+      if (draft) {
+        setData({ ...JSON.parse(draft) });
+      }
+    };
+    getDraft();
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setErrors("");
     if (!data.distance && !data.startValue && !data.selectedPreset) {
       return setErrors("Please enter either a preset, distance or start value");
@@ -89,6 +103,9 @@ export default ({ navigation }: any) => {
       distance = filtered[0].distance;
     }
     if (data.startValue && !data.endValue) {
+      await SecureStore.setItemAsync("draft", JSON.stringify(data));
+      await SecureStore.setItemAsync("showToast", "draftSaved");
+      navigation.navigate("Dashboard");
       // store it for later as draft with unique id
       return;
     }
@@ -104,6 +121,7 @@ export default ({ navigation }: any) => {
       })
       .then(async () => {
         setLoading(false);
+        await SecureStore.deleteItemAsync("draft");
         await SecureStore.setItemAsync("showToast", "distanceUpdated");
         navigation.navigate("Dashboard");
       })
@@ -149,13 +167,13 @@ export default ({ navigation }: any) => {
   const handlePresetSubmit = () => {
     let errors: any = {};
     Object.entries(presetFormData).map(([key, value]) => {
+      if (key === "presetID") return;
       if (!value) errors[key] = "Please complete this field!";
 
       if (key === "distance" && !parseInt(value))
         errors[key] = "Please enter a valid numerical value!";
     });
     setPresetFormErrors(errors);
-    console.log(errors);
 
     if (!Object.keys(errors).length && retrieveData) {
       axios
@@ -193,6 +211,7 @@ export default ({ navigation }: any) => {
         placeholder="Enter odemetor start value"
         label="Start Odometer"
         keyboardType="numeric"
+        value={data.startValue}
         handleInput={(e) => setData({ ...data, startValue: e })}
         style={{ marginBottom: 20 }}
       />
@@ -200,6 +219,7 @@ export default ({ navigation }: any) => {
         placeholder="Enter odemetor end value"
         label="End Odometer"
         keyboardType="numeric"
+        value={data.endValue}
         handleInput={(e) => setData({ ...data, endValue: e })}
         style={{ marginBottom: 30 }}
       />
@@ -239,6 +259,7 @@ export default ({ navigation }: any) => {
         placeholder="Enter total distance"
         label="Distance"
         keyboardType="numeric"
+        value={data.distance}
         handleInput={(e) => setData({ ...data, distance: e })}
         style={{ marginBottom: 30 }}
       />
@@ -333,7 +354,13 @@ export default ({ navigation }: any) => {
                 return (
                   <TouchableWithoutFeedback
                     onPress={() =>
-                      setData({ ...data, selectedPreset: e.presetID })
+                      setData({
+                        ...data,
+                        selectedPreset:
+                          data.selectedPreset === e.presetID
+                            ? null
+                            : e.presetID,
+                      })
                     }
                     key={e.presetName}
                   >

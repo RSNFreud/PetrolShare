@@ -6,7 +6,7 @@ import {
 } from "../../components/Themed";
 import SplitRow from "../dashboard/splitRow";
 import Svg, { Path } from "react-native-svg";
-import { AuthContext } from "../../navigation";
+import { AuthContext } from "../../App";
 import { useContext, useState } from "react";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
