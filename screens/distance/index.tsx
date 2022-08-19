@@ -27,6 +27,7 @@ export default ({ navigation }: any) => {
     selectedPreset: null,
   });
   const [errors, setErrors] = useState("");
+  const [distance, setDistance] = useState("");
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
@@ -65,6 +66,23 @@ export default ({ navigation }: any) => {
     }
   };
 
+  useEffect(() => {
+    if (data.distance) {
+      setDistance(data.distance);
+    }
+
+    if (data.startValue && data.endValue) {
+      setDistance(
+        (parseInt(data.endValue) - parseInt(data.startValue)).toString()
+      );
+    }
+    if (data.selectedPreset && presets) {
+      const filtered: Array<any> = presets.filter(
+        (e: any) => e.presetID === data.selectedPreset
+      );
+      setDistance(filtered[0].distance);
+    }
+  }, [data]);
   useEffect(() => {
     getPresets();
 
@@ -106,7 +124,6 @@ export default ({ navigation }: any) => {
       await SecureStore.setItemAsync("draft", JSON.stringify(data));
       await SecureStore.setItemAsync("showToast", "draftSaved");
       navigation.navigate("Dashboard");
-      // store it for later as draft with unique id
       return;
     }
     if (parseInt(distance) <= 0)
@@ -521,7 +538,7 @@ export default ({ navigation }: any) => {
         styles={{ marginBottom: errors ? 0 : 55 }}
         handleClick={() => handleSubmit()}
       >
-        Save
+        <>Save {distance && <>({distance}km)</>}</>
       </Button>
       {!!errors && (
         <View
