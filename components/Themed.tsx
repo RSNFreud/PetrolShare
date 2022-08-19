@@ -156,7 +156,7 @@ export const Box = ({
   children,
   style,
 }: {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
   style?: ViewProps["style"];
 }) => {
   return (

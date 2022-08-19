@@ -109,7 +109,7 @@ export default ({ navigation }: any) => {
       // store it for later as draft with unique id
       return;
     }
-    if (parseInt(distance) < 0)
+    if (parseInt(distance) <= 0)
       return setErrors("Please enter a distance above 0!");
 
     if (!retrieveData) return;
