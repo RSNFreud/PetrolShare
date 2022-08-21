@@ -13,10 +13,11 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View as DefaultView,
+  Dimensions,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Toast from "react-native-toast-message";
-import { AuthContext } from "../App";
+import { AuthContext } from "../hooks/context";
 import Header from "./Header";
 
 export type TextProps = DefaultText["props"];
@@ -183,9 +184,11 @@ import * as SecureStore from "expo-secure-store";
 export const Layout = ({
   children,
   style,
+  ...rest
 }: {
   children: any;
   style?: ViewProps["style"];
+  onLayout?: any;
 }) => {
   const navigation = useNavigation();
   const { isLoggedIn } = useContext(AuthContext);
@@ -249,6 +252,7 @@ export const Layout = ({
       <ScrollView
         keyboardShouldPersistTaps={"handled"}
         style={[{ paddingHorizontal: 20 }, style]}
+        {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />
         <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
@@ -322,6 +326,34 @@ export const Breadcrumbs = ({
           </DefaultView>
         );
       })}
+    </DefaultView>
+  );
+};
+
+export const FlexFull = ({
+  children,
+}: {
+  children: JSX.Element | JSX.Element[];
+}) => {
+  return (
+    <DefaultView
+      style={{
+        position: "relative",
+        flex: 1,
+        minHeight: Dimensions.get("window").height - 108 - 87,
+      }}
+    >
+      <DefaultView
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+          width: "100%",
+          paddingBottom: 55,
+        }}
+      >
+        {children}
+      </DefaultView>
     </DefaultView>
   );
 };

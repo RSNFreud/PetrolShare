@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
 
@@ -16,13 +16,15 @@ import LinkingConfiguration from "./hooks/LinkingConfiguration";
 import Settings from "./screens/settings";
 import distance from "./screens/distance";
 import logs from "./screens/logs";
-
-export const AuthContext = createContext({} as any);
+import manual from "./screens/distance/manual";
+import odometer from "./screens/distance/odometer";
+import preset from "./screens/distance/preset";
+import { AuthContext } from "./hooks/context";
 
 SplashScreen.preventAutoHideAsync();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
 
@@ -60,6 +62,7 @@ export default function App() {
         setUserData({});
         await SecureStore.deleteItemAsync("userData");
       },
+      // isLoggedIn: true,
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
     [userData]
@@ -124,7 +127,10 @@ export default function App() {
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen name="AddDistance" component={distance} />
+                <Stack.Screen name="ManageDistance" component={distance} />
+                <Stack.Screen name="AddManual" component={manual} />
+                <Stack.Screen name="AddOdometer" component={odometer} />
+                <Stack.Screen name="AddPreset" component={preset} />
                 <Stack.Screen name="Logs" component={logs} />
               </>
             ) : (

@@ -1,12 +1,4 @@
-import {
-  Animated,
-  Dimensions,
-  KeyboardAvoidingView,
-  Modal,
-  Pressable,
-  ScrollView,
-  View,
-} from "react-native";
+import { Animated, Dimensions, Modal, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import Svg, { Path } from "react-native-svg";
 
@@ -15,6 +7,7 @@ type ModalType = {
   handleClose: () => void;
   children: JSX.Element | Array<JSX.Element>;
   height?: string | number;
+  animate?: boolean;
 };
 
 export default ({
@@ -22,11 +15,14 @@ export default ({
   handleClose,
   children,
   height = "auto",
+  animate = true,
 }: ModalType) => {
   const [opened, setOpened] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   let position = new Animated.Value(1000);
   useEffect(() => {
     if (opened) return;
+    if (!animate) return position.setValue(0);
 
     Animated.sequence([
       Animated.timing(position, {
@@ -34,37 +30,38 @@ export default ({
         duration: 400,
         useNativeDriver: true,
       }),
-    ]).start();
-    position.addListener(({ value }) => {
-      if (visible && value === 0) setOpened(true);
+    ]).start(() => {
+      if (isVisible || visible) setOpened(true);
     });
-    return () => position.removeAllListeners();
+    position.addListener(({ value }) => {});
+
+    return () => {
+      position.removeAllListeners();
+    };
   }, [position]);
 
   const close = () => {
     position.setValue(0);
-
     Animated.sequence([
       Animated.timing(position, {
         toValue: 1000,
         duration: 400,
         useNativeDriver: true,
       }),
-    ]).start();
-    position.addListener(({ value }) => {
-      if (value === 1000) {
-        handleClose();
-      }
+    ]).start((e) => {
+      setIsVisible(false);
+      setOpened(false);
     });
   };
   useEffect(() => {
-    if (!visible) setOpened(false);
+    if (!visible && isVisible) return close();
+    else setIsVisible(visible);
   }, [visible]);
 
   return (
-    <Modal animationType="fade" visible={visible} transparent={true}>
+    <Modal animationType="fade" visible={isVisible} transparent={true}>
       <Pressable
-        onPress={close}
+        onPress={() => handleClose()}
         android_disableSound={true}
         style={{
           backgroundColor: "rgba(35, 35, 35, 0.8)",
@@ -93,7 +90,7 @@ export default ({
         <Pressable
           android_disableSound={true}
           onPress={() => {
-            close();
+            handleClose();
           }}
           style={{
             position: "absolute",

@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import { Button, Layout, Seperator, Text } from "../components/Themed";
 import Popup from "../components/Popup";
 import { Pressable, View } from "react-native";
-import { AuthContext } from "../App";
+import { AuthContext } from "../hooks/context";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);

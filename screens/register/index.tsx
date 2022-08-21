@@ -8,7 +8,7 @@ import Stage from "./stage";
 import StepBar from "./stepBar";
 import * as Clipboard from "expo-clipboard";
 import Svg, { Path } from "react-native-svg";
-import { AuthContext } from "../../App";
+import { AuthContext } from "../../hooks/context";
 import axios from "axios";
 
 const groupID = generateGroupID();

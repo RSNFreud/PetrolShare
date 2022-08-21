@@ -8,15 +8,25 @@ import {
 } from "../../components/Themed";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
-import { AuthContext } from "../../App";
+import { AuthContext } from "../../hooks/context";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const formatDate = (date: string) => {
   let x: Date = new Date(parseInt(date));
-  return `${x.getDate()}/${x.getMonth()}/${x.getFullYear()}`;
+  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${
+    x.getMonth() < 10 ? "0" : ""
+  }${x.getMonth()}/${x.getFullYear()}`;
 };
 
-const DateHead = ({ data }: { data: any; activeSession: string }) => {
+const DateHead = ({
+  data,
+  handleNext,
+  handlePrevious,
+}: {
+  data: any;
+  handleNext: () => void;
+  handlePrevious: () => void;
+}) => {
   const styles = StyleSheet.create({
     container: {
       display: "flex",
@@ -42,7 +52,7 @@ const DateHead = ({ data }: { data: any; activeSession: string }) => {
 
   return (
     <View style={styles.container}>
-      <Button noText styles={styles.button}>
+      <Button noText styles={styles.button} handleClick={handlePrevious}>
         <Svg width="12" height="10" fill="none" viewBox="0 0 12 10">
           <Path
             stroke="#fff"
@@ -53,10 +63,10 @@ const DateHead = ({ data }: { data: any; activeSession: string }) => {
         </Svg>
       </Button>
       <Text style={styles.text}>
-        {formatDate(data["sessionStart"])} -
+        {formatDate(data["sessionStart"])} -&nbsp;
         {formatDate(data["sessionEnd"] || Date.now())}
       </Text>
-      <Button noText styles={styles.button}>
+      <Button noText styles={styles.button} handleClick={handleNext}>
         <Svg width="12" height="10" viewBox="0 0 12 10" fill="none">
           <Path
             d="M6.6875 9.5L11.5 5L6.6875 0.5M11.5 5L0.5 5"
@@ -70,28 +80,7 @@ const DateHead = ({ data }: { data: any; activeSession: string }) => {
   );
 };
 
-const Summary = () => {
-  const [summary, setSummary] = useState([]);
-  const { retrieveData } = useContext(AuthContext);
-
-  useEffect(() => {
-    getSummary();
-  }, []);
-
-  const getSummary = async () => {
-    await axios
-      .get(
-        `https://petrolshare.freud-online.co.uk/summary/get?authenticationKey=${
-          retrieveData().authenticationKey
-        }`
-      )
-      .then(({ data }) => {
-        setSummary(data);
-      })
-      .catch(({ response }) => {
-        console.log(response);
-      });
-  };
+const Summary = ({ summary }: { summary: Array<any> }) => {
   if (!Boolean(summary.length)) return <></>;
   return (
     <Box
@@ -206,11 +195,51 @@ export default () => {
   const { retrieveData } = useContext(AuthContext);
   const logData = useRef([]);
   const [activeSession, setActiveSession] = useState("0");
-  const [currentData, setCurrentData] = useState<any>({});
+  const [currentData, setCurrentData] = useState<any>(null);
+  const [summary, setSummary] = useState([]);
 
   useEffect(() => {
     getLogs();
+    getSummary();
   }, []);
+
+  const getSummary = async () => {
+    await axios
+      .get(
+        `https://petrolshare.freud-online.co.uk/summary/get?authenticationKey=${
+          retrieveData().authenticationKey
+        }`
+      )
+      .then(({ data }) => {
+        setSummary(data);
+      })
+      .catch(({ response }) => {
+        console.log(response);
+      });
+  };
+
+  const nextPage = () => {
+    if (currentData === null) return;
+    if (!logData.current) return;
+    const data = logData.current;
+    Object.entries(data).map(([key, value]: any) => {
+      if (value.sessionStart > currentData.sessionStart) {
+        setActiveSession(key);
+        setCurrentData(data[key]);
+      }
+    });
+  };
+
+  const previousPage = () => {
+    if (!logData.current) return;
+    const data = logData.current;
+    Object.entries(data).map(([key, value]: any) => {
+      if (value.sessionStart < currentData.sessionStart) {
+        setActiveSession(key);
+        setCurrentData(data[key]);
+      }
+    });
+  };
 
   const getLogs = async () => {
     if (!retrieveData) return;
@@ -225,6 +254,8 @@ export default () => {
 
         Object.entries(data).map(([key, value]: any) => {
           if (value.sessionActive) {
+            console.log(data[key]);
+
             setActiveSession(key);
             setCurrentData(data[key]);
           }
@@ -247,10 +278,14 @@ export default () => {
           },
         ]}
       />
-      {Boolean(Object.keys(currentData).length) && (
-        <>
-          <DateHead activeSession={activeSession} data={currentData} />
-          <Summary />
+      {currentData !== null && Boolean(Object.keys(summary).length) && (
+        <View style={{ paddingBottom: 55 }}>
+          <DateHead
+            data={currentData}
+            handlePrevious={previousPage}
+            handleNext={nextPage}
+          />
+          <Summary summary={summary} />
           {currentData["logs"].map((e: any, c: number) => (
             <LogItem
               fullName={e.fullName}
@@ -262,7 +297,7 @@ export default () => {
               date={e.date}
             />
           ))}
-        </>
+        </View>
       )}
     </Layout>
   );

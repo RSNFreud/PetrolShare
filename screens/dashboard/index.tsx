@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, Button, Layout, Text } from "../../components/Themed";
 import generateGroupID from "../../hooks/generateGroupID";
-import { AuthContext } from "../../App";
+import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
 import { View, TouchableWithoutFeedback } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -33,7 +33,14 @@ export default ({ route, navigation }: any) => {
         Toast.show({
           type: "default",
           text1:
-            "Saved your distance as a draft! Access it by clicking on Add Distance again!",
+            "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
+        });
+      }
+      if ((await SecureStore.getItemAsync("showToast")) === "resetDistance") {
+        await SecureStore.deleteItemAsync("showToast");
+        Toast.show({
+          type: "default",
+          text1: "Reset your distance back to 0!",
         });
       }
       getDistance();
@@ -68,25 +75,6 @@ export default ({ route, navigation }: any) => {
       })
       .catch((err) => {
         console.log(err);
-      });
-  };
-
-  const resetDistance = () => {
-    axios
-      .post(`https://petrolshare.freud-online.co.uk/distance/reset`, {
-        emailAddress: retrieveData().emailAddress,
-        authenticationKey: retrieveData().authenticationKey,
-      })
-      .then(() => {
-        setCurrentMileage(0);
-        setVisible(false);
-        Toast.show({
-          type: "default",
-          text1: "Successfully reset your distance to 0.",
-        });
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
       });
   };
 
@@ -165,7 +153,7 @@ export default ({ route, navigation }: any) => {
         style={{ marginTop: 32 }}
         buttons={[
           {
-            text: "Add Distance",
+            text: "Manage Distance",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -174,7 +162,7 @@ export default ({ route, navigation }: any) => {
                 ></Path>
               </Svg>
             ),
-            handleClick: () => navigation.navigate("AddDistance"),
+            handleClick: () => navigation.navigate("ManageDistance"),
           },
           {
             text: "View Logs",
@@ -194,18 +182,6 @@ export default ({ route, navigation }: any) => {
         style={{ marginVertical: 20 }}
         buttons={[
           {
-            text: "Reset Distance",
-            icon: (
-              <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
-                <Path
-                  fill="#fff"
-                  d="M13.733 21.017A9.517 9.517 0 104.216 11.5v4.917L1.36 13.562l-1.11 1.11 4.759 4.759 4.758-4.759-1.11-1.11-2.855 2.855V11.5a7.931 7.931 0 117.93 7.931v1.586z"
-                ></Path>
-              </Svg>
-            ),
-            handleClick: () => setVisible(true),
-          },
-          {
             text: "Add Petrol",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
@@ -216,10 +192,6 @@ export default ({ route, navigation }: any) => {
               </Svg>
             ),
           },
-        ]}
-      />
-      <SplitRow
-        buttons={[
           {
             text: "Join a Group",
             icon: (
@@ -233,27 +205,6 @@ export default ({ route, navigation }: any) => {
           },
         ]}
       />
-      <Popup visible={visible} handleClose={() => setVisible(false)}>
-        <Text
-          style={{
-            fontSize: 18,
-            marginBottom: 20,
-            fontWeight: "bold",
-            lineHeight: 28,
-          }}
-        >
-          Are you sure you want to reset{"\n"}your distance?
-        </Text>
-        <Button
-          styles={{ marginBottom: 20 }}
-          handleClick={() => resetDistance()}
-        >
-          Yes
-        </Button>
-        <Button style="ghost" handleClick={() => setVisible(false)}>
-          No
-        </Button>
-      </Popup>
     </Layout>
   );
 };
