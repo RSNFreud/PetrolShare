@@ -254,8 +254,6 @@ export default () => {
 
         Object.entries(data).map(([key, value]: any) => {
           if (value.sessionActive) {
-            console.log(data[key]);
-
             setActiveSession(key);
             setCurrentData(data[key]);
           }
