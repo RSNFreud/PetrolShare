@@ -8,11 +8,13 @@ import { useNavigation } from "@react-navigation/native";
 
 export default ({
   previousData,
+  handleClose,
 }: {
   previousData?: {
     startValue: string;
     endValue: string;
   };
+  handleClose: () => void;
 }) => {
   const [data, setData] = useState({
     ...previousData,
@@ -52,6 +54,7 @@ export default ({
     }
 
     if (data.startValue && !data.endValue) {
+      handleClose();
       await SecureStore.setItemAsync("draft", JSON.stringify(data));
       await SecureStore.setItemAsync("showToast", "draftSaved");
       navigate("Dashboard");
@@ -69,6 +72,7 @@ export default ({
       })
       .then(async () => {
         setLoading(false);
+        handleClose();
         await SecureStore.deleteItemAsync("draft");
         await SecureStore.setItemAsync("showToast", "distanceUpdated");
         navigate("Dashboard");

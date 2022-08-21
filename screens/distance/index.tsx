@@ -32,7 +32,12 @@ export default ({ navigation }: any) => {
           text1: "Recovered draft data!",
         });
         setIsDraft(true);
-        openPopup(<Odometer previousData={{ ...JSON.parse(draft) }} />);
+        openPopup(
+          <Odometer
+            previousData={{ ...JSON.parse(draft) }}
+            handleClose={() => handleClose()}
+          />
+        );
       } else {
         setVisible(false);
       }
@@ -99,13 +104,19 @@ export default ({ navigation }: any) => {
       />
       <Button
         styles={{ marginBottom: 20 }}
-        handleClick={() => openPopup(<Manual />)}
+        handleClick={() =>
+          openPopup(<Manual handleClose={() => handleClose()} />)
+        }
       >
         Add Specific Distance
       </Button>
       <Button
         styles={{ marginBottom: 20 }}
-        handleClick={() => openPopup(<Odometer previousData={data} />)}
+        handleClick={() =>
+          openPopup(
+            <Odometer previousData={data} handleClose={() => handleClose()} />
+          )
+        }
       >
         Record Odometer
       </Button>

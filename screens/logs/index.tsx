@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import {
   Layout,
   Breadcrumbs,
@@ -10,6 +10,9 @@ import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useContext, useEffect, useRef, useState } from "react";
+import Toast from "react-native-toast-message";
+import Popup from "../../components/Popup";
+import Input from "../../components/Input";
 
 const formatDate = (date: string) => {
   let x: Date = new Date(parseInt(date));
@@ -150,6 +153,7 @@ const Split = ({ children }: { children: JSX.Element[] }) => {
       style={{
         display: "flex",
         flexDirection: "row",
+        marginTop: 15,
         justifyContent: "space-between",
       }}
       onLayout={handleWidth}
@@ -168,14 +172,68 @@ const LogItem = ({
   distance,
   date,
   style,
+  id,
   activeSession,
+  handleComplete,
 }: {
   fullName: string;
+  id: number;
   distance: string;
   date: string;
   style: View["props"]["style"];
   activeSession: boolean;
+  handleComplete: () => void;
 }) => {
+  const { retrieveData } = useContext(AuthContext);
+  const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState(distance);
+
+  const handleDelete = () => {
+    Alert.alert("Are you sure you want to delete this log?", undefined, [
+      {
+        text: "Yes",
+        onPress: async () => {
+          axios
+            .post(`https://petrolshare.freud-online.co.uk/logs/delete`, {
+              authenticationKey: retrieveData().authenticationKey,
+              logID: id,
+            })
+            .then(async (e) => {
+              Toast.show({
+                text1: "Log deleted successfully!",
+                type: "default",
+              });
+              handleComplete();
+            })
+            .catch(({ response }) => {
+              console.log(response.message);
+            });
+        },
+      },
+      { text: "No", style: "cancel" },
+    ]);
+  };
+
+  const handleEdit = () => {
+    axios
+      .post(`https://petrolshare.freud-online.co.uk/logs/edit`, {
+        authenticationKey: retrieveData().authenticationKey,
+        logID: id,
+        distance: formData,
+      })
+      .then(async (e) => {
+        Toast.show({
+          text1: "Log updated successfully!",
+          type: "default",
+        });
+        setVisible(false);
+        handleComplete();
+      })
+      .catch(({ response }) => {
+        console.log(response.message);
+      });
+  };
+
   return (
     <View
       style={[
@@ -191,7 +249,6 @@ const LogItem = ({
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
-          marginBottom: 15,
         }}
       >
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{fullName}</Text>
@@ -212,6 +269,7 @@ const LogItem = ({
               height: 32,
               alignItems: "center",
             }}
+            handleClick={() => setVisible(true)}
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>Edit</Text>
           </Button>
@@ -226,12 +284,25 @@ const LogItem = ({
               height: 32,
               alignItems: "center",
             }}
+            handleClick={handleDelete}
             noText
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>Remove</Text>
           </Button>
         </Split>
       )}
+      <Popup visible={visible} handleClose={() => setVisible(false)}>
+        <Input
+          label="Distance"
+          handleInput={(e) => setFormData(e)}
+          value={formData.toString()}
+          placeholder="Enter new distance"
+          style={{ marginBottom: 20 }}
+        />
+        <Button handleClick={handleEdit}>
+          <>Update Distance {formData && <>({formData}km)</>}</>
+        </Button>
+      </Popup>
     </View>
   );
 };
@@ -272,11 +343,17 @@ export default () => {
     if (currentData === null) return;
     if (!logData.current) return;
     const data = logData.current;
-    setCurrentData(data[pageData.currentPage + 1]);
-    setPageData({
-      ...pageData,
-      currentPage: pageData.currentPage + 1,
-    });
+    for (let i = 0; i < Object.entries(data).length; i++) {
+      const key = Object.entries(data)[i];
+      if (key[1]["sessionStart"] > (currentData?.sessionStart || Date.now())) {
+        setPageData({
+          ...pageData,
+          currentPage: pageData.currentPage + 1,
+        });
+        setCurrentData(key[1]);
+        return;
+      }
+    }
   };
 
   const previousPage = () => {
@@ -333,49 +410,47 @@ export default () => {
           },
         ]}
       />
-      <View style={{ paddingBottom: 55 }}>
-        <DateHead
-          data={currentData}
-          handlePrevious={previousPage}
-          handleNext={nextPage}
-          hasNext={pageData.currentPage != pageData.maxPages}
-          hasPrevious={pageData.currentPage != 0 && pageData.maxPages > 1}
-        />
-        {Boolean(Object.keys(summary).length) && (
-          <>
-            <Summary summary={summary} />
-            {currentData &&
-              currentData["logs"].map((e: any, c: number) => {
-                return (
-                  <LogItem
-                    activeSession={
-                      currentData["sessionID"].toString() ===
-                      activeSession.toString()
-                    }
-                    fullName={e.fullName}
-                    key={c}
-                    style={{
-                      marginBottom:
-                        currentData["logs"].length - 1 === c ? 0 : 15,
-                    }}
-                    distance={e.distance}
-                    date={e.date}
-                  />
-                );
-              })}
-          </>
-        )}
-        {!currentData && (
-          <Text style={{ fontSize: 16, textAlign: "center" }}>
-            There are no logs available to display
-          </Text>
-        )}
-      </View>
-
-      {currentData && currentData === {} && (
-        <Text style={{ fontSize: 16, textAlign: "center" }}>
-          There are no logs available to display
-        </Text>
+      {currentData && (
+        <View style={{ paddingBottom: 55 }}>
+          <DateHead
+            data={currentData}
+            handlePrevious={previousPage}
+            handleNext={nextPage}
+            hasNext={pageData.currentPage != pageData.maxPages}
+            hasPrevious={pageData.currentPage > 1 && pageData.maxPages > 1}
+          />
+          {Boolean(Object.keys(summary).length) && (
+            <>
+              <Summary summary={summary} />
+              {currentData &&
+                currentData["logs"].map((e: any, c: number) => {
+                  return (
+                    <LogItem
+                      handleComplete={() => getLogs()}
+                      activeSession={
+                        currentData["sessionID"].toString() ===
+                        activeSession.toString()
+                      }
+                      fullName={e.fullName}
+                      id={e.logID}
+                      key={e.logID}
+                      style={{
+                        marginBottom:
+                          currentData["logs"].length - 1 === c ? 0 : 15,
+                      }}
+                      distance={e.distance}
+                      date={e.date}
+                    />
+                  );
+                })}
+            </>
+          )}
+          {!Boolean(Object.keys(summary).length) && (
+            <Text style={{ fontSize: 16, textAlign: "center" }}>
+              There are no logs available to display
+            </Text>
+          )}
+        </View>
       )}
     </Layout>
   );

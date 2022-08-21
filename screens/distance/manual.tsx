@@ -1,15 +1,12 @@
-import { View } from "react-native";
 import Input from "../../components/Input";
-import { Text, Button } from "../../components/Themed";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import * as SecureStore from "expo-secure-store";
-import { useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SubmitButton from "./submitButton";
 
-export default () => {
+export default ({ handleClose }: { handleClose: () => void }) => {
   const [data, setData] = useState({
     distance: "",
   });
@@ -49,6 +46,7 @@ export default () => {
       })
       .then(async () => {
         setLoading(false);
+        handleClose();
         await SecureStore.deleteItemAsync("draft");
         await SecureStore.setItemAsync("showToast", "distanceUpdated");
         navigate("Dashboard");
