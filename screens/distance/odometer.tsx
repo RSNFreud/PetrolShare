@@ -31,9 +31,10 @@ export default ({
 
   useEffect(() => {
     if (data.startValue && data.endValue) {
-      const start = parseInt(data.startValue);
-      const end = parseInt(data.startValue);
+      const start = parseFloat(data.startValue);
+      const end = parseFloat(data.endValue);
       if (isNaN(start) || isNaN(end)) return;
+      if (end - start < 0) return;
       setDistance((end - start).toString());
     }
   }, [data]);
@@ -47,7 +48,7 @@ export default ({
     let distance: number = 0;
 
     if (data.startValue && data.endValue) {
-      distance = parseInt(data.endValue) - parseInt(data.startValue);
+      distance = parseFloat(data.endValue) - parseFloat(data.startValue);
     }
 
     if (data.startValue && !data.endValue) {

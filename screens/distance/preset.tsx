@@ -17,6 +17,7 @@ import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import * as SecureStore from "expo-secure-store";
 import Popup from "../../components/Popup";
+import SubmitButton from "./submitButton";
 import Toast from "react-native-toast-message";
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
@@ -417,28 +418,12 @@ export default ({ navigation }: any) => {
             </Text>
           )}
         </View>
-        <View>
-          <Button loading={loading} handleClick={() => handleSubmit()}>
-            <>Save {distance && <>({distance}km)</>}</>
-          </Button>
-          {!!errors && (
-            <View
-              style={{
-                marginTop: 15,
-                backgroundColor: "#EECFCF",
-                borderRadius: 4,
-                paddingHorizontal: 20,
-                paddingVertical: 15,
-              }}
-            >
-              <Text
-                style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}
-              >
-                {errors}
-              </Text>
-            </View>
-          )}
-        </View>
+        <SubmitButton
+          loading={loading}
+          handleClick={handleSubmit}
+          errors={errors}
+          distance={distance}
+        />
       </FlexFull>
 
       <Popup

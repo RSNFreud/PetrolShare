@@ -47,10 +47,9 @@ export default ({ navigation }: any) => {
         onPress: async () => {
           axios
             .post(`https://petrolshare.freud-online.co.uk/distance/reset`, {
-              emailAddress: retrieveData().emailAddress,
               authenticationKey: retrieveData().authenticationKey,
             })
-            .then(async () => {
+            .then(async (e) => {
               await SecureStore.setItemAsync("showToast", "resetDistance");
               navigation.navigate("Dashboard");
             })
@@ -66,7 +65,7 @@ export default ({ navigation }: any) => {
   const handleClose = () => {
     if (isDraft === false) return setVisible(false);
 
-    Alert.alert("Are you sure you want to delete this draft?", undefined, [
+    Alert.alert("Do you want to delete this draft?", undefined, [
       {
         text: "Yes",
         onPress: async () => {
@@ -76,7 +75,13 @@ export default ({ navigation }: any) => {
           setData({ startValue: "", endValue: "" });
         },
       },
-      { text: "No", style: "cancel" },
+      {
+        text: "Save for later",
+        onPress: () => {
+          setVisible(false);
+        },
+        style: "cancel",
+      },
     ]);
   };
 

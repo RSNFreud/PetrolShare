@@ -42,6 +42,7 @@ type ButtonType = {
   handleClick?: () => void;
   styles?: TouchableOpacity["props"]["style"];
   noText?: boolean;
+  disabled?: boolean;
   loading?: boolean;
 };
 
@@ -50,6 +51,7 @@ export const Button = ({
   handleClick,
   noText,
   size,
+  disabled,
   style,
   color,
   loading,
@@ -101,6 +103,7 @@ export const Button = ({
     <TouchableOpacity
       onPress={handleClick}
       activeOpacity={0.8}
+      disabled={disabled}
       style={[
         {
           borderStyle: "solid",
@@ -112,6 +115,7 @@ export const Button = ({
           width: "100%",
           alignContent: "center",
           alignItems: "center",
+          opacity: disabled ? 0.6 : 1,
           minHeight: variableProperties.height,
           backgroundColor: variableProperties.backgroundColor,
         },
