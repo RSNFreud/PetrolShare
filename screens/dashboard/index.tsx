@@ -262,6 +262,7 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () => navigation.navigate("AddPetrol"),
           },
           {
             text: "Join a Group",

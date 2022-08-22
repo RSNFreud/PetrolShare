@@ -14,6 +14,7 @@ const linking: any = {
       Register: 'register',
       Settings: 'settings',
       AddDistance: 'manage-distance',
+      AddPetrol: 'add-petrol',
       Logs: 'logs',
       AddManual: 'manage-distance/manual',
       Dashboard: '',

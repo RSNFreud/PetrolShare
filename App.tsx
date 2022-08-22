@@ -20,6 +20,7 @@ import odometer from "./screens/distance/odometer";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
 import { deleteItem, getItem, setItem } from "./hooks";
+import petrol from "./screens/petrol";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -128,6 +129,7 @@ export default function App() {
                 <Stack.Screen name="AddManual" component={manual} />
                 <Stack.Screen name="AddOdometer" component={odometer} />
                 <Stack.Screen name="AddPreset" component={preset} />
+                <Stack.Screen name="AddPetrol" component={petrol} />
                 <Stack.Screen name="Logs" component={logs} />
               </>
             ) : (
