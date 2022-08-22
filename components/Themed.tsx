@@ -183,7 +183,7 @@ export const Box = ({
   );
 };
 
-import * as SecureStore from "expo-secure-store";
+import { deleteItem, getItem } from "../hooks";
 
 export const Layout = ({
   children,
@@ -201,8 +201,8 @@ export const Layout = ({
     if (navigation) {
       navigation.addListener("state", async (e: any) => {
         try {
-          if (await SecureStore.getItemAsync("firstLoad")) {
-            await SecureStore.deleteItemAsync("firstLoad");
+          if (await getItem("firstLoad")) {
+            await deleteItem("firstLoad");
             return opacity.setValue(1);
           }
         } catch {

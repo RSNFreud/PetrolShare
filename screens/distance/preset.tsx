@@ -15,10 +15,10 @@ import Svg, { Path } from "react-native-svg";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
-import * as SecureStore from "expo-secure-store";
 import Popup from "../../components/Popup";
 import SubmitButton from "./submitButton";
 import Toast from "react-native-toast-message";
+import { deleteItem, getItem, setItem } from "../../hooks";
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
     selectedPreset: null,
@@ -41,7 +41,7 @@ export default ({ navigation }: any) => {
   const [popupType, setPopupType] = useState("new");
   const selectedToDelete = useRef("");
   const getPresets = async () => {
-    const currentPresets = await SecureStore.getItemAsync("presets");
+    const currentPresets = await getItem("presets");
     if (currentPresets) {
       setPresets(JSON.parse(currentPresets));
     }
@@ -55,7 +55,7 @@ export default ({ navigation }: any) => {
         )
         .then(async ({ data }) => {
           setPresets(data);
-          await SecureStore.setItemAsync("presets", JSON.stringify(data));
+          await setItem("presets", JSON.stringify(data));
         })
         .catch(({ response }) => {
           console.log(response.message);
@@ -75,7 +75,7 @@ export default ({ navigation }: any) => {
     getPresets();
 
     const getDraft = async () => {
-      const draft = await SecureStore.getItemAsync("draft");
+      const draft = await getItem("draft");
       if (draft) {
         setData({ ...JSON.parse(draft) });
       }
@@ -109,8 +109,8 @@ export default ({ navigation }: any) => {
       })
       .then(async () => {
         setLoading(false);
-        await SecureStore.deleteItemAsync("draft");
-        await SecureStore.setItemAsync("showToast", "distanceUpdated");
+        await deleteItem("draft");
+        await setItem("showToast", "distanceUpdated");
         navigation.navigate("Dashboard");
       })
       .catch(({ response }) => {

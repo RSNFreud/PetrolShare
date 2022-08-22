@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import * as SecureStore from "expo-secure-store";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
@@ -20,6 +19,8 @@ import manual from "./screens/distance/manual";
 import odometer from "./screens/distance/odometer";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
+import { Platform } from "react-native";
+import { deleteItem, getItem, setItem } from "./hooks";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -37,10 +38,7 @@ export default function App() {
             .then(async ({ data }) => {
               setUserData(data);
               try {
-                await SecureStore.setItemAsync(
-                  "userData",
-                  JSON.stringify(data)
-                );
+                await setItem("userData", JSON.stringify(data));
               } catch {}
               res(data);
             })
@@ -52,17 +50,19 @@ export default function App() {
       register: async (e: any) => {
         setUserData(e);
         try {
-          await SecureStore.setItemAsync("userData", JSON.stringify(e));
+          await setItem("userData", JSON.stringify(e));
         } catch {}
       },
       retrieveData: () => {
         return userData;
       },
+      setData: (e: any) => {
+        setUserData(e);
+      },
       signOut: async () => {
         setUserData({});
-        await SecureStore.deleteItemAsync("userData");
+        await deleteItem("userData");
       },
-      // isLoggedIn: true,
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
     [userData]
@@ -71,7 +71,7 @@ export default function App() {
   useEffect(() => {
     const async = async () => {
       try {
-        const data = await SecureStore.getItemAsync("userData");
+        const data = await getItem("userData");
 
         if (data) {
           const parsed = JSON.parse(data);
@@ -97,9 +97,7 @@ export default function App() {
   }, [loading]);
 
   useEffect(() => {
-    try {
-      SecureStore.setItemAsync("firstLoad", "true");
-    } catch {}
+    setItem("firstLoad", "true");
   }, []);
 
   return (

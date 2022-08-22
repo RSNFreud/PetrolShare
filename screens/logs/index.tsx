@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import {
   Layout,
   Breadcrumbs,
@@ -89,8 +89,8 @@ const DateHead = ({
           <Path
             d="M6.6875 9.5L11.5 5L6.6875 0.5M11.5 5L0.5 5"
             stroke="white"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </Svg>
       </Button>
@@ -142,7 +142,7 @@ const Summary = ({ summary }: { summary: {} }) => {
 };
 
 const Split = ({ children }: { children: JSX.Element[] }) => {
-  const [buttonWidth, setButtonWidth] = useState(0);
+  const [buttonWidth, setButtonWidth] = useState<string | number>("49%");
   const handleWidth = ({ nativeEvent }: any) => {
     const { width } = nativeEvent.layout;
     setButtonWidth(width / 2 - 5);
@@ -251,13 +251,17 @@ const LogItem = ({
           justifyContent: "space-between",
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{fullName}</Text>
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+          {fullName}
+          {fullName === retrieveData().fullName && <> (You)</>}
+        </Text>
         <Text style={{ fontSize: 16 }}>{distance}km</Text>
       </View>
 
       {activeSession && (
         <Split>
           <Button
+            disabled={fullName !== retrieveData().fullName}
             styles={{
               paddingVertical: 0,
               paddingHorizontal: 0,
@@ -274,6 +278,7 @@ const LogItem = ({
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>Edit</Text>
           </Button>
           <Button
+            disabled={fullName !== retrieveData().fullName}
             color="red"
             styles={{
               paddingVertical: 0,
@@ -359,15 +364,17 @@ export default () => {
   const previousPage = () => {
     if (!logData.current) return;
     const data = logData.current;
-    Object.entries(data).map(([key, value]: any) => {
-      if (value.sessionStart < (currentData?.sessionStart || Date.now())) {
+    for (let i = 0; i < Object.entries(data).length; i++) {
+      const key = Object.entries(data)[i];
+      if (key[1]["sessionStart"] < (currentData?.sessionStart || Date.now())) {
         setPageData({
           ...pageData,
           currentPage: pageData.currentPage - 1,
         });
-        setCurrentData(data[key]);
+        setCurrentData(key[1]);
+        return;
       }
-    });
+    }
   };
 
   const getLogs = async () => {
@@ -410,7 +417,7 @@ export default () => {
           },
         ]}
       />
-      {currentData && (
+      {pageData.currentPage >= 1 && (
         <View style={{ paddingBottom: 55 }}>
           <DateHead
             data={currentData}
@@ -445,7 +452,7 @@ export default () => {
                 })}
             </>
           )}
-          {!Boolean(Object.keys(summary).length) && (
+          {currentData && !Boolean(currentData["logs"].length) && (
             <Text style={{ fontSize: 16, textAlign: "center" }}>
               There are no logs available to display
             </Text>

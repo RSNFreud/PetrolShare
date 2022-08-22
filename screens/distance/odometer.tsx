@@ -2,9 +2,9 @@ import Input from "../../components/Input";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
-import * as SecureStore from "expo-secure-store";
 import SubmitButton from "./submitButton";
 import { useNavigation } from "@react-navigation/native";
+import { deleteItem, setItem } from "../../hooks";
 
 export default ({
   previousData,
@@ -55,8 +55,8 @@ export default ({
 
     if (data.startValue && !data.endValue) {
       handleClose();
-      await SecureStore.setItemAsync("draft", JSON.stringify(data));
-      await SecureStore.setItemAsync("showToast", "draftSaved");
+      await setItem("draft", JSON.stringify(data));
+      await setItem("showToast", "draftSaved");
       navigate("Dashboard");
       return;
     }
@@ -73,8 +73,8 @@ export default ({
       .then(async () => {
         setLoading(false);
         handleClose();
-        await SecureStore.deleteItemAsync("draft");
-        await SecureStore.setItemAsync("showToast", "distanceUpdated");
+        await deleteItem("draft");
+        await setItem("showToast", "distanceUpdated");
         navigate("Dashboard");
       })
       .catch(({ response }) => {

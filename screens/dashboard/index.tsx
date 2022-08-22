@@ -1,43 +1,53 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Button, Layout, Text } from "../../components/Themed";
-import generateGroupID from "../../hooks/generateGroupID";
+import { Box, Layout, Text, Button } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableWithoutFeedback, Alert } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
-import Popup from "../../components/Popup";
-import * as SecureStore from "expo-secure-store";
 import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
+import Popup from "../../components/Popup";
+import Input from "../../components/Input";
+import { deleteItem, getItem, setItem } from "../../hooks";
 
-export default ({ route, navigation }: any) => {
-  const { retrieveData } = useContext(AuthContext);
+export default ({ navigation }: any) => {
+  const { retrieveData, setData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
   const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    data: "",
+    errors: "",
+  });
+
   useEffect(() => {
     getDistance();
+    updateData();
     navigation.addListener("focus", async () => {
-      if ((await SecureStore.getItemAsync("showToast")) === "distanceUpdated") {
-        await SecureStore.deleteItemAsync("showToast");
+      getDistance();
+      updateData();
+
+      if ((await getItem("showToast")) === "distanceUpdated") {
+        await deleteItem("showToast");
         Toast.show({
           type: "default",
           text1: "Distance successfully updated!",
         });
       }
-      if ((await SecureStore.getItemAsync("showToast")) === "draftSaved") {
-        await SecureStore.deleteItemAsync("showToast");
+      if ((await getItem("showToast")) === "draftSaved") {
+        await deleteItem("showToast");
         Toast.show({
           type: "default",
           text1:
             "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
         });
       }
-      if ((await SecureStore.getItemAsync("showToast")) === "resetDistance") {
-        await SecureStore.deleteItemAsync("showToast");
+      if ((await getItem("showToast")) === "resetDistance") {
+        await deleteItem("showToast");
         Toast.show({
           type: "default",
           text1: "Reset your distance back to 0!",
@@ -45,30 +55,75 @@ export default ({ route, navigation }: any) => {
       }
       getDistance();
     });
-  });
+  }, []);
+
+  const updateGroup = () => {
+    if (!form.data)
+      return setForm({ ...form, errors: "Please enter a group ID!" });
+    else setForm({ ...form, errors: "" });
+
+    Alert.alert(
+      "Are you sure you want to join a new group?",
+      "This will delete all the current data you have saved.",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            setLoading(true);
+            axios
+              .post(
+                `https://petrolshare.freud-online.co.uk/user/change-group`,
+                {
+                  authenticationKey: retrieveData().authenticationKey,
+                  groupID: form.data,
+                }
+              )
+              .then(async (e) => {
+                setLoading(false);
+                setVisible(false);
+                Toast.show({
+                  type: "default",
+                  text1: "Group ID updated successfully!",
+                });
+                setForm({
+                  data: "",
+                  errors: "",
+                });
+                updateData();
+              })
+              .catch(() => {
+                setLoading(false);
+                setForm({
+                  ...form,
+                  errors: "There was no group found with that ID!",
+                });
+              });
+          },
+        },
+        { text: "No", style: "cancel" },
+      ]
+    );
+  };
 
   const getDistance = () => {
     if (!retrieveData) return;
 
     axios
       .get(
-        `https://petrolshare.freud-online.co.uk/distance/get?emailAddress=${
-          retrieveData().emailAddress
-        }&authenticationKey=${retrieveData().authenticationKey}`
+        `https://petrolshare.freud-online.co.uk/distance/get?authenticationKey=${
+          retrieveData().authenticationKey
+        }`
       )
       .then(async ({ data }) => {
         setCurrentMileage(data);
         let sessionStorage;
         try {
-          sessionStorage = await SecureStore.getItemAsync("userData");
+          sessionStorage = await getItem("userData");
           if (!sessionStorage) return;
           sessionStorage = JSON.parse(sessionStorage);
           sessionStorage.currentMileage = data.toString();
 
-          await SecureStore.setItemAsync(
-            "userData",
-            JSON.stringify(sessionStorage)
-          );
+          await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
           console.log(err);
         }
@@ -78,11 +133,34 @@ export default ({ route, navigation }: any) => {
       });
   };
 
+  const updateData = () => {
+    axios
+      .get(
+        `https://petrolshare.freud-online.co.uk/user/get?authenticationKey=${
+          retrieveData().authenticationKey
+        }`
+      )
+      .then(async ({ data }) => {
+        let sessionStorage;
+        try {
+          sessionStorage = await getItem("userData");
+          if (!sessionStorage) return;
+          sessionStorage = JSON.parse(sessionStorage);
+          sessionStorage = { ...sessionStorage, ...data[0] };
+          setData(sessionStorage);
+          await setItem("userData", JSON.stringify(sessionStorage));
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(({ response }) => {
+        console.log(response);
+      });
+  };
+
   const copyToClipboard = async () => {
     Clipboard.setStringAsync(
-      retrieveData
-        ? retrieveData()?.groupID || generateGroupID()
-        : generateGroupID()
+      retrieveData ? retrieveData()?.groupID || null : null
     );
     setCopied(true);
     setTimeout(() => {
@@ -112,9 +190,7 @@ export default ({ route, navigation }: any) => {
             >
               <Text style={{ fontSize: 16, marginRight: 5 }}>
                 <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
-                {retrieveData
-                  ? retrieveData()?.groupID || generateGroupID()
-                  : generateGroupID()}
+                {retrieveData ? retrieveData()?.groupID || null : null}
               </Text>
               <>
                 {copied ? (
@@ -202,9 +278,23 @@ export default ({ route, navigation }: any) => {
                 ></Path>
               </Svg>
             ),
+            handleClick: () => setVisible(true),
           },
         ]}
       />
+      <Popup visible={visible} handleClose={() => setVisible(false)}>
+        <Input
+          placeholder="Enter new group ID"
+          label="Group ID"
+          value={form.data}
+          handleInput={(e) => setForm({ ...form, data: e })}
+          errorMessage={form.errors}
+          style={{ marginBottom: 20 }}
+        />
+        <Button loading={loading} handleClick={() => updateGroup()}>
+          Join Group
+        </Button>
+      </Popup>
     </Layout>
   );
 };

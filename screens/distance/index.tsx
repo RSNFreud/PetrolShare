@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import Popup from "../../components/Popup";
 import { Layout, Breadcrumbs, Button } from "../../components/Themed";
 import Manual from "./manual";
-import * as SecureStore from "expo-secure-store";
 import Odometer from "./odometer";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { Alert } from "react-native";
+import { deleteItem, getItem, setItem } from "../../hooks";
 
 export default ({ navigation }: any) => {
   const [popupData, setPopupData] = useState(<></>);
@@ -23,7 +23,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     const getDraft = async () => {
-      const draft = await SecureStore.getItemAsync("draft");
+      const draft = await getItem("draft");
 
       if (draft != null) {
         setData({ ...JSON.parse(draft) });
@@ -55,7 +55,7 @@ export default ({ navigation }: any) => {
               authenticationKey: retrieveData().authenticationKey,
             })
             .then(async (e) => {
-              await SecureStore.setItemAsync("showToast", "resetDistance");
+              await setItem("showToast", "resetDistance");
               navigation.navigate("Dashboard");
             })
             .catch(({ response }) => {
@@ -74,7 +74,7 @@ export default ({ navigation }: any) => {
       {
         text: "Yes",
         onPress: async () => {
-          await SecureStore.deleteItemAsync("draft");
+          await deleteItem("draft");
           setVisible(false);
           setIsDraft(false);
           setData({ startValue: "", endValue: "" });

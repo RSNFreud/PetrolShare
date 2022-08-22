@@ -2,9 +2,9 @@ import Input from "../../components/Input";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
-import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import SubmitButton from "./submitButton";
+import { deleteItem, setItem } from "../../hooks";
 
 export default ({ handleClose }: { handleClose: () => void }) => {
   const [data, setData] = useState({
@@ -47,8 +47,8 @@ export default ({ handleClose }: { handleClose: () => void }) => {
       .then(async () => {
         setLoading(false);
         handleClose();
-        await SecureStore.deleteItemAsync("draft");
-        await SecureStore.setItemAsync("showToast", "distanceUpdated");
+        await deleteItem("draft");
+        await setItem("showToast", "distanceUpdated");
         navigate("Dashboard");
       })
       .catch(({ response }) => {
