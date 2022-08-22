@@ -51,7 +51,7 @@ export default ({ navigation }: any) => {
         text: "Yes",
         onPress: async () => {
           axios
-            .post(`https://petrolshare.freud-online.co.uk/distance/reset`, {
+            .post(process.env.REACT_APP_API_ADDRESS + `/distance/reset`, {
               authenticationKey: retrieveData().authenticationKey,
             })
             .then(async (e) => {

@@ -194,7 +194,7 @@ const LogItem = ({
         text: "Yes",
         onPress: async () => {
           axios
-            .post(`https://petrolshare.freud-online.co.uk/logs/delete`, {
+            .post(process.env.REACT_APP_API_ADDRESS + `/logs/delete`, {
               authenticationKey: retrieveData().authenticationKey,
               logID: id,
             })
@@ -216,7 +216,7 @@ const LogItem = ({
 
   const handleEdit = () => {
     axios
-      .post(`https://petrolshare.freud-online.co.uk/logs/edit`, {
+      .post(process.env.REACT_APP_API_ADDRESS + `/logs/edit`, {
         authenticationKey: retrieveData().authenticationKey,
         logID: id,
         distance: formData,
@@ -381,9 +381,8 @@ export default () => {
     if (!retrieveData) return;
     await axios
       .get(
-        `https://petrolshare.freud-online.co.uk/logs/get?authenticationKey=${
-          retrieveData().authenticationKey
-        }`
+        process.env.REACT_APP_API_ADDRESS +
+          `/logs/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(({ data }) => {
         logData.current = data;

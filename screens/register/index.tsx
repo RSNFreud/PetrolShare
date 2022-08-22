@@ -114,7 +114,7 @@ export default React.memo(({ navigation }: any) => {
   const handleRegister = async () => {
     if (register) {
       axios
-        .post("https://petrolshare.freud-online.co.uk/user/register", {
+        .post(process.env.REACT_APP_API_ADDRESS + "/user/register", {
           fullName: formData["fullName"],
           emailAddress: formData["emailAddress"],
           groupID: groupID,

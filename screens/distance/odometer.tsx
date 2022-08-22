@@ -66,7 +66,7 @@ export default ({
     if (!retrieveData) return;
     setLoading(true);
     axios
-      .post(`https://petrolshare.freud-online.co.uk/distance/add`, {
+      .post(process.env.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })

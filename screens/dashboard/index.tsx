@@ -71,13 +71,10 @@ export default ({ navigation }: any) => {
           onPress: async () => {
             setLoading(true);
             axios
-              .post(
-                `https://petrolshare.freud-online.co.uk/user/change-group`,
-                {
-                  authenticationKey: retrieveData().authenticationKey,
-                  groupID: form.data,
-                }
-              )
+              .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
+                authenticationKey: retrieveData().authenticationKey,
+                groupID: form.data,
+              })
               .then(async (e) => {
                 setLoading(false);
                 setVisible(false);
@@ -110,9 +107,8 @@ export default ({ navigation }: any) => {
 
     axios
       .get(
-        `https://petrolshare.freud-online.co.uk/distance/get?authenticationKey=${
-          retrieveData().authenticationKey
-        }`
+        process.env.REACT_APP_API_ADDRESS +
+          `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
         setCurrentMileage(data);
@@ -136,9 +132,8 @@ export default ({ navigation }: any) => {
   const updateData = () => {
     axios
       .get(
-        `https://petrolshare.freud-online.co.uk/user/get?authenticationKey=${
-          retrieveData().authenticationKey
-        }`
+        process.env.REACT_APP_API_ADDRESS +
+          `/user/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
         let sessionStorage;

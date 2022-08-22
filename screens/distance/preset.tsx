@@ -49,9 +49,8 @@ export default ({ navigation }: any) => {
     if (retrieveData) {
       axios
         .get(
-          `https://petrolshare.freud-online.co.uk/preset/get?authenticationKey=${
-            retrieveData().authenticationKey
-          }`
+          process.env.REACT_APP_API_ADDRESS +
+            `/preset/get?authenticationKey=${retrieveData().authenticationKey}`
         )
         .then(async ({ data }) => {
           setPresets(data);
@@ -103,7 +102,7 @@ export default ({ navigation }: any) => {
     if (!retrieveData) return;
     setLoading(true);
     axios
-      .post(`https://petrolshare.freud-online.co.uk/distance/add`, {
+      .post(process.env.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
@@ -125,7 +124,7 @@ export default ({ navigation }: any) => {
 
   const deletePreset = () => {
     axios
-      .post("https://petrolshare.freud-online.co.uk/preset/delete", {
+      .post(process.env.REACT_APP_API_ADDRESS + "/preset/delete", {
         presetID: selectedToDelete.current,
         authenticationKey: retrieveData().authenticationKey,
       })
@@ -165,7 +164,7 @@ export default ({ navigation }: any) => {
 
     if (!Object.keys(errors).length && retrieveData) {
       axios
-        .post("https://petrolshare.freud-online.co.uk/preset/add", {
+        .post(process.env.REACT_APP_API_ADDRESS + "/preset/add", {
           presetName: presetFormData.presetName,
           distance: presetFormData.distance,
           authenticationKey: retrieveData().authenticationKey,

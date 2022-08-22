@@ -19,7 +19,6 @@ import manual from "./screens/distance/manual";
 import odometer from "./screens/distance/odometer";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
-import { Platform } from "react-native";
 import { deleteItem, getItem, setItem } from "./hooks";
 
 SplashScreen.preventAutoHideAsync();
@@ -34,7 +33,7 @@ export default function App() {
       signIn: async (e: any) => {
         return new Promise((res, rej) => {
           axios
-            .post("https://petrolshare.freud-online.co.uk/user/login", { ...e })
+            .post(process.env.REACT_APP_API_ADDRESS + "/user/login", { ...e })
             .then(async ({ data }) => {
               setUserData(data);
               try {
