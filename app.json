@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
+    "description": "The web version of the PetrolShare App",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -30,9 +31,7 @@
       "package": "com.rsnfreud.PetrolShare"
     },
     "web": {
-      "favicon": "./assets/images/favicon.png",
-      "name": "PetrolShare",
-      "description": "The web version of the PetrolShare App"
+      "favicon": "./assets/images/favicon.png"
     }
   }
 }
