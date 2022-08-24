@@ -9,7 +9,9 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --watchAll",
-    "build-web": "expo build:web"
+    "build-web": "expo build:web",
+    "build-android": "eas build --profile preview --platform android",
+    "build": "yarn build-web && yarn build-android"
   },
   "jest": {
     "preset": "jest-expo"

@@ -5,6 +5,7 @@ import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
 import { convertToDate } from "../../hooks";
+import Toast from "react-native-toast-message";
 
 type PropsType = {
   invoiceID: number;
@@ -16,6 +17,32 @@ export default ({ invoiceID }: PropsType) => {
   const { navigate } = useNavigation();
 
   useEffect(() => {
+    getInvoice();
+  }, []);
+  const [loading, setLoading] = useState(0);
+
+  const markPaid = (userID: number) => {
+    setLoading(userID);
+    axios
+      .post(process.env.REACT_APP_API_ADDRESS + `/invoices/pay`, {
+        authenticationKey: retrieveData().authenticationKey,
+        userID: userID,
+        invoiceID: invoiceID,
+      })
+      .then(async ({ data }) => {
+        Toast.show({
+          type: "default",
+          text1: "Successfully marked as paid!",
+        });
+        getInvoice();
+        setLoading(0);
+      })
+      .catch((err) => {
+        setLoading(0);
+      });
+  };
+
+  const getInvoice = () => {
     axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
@@ -29,7 +56,7 @@ export default ({ invoiceID }: PropsType) => {
       .catch((err) => {
         navigate("Invoices");
       });
-  }, []);
+  };
 
   if (Object.keys(data).length === 0)
     return (
@@ -68,6 +95,7 @@ export default ({ invoiceID }: PropsType) => {
         ([key, value]: any, count: number) => {
           return (
             <Box
+              key={key}
               style={{
                 paddingHorizontal: 15,
                 paddingVertical: 15,
@@ -77,18 +105,6 @@ export default ({ invoiceID }: PropsType) => {
                   Object.keys(data.invoiceData).length === count ? 0 : 10,
               }}
             >
-              {value.paymentDue && (
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: "#FA4F4F",
-                    marginBottom: 10,
-                    fontWeight: "bold",
-                  }}
-                >
-                  PAYMENT DUE
-                </Text>
-              )}
               <View
                 style={{
                   display: "flex",
@@ -98,25 +114,62 @@ export default ({ invoiceID }: PropsType) => {
                   marginBottom: 10,
                 }}
               >
-                <View>
+                {value.paid ? (
                   <Text
                     style={{
                       fontSize: 16,
+                      color: "#7CFF5B",
                       fontWeight: "bold",
-                      marginBottom: 5,
                     }}
                   >
-                    {key}
+                    PAID
                   </Text>
-                  <Text style={{ fontSize: 14 }}>{value.distance}km</Text>
-                </View>
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: "#FA4F4F",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    PAYMENT DUE
+                  </Text>
+                )}
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                   {value.paymentDue} NIS
                 </Text>
               </View>
-              <Button size="small" disabled>
-                Mark as paid
-              </Button>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    marginBottom: 5,
+                  }}
+                >
+                  {value.fullName}
+                </Text>
+                <Text style={{ fontSize: 14 }}>{value.distance}km</Text>
+              </View>
+              {value.paid ? (
+                <></>
+              ) : (
+                <Button
+                  loading={loading === key}
+                  size="small"
+                  styles={{
+                    marginTop: 15,
+                    height: 34,
+                    justifyContent: "center",
+                  }}
+                  noText
+                  handleClick={() => markPaid(key)}
+                >
+                  <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                    Mark as paid
+                  </Text>
+                </Button>
+              )}
             </Box>
           );
         }

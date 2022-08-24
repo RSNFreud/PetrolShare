@@ -21,8 +21,6 @@ export default ({ navigation }: any) => {
     else return;
     getData();
     navigation.addListener("focus", async () => {
-      console.log("test");
-
       getData();
     });
   }, [retrieveData]);
@@ -44,16 +42,33 @@ export default ({ navigation }: any) => {
   };
   return (
     <Layout>
-      <Breadcrumbs
-        links={[
-          {
-            name: "Dashboard",
-          },
-          {
-            name: "Invoices",
-          },
-        ]}
-      />
+      {params && params["id"] ? (
+        <Breadcrumbs
+          links={[
+            {
+              name: "Dashboard",
+            },
+            {
+              name: "Invoices",
+            },
+            {
+              name: "Invoice #" + params["id"],
+            },
+          ]}
+        />
+      ) : (
+        <Breadcrumbs
+          links={[
+            {
+              name: "Dashboard",
+            },
+            {
+              name: "Invoices",
+            },
+          ]}
+        />
+      )}
+
       {params && params["id"] ? (
         <Invoice invoiceID={params["id"]} />
       ) : (
@@ -89,7 +104,7 @@ export default ({ navigation }: any) => {
                     key={c}
                   >
                     <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                      Invoice #{c + 1}
+                      Invoice #{e["invoiceID"]}
                     </Text>
                     <Text style={{ fontSize: 16 }}>
                       {convertToDate(e["sessionEnd"])}
