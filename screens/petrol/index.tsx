@@ -28,7 +28,6 @@ export default ({ navigation }: any) => {
 
   const handleSubmit = () => {
     let errors: any = {};
-    navigation.navigate("Invoices");
 
     Object.entries(data).map(([key, value]) => {
       if (!value) errors[key] = "Please complete this field!";
@@ -45,10 +44,11 @@ export default ({ navigation }: any) => {
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,
       })
-      .then((e) => {
+      .then(({ data }) => {
         setLoading(false);
-        navigation.navigate("Invoices", { id: 403 });
-        console.log(e);
+        console.log(data);
+
+        navigation.navigate("Invoices", { id: data });
       })
       .catch(({ response }) => {
         console.log(response);

@@ -1,40 +1,42 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Text, Button } from "../../components/Themed";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
+import axios from "axios";
+import { AuthContext } from "../../hooks/context";
+import { useNavigation } from "@react-navigation/native";
+import { convertToDate } from "../../hooks";
 
 type PropsType = {
   invoiceID: number;
 };
 
 export default ({ invoiceID }: PropsType) => {
-  const [data, setData] = useState<any>({
-    invoiceData: {
-      "Your Mum": {
-        paymentDue: 132.92,
-        paid: false,
-        distance: 7,
-      },
-      "Rafi H": {
-        paymentDue: 189.88,
-        paid: false,
-        distance: 10,
-      },
-    },
-    totalDistance: "17",
-    sessionEnd: "1661291811350",
-    totalPrice: "322.8",
-  });
+  const [data, setData] = useState<any>({});
+  const { retrieveData } = useContext(AuthContext);
+  const { navigate } = useNavigation();
 
   useEffect(() => {
-    // call api
+    axios
+      .get(
+        process.env.REACT_APP_API_ADDRESS +
+          `/invoices/get?authenticationKey=${
+            retrieveData().authenticationKey
+          }&invoiceID=${invoiceID}`
+      )
+      .then(async ({ data }) => {
+        setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
+      })
+      .catch((err) => {
+        navigate("Invoices");
+      });
   }, []);
 
-  const convertToDate = (date: string) => {
-    let x: Date = new Date(parseInt(date));
-    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${
-      x.getMonth() < 10 ? "0" : ""
-    }${x.getMonth()}/${x.getFullYear()}`;
-  };
+  if (Object.keys(data).length === 0)
+    return (
+      <>
+        <ActivityIndicator size={"large"} />
+      </>
+    );
 
   return (
     <>

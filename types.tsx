@@ -17,11 +17,15 @@ declare global {
 }
 
 export type RootStackParamList = {
-  Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Register: NavigatorScreenParams<RootTabParamList> | undefined;
+  Settings: NavigatorScreenParams<RootTabParamList> | undefined;
+  AddDistance: NavigatorScreenParams<RootTabParamList> | undefined;
+  AddPetrol: NavigatorScreenParams<RootTabParamList> | undefined;
+  AddPreset: NavigatorScreenParams<RootTabParamList> | undefined;
+  Logs: NavigatorScreenParams<RootTabParamList> | undefined;
+  AddManual: NavigatorScreenParams<RootTabParamList> | undefined;
+  Invoices: NavigatorScreenParams<RootTabParamList> | undefined;
   Login: NavigatorScreenParams<RootTabParamList> | undefined;
   Dashboard: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: undefined;
   NotFound: undefined;
 };
 
