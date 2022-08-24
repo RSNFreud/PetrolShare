@@ -314,8 +314,9 @@ const LogItem = ({
 
 export default () => {
   const { retrieveData } = useContext(AuthContext);
-  const logData = useRef([]);
+  const logData = useRef<any>(null);
   const [activeSession, setActiveSession] = useState("0");
+  const [loaded, setLoaded] = useState(false);
   const [currentData, setCurrentData] = useState<any>(null);
   const [summary, setSummary] = useState({});
   const [pageData, setPageData] = useState({
@@ -326,7 +327,7 @@ export default () => {
   useEffect(() => {
     getLogs();
     getSummary();
-  }, []);
+  }, [retrieveData]);
 
   useEffect(() => {
     getSummary();
@@ -349,7 +350,7 @@ export default () => {
     if (!logData.current) return;
     const data = logData.current;
     for (let i = 0; i < Object.entries(data).length; i++) {
-      const key = Object.entries(data)[i];
+      const key: any = Object.entries(data)[i];
       if (key[1]["sessionStart"] > (currentData?.sessionStart || Date.now())) {
         setPageData({
           ...pageData,
@@ -365,7 +366,7 @@ export default () => {
     if (!logData.current) return;
     const data = logData.current;
     for (let i = 0; i < Object.entries(data).length; i++) {
-      const key = Object.entries(data)[i];
+      const key: any = Object.entries(data)[i];
       if (key[1]["sessionStart"] < (currentData?.sessionStart || Date.now())) {
         setPageData({
           ...pageData,
@@ -378,7 +379,7 @@ export default () => {
   };
 
   const getLogs = async () => {
-    if (!retrieveData) return;
+    if (!retrieveData || !retrieveData().authenticationKey) return;
     await axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
@@ -386,6 +387,7 @@ export default () => {
       )
       .then(({ data }) => {
         logData.current = data;
+        setLoaded(true);
 
         setPageData({
           currentPage: Object.keys(data).length,
@@ -394,7 +396,6 @@ export default () => {
         Object.entries(data).map(([key, value]: any) => {
           if (value.sessionActive) {
             setActiveSession(key);
-
             setCurrentData(data[key]);
           }
         });
@@ -458,6 +459,13 @@ export default () => {
           )}
         </View>
       )}
+      {loaded && pageData.currentPage === 0 && (
+        <Text style={{ fontSize: 16, textAlign: "center" }}>
+          There are no logs available to display
+        </Text>
+      )}
+
+      {!loaded && <ActivityIndicator size={"large"} />}
     </Layout>
   );
 };

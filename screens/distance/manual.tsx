@@ -19,6 +19,8 @@ export default ({ handleClose }: { handleClose: () => void }) => {
   useEffect(() => {
     if (data.distance && !isNaN(parseInt(data.distance))) {
       setDistance(data.distance);
+    } else {
+      setDistance("");
     }
   }, [data]);
 

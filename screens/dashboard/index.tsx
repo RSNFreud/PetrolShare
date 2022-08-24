@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Layout, Text, Button } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback, Alert } from "react-native";
+import { View, TouchableWithoutFeedback, Alert, Platform } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -12,10 +12,11 @@ import Input from "../../components/Input";
 import { deleteItem, getItem, setItem } from "../../hooks";
 
 export default ({ navigation }: any) => {
-  const { retrieveData, setData } = useContext(AuthContext);
+  const { setData, retrieveData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
+  const dataRetrieved = useRef(false);
   const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,86 +26,115 @@ export default ({ navigation }: any) => {
   });
 
   useEffect(() => {
-    getDistance();
-    updateData();
-    navigation.addListener("focus", async () => {
+    if (dataRetrieved.current) return;
+    if (retrieveData && retrieveData().authenticationKey) {
+      dataRetrieved.current = true;
       getDistance();
       updateData();
-
-      if ((await getItem("showToast")) === "distanceUpdated") {
-        await deleteItem("showToast");
-        Toast.show({
-          type: "default",
-          text1: "Distance successfully updated!",
-        });
-      }
-      if ((await getItem("showToast")) === "draftSaved") {
-        await deleteItem("showToast");
-        Toast.show({
-          type: "default",
-          text1:
-            "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
-        });
-      }
-      if ((await getItem("showToast")) === "resetDistance") {
-        await deleteItem("showToast");
-        Toast.show({
-          type: "default",
-          text1: "Reset your distance back to 0!",
-        });
-      }
-      getDistance();
-    });
-  }, []);
+      navigation.addListener("focus", async () => {
+        if ((await getItem("showToast")) === "distanceUpdated") {
+          await deleteItem("showToast");
+          Toast.show({
+            type: "default",
+            text1: "Distance successfully updated!",
+          });
+        }
+        if ((await getItem("showToast")) === "draftSaved") {
+          await deleteItem("showToast");
+          Toast.show({
+            type: "default",
+            text1:
+              "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
+          });
+        }
+        if ((await getItem("showToast")) === "resetDistance") {
+          await deleteItem("showToast");
+          Toast.show({
+            type: "default",
+            text1: "Reset your distance back to 0!",
+          });
+        }
+      });
+    }
+  }, [retrieveData]);
 
   const updateGroup = () => {
     if (!form.data)
       return setForm({ ...form, errors: "Please enter a group ID!" });
     else setForm({ ...form, errors: "" });
 
-    Alert.alert(
-      "Are you sure you want to join a new group?",
-      "This will delete all the current data you have saved.",
-      [
-        {
-          text: "Yes",
-          onPress: async () => {
-            setLoading(true);
-            axios
-              .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
-                authenticationKey: retrieveData().authenticationKey,
-                groupID: form.data,
-              })
-              .then(async (e) => {
-                setLoading(false);
-                setVisible(false);
-                Toast.show({
-                  type: "default",
-                  text1: "Group ID updated successfully!",
+    if (Platform.OS === "web") {
+      setLoading(true);
+      axios
+        .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
+          authenticationKey: retrieveData().authenticationKey,
+          groupID: form.data,
+        })
+        .then(async (e) => {
+          setLoading(false);
+          setVisible(false);
+          Toast.show({
+            type: "default",
+            text1: "Group ID updated successfully!",
+          });
+          setForm({
+            data: "",
+            errors: "",
+          });
+          updateData();
+        })
+        .catch(() => {
+          setLoading(false);
+          setForm({
+            ...form,
+            errors: "There was no group found with that ID!",
+          });
+        });
+    } else
+      Alert.alert(
+        "Are you sure you want to join a new group?",
+        "This will delete all the current data you have saved.",
+        [
+          {
+            text: "Yes",
+            onPress: async () => {
+              setLoading(true);
+              axios
+                .post(
+                  process.env.REACT_APP_API_ADDRESS + `/user/change-group`,
+                  {
+                    authenticationKey: retrieveData().authenticationKey,
+                    groupID: form.data,
+                  }
+                )
+                .then(async (e) => {
+                  setLoading(false);
+                  setVisible(false);
+                  Toast.show({
+                    type: "default",
+                    text1: "Group ID updated successfully!",
+                  });
+                  setForm({
+                    data: "",
+                    errors: "",
+                  });
+                  updateData();
+                })
+                .catch(() => {
+                  setLoading(false);
+                  setForm({
+                    ...form,
+                    errors: "There was no group found with that ID!",
+                  });
                 });
-                setForm({
-                  data: "",
-                  errors: "",
-                });
-                updateData();
-              })
-              .catch(() => {
-                setLoading(false);
-                setForm({
-                  ...form,
-                  errors: "There was no group found with that ID!",
-                });
-              });
+            },
           },
-        },
-        { text: "No", style: "cancel" },
-      ]
-    );
+          { text: "No", style: "cancel" },
+        ]
+      );
   };
 
   const getDistance = () => {
-    if (!retrieveData) return;
-
     axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
@@ -275,6 +305,15 @@ export default ({ navigation }: any) => {
               </Svg>
             ),
             handleClick: () => setVisible(true),
+          },
+        ]}
+      />
+      <SplitRow
+        buttons={[
+          {
+            text: "Invoices",
+            icon: <></>,
+            handleClick: () => navigation.navigate("Invoices"),
           },
         ]}
       />

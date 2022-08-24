@@ -68,11 +68,12 @@ export default ({ navigation }: any) => {
         (e: any) => e.presetID === data.selectedPreset
       );
       setDistance(filtered[0].distance);
+    } else {
+      setDistance("");
     }
   }, [data]);
   useEffect(() => {
-    getPresets();
-
+    if (retrieveData && retrieveData().authenticationKey) getPresets();
     const getDraft = async () => {
       const draft = await getItem("draft");
       if (draft) {
@@ -80,7 +81,7 @@ export default ({ navigation }: any) => {
       }
     };
     getDraft();
-  }, []);
+  }, [retrieveData]);
 
   const handleSubmit = async () => {
     setErrors("");

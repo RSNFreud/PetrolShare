@@ -4,7 +4,7 @@
  */
 
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Animated,
   ScrollView,
@@ -195,7 +195,7 @@ export const Layout = ({
   onLayout?: any;
 }) => {
   const navigation = useNavigation();
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, isLoading } = useContext(AuthContext);
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (navigation) {
@@ -251,6 +251,8 @@ export const Layout = ({
     }).start();
   };
 
+  if (isLoading) return <></>;
+
   return (
     <>
       <ScrollView
@@ -259,7 +261,9 @@ export const Layout = ({
         {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />
-        <Animated.View style={{ opacity: opacity }}>{children}</Animated.View>
+        <Animated.View style={{ opacity: opacity }}>
+          <>{children}</>
+        </Animated.View>
       </ScrollView>
       <Toast config={ToastConfig} />
     </>

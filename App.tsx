@@ -21,6 +21,7 @@ import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
 import { deleteItem, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
+import invoices from "./screens/invoices";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -59,13 +60,14 @@ export default function App() {
       setData: (e: any) => {
         setUserData(e);
       },
+      isLoading: loading,
       signOut: async () => {
         setUserData({});
         await deleteItem("userData");
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
-    [userData]
+    [userData, loading]
   );
 
   useEffect(() => {
@@ -121,7 +123,7 @@ export default function App() {
               animation: "none",
             }}
           >
-            {login.isLoggedIn ? (
+            {loading || login.isLoggedIn ? (
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="Settings" component={Settings} />
@@ -131,6 +133,7 @@ export default function App() {
                 <Stack.Screen name="AddPreset" component={preset} />
                 <Stack.Screen name="AddPetrol" component={petrol} />
                 <Stack.Screen name="Logs" component={logs} />
+                <Stack.Screen name="Invoices" component={invoices} />
               </>
             ) : (
               <>

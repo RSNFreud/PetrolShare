@@ -38,6 +38,8 @@ export default ({
       if (isNaN(start) || isNaN(end)) return;
       if (end - start < 0) return;
       setDistance((end - start).toString());
+    } else {
+      setDistance("");
     }
   }, [data]);
 
