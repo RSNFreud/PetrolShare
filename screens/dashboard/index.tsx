@@ -32,6 +32,8 @@ export default ({ navigation }: any) => {
       getDistance();
       updateData();
       navigation.addListener("focus", async () => {
+        getDistance();
+        updateData();
         if ((await getItem("showToast")) === "distanceUpdated") {
           await deleteItem("showToast");
           Toast.show({

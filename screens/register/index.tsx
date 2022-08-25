@@ -108,6 +108,12 @@ export default React.memo(({ navigation }: any) => {
   };
 
   const login = () => {
+    register({
+      fullName: formData["fullName"],
+      emailAddress: formData["emailAddress"],
+      groupID: groupID,
+      authenticationKey: formData.key,
+    });
     navigation.popToTop();
   };
 
@@ -121,12 +127,10 @@ export default React.memo(({ navigation }: any) => {
           password: formData["password"],
         })
         .then(async ({ data }) => {
-          register({
-            fullName: formData["fullName"],
-            emailAddress: formData["emailAddress"],
-            groupID: groupID,
-            authenticationKey: data,
-          });
+          console.log(data);
+
+          setFormData({ ...formData, key: data });
+          nextPage();
         })
         .catch((err) => {
           previousPage();

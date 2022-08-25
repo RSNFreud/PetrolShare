@@ -81,9 +81,20 @@ export default function App() {
             setLoading(false);
             return login.signOut;
           }
-
-          setUserData(parsed);
-          setLoading(false);
+          axios
+            .get(
+              process.env.REACT_APP_API_ADDRESS +
+                "/user/verify?authenticationKey=" +
+                parsed.authenticationKey
+            )
+            .then(() => {
+              setUserData(parsed);
+              setLoading(false);
+            })
+            .catch(() => {
+              setLoading(false);
+              return login.signOut;
+            });
         } else {
           setLoading(false);
         }
@@ -120,7 +131,8 @@ export default function App() {
             screenOptions={{
               gestureEnabled: false,
               headerShown: false,
-              animation: "none",
+              animation: "fade",
+              animationDuration: 300,
             }}
           >
             {loading || login.isLoggedIn ? (

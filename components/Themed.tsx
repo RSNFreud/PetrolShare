@@ -194,28 +194,7 @@ export const Layout = ({
   style?: ViewProps["style"];
   onLayout?: any;
 }) => {
-  const navigation = useNavigation();
   const { isLoggedIn, isLoading } = useContext(AuthContext);
-  const opacity = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (navigation) {
-      navigation.addListener("state", async (e: any) => {
-        try {
-          if (await getItem("firstLoad")) {
-            await deleteItem("firstLoad");
-            return opacity.setValue(1);
-          }
-        } catch {
-          return opacity.setValue(1);
-        }
-
-        opacity.setValue(0);
-        fadeIn();
-      });
-    } else {
-      fadeIn();
-    }
-  }, []);
 
   const ToastConfig = {
     default: ({ text1 }: { text1?: string }) => (
@@ -243,14 +222,6 @@ export const Layout = ({
     ),
   };
 
-  const fadeIn = () => {
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  };
-
   if (isLoading) return <></>;
 
   return (
@@ -261,11 +232,11 @@ export const Layout = ({
         {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />
-        <Animated.View style={{ opacity: opacity }}>
+        <DefaultView>
           <>{children}</>
-        </Animated.View>
+        </DefaultView>
+        <Toast config={ToastConfig} />
       </ScrollView>
-      <Toast config={ToastConfig} />
     </>
   );
 };

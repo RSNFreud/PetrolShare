@@ -282,6 +282,8 @@ const LogItem = ({
             color="red"
             styles={{
               paddingVertical: 0,
+              backgroundColor: "transparent",
+              borderColor: "#FA4F4F",
               paddingHorizontal: 0,
               width: "auto",
               minHeight: 0,
@@ -292,7 +294,11 @@ const LogItem = ({
             handleClick={handleDelete}
             noText
           >
-            <Text style={{ fontSize: 14, fontWeight: "bold" }}>Remove</Text>
+            <Text
+              style={{ fontSize: 14, fontWeight: "bold", color: "#FA4F4F" }}
+            >
+              Remove
+            </Text>
           </Button>
         </Split>
       )}

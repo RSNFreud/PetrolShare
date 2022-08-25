@@ -147,9 +147,9 @@ export default ({ invoiceID }: PropsType) => {
                     marginBottom: 5,
                   }}
                 >
-                  {value.fullName}
+                  {value.fullName} (
+                  <Text style={{ fontSize: 17 }}>{value.distance}km</Text>)
                 </Text>
-                <Text style={{ fontSize: 14 }}>{value.distance}km</Text>
               </View>
               {value.paid ? (
                 <></>
@@ -158,14 +158,15 @@ export default ({ invoiceID }: PropsType) => {
                   loading={loading === key}
                   size="small"
                   styles={{
-                    marginTop: 15,
-                    height: 34,
+                    marginTop: 20,
+                    borderWidth: 0,
+                    height: 40,
                     justifyContent: "center",
                   }}
                   noText
                   handleClick={() => markPaid(key)}
                 >
-                  <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                  <Text style={{ fontWeight: "bold", fontSize: 14 }}>
                     Mark as paid
                   </Text>
                 </Button>

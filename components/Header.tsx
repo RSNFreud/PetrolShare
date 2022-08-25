@@ -40,7 +40,9 @@ export default ({ isLoggedIn }: PropsType) => {
           noText
           size="small"
           handleClick={() =>
-            route.name != "Settings" && navigation.navigate("Settings")
+            route.name != "Settings"
+              ? navigation.navigate("Settings")
+              : navigation.goBack()
           }
           styles={{
             paddingHorizontal: 0,
