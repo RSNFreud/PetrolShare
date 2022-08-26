@@ -15,7 +15,6 @@ export default ({ invoiceID }: PropsType) => {
   const [data, setData] = useState<any>({});
   const { retrieveData } = useContext(AuthContext);
   const { navigate } = useNavigation();
-
   useEffect(() => {
     getInvoice();
   }, []);
@@ -79,7 +78,9 @@ export default ({ invoiceID }: PropsType) => {
         <View
           style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}
         >
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Invoice By: </Text>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            Invoiced By:{" "}
+          </Text>
           <Text style={{ fontSize: 16 }}>{data.fullName}</Text>
         </View>
         <View
