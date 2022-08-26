@@ -7,8 +7,8 @@ import Toast from "react-native-toast-message";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import Svg, { Path } from "react-native-svg";
-import { Alert, TouchableOpacity } from "react-native";
-import { deleteItem, getItem, setItem } from "../../hooks";
+import { TouchableOpacity } from "react-native";
+import { deleteItem, getItem, setItem, Alert } from "../../hooks";
 
 const DistanceButton = ({
   marginBottom = 20,
@@ -81,7 +81,7 @@ export default ({ navigation }: any) => {
   }, []);
 
   const resetDistance = () => {
-    Alert.alert("Are you sure you want to reset your data?", undefined, [
+    Alert("Are you sure you want to reset your data?", undefined, [
       {
         text: "Yes",
         onPress: async () => {
@@ -105,7 +105,7 @@ export default ({ navigation }: any) => {
   const handleClose = () => {
     if (isDraft === false) return setVisible(false);
 
-    Alert.alert("Do you want to delete this draft?", undefined, [
+    Alert("Do you want to delete this draft?", undefined, [
       {
         text: "Yes",
         onPress: async () => {

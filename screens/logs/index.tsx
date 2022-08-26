@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import {
   Layout,
   Breadcrumbs,
@@ -13,6 +13,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Toast from "react-native-toast-message";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
+import { Alert } from "../../hooks";
 
 const formatDate = (date: string) => {
   let x: Date = new Date(parseInt(date));
@@ -189,7 +190,7 @@ const LogItem = ({
   const [formData, setFormData] = useState(distance);
 
   const handleDelete = () => {
-    Alert.alert("Are you sure you want to delete this log?", undefined, [
+    Alert("Are you sure you want to delete this log?", undefined, [
       {
         text: "Yes",
         onPress: async () => {

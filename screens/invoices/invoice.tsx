@@ -79,6 +79,12 @@ export default ({ invoiceID }: PropsType) => {
         <View
           style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}
         >
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Invoice By: </Text>
+          <Text style={{ fontSize: 16 }}>{data.fullName}</Text>
+        </View>
+        <View
+          style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}
+        >
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Total Distance:{" "}
           </Text>

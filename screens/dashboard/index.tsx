@@ -2,14 +2,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Layout, Text, Button } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback, Alert, Platform } from "react-native";
+import { View, TouchableWithoutFeedback, Platform } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
-import { deleteItem, getItem, setItem } from "../../hooks";
+import { deleteItem, getItem, setItem, Alert } from "../../hooks";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -65,75 +65,44 @@ export default ({ navigation }: any) => {
       return setForm({ ...form, errors: "Please enter a group ID!" });
     else setForm({ ...form, errors: "" });
 
-    if (Platform.OS === "web") {
-      setLoading(true);
-      axios
-        .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
-          authenticationKey: retrieveData().authenticationKey,
-          groupID: form.data,
-        })
-        .then(async (e) => {
-          setLoading(false);
-          setVisible(false);
-          Toast.show({
-            type: "default",
-            text1: "Group ID updated successfully!",
-          });
-          setForm({
-            data: "",
-            errors: "",
-          });
-          updateData();
-        })
-        .catch(() => {
-          setLoading(false);
-          setForm({
-            ...form,
-            errors: "There was no group found with that ID!",
-          });
-        });
-    } else
-      Alert.alert(
-        "Are you sure you want to join a new group?",
-        "This will delete all the current data you have saved.",
-        [
-          {
-            text: "Yes",
-            onPress: async () => {
-              setLoading(true);
-              axios
-                .post(
-                  process.env.REACT_APP_API_ADDRESS + `/user/change-group`,
-                  {
-                    authenticationKey: retrieveData().authenticationKey,
-                    groupID: form.data,
-                  }
-                )
-                .then(async (e) => {
-                  setLoading(false);
-                  setVisible(false);
-                  Toast.show({
-                    type: "default",
-                    text1: "Group ID updated successfully!",
-                  });
-                  setForm({
-                    data: "",
-                    errors: "",
-                  });
-                  updateData();
-                })
-                .catch(() => {
-                  setLoading(false);
-                  setForm({
-                    ...form,
-                    errors: "There was no group found with that ID!",
-                  });
+    Alert(
+      "Are you sure you want to join a new group?",
+      "This will delete all the current data you have saved.",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            setLoading(true);
+            axios
+              .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
+                authenticationKey: retrieveData().authenticationKey,
+                groupID: form.data,
+              })
+              .then(async (e) => {
+                setLoading(false);
+                setVisible(false);
+                Toast.show({
+                  type: "default",
+                  text1: "Group ID updated successfully!",
                 });
-            },
+                setForm({
+                  data: "",
+                  errors: "",
+                });
+                updateData();
+              })
+              .catch(() => {
+                setLoading(false);
+                setForm({
+                  ...form,
+                  errors: "There was no group found with that ID!",
+                });
+              });
           },
-          { text: "No", style: "cancel" },
-        ]
-      );
+        },
+        { text: "No", style: "cancel" },
+      ]
+    );
   };
 
   const getDistance = () => {
