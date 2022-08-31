@@ -10,9 +10,11 @@ import * as Clipboard from "expo-clipboard";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
 import { deleteItem, getItem, setItem, Alert } from "../../hooks";
+import FirstSteps from "./firstSteps";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
+  const [currentData, setCurrentData] = useState<null | any>(null);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
@@ -29,8 +31,11 @@ export default ({ navigation }: any) => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
       dataRetrieved.current = true;
+      setCurrentData(retrieveData());
       getDistance();
       updateData();
+      console.log(retrieveData().newUser || retrieveData().groupID === null);
+
       navigation.addListener("focus", async () => {
         getDistance();
         updateData();
@@ -163,6 +168,14 @@ export default ({ navigation }: any) => {
       setCopied(false);
     }, 500);
   };
+
+  if (
+    currentData &&
+    Object.values(currentData).length &&
+    (currentData.newUser || currentData.groupID === null)
+  )
+    return <FirstSteps />;
+
   return (
     <Layout style={{ display: "flex" }}>
       <Box>

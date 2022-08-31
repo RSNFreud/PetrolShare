@@ -77,6 +77,7 @@ export default function App() {
 
         if (data) {
           const parsed = JSON.parse(data);
+
           if (!("authenticationKey" in parsed)) {
             setLoading(false);
             return login.signOut;
@@ -87,8 +88,9 @@ export default function App() {
                 "/user/verify?authenticationKey=" +
                 parsed.authenticationKey
             )
-            .then(() => {
-              setUserData(parsed);
+            .then(async ({ data }) => {
+              await setItem("userData", JSON.stringify({ ...parsed, ...data }));
+              setUserData({ ...parsed, ...data });
               setLoading(false);
             })
             .catch(() => {

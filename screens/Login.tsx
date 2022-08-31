@@ -3,8 +3,9 @@ import React, { useCallback, useContext, useState } from "react";
 import Input from "../components/Input";
 import { Button, Layout, Seperator, Text } from "../components/Themed";
 import Popup from "../components/Popup";
-import { Pressable, View } from "react-native";
+import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../hooks/context";
+import axios from "axios";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
@@ -18,6 +19,8 @@ export default ({ navigation }: any) => {
     password: "",
     verification: "",
   });
+
+  const [verificationEmailSent, setVerificationEmailSent] = useState(false);
 
   const { signIn } = useContext(AuthContext);
 
@@ -109,12 +112,24 @@ export default ({ navigation }: any) => {
 
   const handleLogin = () => {
     if (!signIn) return;
+    setVerificationEmailSent(false);
     setFormErrors({ emailAddress: "", password: "", verification: "" });
     setLoading(true);
     signIn({ ...formData }).catch((err: string) => {
       setLoading(false);
       setFormErrors({ emailAddress: "", password: "", verification: err });
     });
+  };
+
+  const resendVerification = () => {
+    axios
+      .post(process.env.REACT_APP_EMAIL_API_ADDRESS + "/resend", {
+        emailAddress: formData.emailAddress,
+      })
+      .then(async () => {
+        setVerificationEmailSent(true);
+      })
+      .catch(({ response }) => {});
   };
 
   return (
@@ -140,15 +155,56 @@ export default ({ navigation }: any) => {
           style={{
             marginTop: 5,
             marginBottom: 15,
-            backgroundColor: "#EECFCF",
+            backgroundColor: verificationEmailSent ? "#484848" : "#EECFCF",
             borderRadius: 4,
             paddingHorizontal: 20,
             paddingVertical: 15,
           }}
         >
-          <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
-            {formErrors.verification}
-          </Text>
+          {verificationEmailSent ? (
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "400" }}>
+              Successfully resent the verification email to the address
+              provided! Click{" "}
+              <TouchableWithoutFeedback onPress={resendVerification}>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: "400",
+                    textDecorationStyle: "solid",
+                    textDecorationLine: "underline",
+                  }}
+                >
+                  here
+                </Text>
+              </TouchableWithoutFeedback>{" "}
+              to send it again{" "}
+            </Text>
+          ) : (
+            <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+              {formErrors.verification === "Please verify your account!" ? (
+                <>
+                  Please verify your account! Click{" "}
+                  <TouchableWithoutFeedback onPress={resendVerification}>
+                    <Text
+                      style={{
+                        color: "#7B1D1D",
+                        fontSize: 16,
+                        textDecorationStyle: "solid",
+                        textDecorationLine: "underline",
+                        fontWeight: "400",
+                      }}
+                    >
+                      here
+                    </Text>
+                  </TouchableWithoutFeedback>{" "}
+                  to resend your verification email.
+                </>
+              ) : (
+                formErrors.verification
+              )}
+            </Text>
+          )}
         </View>
       )}
       <Pressable
