@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Layout, Text, Button } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback, Platform } from "react-native";
+import { View, TouchableWithoutFeedback } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -149,6 +149,7 @@ export default ({ navigation }: any) => {
           sessionStorage = JSON.parse(sessionStorage);
           sessionStorage = { ...sessionStorage, ...data[0] };
           setData(sessionStorage);
+          setCurrentData(sessionStorage);
           await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
           console.log(err);
@@ -168,13 +169,6 @@ export default ({ navigation }: any) => {
       setCopied(false);
     }, 500);
   };
-
-  if (
-    currentData &&
-    Object.values(currentData).length &&
-    (currentData.newUser || currentData.groupID === null)
-  )
-    return <FirstSteps />;
 
   return (
     <Layout style={{ display: "flex" }}>
@@ -199,10 +193,10 @@ export default ({ navigation }: any) => {
             >
               <Text style={{ fontSize: 16, marginRight: 5 }}>
                 <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
-                {retrieveData ? retrieveData()?.groupID || null : null}
+                {retrieveData ? retrieveData()?.groupID || "Loading..." : null}
               </Text>
-              <>
-                {copied ? (
+              {!!(retrieveData && retrieveData()?.groupID) &&
+                (copied ? (
                   <Svg width="18" height="18" fill="none" viewBox="0 0 26 26">
                     <Path
                       stroke="#fff"
@@ -223,8 +217,7 @@ export default ({ navigation }: any) => {
                       d="M18.778 2.528a1.083 1.083 0 00-1.083-1.084H3.972A1.083 1.083 0 002.89 2.528V19.86a1.083 1.083 0 001.083 1.083h.361V2.89h14.445v-.361z"
                     ></Path>
                   </Svg>
-                )}
-              </>
+                ))}
             </View>
           </TouchableWithoutFeedback>
           <Text style={{ fontSize: 16, marginTop: 10 }}>
@@ -308,19 +301,25 @@ export default ({ navigation }: any) => {
           },
         ]}
       />
-      <Popup visible={visible} handleClose={() => setVisible(false)}>
-        <Input
-          placeholder="Enter new group ID"
-          label="Group ID"
-          value={form.data}
-          handleInput={(e) => setForm({ ...form, data: e })}
-          errorMessage={form.errors}
-          style={{ marginBottom: 20 }}
-        />
-        <Button loading={loading} handleClick={() => updateGroup()}>
-          Join Group
-        </Button>
-      </Popup>
+      {currentData &&
+      Object.values(currentData).length &&
+      (currentData.newUser || currentData.groupID === null) ? (
+        <FirstSteps onComplete={updateData} />
+      ) : (
+        <Popup visible={visible} handleClose={() => setVisible(false)}>
+          <Input
+            placeholder="Enter new group ID"
+            label="Group ID"
+            value={form.data}
+            handleInput={(e) => setForm({ ...form, data: e })}
+            errorMessage={form.errors}
+            style={{ marginBottom: 20 }}
+          />
+          <Button loading={loading} handleClick={() => updateGroup()}>
+            Join Group
+          </Button>
+        </Popup>
+      )}
     </Layout>
   );
 };

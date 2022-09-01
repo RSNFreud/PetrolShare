@@ -8,12 +8,14 @@ type ModalType = {
   children: JSX.Element | Array<JSX.Element>;
   height?: string | number;
   animate?: boolean;
+  showClose?: boolean;
 };
 
 export default ({
   visible,
   handleClose,
   children,
+  showClose = true,
   height = "auto",
   animate = true,
 }: ModalType) => {
@@ -87,28 +89,30 @@ export default ({
           borderColor: "#063943",
         }}
       >
-        <Pressable
-          android_disableSound={true}
-          onPress={() => {
-            handleClose();
-          }}
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 10,
-            width: 20,
-            height: 20,
-            alignContent: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Svg width="10" height="10" fill="none" viewBox="0 0 10 10">
-            <Path
-              fill="#fff"
-              d="M10 .875L9.125 0 5 4.125.875 0 0 .875 4.125 5 0 9.125.875 10 5 5.875 9.125 10 10 9.125 5.875 5 10 .875z"
-            ></Path>
-          </Svg>
-        </Pressable>
+        {showClose && (
+          <Pressable
+            android_disableSound={true}
+            onPress={() => {
+              handleClose();
+            }}
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 10,
+              width: 20,
+              height: 20,
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Svg width="10" height="10" fill="none" viewBox="0 0 10 10">
+              <Path
+                fill="#fff"
+                d="M10 .875L9.125 0 5 4.125.875 0 0 .875 4.125 5 0 9.125.875 10 5 5.875 9.125 10 10 9.125 5.875 5 10 .875z"
+              ></Path>
+            </Svg>
+          </Pressable>
+        )}
         {children}
       </Animated.View>
     </Modal>
