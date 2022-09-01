@@ -1,9 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigation,
+  useRoute,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 import axios from "axios";
 
@@ -28,7 +34,9 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState<any>({});
+  const [firstSteps, setFirstSteps] = useState(false);
+  const navRef = useNavigationContainerRef();
 
   const login = React.useMemo(
     () => ({
@@ -115,9 +123,20 @@ export default function App() {
     setItem("firstLoad", "true");
   }, []);
 
+  useEffect(() => {
+    if (
+      navRef.getCurrentRoute.name != "Dashboard" &&
+      "groupID" in userData &&
+      userData["groupID"] === null
+    )
+      setFirstSteps(true);
+    else setFirstSteps(false);
+  }, [userData]);
+
   return (
     <SafeAreaProvider>
       <NavigationContainer
+        ref={navRef}
         linking={LinkingConfiguration}
         theme={{
           dark: true,
@@ -140,14 +159,18 @@ export default function App() {
             {loading || login.isLoggedIn ? (
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} />
-                <Stack.Screen name="Settings" component={Settings} />
-                <Stack.Screen name="ManageDistance" component={distance} />
-                <Stack.Screen name="AddManual" component={manual} />
-                <Stack.Screen name="AddOdometer" component={odometer} />
-                <Stack.Screen name="AddPreset" component={preset} />
-                <Stack.Screen name="AddPetrol" component={petrol} />
-                <Stack.Screen name="Logs" component={logs} />
-                <Stack.Screen name="Invoices" component={invoices} />
+                {!firstSteps && (
+                  <>
+                    <Stack.Screen name="Settings" component={Settings} />
+                    <Stack.Screen name="ManageDistance" component={distance} />
+                    <Stack.Screen name="AddManual" component={manual} />
+                    <Stack.Screen name="AddOdometer" component={odometer} />
+                    <Stack.Screen name="AddPreset" component={preset} />
+                    <Stack.Screen name="AddPetrol" component={petrol} />
+                    <Stack.Screen name="Logs" component={logs} />
+                    <Stack.Screen name="Invoices" component={invoices} />
+                  </>
+                )}
               </>
             ) : (
               <>

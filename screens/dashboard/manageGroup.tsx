@@ -9,28 +9,68 @@ import Svg, { Path } from "react-native-svg";
 import * as Clipboard from "expo-clipboard";
 import { AuthContext } from "../../hooks/context";
 import axios from "axios";
+import { Alert } from "../../hooks";
 
-export default ({ onComplete }: { onComplete: () => void }) => {
-  const [groupID, setGroupID] = useState(generateGroupID());
-  const [animating, setAnimating] = useState(false);
-  const { retrieveData } = useContext(AuthContext);
+type PropsType = {
+  onComplete: () => void;
+  closeButton?: boolean;
+  firstSteps?: boolean;
+  initialVisible?: boolean;
+  handleClose?: () => void;
+};
 
-  const Default = () => (
+type DefaultType = {
+  firstSteps: boolean;
+  createGroup: () => void;
+  joinGroup: () => void;
+};
+
+const Default = ({ firstSteps, createGroup, joinGroup }: DefaultType) => {
+  console.log(firstSteps);
+
+  return (
     <View>
-      <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 10 }}>
-        Welcome to PetrolShare!
-      </Text>
+      {firstSteps && (
+        <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 10 }}>
+          Welcome to PetrolShare!
+        </Text>
+      )}
       <Text style={{ fontSize: 18, marginBottom: 30, lineHeight: 27 }}>
         Would you like to create a group or join an existing group?
       </Text>
       <Button styles={{ marginBottom: 20 }} handleClick={createGroup}>
         Create a new group
       </Button>
-      <Button handleClick={() => setPopupData(<JoinGroup />)}>
-        Join an existing group
-      </Button>
+      <Button handleClick={joinGroup}>Join an existing group</Button>
     </View>
   );
+};
+
+export default ({
+  onComplete,
+  handleClose,
+  closeButton = false,
+  firstSteps = true,
+  initialVisible = true,
+}: PropsType) => {
+  const [groupID, setGroupID] = useState(generateGroupID());
+  const [animating, setAnimating] = useState(firstSteps ? false : true);
+  const { retrieveData } = useContext(AuthContext);
+
+  const DefaultProps: DefaultType = {
+    firstSteps: firstSteps,
+    createGroup: () => createGroup(),
+    joinGroup: () => setPopupData(<JoinGroup firstSteps={firstSteps} />),
+  };
+
+  useEffect(() => {
+    setVisible(initialVisible);
+    console.log(firstSteps, DefaultProps);
+  }, [initialVisible]);
+
+  useEffect(() => {
+    console.log(firstSteps, DefaultProps);
+  }, [firstSteps]);
 
   const Complete = ({ groupID }: { groupID: string }) => {
     const [copied, setCopied] = useState(false);
@@ -47,12 +87,16 @@ export default ({ onComplete }: { onComplete: () => void }) => {
       <View>
         <Box>
           <Text style={{ fontSize: 16, lineHeight: 25 }}>
-            Thank you for registering for PetrolShare{" "}
-            <Text style={{ fontWeight: "bold" }}>
-              {retrieveData && retrieveData().fullName}
-            </Text>
-            .{"\n"}
-            {"\n"}
+            {firstSteps && (
+              <>
+                Thank you for registering for PetrolShare{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  {retrieveData && retrieveData().fullName}
+                </Text>
+                .{"\n"}
+                {"\n"}
+              </>
+            )}
             Your Group ID number is:
           </Text>
           <View
@@ -106,7 +150,7 @@ export default ({ onComplete }: { onComplete: () => void }) => {
     );
   };
 
-  const JoinGroup = () => {
+  const JoinGroup = ({ firstSteps }: { firstSteps: boolean }) => {
     const [form, setForm] = useState({
       data: "",
       errors: "",
@@ -119,23 +163,62 @@ export default ({ onComplete }: { onComplete: () => void }) => {
       else setForm({ ...form, errors: "" });
       setLoading(true);
       setGroupID(form.data);
+      if (!firstSteps)
+        Alert(
+          "Are you sure you want to join a new group?",
+          "This will delete all the current data you have saved.",
+          [
+            {
+              text: "Yes",
+              onPress: async () => {
+                setLoading(true);
+                axios
+                  .post(
+                    process.env.REACT_APP_API_ADDRESS + `/user/change-group`,
+                    {
+                      authenticationKey: retrieveData().authenticationKey,
+                      groupID: form.data,
+                    }
+                  )
+                  .then(async (e) => {
+                    setLoading(false);
+                    setVisible(false);
 
-      axios
-        .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
-          authenticationKey: retrieveData().authenticationKey,
-          groupID: form.data,
-        })
-        .then(async (e) => {
-          setLoading(false);
-          setPopupData(<Complete groupID={form.data} />);
-        })
-        .catch(() => {
-          setLoading(false);
-          setForm({
-            ...form,
-            errors: "There was no group found with that ID!",
+                    setForm({
+                      data: "",
+                      errors: "",
+                    });
+                    setPopupData(<Complete groupID={form.data} />);
+                  })
+                  .catch(() => {
+                    setLoading(false);
+                    setForm({
+                      ...form,
+                      errors: "There was no group found with that ID!",
+                    });
+                  });
+              },
+            },
+            { text: "No", style: "cancel", onPress: () => setLoading(false) },
+          ]
+        );
+      else
+        axios
+          .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
+            authenticationKey: retrieveData().authenticationKey,
+            groupID: form.data,
+          })
+          .then(async (e) => {
+            setLoading(false);
+            setPopupData(<Complete groupID={form.data} />);
+          })
+          .catch(() => {
+            setLoading(false);
+            setForm({
+              ...form,
+              errors: "There was no group found with that ID!",
+            });
           });
-        });
     };
 
     return (
@@ -154,7 +237,7 @@ export default ({ onComplete }: { onComplete: () => void }) => {
         <Button
           style="ghost"
           styles={{ marginTop: 20 }}
-          handleClick={() => setPopupData(<Default />)}
+          handleClick={() => setPopupData(<Default {...DefaultProps} />)}
         >
           Back
         </Button>
@@ -162,12 +245,13 @@ export default ({ onComplete }: { onComplete: () => void }) => {
     );
   };
 
-  const [visible, setVisible] = useState(true);
-  const [popupData, setPopupData] = useState(<Default />);
+  const [visible, setVisible] = useState(initialVisible);
+  const [popupData, setPopupData] = useState(<Default {...DefaultProps} />);
 
   const close = () => {
     setAnimating(true);
     setVisible(false);
+    setPopupData(<Default {...DefaultProps} firstSteps={false} />);
     onComplete();
   };
 
@@ -179,13 +263,12 @@ export default ({ onComplete }: { onComplete: () => void }) => {
       groupID: groupID,
     });
   };
-
   return (
     <Popup
-      showClose={false}
+      showClose={closeButton}
       animate={animating}
       visible={visible}
-      handleClose={() => null}
+      handleClose={() => (firstSteps ? null : handleClose && handleClose())}
       children={popupData}
     />
   );

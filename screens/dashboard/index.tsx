@@ -10,7 +10,7 @@ import * as Clipboard from "expo-clipboard";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
 import { deleteItem, getItem, setItem, Alert } from "../../hooks";
-import FirstSteps from "./firstSteps";
+import ManageGroup from "./manageGroup";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -21,23 +21,16 @@ export default ({ navigation }: any) => {
   const dataRetrieved = useRef(false);
   const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    data: "",
-    errors: "",
-  });
 
   useEffect(() => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
       dataRetrieved.current = true;
       setCurrentData(retrieveData());
-      getDistance();
       updateData();
       console.log(retrieveData().newUser || retrieveData().groupID === null);
 
       navigation.addListener("focus", async () => {
-        getDistance();
         updateData();
         if ((await getItem("showToast")) === "distanceUpdated") {
           await deleteItem("showToast");
@@ -64,51 +57,6 @@ export default ({ navigation }: any) => {
       });
     }
   }, [retrieveData]);
-
-  const updateGroup = () => {
-    if (!form.data)
-      return setForm({ ...form, errors: "Please enter a group ID!" });
-    else setForm({ ...form, errors: "" });
-
-    Alert(
-      "Are you sure you want to join a new group?",
-      "This will delete all the current data you have saved.",
-      [
-        {
-          text: "Yes",
-          onPress: async () => {
-            setLoading(true);
-            axios
-              .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
-                authenticationKey: retrieveData().authenticationKey,
-                groupID: form.data,
-              })
-              .then(async (e) => {
-                setLoading(false);
-                setVisible(false);
-                Toast.show({
-                  type: "default",
-                  text1: "Group ID updated successfully!",
-                });
-                setForm({
-                  data: "",
-                  errors: "",
-                });
-                updateData();
-              })
-              .catch(() => {
-                setLoading(false);
-                setForm({
-                  ...form,
-                  errors: "There was no group found with that ID!",
-                });
-              });
-          },
-        },
-        { text: "No", style: "cancel" },
-      ]
-    );
-  };
 
   const getDistance = () => {
     axios
@@ -149,6 +97,7 @@ export default ({ navigation }: any) => {
           sessionStorage = JSON.parse(sessionStorage);
           sessionStorage = { ...sessionStorage, ...data[0] };
           setData(sessionStorage);
+          getDistance();
           setCurrentData(sessionStorage);
           await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
@@ -272,7 +221,7 @@ export default ({ navigation }: any) => {
             handleClick: () => navigation.navigate("AddPetrol"),
           },
           {
-            text: "Join a Group",
+            text: "Manage Group",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -303,22 +252,16 @@ export default ({ navigation }: any) => {
       />
       {currentData &&
       Object.values(currentData).length &&
-      (currentData.newUser || currentData.groupID === null) ? (
-        <FirstSteps onComplete={updateData} />
+      currentData.groupID === null ? (
+        <ManageGroup onComplete={updateData} />
       ) : (
-        <Popup visible={visible} handleClose={() => setVisible(false)}>
-          <Input
-            placeholder="Enter new group ID"
-            label="Group ID"
-            value={form.data}
-            handleInput={(e) => setForm({ ...form, data: e })}
-            errorMessage={form.errors}
-            style={{ marginBottom: 20 }}
-          />
-          <Button loading={loading} handleClick={() => updateGroup()}>
-            Join Group
-          </Button>
-        </Popup>
+        <ManageGroup
+          firstSteps={false}
+          closeButton={true}
+          handleClose={() => setVisible(false)}
+          initialVisible={visible}
+          onComplete={updateData}
+        />
       )}
     </Layout>
   );
