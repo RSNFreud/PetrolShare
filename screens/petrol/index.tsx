@@ -15,9 +15,11 @@ export default ({ navigation }: any) => {
   const [data, setData] = useState({
     litersFilled: "",
     totalPrice: "",
+    odometer: "",
   });
 
   const [errors, setErrors] = useState({
+    odometer: "",
     litersFilled: "",
     totalPrice: "",
     submit: "",
@@ -43,11 +45,10 @@ export default ({ navigation }: any) => {
         authenticationKey: retrieveData().authenticationKey,
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,
+        odometer: data.odometer,
       })
       .then(({ data }) => {
         setLoading(false);
-        console.log(data);
-
         navigation.navigate("Invoices", { id: data });
       })
       .catch(({ response }) => {
@@ -88,6 +89,14 @@ export default ({ navigation }: any) => {
             errorMessage={errors.totalPrice}
             label="Total Cost"
             placeholder="Enter the total cost of refueling"
+            style={{ marginBottom: 20 }}
+          />
+          <Input
+            handleInput={(e) => setData({ ...data, odometer: e })}
+            value={data.odometer}
+            errorMessage={errors.odometer}
+            label="Current Odometer"
+            placeholder="Enter the current odometer value"
           />
         </View>
         <View>

@@ -10,11 +10,11 @@ import * as Clipboard from "expo-clipboard";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
 import { deleteItem, getItem, setItem, Alert } from "../../hooks";
-import ManageGroup from "./manageGroup";
+import ManageGroup from "../../components/manageGroup";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
-  const [currentData, setCurrentData] = useState<null | any>(null);
+  const [firstSteps, setFirstSteps] = useState(false);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
@@ -26,9 +26,15 @@ export default ({ navigation }: any) => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
       dataRetrieved.current = true;
-      setCurrentData(retrieveData());
       updateData();
-      console.log(retrieveData().newUser || retrieveData().groupID === null);
+      if (
+        retrieveData() &&
+        Object.values(retrieveData()).length &&
+        retrieveData().groupID === null
+      ) {
+        setFirstSteps(true);
+        setVisible(true);
+      }
 
       navigation.addListener("focus", async () => {
         updateData();
@@ -98,7 +104,9 @@ export default ({ navigation }: any) => {
           sessionStorage = { ...sessionStorage, ...data[0] };
           setData(sessionStorage);
           getDistance();
-          setCurrentData(sessionStorage);
+          if (Object.values(data).length && data.groupID !== null)
+            setFirstSteps(false);
+
           await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
           console.log(err);
@@ -250,19 +258,13 @@ export default ({ navigation }: any) => {
           },
         ]}
       />
-      {currentData &&
-      Object.values(currentData).length &&
-      currentData.groupID === null ? (
-        <ManageGroup onComplete={updateData} />
-      ) : (
-        <ManageGroup
-          firstSteps={false}
-          closeButton={true}
-          handleClose={() => setVisible(false)}
-          initialVisible={visible}
-          onComplete={updateData}
-        />
-      )}
+      <ManageGroup
+        closeButton={true}
+        handleClose={() => setVisible(false)}
+        visible={visible}
+        onComplete={updateData}
+        firstSteps={firstSteps}
+      />
     </Layout>
   );
 };

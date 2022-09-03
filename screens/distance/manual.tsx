@@ -17,7 +17,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
   const { navigate } = useNavigation() as any;
 
   useEffect(() => {
-    if (data.distance && !isNaN(parseInt(data.distance))) {
+    if (data.distance && !isNaN(parseFloat(data.distance))) {
       setDistance(data.distance);
     } else {
       setDistance("");
@@ -36,7 +36,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
       distance = data.distance;
     }
 
-    if (parseInt(distance) <= 0 || isNaN(parseInt(data.distance)))
+    if (parseFloat(distance) <= 0 || isNaN(parseFloat(data.distance)))
       return setErrors("Please enter a distance above 0!");
 
     if (!retrieveData) return;

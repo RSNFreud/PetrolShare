@@ -3,15 +3,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   NavigationContainer,
   DefaultTheme,
-  useNavigation,
-  useRoute,
   useNavigationContainerRef,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
+import { useWindowDimensions } from "react-native";
 
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/Login";
@@ -20,6 +19,7 @@ import NotFoundScreen from "./screens/NotFoundScreen";
 import LinkingConfiguration from "./hooks/LinkingConfiguration";
 import Settings from "./screens/settings";
 import distance from "./screens/distance";
+import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import manual from "./screens/distance/manual";
 import odometer from "./screens/distance/odometer";
@@ -28,6 +28,7 @@ import { AuthContext } from "./hooks/context";
 import { deleteItem, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
+import { useFonts } from "expo-font";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -37,7 +38,13 @@ export default function App() {
   const [userData, setUserData] = useState<any>({});
   const [firstSteps, setFirstSteps] = useState(false);
   const navRef = useNavigationContainerRef();
-
+  const { width } = useWindowDimensions();
+  const [fontsLoaded] = useFonts({
+    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-Light": require("./assets/fonts/Roboto-Light.ttf"),
+  });
   const login = React.useMemo(
     () => ({
       signIn: async (e: any) => {
@@ -79,6 +86,7 @@ export default function App() {
   );
 
   useEffect(() => {
+    if (!fontsLoaded) return;
     const async = async () => {
       try {
         const data = await getItem("userData");
@@ -99,21 +107,21 @@ export default function App() {
             .then(async ({ data }) => {
               await setItem("userData", JSON.stringify({ ...parsed, ...data }));
               setUserData({ ...parsed, ...data });
-              setLoading(false);
+              if (fontsLoaded) setLoading(false);
             })
             .catch(() => {
-              setLoading(false);
+              if (fontsLoaded) setLoading(false);
               return login.signOut;
             });
         } else {
-          setLoading(false);
+          if (fontsLoaded) setLoading(false);
         }
       } catch (err) {
         console.log(err);
       }
     };
     async();
-  }, []);
+  }, [fontsLoaded]);
 
   useEffect(() => {
     if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
@@ -156,7 +164,9 @@ export default function App() {
               animationDuration: 300,
             }}
           >
-            {loading || login.isLoggedIn ? (
+            {width > 768 ? (
+              <Stack.Screen name="DesktopScreen" component={DesktopScreen} />
+            ) : loading || login.isLoggedIn ? (
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 {!firstSteps && (

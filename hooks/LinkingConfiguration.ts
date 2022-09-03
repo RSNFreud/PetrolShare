@@ -21,6 +21,7 @@ const linking: any = {
       Invoices: 'invoices',
       Dashboard: 'dashboard',
       NotFound: '*',
+      DesktopScreen: '/'
     },
   },
 };
