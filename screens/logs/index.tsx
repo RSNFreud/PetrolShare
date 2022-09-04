@@ -374,7 +374,7 @@ export default () => {
     const data = logData.current;
     for (let i = 0; i < Object.entries(data).length; i++) {
       const key: any = Object.entries(data)[i];
-      if (key[1]["sessionStart"] < (currentData?.sessionStart || Date.now())) {
+      if (key[1]["sessionEnd"] > currentData?.sessionStart - 100) {
         setPageData({
           ...pageData,
           currentPage: pageData.currentPage - 1,

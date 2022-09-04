@@ -16,10 +16,13 @@ export const deleteItem = async (key: string) => {
   else return await SecureStore.deleteItemAsync(key);
 };
 
-export const convertToDate = (date: string) => {
+export const convertToDate = (date: string, time?: boolean) => {
   let x: Date = new Date(parseInt(date));
+  if (!time)
+    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${x.getMonth() < 10 ? "0" : ""
+      }${x.getMonth()}/${x.getFullYear()}`;
   return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${x.getMonth() < 10 ? "0" : ""
-    }${x.getMonth()}/${x.getFullYear()}`;
+    }${x.getMonth()}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()}:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${x.getHours() > 12 ? 'pm' : 'am'}`;
 };
 
 

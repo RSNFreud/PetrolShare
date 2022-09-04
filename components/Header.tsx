@@ -1,5 +1,5 @@
 import { Button, Text } from "../components/Themed";
-import { View } from "react-native";
+import { TouchableWithoutFeedback, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
@@ -24,17 +24,19 @@ export default ({ isLoggedIn }: PropsType) => {
         paddingBottom: isLoggedIn ? 44 : 22,
       }}
     >
-      <Text
-        style={{
-          fontWeight: "700",
-          fontSize: 26,
-          lineHeight: 31,
-          color: "white",
-          textAlign: isLoggedIn ? "left" : "center",
-        }}
-      >
-        PetrolShare
-      </Text>
+      <TouchableWithoutFeedback onPress={() => navigation.popToTop()}>
+        <Text
+          style={{
+            fontWeight: "700",
+            fontSize: 26,
+            lineHeight: 31,
+            color: "white",
+            textAlign: isLoggedIn ? "left" : "center",
+          }}
+        >
+          PetrolShare
+        </Text>
+      </TouchableWithoutFeedback>
       {!!isLoggedIn && (
         <Button
           noText

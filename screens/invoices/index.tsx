@@ -107,7 +107,7 @@ export default ({ navigation }: any) => {
                       Invoice #{e["invoiceID"]}
                     </Text>
                     <Text style={{ fontSize: 16 }}>
-                      {convertToDate(e["sessionEnd"])}
+                      {convertToDate(e["sessionEnd"], true)}
                     </Text>
                   </TouchableOpacity>
                 ))}
