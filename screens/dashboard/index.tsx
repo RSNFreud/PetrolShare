@@ -45,6 +45,13 @@ export default ({ navigation }: any) => {
             text1: "Distance successfully updated!",
           });
         }
+        if ((await getItem("showToast")) === "nameUpdated") {
+          await deleteItem("showToast");
+          Toast.show({
+            type: "default",
+            text1: "Your name has been successfully updated!",
+          });
+        }
         if ((await getItem("showToast")) === "draftSaved") {
           await deleteItem("showToast");
           Toast.show({

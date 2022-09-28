@@ -165,7 +165,11 @@ export default function App() {
             }}
           >
             {width > 768 ? (
-              <Stack.Screen name="DesktopScreen" component={DesktopScreen} />
+              <Stack.Screen
+                name="DesktopScreen"
+                component={DesktopScreen}
+                options={{ title: "PetrolShare" }}
+              />
             ) : loading || login.isLoggedIn ? (
               <>
                 <Stack.Screen name="Dashboard" component={Dashboard} />

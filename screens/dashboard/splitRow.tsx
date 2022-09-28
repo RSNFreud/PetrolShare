@@ -9,6 +9,7 @@ type PropTypes = {
     icon: JSX.Element;
     colourTheme?: "regular" | "red";
     handleClick?: () => void;
+    disabled?: boolean;
   }>;
   style?: View["props"]["style"];
 };
@@ -37,6 +38,7 @@ export default ({ buttons, style }: PropTypes) => {
         <DashboardButton
           style={{ width: buttonWidth }}
           handleClick={e.handleClick}
+          disabled={e.disabled}
           key={e.text}
           colourTheme={e.colourTheme}
         >
