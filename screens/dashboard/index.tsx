@@ -1,15 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Box, Layout, Text, Button } from "../../components/Themed";
+import { Box, Layout, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
 import { View, TouchableWithoutFeedback } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import Svg, { G, Path, Mask } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
-import Popup from "../../components/Popup";
-import Input from "../../components/Input";
-import { deleteItem, getItem, setItem, Alert } from "../../hooks";
+import { deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
 
 export default ({ navigation }: any) => {
@@ -253,7 +251,6 @@ export default ({ navigation }: any) => {
         buttons={[
           {
             text: "Manage Group",
-            disabled: true,
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -263,6 +260,45 @@ export default ({ navigation }: any) => {
               </Svg>
             ),
             handleClick: () => setVisible(true),
+          },
+          {
+            text: "Group Settings",
+            icon: (
+              <Svg width="23" height="23" fill="none" viewBox="0 0 23 23">
+                <G clipPath="url(#a)">
+                  <Path
+                    fill="#fff"
+                    d="M7.667 10.312H7.11a5.539 5.539 0 00-4.108 1.61l-.154.179v5.29h2.607v-3.003l.351-.396.16-.186a7.028 7.028 0 013.01-1.827 4.21 4.21 0 01-1.31-1.667zm-.575-1.246h.198a4.12 4.12 0 011.987-4.019 2.613 2.613 0 10-2.185 4.044v-.025zm8.516-.479a4.21 4.21 0 010 .44c.123.02.246.03.37.032h.122a2.613 2.613 0 10-2.383-3.948 4.17 4.17 0 011.891 3.476zm-4.191 2.862a2.856 2.856 0 100-5.712 2.856 2.856 0 000 5.712zm2.624 6.532l.613 1.038c.04.07.107.12.186.14.079.02.162.01.232-.03l.428-.242c.178.137.374.25.58.334v.479c0 .08.033.156.09.212a.31.31 0 00.217.088h1.226a.31.31 0 00.217-.088.296.296 0 00.09-.212v-.48c.208-.084.403-.197.58-.333l.428.242a.311.311 0 00.418-.11l.613-1.038a.296.296 0 00-.111-.41l-.42-.237a2.257 2.257 0 00-.002-.668l.42-.238a.297.297 0 00.113-.41l-.613-1.037a.312.312 0 00-.419-.11l-.427.242a2.473 2.473 0 00-.58-.334V14.3a.297.297 0 00-.09-.212.31.31 0 00-.217-.088h-1.226a.31.31 0 00-.217.088.297.297 0 00-.09.212v.48a2.492 2.492 0 00-.58.333l-.428-.242a.311.311 0 00-.418.11l-.613 1.038a.295.295 0 00.112.41l.42.237a2.254 2.254 0 000 .668l-.42.238a.297.297 0 00-.112.41zM17 15.8c.676 0 1.226.538 1.226 1.2 0 .662-.55 1.2-1.226 1.2-.676 0-1.226-.538-1.226-1.2 0-.662.55-1.2 1.226-1.2z"
+                  ></Path>
+                  <Mask
+                    id="b"
+                    style={{ maskType: "alpha" }}
+                    width="17"
+                    height="12"
+                    x="4"
+                    y="10"
+                    maskUnits="userSpaceOnUse"
+                  >
+                    <path
+                      fill="#D9D9D9"
+                      fillRule="evenodd"
+                      d="M21 10H4v11h9.498c-.045.09-.038.11.068 0h2.617a.413.413 0 01-.289-.117.396.396 0 01-.12-.283v-.64c-.133-.053-.47.205-.81.464-.36.276-.722.553-.844.459h-.448a3.67 3.67 0 01-.106.117h-.068a8 8 0 01.268-.455c.192-.315.4-.655.354-.667a.407.407 0 01-.248-.186l-.817-1.384a.396.396 0 01.149-.546l.56-.317a3.007 3.007 0 010-.89l-.56-.317a.394.394 0 01-.15-.546l.818-1.384a.402.402 0 01.248-.187.416.416 0 01.31.04l.57.323c.236-.182.497-.332.774-.445V13.4c0-.106.043-.208.12-.283a.413.413 0 01.289-.117h1.634c.108 0 .212.042.289.117a.4.4 0 01.12.283v.64c.277.112.537.262.773.444l.57-.322a.416.416 0 01.559.146l.817 1.384a.396.396 0 01-.15.546l-.56.317a3.01 3.01 0 01.001.89l.56.317a.402.402 0 01.204.347V10zm0 8.109c0 .07-.018.138-.054.2l-.817 1.383a.415.415 0 01-.559.146l-.57-.322a3.324 3.324 0 01-.774.445v.639a.396.396 0 01-.12.283.413.413 0 01-.289.117H21v-2.891z"
+                      clipRule="evenodd"
+                    ></path>
+                  </Mask>
+                  <g fill="#fff" mask="url(#b)">
+                    <path d="M20.023 11.902a5.54 5.54 0 00-4.108-1.61 6.768 6.768 0 00-.697.039 4.21 4.21 0 01-1.277 1.565 6.97 6.97 0 013.194 1.917l.16.179.345.396v3.009h2.517V12.08l-.134-.178z"></path>
+                    <path d="M11.57 12.97a6.19 6.19 0 00-4.542 1.724l-.16.18v4.043a1.004 1.004 0 001.022.984h7.341a1.001 1.001 0 001.022-.983v-4.032l-.153-.191a6.12 6.12 0 00-4.53-1.726z"></path>
+                  </g>
+                </G>
+                <defs>
+                  <clipPath id="a">
+                    <path fill="#fff" d="M0 0h23v23H0z"></path>
+                  </clipPath>
+                </defs>
+              </Svg>
+            ),
+            disabled: true,
           },
         ]}
       />
