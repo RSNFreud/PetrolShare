@@ -10,7 +10,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { useWindowDimensions } from "react-native";
+import { Platform, useWindowDimensions } from "react-native";
 
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/Login";
@@ -164,7 +164,7 @@ export default function App() {
               animationDuration: 300,
             }}
           >
-            {width > 768 ? (
+            {width > 768 && Platform.OS === "web" ? (
               <Stack.Screen
                 name="DesktopScreen"
                 component={DesktopScreen}
