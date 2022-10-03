@@ -13,9 +13,11 @@ type PropsType = {
   visible: boolean;
   firstSteps: boolean;
   handleClose?: () => void;
+  screen?: JSX.Element | null;
 };
 
 export default ({
+  screen,
   handleClose,
   closeButton,
   firstSteps,
@@ -23,7 +25,7 @@ export default ({
   onComplete,
 }: PropsType) => {
   const { retrieveData } = useContext(AuthContext);
-  const [currentScreen, setCurrentScreen] = useState(<></>);
+  const [currentScreen, setCurrentScreen] = useState(screen || <></>);
   const [groupID, setGroupID] = useState(generateGroupID());
   const [animating, setAnimating] = useState(firstSteps ? false : true);
 
@@ -81,12 +83,19 @@ export default ({
 
   useEffect(() => {
     if (firstSteps) setAnimating(false);
+    if (screen) return setCurrentScreen(screen);
+
     changeScreen("Default");
   }, []);
 
   useEffect(() => {
+    if (screen) return setCurrentScreen(screen);
     changeScreen("Default");
   }, [visible]);
+
+  useEffect(() => {
+    if (screen) setCurrentScreen(screen);
+  }, [screen]);
 
   return (
     <Popup

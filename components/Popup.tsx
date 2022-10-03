@@ -1,30 +1,36 @@
-import { Animated, Dimensions, Modal, Pressable } from "react-native";
-import { useEffect, useState } from "react";
-import Svg, { Path } from "react-native-svg";
+import {
+  Animated,
+  Dimensions,
+  Modal,
+  Pressable,
+  ScrollView,
+} from 'react-native'
+import { useEffect, useState } from 'react'
+import Svg, { Path } from 'react-native-svg'
 
 type ModalType = {
-  visible: boolean;
-  handleClose: () => void;
-  children: JSX.Element | Array<JSX.Element>;
-  height?: string | number;
-  animate?: boolean;
-  showClose?: boolean;
-};
+  visible: boolean
+  handleClose: () => void
+  children: JSX.Element | Array<JSX.Element>
+  height?: string | number
+  animate?: boolean
+  showClose?: boolean
+}
 
 export default ({
   visible,
   handleClose,
   children,
   showClose = true,
-  height = "auto",
+  height = 'auto',
   animate = true,
 }: ModalType) => {
-  const [opened, setOpened] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  let position = new Animated.Value(1000);
+  const [opened, setOpened] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  let position = new Animated.Value(1000)
   useEffect(() => {
-    if (opened) return;
-    if (!animate) return position.setValue(0);
+    if (opened) return
+    if (!animate) return position.setValue(0)
 
     Animated.sequence([
       Animated.timing(position, {
@@ -33,17 +39,17 @@ export default ({
         useNativeDriver: true,
       }),
     ]).start(() => {
-      if (isVisible || visible) setOpened(true);
-    });
-    position.addListener(({ value }) => {});
+      if (isVisible || visible) setOpened(true)
+    })
+    position.addListener(({ value }) => {})
 
     return () => {
-      position.removeAllListeners();
-    };
-  }, [position]);
+      position.removeAllListeners()
+    }
+  }, [position])
 
   const close = () => {
-    position.setValue(0);
+    position.setValue(0)
     Animated.sequence([
       Animated.timing(position, {
         toValue: 1000,
@@ -51,14 +57,14 @@ export default ({
         useNativeDriver: true,
       }),
     ]).start((e) => {
-      setIsVisible(false);
-      setOpened(false);
-    });
-  };
+      setIsVisible(false)
+      setOpened(false)
+    })
+  }
   useEffect(() => {
-    if (!visible && isVisible) return close();
-    else setIsVisible(visible);
-  }, [visible]);
+    if (!visible && isVisible) return close()
+    else setIsVisible(visible)
+  }, [visible])
 
   return (
     <Modal animationType="fade" visible={isVisible} transparent={true}>
@@ -66,43 +72,41 @@ export default ({
         onPress={() => handleClose()}
         android_disableSound={true}
         style={{
-          backgroundColor: "rgba(35, 35, 35, 0.8)",
-          height: Dimensions.get("window").height,
+          backgroundColor: 'rgba(35, 35, 35, 0.8)',
+          height: Dimensions.get('window').height,
         }}
       />
       <Animated.View
         style={{
-          backgroundColor: "#001E24",
+          backgroundColor: '#001E24',
           height: height,
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           transform: [{ translateY: position }],
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
-          width: "100%",
+          width: '100%',
+          maxHeight: '96%',
           zIndex: 2,
-          paddingTop: 40,
-          paddingHorizontal: 20,
-          paddingBottom: 40,
-          borderStyle: "solid",
+          borderStyle: 'solid',
           borderWidth: 1,
-          borderColor: "#063943",
+          borderColor: '#063943',
         }}
       >
         {showClose && (
           <Pressable
             android_disableSound={true}
             onPress={() => {
-              handleClose();
+              handleClose()
             }}
             style={{
-              position: "absolute",
+              position: 'absolute',
               right: 0,
               top: 10,
               width: 20,
               height: 20,
-              alignContent: "center",
-              justifyContent: "center",
+              alignContent: 'center',
+              justifyContent: 'center',
             }}
           >
             <Svg width="10" height="10" fill="none" viewBox="0 0 10 10">
@@ -113,8 +117,16 @@ export default ({
             </Svg>
           </Pressable>
         )}
-        {children}
+        <ScrollView
+          style={{
+            height: '100%',
+            paddingVertical: 40,
+            paddingHorizontal: 20,
+          }}
+        >
+          {children}
+        </ScrollView>
       </Animated.View>
     </Modal>
-  );
-};
+  )
+}
