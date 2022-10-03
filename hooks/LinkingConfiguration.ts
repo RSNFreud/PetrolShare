@@ -4,7 +4,7 @@
  * https://reactnavigation.org/docs/configuring-links
  */
 
-import * as Linking from 'expo-linking';
+import * as Linking from 'expo-linking'
 
 const linking: any = {
   prefixes: [Linking.createURL('/')],
@@ -21,9 +21,10 @@ const linking: any = {
       Invoices: 'invoices',
       Dashboard: 'dashboard',
       NotFound: '*',
-      DesktopScreen: '/'
+      DesktopScreen: '/',
+      GroupSettings: 'group-settings',
     },
   },
-};
+}
 
-export default linking;
+export default linking
