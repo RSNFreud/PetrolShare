@@ -18,11 +18,13 @@ export const deleteItem = async (key: string) => {
 
 export const convertToDate = (date: string, time?: boolean) => {
   let x: Date = new Date(parseInt(date));
+  const month = x.getMonth() + 1
+
   if (!time)
-    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${x.getMonth() < 10 ? "0" : ""
-      }${x.getMonth()}/${x.getFullYear()}`;
-  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${x.getMonth() < 10 ? "0" : ""
-    }${x.getMonth()}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()}:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${x.getHours() > 12 ? 'pm' : 'am'}`;
+    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${month < 10 ? "0" : ""
+      }${month}/${x.getFullYear()}`;
+  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${month < 10 ? "0" : ""
+    }${month}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()}:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${x.getHours() > 12 ? 'pm' : 'am'}`;
 };
 
 

@@ -71,7 +71,7 @@ export default ({
 
   const createGroup = async () => {
     setGroupID(generateGroupID());
-    await axios.post(process.env.REACT_APP_API_ADDRESS + "/user/create-group", {
+    await axios.post(process.env.REACT_APP_API_ADDRESS + "/group/create", {
       authenticationKey: retrieveData().authenticationKey,
       groupID: groupID,
     });

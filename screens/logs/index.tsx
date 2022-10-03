@@ -13,14 +13,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Toast from "react-native-toast-message";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
-import { Alert } from "../../hooks";
-
-const formatDate = (date: string) => {
-  let x: Date = new Date(parseInt(date));
-  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${
-    x.getMonth() < 10 ? "0" : ""
-  }${x.getMonth()}/${x.getFullYear()}`;
-};
+import { Alert, convertToDate } from "../../hooks";
 
 const DateHead = ({
   data,
@@ -77,8 +70,8 @@ const DateHead = ({
         </Svg>
       </Button>
       <Text style={styles.text}>
-        {formatDate(data ? data["sessionStart"] : Date.now())} -&nbsp;
-        {formatDate(data ? data["sessionEnd"] || Date.now() : Date.now())}
+        {convertToDate(data ? data["sessionStart"] : Date.now())} -&nbsp;
+        {convertToDate(data ? data["sessionEnd"] || Date.now() : Date.now())}
       </Text>
       <Button
         disabled={!hasNext}
@@ -243,7 +236,7 @@ const LogItem = ({
       ]}
     >
       <Text style={{ fontSize: 14, fontWeight: "300", marginBottom: 5 }}>
-        {formatDate(date)}
+        {convertToDate(date)}
       </Text>
       <View
         style={{
