@@ -1,11 +1,17 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
 import Toast from "react-native-toast-message";
-import Input from "../../components/Input";
-import { Button } from "../../components/Themed";
+import Input from "../Input";
+import { Button } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 
-export default ({ handleClose }: { handleClose: any }) => {
+export default ({
+  handleClose,
+  handleBack,
+}: {
+  handleClose: () => void;
+  handleBack: () => void;
+}) => {
   const [emailAddress, setEmailAddress] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
@@ -46,8 +52,15 @@ export default ({ handleClose }: { handleClose: any }) => {
         placeholder="Enter a new email address"
         style={{ marginBottom: 20 }}
       />
-      <Button handleClick={validateForm} loading={loading}>
+      <Button
+        handleClick={validateForm}
+        loading={loading}
+        styles={{ marginBottom: 15 }}
+      >
         Change email
+      </Button>
+      <Button handleClick={handleBack} style={"ghost"}>
+        Back
       </Button>
     </>
   );

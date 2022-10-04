@@ -12,7 +12,6 @@ const linking: any = {
     screens: {
       Login: 'login',
       Register: 'register',
-      Settings: 'settings',
       ManageDistance: 'manage-distance',
       AddPetrol: 'add-petrol',
       AddPreset: 'manage-distance/select-preset',
@@ -22,7 +21,6 @@ const linking: any = {
       Dashboard: 'dashboard',
       NotFound: '*',
       DesktopScreen: '/',
-      GroupSettings: 'group-settings',
     },
   },
 }

@@ -1,11 +1,17 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
 import Toast from "react-native-toast-message";
-import Input from "../../components/Input";
-import { Button, Seperator } from "../../components/Themed";
+import Input from "../Input";
+import { Button, Seperator } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 
-export default ({ handleClose }: { handleClose: any }) => {
+export default ({
+  handleClose,
+  handleBack,
+}: {
+  handleClose: () => void;
+  handleBack: () => void;
+}) => {
   const [data, setData] = useState({
     currentPassword: "",
     password: "",
@@ -91,8 +97,15 @@ export default ({ handleClose }: { handleClose: any }) => {
         placeholder="Confirm your new password"
       />
       <Seperator style={{ marginVertical: 30 }} />
-      <Button handleClick={validateForm} loading={loading}>
+      <Button
+        handleClick={validateForm}
+        loading={loading}
+        styles={{ marginBottom: 15 }}
+      >
         Change password
+      </Button>
+      <Button handleClick={handleBack} style={"ghost"}>
+        Back
       </Button>
     </>
   );

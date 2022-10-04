@@ -77,6 +77,10 @@ export default ({ navigation }: any) => {
           });
         }
       });
+
+      window.addEventListener("dataUpdated", async () => {
+        updateData();
+      });
     }
   }, [retrieveData]);
 
@@ -158,8 +162,6 @@ export default ({ navigation }: any) => {
           setVisible(true);
           return;
         }
-        console.log("triggered");
-
         await setItem("groupData", JSON.stringify(data));
         setGroupData(data);
       })
