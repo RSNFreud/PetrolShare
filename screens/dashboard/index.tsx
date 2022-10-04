@@ -151,15 +151,16 @@ export default ({ navigation }: any) => {
           "/group/get?authenticationKey=" +
           retrieveData().authenticationKey
       )
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         if (!data.distance) {
           setFirstSteps(true);
           setCurrentScreen("Settings");
           setVisible(true);
           return;
         }
+        console.log("triggered");
 
-        setItem("groupData", JSON.stringify(data));
+        await setItem("groupData", JSON.stringify(data));
         setGroupData(data);
       })
       .catch(() => {});

@@ -119,6 +119,9 @@ export default ({
   }, [firstSteps]);
 
   useEffect(() => {
+    if (screen) {
+      return changeScreen("SettingsChange");
+    }
     changeScreen("Default");
   }, [visible]);
 

@@ -7,9 +7,10 @@ import {
   Button,
   Text,
 } from "../../components/Themed";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
+import { convertToSentenceCase, getGroupData } from "../../hooks";
 
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
@@ -27,6 +28,18 @@ export default ({ navigation }: any) => {
 
   const [loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
+  const [fuelFormat, setFuelFormat] = useState("");
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  const init = async () => {
+    const data = await getGroupData();
+    if (!data) return;
+
+    setFuelFormat(data.petrol);
+  };
 
   const handleSubmit = () => {
     let errors: any = {};
@@ -79,8 +92,8 @@ export default ({ navigation }: any) => {
             handleInput={(e) => setData({ ...data, litersFilled: e })}
             value={data.litersFilled}
             errorMessage={errors.litersFilled}
-            label="Liters Filled"
-            placeholder="Enter amount of liters filled"
+            label={`${convertToSentenceCase(fuelFormat)} Filled`}
+            placeholder={`Enter amount of ${fuelFormat} filled`}
             style={{ marginBottom: 20 }}
           />
           <Input

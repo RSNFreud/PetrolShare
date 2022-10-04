@@ -4,8 +4,9 @@ import { ActivityIndicator, View } from "react-native";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
-import { convertToDate, getGroupData } from "../../hooks";
+import { convertToDate, currencyPosition, getGroupData } from "../../hooks";
 import Toast from "react-native-toast-message";
+import { convertCurrency } from "../../hooks/getCurrencies";
 
 type PropsType = {
   invoiceID: number;
@@ -29,8 +30,8 @@ export default ({ invoiceID }: PropsType) => {
   const init = async () => {
     const data = await getGroupData();
     if (!data) return;
-    console.log(data);
-
+    const currency = await convertCurrency(data.currency);
+    data.currency = currency;
     setGroupData(data);
   };
 
@@ -112,7 +113,7 @@ export default ({ invoiceID }: PropsType) => {
             Amount Paid:{" "}
           </Text>
           <Text style={{ fontSize: 16 }}>
-            {data.totalPrice} {groupData.currency}
+            {currencyPosition(data.totalPrice, groupData.currency)}
           </Text>
         </View>
       </Box>
@@ -161,7 +162,7 @@ export default ({ invoiceID }: PropsType) => {
                   </Text>
                 )}
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                  {value.paymentDue} NIS
+                  {currencyPosition(value.paymentDue, groupData.currency)}
                 </Text>
               </View>
               <View>

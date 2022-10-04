@@ -16,6 +16,10 @@ export const deleteItem = async (key: string) => {
   else return await SecureStore.deleteItemAsync(key);
 };
 
+export const convertToSentenceCase = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.substr(1).toLowerCase();
+}
+
 export const convertToDate = (date: string, time?: boolean) => {
   let x: Date = new Date(parseInt(date));
   const month = x.getMonth() + 1
@@ -48,4 +52,10 @@ const alertPolyfill = (title: string, message?: string, buttons?: AlertButton[],
     const cancelOption: any = buttons.find(({ style }) => style === 'cancel')
     cancelOption && cancelOption.onPress()
   }
+}
+
+
+export const currencyPosition = (value: number, symbol: string) => {
+  if (symbol === "$" || symbol === "£") return `${symbol.trim()}${value}`
+  return `${value} ${symbol}`
 }
