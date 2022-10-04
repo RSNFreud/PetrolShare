@@ -27,6 +27,11 @@ export const convertToDate = (date: string, time?: boolean) => {
     }${month}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()}:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${x.getHours() > 12 ? 'pm' : 'am'}`;
 };
 
+export const getGroupData = async () => {
+  let sessionStorage = await getItem("groupData");
+  if (sessionStorage) return (JSON.parse(sessionStorage));
+  else return null
+}
 
 export const Alert = (title: string, message?: string, buttons?: AlertButton[], options?: AlertOptions) => {
   if (Platform.OS !== 'web') DefaultAlert.alert(title, message, buttons, options)

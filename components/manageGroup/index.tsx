@@ -6,6 +6,8 @@ import axios from "axios";
 import generateGroupID from "../../hooks/generateGroupID";
 import Complete from "./complete";
 import JoinGroup from "./joinGroup";
+import GroupSettings from "../groupSettings";
+import { setItem } from "../../hooks";
 
 type PropsType = {
   onComplete: () => void;
@@ -13,7 +15,7 @@ type PropsType = {
   visible: boolean;
   firstSteps: boolean;
   handleClose?: () => void;
-  screen?: JSX.Element | null;
+  screen?: string | null;
 };
 
 export default ({
@@ -25,8 +27,9 @@ export default ({
   onComplete,
 }: PropsType) => {
   const { retrieveData } = useContext(AuthContext);
-  const [currentScreen, setCurrentScreen] = useState(screen || <></>);
+  const [currentScreen, setCurrentScreen] = useState(<></>);
   const [groupID, setGroupID] = useState(generateGroupID());
+  const [newGroup, setNewGroup] = useState(true);
   const [animating, setAnimating] = useState(firstSteps ? false : true);
 
   const closePopup = () => {
@@ -36,7 +39,12 @@ export default ({
   };
 
   const changeScreen = (
-    screen: "Default" | "Complete" | "JoinGroup",
+    screen:
+      | "Default"
+      | "Complete"
+      | "JoinGroup"
+      | "Settings"
+      | "SettingsChange",
     currentGroupID: string = groupID
   ) => {
     switch (screen) {
@@ -48,15 +56,32 @@ export default ({
             closeScreen={closePopup}
           />
         );
+        setNewGroup(false);
         break;
 
       case "JoinGroup":
+        setNewGroup(false);
         setCurrentScreen(
           <JoinGroup
             firstSteps={firstSteps}
             onComplete={(e) => changeScreen("Complete", e)}
             onBack={() => changeScreen("Default")}
           />
+        );
+        break;
+      case "Settings":
+        setCurrentScreen(
+          <GroupSettings
+            firstSteps={newGroup}
+            handleClose={(e) =>
+              newGroup ? changeScreen("Complete", e) : handleGroupClose()
+            }
+          />
+        );
+        break;
+      case "SettingsChange":
+        setCurrentScreen(
+          <GroupSettings firstSteps={false} handleClose={handleGroupClose} />
         );
         break;
       default:
@@ -71,30 +96,36 @@ export default ({
     }
   };
 
+  const handleGroupClose = async () => {
+    await setItem("showToast", "groupSettingsUpdated");
+    setNewGroup(false);
+    closePopup();
+  };
+
   const createGroup = async () => {
     setGroupID(generateGroupID());
+    setNewGroup(true);
     await axios.post(process.env.REACT_APP_API_ADDRESS + "/group/create", {
       authenticationKey: retrieveData().authenticationKey,
       groupID: groupID,
     });
-    changeScreen("Complete");
-    if (!firstSteps) onComplete();
+    changeScreen("Settings");
   };
 
   useEffect(() => {
     if (firstSteps) setAnimating(false);
-    if (screen) return setCurrentScreen(screen);
 
     changeScreen("Default");
-  }, []);
+  }, [firstSteps]);
 
   useEffect(() => {
-    if (screen) return setCurrentScreen(screen);
     changeScreen("Default");
   }, [visible]);
 
   useEffect(() => {
-    if (screen) setCurrentScreen(screen);
+    if (screen) {
+      return changeScreen("SettingsChange");
+    }
   }, [screen]);
 
   return (

@@ -1,163 +1,204 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { Box, Layout, Text } from '../../components/Themed'
-import { AuthContext } from '../../hooks/context'
-import SplitRow from './splitRow'
-import { View, TouchableWithoutFeedback } from 'react-native'
-import Svg, { G, Path } from 'react-native-svg'
-import axios from 'axios'
-import Toast from 'react-native-toast-message'
-import * as Clipboard from 'expo-clipboard'
-import { deleteItem, getItem, setItem } from '../../hooks'
-import ManageGroup from '../../components/manageGroup'
-import GroupSettings from '../../components/groupSettings'
+import { useContext, useEffect, useRef, useState } from "react";
+import { Box, Layout, Text } from "../../components/Themed";
+import { AuthContext } from "../../hooks/context";
+import SplitRow from "./splitRow";
+import { View, TouchableWithoutFeedback } from "react-native";
+import Svg, { G, Path } from "react-native-svg";
+import axios from "axios";
+import Toast from "react-native-toast-message";
+import * as Clipboard from "expo-clipboard";
+import { deleteItem, getItem, setItem } from "../../hooks";
+import ManageGroup from "../../components/manageGroup";
+import GroupSettings from "../../components/groupSettings";
 
 export default ({ navigation }: any) => {
-  const { setData, retrieveData } = useContext(AuthContext)
-  const [firstSteps, setFirstSteps] = useState(false)
+  const { setData, retrieveData } = useContext(AuthContext);
+  const [firstSteps, setFirstSteps] = useState(false);
   const [currentMileage, setCurrentMileage] = useState(
-    retrieveData ? retrieveData()?.currentMileage : 0,
-  )
-  const dataRetrieved = useRef(false)
-  const [copied, setCopied] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const [currentScreen, setCurrentScreen] = useState<JSX.Element | null>(<></>)
+    retrieveData ? retrieveData()?.currentMileage : 0
+  );
+  const dataRetrieved = useRef(false);
+  const [copied, setCopied] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [groupData, setGroupData] = useState<{
+    distance?: string;
+    petrol?: string;
+    currency?: string;
+  }>({});
+  const [currentScreen, setCurrentScreen] = useState<string>("");
 
   useEffect(() => {
-    if (dataRetrieved.current) return
+    if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
-      dataRetrieved.current = true
-      updateData()
+      dataRetrieved.current = true;
+      updateData();
       if (
         retrieveData() &&
         Object.values(retrieveData()).length &&
         retrieveData().groupID === null
       ) {
-        setFirstSteps(true)
-        setVisible(true)
+        setFirstSteps(true);
+        setVisible(true);
       }
 
-      navigation.addListener('focus', async () => {
-        updateData()
-        if ((await getItem('showToast')) === 'distanceUpdated') {
-          await deleteItem('showToast')
+      if (retrieveData() && retrieveData().groupID !== null) getGroupData();
+
+      navigation.addListener("focus", async () => {
+        updateData();
+        getGroupData();
+
+        if ((await getItem("showToast")) === "distanceUpdated") {
+          await deleteItem("showToast");
           Toast.show({
-            type: 'default',
-            text1: 'Distance successfully updated!',
-          })
+            type: "default",
+            text1: "Distance successfully updated!",
+          });
         }
-        if ((await getItem('showToast')) === 'nameUpdated') {
-          await deleteItem('showToast')
+        if ((await getItem("showToast")) === "nameUpdated") {
+          await deleteItem("showToast");
           Toast.show({
-            type: 'default',
-            text1: 'Your name has been successfully updated!',
-          })
+            type: "default",
+            text1: "Your name has been successfully updated!",
+          });
         }
-        if ((await getItem('showToast')) === 'draftSaved') {
-          await deleteItem('showToast')
+        if ((await getItem("showToast")) === "draftSaved") {
+          await deleteItem("showToast");
           Toast.show({
-            type: 'default',
+            type: "default",
             text1:
-              'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
-          })
+              "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
+          });
         }
-        if ((await getItem('showToast')) === 'resetDistance') {
-          await deleteItem('showToast')
+        if ((await getItem("showToast")) === "resetDistance") {
+          await deleteItem("showToast");
           Toast.show({
-            type: 'default',
-            text1: 'Reset your distance back to 0!',
-          })
+            type: "default",
+            text1: "Reset your distance back to 0!",
+          });
         }
-      })
+      });
     }
-  }, [retrieveData])
+  }, [retrieveData]);
 
   const getDistance = () => {
     axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
-          `/distance/get?authenticationKey=${retrieveData().authenticationKey}`,
+          `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
-        setCurrentMileage(data)
-        let sessionStorage
+        setCurrentMileage(data);
+        let sessionStorage;
         try {
-          sessionStorage = await getItem('userData')
-          if (!sessionStorage) return
-          sessionStorage = JSON.parse(sessionStorage)
-          sessionStorage.currentMileage = data.toString()
+          sessionStorage = await getItem("userData");
+          if (!sessionStorage) return;
+          sessionStorage = JSON.parse(sessionStorage);
+          sessionStorage.currentMileage = data.toString();
 
-          await setItem('userData', JSON.stringify(sessionStorage))
+          await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
-  const updateData = () => {
+  const updateData = async () => {
+    if ((await getItem("showToast")) === "groupSettingsUpdated") {
+      await deleteItem("showToast");
+      Toast.show({
+        text1: "Group settings succesfully updated!",
+        type: "default",
+      });
+    }
+    getGroupData();
+    getDistance();
     axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
-          `/user/get?authenticationKey=${retrieveData().authenticationKey}`,
+          `/user/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
-        let sessionStorage
+        let sessionStorage;
         try {
-          sessionStorage = await getItem('userData')
-          if (!sessionStorage) return
-          sessionStorage = JSON.parse(sessionStorage)
-          sessionStorage = { ...sessionStorage, ...data[0] }
-          setData(sessionStorage)
-          getDistance()
+          sessionStorage = await getItem("userData");
+          if (!sessionStorage) return;
+          sessionStorage = JSON.parse(sessionStorage);
+          sessionStorage = { ...sessionStorage, ...data[0] };
+          setData(sessionStorage);
+          getDistance();
           if (Object.values(data).length && data.groupID !== null)
-            setFirstSteps(false)
+            setFirstSteps(false);
 
-          await setItem('userData', JSON.stringify(sessionStorage))
+          await setItem("userData", JSON.stringify(sessionStorage));
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
       })
       .catch(({ response }) => {
-        console.log(response)
+        console.log(response);
+      });
+  };
+
+  const getGroupData = async () => {
+    let sessionStorage = await getItem("groupData");
+    if (sessionStorage) setGroupData(JSON.parse(sessionStorage));
+    axios
+      .get(
+        process.env.REACT_APP_API_ADDRESS +
+          "/group/get?authenticationKey=" +
+          retrieveData().authenticationKey
+      )
+      .then(({ data }) => {
+        if (!data.distance) {
+          setFirstSteps(true);
+          setCurrentScreen("Settings");
+          setVisible(true);
+          return;
+        }
+
+        setItem("groupData", JSON.stringify(data));
+        setGroupData(data);
       })
-  }
+      .catch(() => {});
+  };
 
   const copyToClipboard = async () => {
     Clipboard.setStringAsync(
-      retrieveData ? retrieveData()?.groupID || null : null,
-    )
-    setCopied(true)
+      retrieveData ? retrieveData()?.groupID || null : null
+    );
+    setCopied(true);
     setTimeout(() => {
-      setCopied(false)
-    }, 500)
-  }
+      setCopied(false);
+    }, 500);
+  };
 
   return (
-    <Layout style={{ display: 'flex' }}>
+    <Layout style={{ display: "flex" }}>
       <Box>
         <>
           <Text style={{ fontSize: 18 }}>
             Welcome
-            <Text style={{ fontWeight: 'bold' }}>
+            <Text style={{ fontWeight: "bold" }}>
               &nbsp;
-              {retrieveData ? retrieveData()?.fullName || 'User' : 'User'}
+              {retrieveData ? retrieveData()?.fullName || "User" : "User"}
             </Text>
             !
           </Text>
           <TouchableWithoutFeedback onPress={() => copyToClipboard()}>
             <View
               style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
                 marginTop: 20,
               }}
             >
               <Text style={{ fontSize: 16, marginRight: 5 }}>
-                <Text style={{ fontWeight: 'bold' }}>Group ID: </Text>
-                {retrieveData ? retrieveData()?.groupID || 'Loading...' : null}
+                <Text style={{ fontWeight: "bold" }}>Group ID: </Text>
+                {retrieveData ? retrieveData()?.groupID || "Loading..." : null}
               </Text>
               {!!(retrieveData && retrieveData()?.groupID) &&
                 (copied ? (
@@ -185,8 +226,8 @@ export default ({ navigation }: any) => {
             </View>
           </TouchableWithoutFeedback>
           <Text style={{ fontSize: 16, marginTop: 10 }}>
-            <Text style={{ fontWeight: 'bold' }}>Current Mileage: </Text>
-            {currentMileage}km
+            <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
+            {currentMileage} {groupData.distance}
           </Text>
         </>
       </Box>
@@ -195,7 +236,7 @@ export default ({ navigation }: any) => {
         style={{ marginTop: 32 }}
         buttons={[
           {
-            text: 'Manage Distance',
+            text: "Manage Distance",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -204,10 +245,10 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
-            handleClick: () => navigation.navigate('ManageDistance'),
+            handleClick: () => navigation.navigate("ManageDistance"),
           },
           {
-            text: 'View Logs',
+            text: "View Logs",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -216,7 +257,7 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
-            handleClick: () => navigation.navigate('Logs'),
+            handleClick: () => navigation.navigate("Logs"),
           },
         ]}
       />
@@ -224,7 +265,7 @@ export default ({ navigation }: any) => {
         style={{ marginVertical: 20 }}
         buttons={[
           {
-            text: 'Add Petrol',
+            text: "Add Petrol",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -233,10 +274,10 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
-            handleClick: () => navigation.navigate('AddPetrol'),
+            handleClick: () => navigation.navigate("AddPetrol"),
           },
           {
-            text: 'Invoices',
+            text: "Invoices",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <Path
@@ -245,14 +286,14 @@ export default ({ navigation }: any) => {
                 ></Path>
               </Svg>
             ),
-            handleClick: () => navigation.navigate('Invoices'),
+            handleClick: () => navigation.navigate("Invoices"),
           },
         ]}
       />
       <SplitRow
         buttons={[
           {
-            text: 'Manage Group',
+            text: "Manage Group",
             icon: (
               <Svg width="24" height="24" fill="none" viewBox="0 0 24 23">
                 <Path
@@ -262,12 +303,12 @@ export default ({ navigation }: any) => {
               </Svg>
             ),
             handleClick: () => {
-              setCurrentScreen(null)
-              setVisible(true)
+              setCurrentScreen("");
+              setVisible(true);
             },
           },
           {
-            text: 'Group Settings',
+            text: "Group Settings",
             icon: (
               <Svg width="24" height="24" viewBox="0 0 60 56.34">
                 <G>
@@ -283,8 +324,8 @@ export default ({ navigation }: any) => {
               </Svg>
             ),
             handleClick: () => {
-              setCurrentScreen(<GroupSettings />)
-              setVisible(true)
+              setCurrentScreen("Settings");
+              setVisible(true);
             },
           },
         ]}
@@ -298,5 +339,5 @@ export default ({ navigation }: any) => {
         screen={currentScreen}
       />
     </Layout>
-  )
-}
+  );
+};

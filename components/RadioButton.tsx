@@ -1,44 +1,51 @@
-import { useEffect, useState } from 'react'
-import { StyleSheet, TouchableWithoutFeedback, View, Text } from 'react-native'
+import { useEffect, useState } from "react";
+import { StyleSheet, TouchableWithoutFeedback, View, Text } from "react-native";
 
 type PropsType = {
-  buttons: Array<{ name: string; value: string }>
-  value: string
-  handleChange: (value: string) => void
-}
+  buttons: Array<{ name: string; value: string }>;
+  value: string;
+  handleChange: (value: string) => void;
+  errorMessage?: string;
+};
 
 const Button = ({ active }: { active: boolean }) => {
   const styles = StyleSheet.create({
     box: {
       borderRadius: 300,
-      borderStyle: 'solid',
+      borderStyle: "solid",
       borderWidth: 1,
-      borderColor: '#1196B0',
+      borderColor: "#1196B0",
       width: 16,
-      backgroundColor: '#0B404A',
+      backgroundColor: "#0B404A",
       height: 16,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
 
     dot: {
       width: 6,
       height: 6,
       borderRadius: 100,
-      backgroundColor: '#137B91',
+      backgroundColor: "#137B91",
     },
-  })
+  });
 
-  return <View style={styles.box}>{active && <View style={styles.dot} />}</View>
-}
+  return (
+    <View style={styles.box}>{active && <View style={styles.dot} />}</View>
+  );
+};
 
-export default ({ buttons, value, handleChange }: PropsType) => {
-  const [activeRadio, setActiveRadio] = useState(value)
+export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
+  const [activeRadio, setActiveRadio] = useState(value);
 
   useEffect(() => {
-    if (activeRadio) handleChange(activeRadio)
-  }, [activeRadio])
+    if (activeRadio) handleChange(activeRadio);
+  }, [activeRadio]);
+
+  useEffect(() => {
+    setActiveRadio(value);
+  }, [value]);
 
   return (
     <View>
@@ -49,8 +56,8 @@ export default ({ buttons, value, handleChange }: PropsType) => {
         >
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: "row",
+              alignItems: "center",
               marginBottom: c + 1 === buttons.length ? 0 : 7,
             }}
           >
@@ -59,9 +66,9 @@ export default ({ buttons, value, handleChange }: PropsType) => {
               style={{
                 fontSize: 16,
                 lineHeight: 24,
-                fontWeight: '400',
+                fontWeight: "400",
                 paddingLeft: 10,
-                color: 'white',
+                color: "white",
               }}
             >
               {e.name}
@@ -69,6 +76,18 @@ export default ({ buttons, value, handleChange }: PropsType) => {
           </View>
         </TouchableWithoutFeedback>
       ))}
+      {!!errorMessage && (
+        <Text
+          style={{
+            marginTop: 6,
+            fontSize: 14,
+            fontWeight: "400",
+            color: "#FA4F4F",
+          }}
+        >
+          {errorMessage}
+        </Text>
+      )}
     </View>
-  )
-}
+  );
+};

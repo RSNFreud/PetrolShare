@@ -4,7 +4,7 @@ import { ActivityIndicator, View } from "react-native";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
-import { convertToDate } from "../../hooks";
+import { convertToDate, getGroupData } from "../../hooks";
 import Toast from "react-native-toast-message";
 
 type PropsType = {
@@ -19,6 +19,20 @@ export default ({ invoiceID }: PropsType) => {
     getInvoice();
   }, []);
   const [loading, setLoading] = useState(0);
+
+  const [groupData, setGroupData] = useState({ distance: "", currency: "" });
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  const init = async () => {
+    const data = await getGroupData();
+    if (!data) return;
+    console.log(data);
+
+    setGroupData(data);
+  };
 
   const markPaid = (userID: number) => {
     setLoading(userID);
@@ -89,13 +103,17 @@ export default ({ invoiceID }: PropsType) => {
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Total Distance:{" "}
           </Text>
-          <Text style={{ fontSize: 16 }}>{data.totalDistance}km</Text>
+          <Text style={{ fontSize: 16 }}>
+            {data.totalDistance} {groupData?.distance || ""}
+          </Text>
         </View>
         <View style={{ display: "flex", flexDirection: "row" }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Amount Paid:{" "}
           </Text>
-          <Text style={{ fontSize: 16 }}>{data.totalPrice} NIS</Text>
+          <Text style={{ fontSize: 16 }}>
+            {data.totalPrice} {groupData.currency}
+          </Text>
         </View>
       </Box>
       {Object.entries(data.invoiceData).map(
@@ -155,7 +173,10 @@ export default ({ invoiceID }: PropsType) => {
                   }}
                 >
                   {value.fullName} (
-                  <Text style={{ fontSize: 17 }}>{value.distance}km</Text>)
+                  <Text style={{ fontSize: 17 }}>
+                    {value.distance} {groupData.distance}
+                  </Text>
+                  )
                 </Text>
               </View>
               {value.paid ? (

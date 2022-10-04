@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Text, Button } from "../../components/Themed";
+import { getGroupData } from "../../hooks";
 
 type PropsType = {
   loading: boolean;
@@ -9,10 +11,29 @@ type PropsType = {
 };
 
 export default ({ loading, handleClick, errors, distance }: PropsType) => {
+  const [distanceFormat, setDistanceFormat] = useState();
+
+  useEffect(() => {
+    getDistanceFormat();
+  });
+
+  const getDistanceFormat = async () => {
+    const data = await getGroupData();
+    if (!data) return;
+    setDistanceFormat(data.distance);
+  };
+
   return (
     <>
       <Button loading={loading} handleClick={handleClick}>
-        <>Add Distance {distance && <>({distance}km)</>}</>
+        <>
+          Add Distance{" "}
+          {distance && (
+            <>
+              ({distance} {distanceFormat || ""})
+            </>
+          )}
+        </>
       </Button>
       {!!errors && (
         <View
