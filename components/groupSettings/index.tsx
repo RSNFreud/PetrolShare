@@ -87,7 +87,7 @@ export default ({
   };
 
   const handleTouch = () => {
-    sendCustomEvent("bodyClicked");
+    // sendCustomEvent("bodyClicked");
   };
 
   return (

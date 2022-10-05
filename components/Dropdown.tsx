@@ -1,8 +1,11 @@
 import {
   ScrollView,
+  FlatList,
   TouchableWithoutFeedback,
   View,
   Pressable,
+  TouchableOpacity,
+  GestureResponderEvent,
 } from "react-native";
 import { Text } from "./Themed";
 import Svg, { Path } from "react-native-svg";
@@ -21,6 +24,7 @@ type PropsType = {
 export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(value);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const selectOption = (e: item) => {
     setSelected(e);
@@ -41,6 +45,19 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
       EventRegister.removeEventListener("bodyClicked");
     };
   }, []);
+
+  const handleClick = (event: GestureResponderEvent, item: item) => {
+    if (
+      (event.nativeEvent.locationX ||
+        (event.nativeEvent.changedTouches[0] as unknown as Touch).clientX) ===
+        position.x &&
+      (event.nativeEvent.locationY ||
+        (event.nativeEvent.changedTouches[0] as unknown as Touch).clientY) ===
+        position.y
+    ) {
+      selectOption(item);
+    }
+  };
 
   return (
     <View style={{ position: "relative", zIndex: 1, paddingBottom: 50 }}>
@@ -94,6 +111,48 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
         )}
       </View>
       {open && (
+        // <FlatList
+        //   style={{
+        //     maxHeight: 89,
+        //     borderRadius: 4,
+        //     width: "100%",
+        //     borderColor: "#0B404A",
+        //     backgroundColor: "#001e24",
+        //     borderWidth: 1,
+        //     position: "absolute",
+        //     top: 51,
+        //     left: 0,
+        //     zIndex: 2,
+        //     borderStyle: "solid",
+        //   }}
+        //   data={data}
+        //   renderItem={({ item: e }) => (
+        //     <Pressable
+        //       key={e.name}
+        //       style={{
+        //         paddingVertical: 5,
+        //         paddingHorizontal: 10,
+        //         backgroundColor:
+        //           (selected as item).value === e.value ? "#0B404A" : "",
+        //         flexDirection: "row",
+        //         justifyContent: "space-between",
+        //       }}
+        //       onTouchStart={(e) =>
+        //         setPosition({
+        //           x:
+        //             e.nativeEvent.locationX ||
+        //             (e.nativeEvent.touches[0] as unknown as Touch).clientX,
+        //           y:
+        //             e.nativeEvent.locationY ||
+        //             (e.nativeEvent.touches[0] as unknown as Touch).clientY,
+        //         })
+        //       }
+        //       onTouchEnd={(x) => handleClick(x, e)}            >
+        //       <Text style={{ color: "white" }}>{e.name}</Text>
+        //       <Text style={{ color: "white" }}>{e.value}</Text>
+        //     </Pressable>
+        //   )}
+        // />
         <ScrollView
           style={{
             maxHeight: 89,
@@ -110,27 +169,31 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
           }}
         >
           {data.map((e) => (
-            <View
+            <Pressable
               key={e.name}
               style={{
                 paddingVertical: 5,
                 paddingHorizontal: 10,
                 backgroundColor:
                   (selected as item)?.value === e.value ? "#0B404A" : "",
+                flexDirection: "row",
+                justifyContent: "space-between",
               }}
+              onTouchStart={(e) =>
+                setPosition({
+                  x:
+                    e.nativeEvent.locationX ||
+                    (e.nativeEvent.touches[0] as unknown as Touch).clientX,
+                  y:
+                    e.nativeEvent.locationY ||
+                    (e.nativeEvent.touches[0] as unknown as Touch).clientY,
+                })
+              }
+              onTouchEnd={(x) => handleClick(x, e)}
             >
-              <Pressable
-                onPress={() => selectOption(e)}
-                key={e.value}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text>{e.name}</Text>
-                <Text>{e.value}</Text>
-              </Pressable>
-            </View>
+              <Text>{e.name}</Text>
+              <Text>{e.value}</Text>
+            </Pressable>
           ))}
         </ScrollView>
       )}

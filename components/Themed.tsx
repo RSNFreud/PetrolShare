@@ -185,6 +185,7 @@ export const Box = ({
 
 import { deleteItem, getItem } from "../hooks";
 import { EventRegister } from "react-native-event-listeners";
+import Constants from "expo-constants";
 
 export const Layout = ({
   children,
@@ -224,6 +225,7 @@ export const Layout = ({
   };
 
   useEffect(() => {
+    Toast.show({ text1: "test", type: "default", autoHide: false });
     EventRegister.addEventListener("dataUpdated", () => {
       setTimeout(async () => {
         if ((await getItem("showToast")) === "distanceUpdated") {
