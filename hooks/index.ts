@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { AlertButton, AlertOptions, Platform, Alert as DefaultAlert } from "react-native";
+import { EventRegister } from 'react-native-event-listeners'
 
 export const getItem = async (key: string) => {
   if (Platform.OS === "web") return window.localStorage.getItem(key);
@@ -58,4 +59,8 @@ const alertPolyfill = (title: string, message?: string, buttons?: AlertButton[],
 export const currencyPosition = (value: number, symbol: string) => {
   if (symbol === "$" || symbol === "£") return `${symbol.trim()}${value}`
   return `${value} ${symbol}`
+}
+
+export const sendCustomEvent = (event: string, data?: string) => {
+  EventRegister.emit(event, data)
 }

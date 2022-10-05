@@ -12,7 +12,7 @@ export default ({
   handleClose: () => void;
   handleBack: () => void;
 }) => {
-  const [emailAddress, setEmailAddress] = useState<string>();
+  const [emailAddress, setEmailAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
   const { retrieveData } = useContext(AuthContext);

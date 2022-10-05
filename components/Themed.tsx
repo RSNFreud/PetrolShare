@@ -184,6 +184,7 @@ export const Box = ({
 };
 
 import { deleteItem, getItem } from "../hooks";
+import { EventRegister } from "react-native-event-listeners";
 
 export const Layout = ({
   children,
@@ -222,10 +223,8 @@ export const Layout = ({
     ),
   };
 
-  if (isLoading) return <></>;
-
   useEffect(() => {
-    window.addEventListener("dataUpdated", async () => {
+    EventRegister.addEventListener("dataUpdated", () => {
       setTimeout(async () => {
         if ((await getItem("showToast")) === "distanceUpdated") {
           await deleteItem("showToast");
@@ -258,7 +257,13 @@ export const Layout = ({
         }
       }, 300);
     });
+
+    return () => {
+      EventRegister.removeEventListener("dataUpdated");
+    };
   }, []);
+
+  if (isLoading) return <></>;
 
   return (
     <>

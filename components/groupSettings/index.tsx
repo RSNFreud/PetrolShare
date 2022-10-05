@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
-import { getItem } from "../../hooks";
+import { Text, Pressable } from "react-native";
+import { getItem, sendCustomEvent } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import getCurrencies from "../../hooks/getCurrencies";
 import Dropdown from "../Dropdown";
@@ -28,6 +28,7 @@ export default ({
 
   const [dropdownData, setDropdownData] = useState<Array<any>>([]);
   const { retrieveData } = useContext(AuthContext);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     generateDropdown();
@@ -71,6 +72,7 @@ export default ({
 
     setErrors({ ...errors });
     if (Object.keys(errors).length) return;
+    setLoading(true);
     await axios
       .post(process.env.REACT_APP_API_ADDRESS + "/group/update", {
         authenticationKey: retrieveData().authenticationKey,
@@ -79,95 +81,106 @@ export default ({
         currency: data.currency,
       })
       .then(() => {
+        setLoading(false);
         handleClose();
       });
   };
 
+  const handleTouch = () => {
+    sendCustomEvent("bodyClicked");
+  };
+
   return (
-    <View>
-      {firstSteps && (
-        <Box
-          style={{
-            marginBottom: 20,
-            paddingHorizontal: 15,
-            paddingVertical: 15,
-          }}
-        >
-          <Text
+    <Pressable onPress={() => handleTouch()}>
+      <>
+        {firstSteps && (
+          <Box
             style={{
-              color: "white",
+              marginBottom: 20,
+              paddingHorizontal: 15,
+              paddingVertical: 15,
             }}
           >
-            Thank you for creating a group, please select your preferences
-            below.
-          </Text>
-        </Box>
-      )}
-      <Text
-        style={{
-          fontSize: 18,
-          lineHeight: 27,
-          fontWeight: "700",
-          color: "white",
-          marginBottom: 10,
-        }}
-      >
-        Which format do you want distance to be displayed in?
-      </Text>
-      <RadioButton
-        value={data.distance}
-        handleChange={(e) => setData({ ...data, distance: e })}
-        buttons={[
-          { name: "Km", value: "km" },
-          { name: "Miles", value: "miles" },
-        ]}
-        errorMessage={errors.distance}
-      />
+            <Text
+              style={{
+                color: "white",
+              }}
+            >
+              Thank you for creating a group, please select your preferences
+              below.
+            </Text>
+          </Box>
+        )}
+        <Text
+          style={{
+            fontSize: 18,
+            lineHeight: 27,
+            fontWeight: "700",
+            color: "white",
+            marginBottom: 10,
+          }}
+        >
+          Which format do you want distance to be displayed in?
+        </Text>
+        <RadioButton
+          value={data.distance}
+          handleChange={(e) => setData({ ...data, distance: e })}
+          buttons={[
+            { name: "Km", value: "km" },
+            { name: "Miles", value: "miles" },
+          ]}
+          errorMessage={errors.distance}
+        />
 
-      <Text
-        style={{
-          fontSize: 18,
-          marginBottom: 10,
-          lineHeight: 27,
-          fontWeight: "700",
-          color: "white",
-          marginTop: 30,
-        }}
-      >
-        Which format do you want petrol to be displayed in?
-      </Text>
-      <RadioButton
-        value={data.petrol}
-        handleChange={(e) => setData({ ...data, petrol: e })}
-        buttons={[
-          { name: "Gallons", value: "gallons" },
-          { name: "Liters", value: "liters" },
-        ]}
-        errorMessage={errors.petrol}
-      />
-      <Text
-        style={{
-          fontSize: 18,
-          marginBottom: 10,
-          lineHeight: 27,
-          fontWeight: "700",
-          color: "white",
-          marginTop: 30,
-        }}
-      >
-        What currency are you using?
-      </Text>
-      <Dropdown
-        value={data.currency}
-        data={dropdownData}
-        handleSelected={(e) =>
-          setData({ ...data, currency: e.value || e.name })
-        }
-        errorMessage={errors.currency}
-      />
-      <Button handleClick={handleSubmit} styles={{ marginTop: 30 }}>
-        Save Settings
-      </Button>
-    </View>
+        <Text
+          style={{
+            fontSize: 18,
+            marginBottom: 10,
+            lineHeight: 27,
+            fontWeight: "700",
+            color: "white",
+            marginTop: 30,
+          }}
+        >
+          Which format do you want petrol to be displayed in?
+        </Text>
+        <RadioButton
+          value={data.petrol}
+          handleChange={(e) => setData({ ...data, petrol: e })}
+          buttons={[
+            { name: "Gallons", value: "gallons" },
+            { name: "Liters", value: "liters" },
+          ]}
+          errorMessage={errors.petrol}
+        />
+        <Text
+          style={{
+            fontSize: 18,
+            marginBottom: 10,
+            lineHeight: 27,
+            fontWeight: "700",
+            color: "white",
+            marginTop: 30,
+          }}
+        >
+          What currency are you using?
+        </Text>
+        <Dropdown
+          value={data.currency}
+          data={dropdownData}
+          handleSelected={(e) =>
+            setData({ ...data, currency: e.value || e.name })
+          }
+          errorMessage={errors.currency}
+        />
+        <Button
+          loading={isLoading}
+          handleClick={handleSubmit}
+          styles={{ marginTop: 30 }}
+        >
+          Save Settings
+        </Button>
+      </>
+    </Pressable>
   );
 };

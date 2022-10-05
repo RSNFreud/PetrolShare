@@ -1,7 +1,13 @@
-import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import {
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+  Pressable,
+} from "react-native";
 import { Text } from "./Themed";
 import Svg, { Path } from "react-native-svg";
 import { useEffect, useState } from "react";
+import { EventRegister } from "react-native-event-listeners";
 
 type item = { name: string; value?: string; symbol?: string };
 
@@ -27,9 +33,18 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
     setSelected(data.filter((e) => e.value === value)[0]);
   }, [value, data]);
 
+  useEffect(() => {
+    EventRegister.addEventListener("bodyClicked", () => {
+      setOpen(false);
+    });
+    return () => {
+      EventRegister.removeEventListener("bodyClicked");
+    };
+  }, []);
+
   return (
-    <View style={{ position: "relative" }}>
-      <View style={{ marginBottom: open ? 150 : 0 }}>
+    <View style={{ position: "relative", zIndex: 1, paddingBottom: 50 }}>
+      <View style={{ marginBottom: 0 }}>
         <TouchableWithoutFeedback onPress={() => setOpen((open) => !open)}>
           <View
             style={{
@@ -44,14 +59,17 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
               alignItems: "center",
               paddingHorizontal: 10,
               paddingVertical: 10,
+              zIndex: 3,
             }}
           >
-            <Text>{selected ? selected.name : <>Choose a currency</>}</Text>
+            <Text>
+              {selected ? (selected as item).name : <>Choose a currency</>}
+            </Text>
             <Svg
               width="16"
               height="16"
               fill="none"
-              style={{ transform: [{ rotate: open ? "0" : "180deg" }] }}
+              style={{ transform: [{ rotate: open ? "0deg" : "180deg" }] }}
             >
               <Path
                 stroke="#fff"
@@ -78,7 +96,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
       {open && (
         <ScrollView
           style={{
-            maxHeight: 150,
+            maxHeight: 89,
             borderRadius: 4,
             width: "100%",
             borderColor: "#0B404A",
@@ -92,23 +110,27 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
           }}
         >
           {data.map((e) => (
-            <TouchableWithoutFeedback
-              onPress={() => selectOption(e)}
-              key={e.value}
+            <View
+              key={e.name}
+              style={{
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                backgroundColor:
+                  (selected as item)?.value === e.value ? "#0B404A" : "",
+              }}
             >
-              <View
+              <Pressable
+                onPress={() => selectOption(e)}
+                key={e.value}
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
-                  backgroundColor: selected?.value === e.value ? "#0B404A" : "",
                 }}
               >
                 <Text>{e.name}</Text>
                 <Text>{e.value}</Text>
-              </View>
-            </TouchableWithoutFeedback>
+              </Pressable>
+            </View>
           ))}
         </ScrollView>
       )}

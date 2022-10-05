@@ -2,7 +2,7 @@ import { Breadcrumbs, Button, Layout, Text } from "../Themed";
 import SplitRow from "../../screens/dashboard/splitRow";
 import Svg, { Path } from "react-native-svg";
 import { AuthContext } from "../../hooks/context";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Popup from "../Popup";
 import ChangeEmail from "./changeEmail";
 import ChangePassword from "./changePassword";
@@ -119,6 +119,10 @@ export default ({
         break;
     }
   };
+
+  useEffect(() => {
+    if (!visible) setScreen("");
+  }, [visible]);
 
   return (
     <Popup visible={visible} handleClose={handleClose}>

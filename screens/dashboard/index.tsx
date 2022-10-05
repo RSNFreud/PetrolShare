@@ -10,6 +10,7 @@ import * as Clipboard from "expo-clipboard";
 import { deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
 import GroupSettings from "../../components/groupSettings";
+import { EventRegister } from "react-native-event-listeners";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -78,7 +79,7 @@ export default ({ navigation }: any) => {
         }
       });
 
-      window.addEventListener("dataUpdated", async () => {
+      EventRegister.addEventListener("dataUpdated", () => {
         updateData();
       });
     }

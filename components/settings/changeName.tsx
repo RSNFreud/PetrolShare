@@ -4,7 +4,7 @@ import React, { useState, useContext } from "react";
 import Toast from "react-native-toast-message";
 import Input from "../Input";
 import { Button } from "../Themed";
-import { setItem } from "../../hooks";
+import { sendCustomEvent, setItem } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 
 export default ({
@@ -31,9 +31,8 @@ export default ({
       .then(async () => {
         setLoading(false);
         handleClose();
-        const event = new Event("dataUpdated");
         await setItem("showToast", "nameUpdated");
-        window.dispatchEvent(event);
+        sendCustomEvent("dataUpdated");
       })
       .catch((err) => {});
   };
