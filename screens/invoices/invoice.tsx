@@ -130,7 +130,11 @@ export default ({ invoiceID }: PropsType) => {
       </Box>
       {Object.entries(data.invoiceData).map(
         ([key, value]: any, count: number) => {
-          console.log(key, value, retrieveData());
+          console.log(
+            value.fullName,
+            retrieveData().fullName,
+            value.fullName !== retrieveData().fullName
+          );
 
           return (
             <Box
@@ -199,7 +203,7 @@ export default ({ invoiceID }: PropsType) => {
                 <Button
                   loading={loading === key}
                   size="small"
-                  disabled={value.fullName !== retrieveData().fullName}
+                  disabled={data.fullName !== retrieveData().fullName}
                   styles={{
                     marginTop: 20,
                     borderWidth: 0,
