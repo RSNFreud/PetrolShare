@@ -174,11 +174,7 @@ export default ({
           }
           errorMessage={errors.currency}
         />
-        <Button
-          loading={isLoading}
-          handleClick={handleSubmit}
-          styles={{ marginTop: 30 }}
-        >
+        <Button loading={isLoading} handleClick={handleSubmit}>
           Save Settings
         </Button>
       </>
