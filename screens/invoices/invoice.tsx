@@ -130,12 +130,6 @@ export default ({ invoiceID }: PropsType) => {
       </Box>
       {Object.entries(data.invoiceData).map(
         ([key, value]: any, count: number) => {
-          console.log(
-            value.fullName,
-            retrieveData().fullName,
-            value.fullName !== retrieveData().fullName
-          );
-
           return (
             <Box
               key={key}
