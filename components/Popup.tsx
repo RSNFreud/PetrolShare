@@ -103,6 +103,7 @@ export default ({
               position: "absolute",
               right: 0,
               top: 10,
+              zIndex: 1,
               width: 20,
               height: 20,
               alignContent: "center",
@@ -118,7 +119,6 @@ export default ({
           </Pressable>
         )}
         <ScrollView
-          nestedScrollEnabled={true}
           style={{
             height: "100%",
             paddingVertical: 40,

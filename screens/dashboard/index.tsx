@@ -9,7 +9,6 @@ import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
 import { deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
-import GroupSettings from "../../components/groupSettings";
 import { EventRegister } from "react-native-event-listeners";
 
 export default ({ navigation }: any) => {
@@ -150,6 +149,7 @@ export default ({ navigation }: any) => {
   const getGroupData = async () => {
     let sessionStorage = await getItem("groupData");
     if (sessionStorage) setGroupData(JSON.parse(sessionStorage));
+
     axios
       .get(
         process.env.REACT_APP_API_ADDRESS +
@@ -163,6 +163,7 @@ export default ({ navigation }: any) => {
           setVisible(true);
           return;
         }
+        setFirstSteps(false);
         await setItem("groupData", JSON.stringify(data));
         setGroupData(data);
       })

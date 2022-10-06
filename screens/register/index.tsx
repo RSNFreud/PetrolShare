@@ -102,8 +102,6 @@ export default React.memo(({ navigation }: any) => {
           password: formData["password"],
         })
         .then(async ({ data }) => {
-          console.log(data);
-
           setFormData({ ...formData, key: data });
           nextPage();
         })

@@ -57,7 +57,7 @@ const alertPolyfill = (title: string, message?: string, buttons?: AlertButton[],
 
 
 export const currencyPosition = (value: number, symbol: string) => {
-  if (symbol === "$" || symbol === "£") return `${symbol.trim()}${value}`
+  if (symbol === "$" || symbol === "£" || symbol === "€") return `${symbol.trim()}${value}`
   return `${value} ${symbol}`
 }
 

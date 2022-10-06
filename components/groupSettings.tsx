@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
-import { Text, Pressable } from "react-native";
-import { getItem, sendCustomEvent } from "../../hooks";
-import { AuthContext } from "../../hooks/context";
-import getCurrencies from "../../hooks/getCurrencies";
-import Dropdown from "../Dropdown";
-import RadioButton from "../RadioButton";
-import { Button, Box } from "../Themed";
+import { useContext, useEffect, useState } from "react";
+import { Text, Pressable, View } from "react-native";
+import { getItem, sendCustomEvent } from "../hooks";
+import { AuthContext } from "../hooks/context";
+import { getAllCurrencies } from "../hooks/getCurrencies";
+import Dropdown from "./Dropdown";
+import RadioButton from "./RadioButton";
+import { Button, Box } from "./Themed";
 
 export default ({
   handleClose,
@@ -51,7 +51,8 @@ export default ({
   };
 
   const generateDropdown = async () => {
-    const data: Array<{ name: string; symbol: string }> = await getCurrencies();
+    const data: Array<{ name: string; symbol: string }> =
+      await getAllCurrencies();
     const dropdown: Array<any> = [];
     Object.entries(data).map(([key, e]) => {
       dropdown.push({
@@ -87,11 +88,11 @@ export default ({
   };
 
   const handleTouch = () => {
-    // sendCustomEvent("bodyClicked");
+    sendCustomEvent("bodyClicked");
   };
 
   return (
-    <Pressable onPress={() => handleTouch()}>
+    <Pressable onPress={handleTouch}>
       <>
         {firstSteps && (
           <Box

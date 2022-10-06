@@ -4,7 +4,12 @@ import { ActivityIndicator, View } from "react-native";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
-import { convertToDate, currencyPosition, getGroupData } from "../../hooks";
+import {
+  convertToDate,
+  currencyPosition,
+  getGroupData,
+  getItem,
+} from "../../hooks";
 import Toast from "react-native-toast-message";
 import { convertCurrency } from "../../hooks/getCurrencies";
 
@@ -28,6 +33,12 @@ export default ({ invoiceID }: PropsType) => {
   }, []);
 
   const init = async () => {
+    if (await getItem("currencySymbol"))
+      setGroupData({
+        ...groupData,
+        currency: (await getItem("currencySymbol")) || "",
+      });
+
     const data = await getGroupData();
     if (!data) return;
     const currency = await convertCurrency(data.currency);
