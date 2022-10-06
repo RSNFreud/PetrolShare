@@ -225,7 +225,6 @@ export const Layout = ({
   };
 
   useEffect(() => {
-    Toast.show({ text1: "test", type: "default", autoHide: false });
     EventRegister.addEventListener("dataUpdated", () => {
       setTimeout(async () => {
         if ((await getItem("showToast")) === "distanceUpdated") {

@@ -111,48 +111,6 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
         )}
       </View>
       {open && (
-        // <FlatList
-        //   style={{
-        //     maxHeight: 89,
-        //     borderRadius: 4,
-        //     width: "100%",
-        //     borderColor: "#0B404A",
-        //     backgroundColor: "#001e24",
-        //     borderWidth: 1,
-        //     position: "absolute",
-        //     top: 51,
-        //     left: 0,
-        //     zIndex: 2,
-        //     borderStyle: "solid",
-        //   }}
-        //   data={data}
-        //   renderItem={({ item: e }) => (
-        //     <Pressable
-        //       key={e.name}
-        //       style={{
-        //         paddingVertical: 5,
-        //         paddingHorizontal: 10,
-        //         backgroundColor:
-        //           (selected as item).value === e.value ? "#0B404A" : "",
-        //         flexDirection: "row",
-        //         justifyContent: "space-between",
-        //       }}
-        //       onTouchStart={(e) =>
-        //         setPosition({
-        //           x:
-        //             e.nativeEvent.locationX ||
-        //             (e.nativeEvent.touches[0] as unknown as Touch).clientX,
-        //           y:
-        //             e.nativeEvent.locationY ||
-        //             (e.nativeEvent.touches[0] as unknown as Touch).clientY,
-        //         })
-        //       }
-        //       onTouchEnd={(x) => handleClick(x, e)}            >
-        //       <Text style={{ color: "white" }}>{e.name}</Text>
-        //       <Text style={{ color: "white" }}>{e.value}</Text>
-        //     </Pressable>
-        //   )}
-        // />
         <ScrollView
           style={{
             maxHeight: 89,
@@ -164,37 +122,44 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             position: "absolute",
             top: 51,
             left: 0,
-            zIndex: 2,
             borderStyle: "solid",
           }}
         >
-          {data.map((e) => (
+          {typeof selected !== "string" && (
             <Pressable
-              key={e.name}
+              key={(selected as item).name}
               style={{
                 paddingVertical: 5,
                 paddingHorizontal: 10,
-                backgroundColor:
-                  (selected as item)?.value === e.value ? "#0B404A" : "",
+                backgroundColor: "#0B404A",
                 flexDirection: "row",
                 justifyContent: "space-between",
               }}
-              onTouchStart={(e) =>
-                setPosition({
-                  x:
-                    e.nativeEvent.locationX ||
-                    (e.nativeEvent.touches[0] as unknown as Touch).clientX,
-                  y:
-                    e.nativeEvent.locationY ||
-                    (e.nativeEvent.touches[0] as unknown as Touch).clientY,
-                })
-              }
-              onTouchEnd={(x) => handleClick(x, e)}
             >
-              <Text>{e.name}</Text>
-              <Text>{e.value}</Text>
+              <Text>{(selected as item).name}</Text>
+              <Text>{(selected as item).value}</Text>
             </Pressable>
-          ))}
+          )}
+          {data.map((e) => {
+            if (e.value === (selected as item).value) return;
+            return (
+              <Pressable
+                key={e.name}
+                style={{
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  backgroundColor:
+                    (selected as item)?.value === e.value ? "#0B404A" : "",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+                onPress={() => selectOption(e)}
+              >
+                <Text>{e.name}</Text>
+                <Text>{e.value}</Text>
+              </Pressable>
+            );
+          })}
         </ScrollView>
       )}
     </View>

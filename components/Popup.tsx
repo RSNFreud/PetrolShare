@@ -118,6 +118,7 @@ export default ({
           </Pressable>
         )}
         <ScrollView
+          nestedScrollEnabled={true}
           style={{
             height: "100%",
             paddingVertical: 40,
