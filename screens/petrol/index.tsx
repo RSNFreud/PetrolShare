@@ -92,6 +92,7 @@ export default ({ navigation }: any) => {
             handleInput={(e) => setData({ ...data, litersFilled: e })}
             value={data.litersFilled}
             errorMessage={errors.litersFilled}
+            keyboardType={"decimal-pad"}
             label={`${convertToSentenceCase(fuelFormat)} Filled`}
             placeholder={`Enter amount of ${fuelFormat} filled`}
             style={{ marginBottom: 20 }}
@@ -100,6 +101,7 @@ export default ({ navigation }: any) => {
             handleInput={(e) => setData({ ...data, totalPrice: e })}
             value={data.totalPrice}
             errorMessage={errors.totalPrice}
+            keyboardType={"decimal-pad"}
             label="Total Cost"
             placeholder="Enter the total cost of refueling"
             style={{ marginBottom: 20 }}
@@ -108,6 +110,7 @@ export default ({ navigation }: any) => {
             handleInput={(e) => setData({ ...data, odometer: e })}
             value={data.odometer}
             errorMessage={errors.odometer}
+            keyboardType={"numeric"}
             label="Current Odometer"
             placeholder="Enter the current odometer value"
           />

@@ -61,9 +61,9 @@ export default ({ handleClose }: { handleClose: () => void }) => {
   return (
     <>
       <Input
+        keyboardType={"decimal-pad"}
         placeholder="Enter total distance"
         label="Distance"
-        keyboardType="numeric"
         value={data.distance}
         handleInput={(e) => setData({ ...data, distance: e })}
         style={{ marginBottom: 20 }}
