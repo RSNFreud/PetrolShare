@@ -19,7 +19,7 @@ export const schedulePushNotification = async (
     content: {
       title: "You've got mail! 📬",
       body: "Here is the notification body",
-      data: { data: "goes here" },
+      data: { route: "Invoices", invoiceID: 417 },
     },
     trigger: { seconds: 2 },
   });

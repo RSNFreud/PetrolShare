@@ -143,7 +143,18 @@ export default function App() {
         shouldSetBadge: true,
       }),
     });
-    schedulePushNotification();
+    // schedulePushNotification();
+    Notifications.addNotificationResponseReceivedListener((e) => {
+      if (login.isLoggedIn) {
+        const routeName = e.notification.request.content.data["route"] as any;
+        const invoiceID = e.notification.request.content.data[
+          "invoiceID"
+        ] as string;
+
+        if (!routeName) return;
+        navRef.navigate(routeName, { id: invoiceID });
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -158,14 +169,6 @@ export default function App() {
     if (userData["emailAddress"]) {
       registerForPushNotificationsAsync(userData.emailAddress);
     }
-
-    Notifications.addNotificationResponseReceivedListener((e) => {
-      if (login.isLoggedIn) {
-        const path = e.notification.request.content.data["route"];
-        if (!path) return;
-        navRef.navigate(route);
-      }
-    });
   }, [userData]);
 
   return (
