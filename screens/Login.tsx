@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import Input from "../components/Input";
 import { Button, Layout, Seperator, Text } from "../components/Themed";
@@ -61,6 +61,28 @@ export default ({ navigation }: any) => {
       emailAddress: "",
     });
     const [isEmailSent, setIsEmailSent] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const sendEmail = () => {
+      setLoading(true);
+      axios
+        .post(process.env.REACT_APP_API_ADDRESS + `/user/forgot-password`, {
+          emailAddress: formData.emailAddress,
+        })
+        .then(() => {
+          setLoading(false);
+          setIsEmailSent(true);
+        })
+        .catch(() => {
+          setLoading(false);
+          setIsEmailSent(true);
+        });
+    };
+
+    useEffect(() => {
+      if (isEmailSent) {
+      }
+    }, [isEmailSent]);
 
     return (
       <Popup
@@ -96,10 +118,9 @@ export default ({ navigation }: any) => {
               errorMessage={formErrors.emailAddress}
             />
             <Button
+              loading={loading}
               handleClick={() =>
-                handleSubmit(formData, setFormErrors, () =>
-                  setIsEmailSent(true)
-                )
+                handleSubmit(formData, setFormErrors, () => sendEmail())
               }
             >
               Send Recovery Email
