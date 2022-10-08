@@ -28,6 +28,12 @@ import { deleteItem, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
+import * as Notifications from "expo-notifications";
+import {
+  deregisterForPushNotifications,
+  registerForPushNotificationsAsync,
+  schedulePushNotification,
+} from "./components/sendNotification";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -51,6 +57,7 @@ export default function App() {
           axios
             .post(process.env.REACT_APP_API_ADDRESS + "/user/login", { ...e })
             .then(async ({ data }) => {
+              registerForPushNotificationsAsync(data.emailAddress);
               setUserData(data);
               try {
                 await setItem("userData", JSON.stringify(data));
@@ -76,6 +83,7 @@ export default function App() {
       },
       isLoading: loading,
       signOut: async () => {
+        deregisterForPushNotifications(userData.emailAddress);
         setUserData({});
         await deleteItem("userData");
       },
@@ -128,6 +136,14 @@ export default function App() {
 
   useEffect(() => {
     setItem("firstLoad", "true");
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: true,
+      }),
+    });
+    schedulePushNotification();
   }, []);
 
   useEffect(() => {
@@ -138,6 +154,18 @@ export default function App() {
     )
       setFirstSteps(true);
     else setFirstSteps(false);
+
+    if (userData["emailAddress"]) {
+      registerForPushNotificationsAsync(userData.emailAddress);
+    }
+
+    Notifications.addNotificationResponseReceivedListener((e) => {
+      if (login.isLoggedIn) {
+        const path = e.notification.request.content.data["route"];
+        if (!path) return;
+        navRef.navigate(route);
+      }
+    });
   }, [userData]);
 
   return (

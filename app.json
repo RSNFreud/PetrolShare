@@ -8,7 +8,9 @@
     "scheme": "petrolshare",
     "description": "The web version of the PetrolShare App",
     "userInterfaceStyle": "automatic",
-    "plugins": ["./withAndroidVerifiedLinksWorkaround"],
+    "plugins": [
+      "./withAndroidVerifiedLinksWorkaround"
+    ],
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -16,7 +18,8 @@
     },
     "backgroundColor": "#001E24",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/5a6b67c6-532d-402b-ab54-ceeb04084203"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -30,20 +33,27 @@
         "backgroundColor": "#001e24"
       },
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [{
-        "action": "VIEW",
-        "data": [{
-          "scheme": "https",
-          "host": "*.freud-online.co.uk"
-        }],
-        "category": [
-          "BROWSABLE",
-          "DEFAULT"
-        ]
-      }]
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.freud-online.co.uk"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

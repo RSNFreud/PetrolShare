@@ -1,0 +1,79 @@
+import axios from "axios";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+export const schedulePushNotification = async (
+  title?: string,
+  body?: string
+) => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: "Here is the notification body",
+      data: { data: "goes here" },
+    },
+    trigger: { seconds: 2 },
+  });
+};
+
+export const registerForPushNotificationsAsync = async (
+  emailAddress: string
+) => {
+  let token;
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (
+      await Notifications.getExpoPushTokenAsync({
+        experienceId: "@rsnfreud/PetrolShare",
+      })
+    ).data;
+
+    await axios
+      .post(process.env.REACT_APP_API_ADDRESS + "/notify/register", {
+        emailAddress: emailAddress,
+        notificationKey: token,
+      })
+      .catch(({ response }) => {
+        console.log(response);
+      });
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  return token;
+};
+
+export const deregisterForPushNotifications = async (emailAddress: string) => {
+  await axios
+    .post(process.env.REACT_APP_API_ADDRESS + "/notify/deregister", {
+      emailAddress: emailAddress,
+    })
+    .catch(() => {});
+};

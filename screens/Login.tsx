@@ -6,6 +6,7 @@ import Popup from "../components/Popup";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../hooks/context";
 import axios from "axios";
+import { schedulePushNotification } from "../components/sendNotification";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
