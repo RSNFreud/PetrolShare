@@ -10,7 +10,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Platform, useWindowDimensions } from "react-native";
+import { Alert, Platform, useWindowDimensions } from "react-native";
 
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/Login";
@@ -132,6 +132,16 @@ export default function App() {
 
   useEffect(() => {
     if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
+    if (!loading && login.isLoggedIn) {
+      Notifications.addNotificationResponseReceivedListener((e) => {
+        const routeName = e.notification.request.content.data["route"] as any;
+        const invoiceID = e.notification.request.content.data[
+          "invoiceID"
+        ] as string;
+        if (!routeName) return;
+        navRef.navigate(routeName, { id: invoiceID });
+      });
+    }
   }, [loading]);
 
   useEffect(() => {
@@ -142,18 +152,6 @@ export default function App() {
         shouldPlaySound: false,
         shouldSetBadge: true,
       }),
-    });
-    // schedulePushNotification();
-    Notifications.addNotificationResponseReceivedListener((e) => {
-      if (login.isLoggedIn) {
-        const routeName = e.notification.request.content.data["route"] as any;
-        const invoiceID = e.notification.request.content.data[
-          "invoiceID"
-        ] as string;
-
-        if (!routeName) return;
-        navRef.navigate(routeName, { id: invoiceID });
-      }
     });
   }, []);
 
@@ -205,11 +203,21 @@ export default function App() {
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 {!firstSteps && (
                   <>
-                    <Stack.Screen name="ManageDistance" component={distance} />
-                    <Stack.Screen name="AddManual" component={manual} />
-                    <Stack.Screen name="AddOdometer" component={odometer} />
-                    <Stack.Screen name="AddPreset" component={preset} />
-                    <Stack.Screen name="AddPetrol" component={petrol} />
+                    <Stack.Screen
+                      name="ManageDistance"
+                      component={distance}
+                      options={{ title: "Manage Distance" }}
+                    />
+                    <Stack.Screen
+                      name="AddPreset"
+                      component={preset}
+                      options={{ title: "Add Preset" }}
+                    />
+                    <Stack.Screen
+                      name="AddPetrol"
+                      component={petrol}
+                      options={{ title: "Add Petrol" }}
+                    />
                     <Stack.Screen name="Logs" component={logs} />
                     <Stack.Screen name="Invoices" component={invoices} />
                   </>

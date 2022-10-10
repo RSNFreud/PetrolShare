@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "752399705305",
+    "project_id": "petrolshare-5b2d8",
+    "storage_bucket": "petrolshare-5b2d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752399705305:android:1cf0979f9b72adc5df8ac8",
+        "android_client_info": {
+          "package_name": "com.rsnfreud.PetrolShare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752399705305-96gg8c39gd1e224gfg2vad01pm1jllpd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYXUStMC4uV3r7MO41zQaQfZI4ZZrGZzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752399705305-96gg8c39gd1e224gfg2vad01pm1jllpd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

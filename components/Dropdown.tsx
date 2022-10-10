@@ -24,7 +24,6 @@ type PropsType = {
 export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(value);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const selectOption = (e: item) => {
     setSelected(e);
@@ -45,19 +44,6 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
       EventRegister.removeEventListener("bodyClicked");
     };
   }, []);
-
-  const handleClick = (event: GestureResponderEvent, item: item) => {
-    if (
-      (event.nativeEvent.locationX ||
-        (event.nativeEvent.changedTouches[0] as unknown as Touch).clientX) ===
-        position.x &&
-      (event.nativeEvent.locationY ||
-        (event.nativeEvent.changedTouches[0] as unknown as Touch).clientY) ===
-        position.y
-    ) {
-      selectOption(item);
-    }
-  };
 
   return (
     <View
@@ -129,7 +115,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             borderStyle: "solid",
           }}
         >
-          {typeof selected !== "string" && (
+          {selected && typeof selected !== "string" && (
             <Pressable
               key={(selected as item).name}
               onPress={() => setOpen(false)}
@@ -141,12 +127,12 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
                 justifyContent: "space-between",
               }}
             >
-              <Text>{(selected as item).name}</Text>
-              <Text>{(selected as item).value}</Text>
+              <Text>{(selected as item)?.name}</Text>
+              <Text>{(selected as item)?.value}</Text>
             </Pressable>
           )}
           {data.map((e) => {
-            if (e.value === (selected as item).value) return;
+            if (selected && e.value === (selected as item).value) return;
             return (
               <Pressable
                 key={e.name}

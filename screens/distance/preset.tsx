@@ -157,30 +157,52 @@ export default ({ navigation }: any) => {
     Object.entries(presetFormData).map(([key, value]) => {
       if (key === "presetID") return;
       if (!value) errors[key] = "Please complete this field!";
+      console.log(key, parseInt(value));
 
-      if (key === "distance" && !parseInt(value))
+      if (key === "distance" && !/^-?\d+$/.test(value)) {
         errors[key] = "Please enter a valid numerical value!";
+      }
     });
     setPresetFormErrors(errors);
 
     if (!Object.keys(errors).length && retrieveData) {
-      axios
-        .post(process.env.REACT_APP_API_ADDRESS + "/preset/add", {
-          presetName: presetFormData.presetName,
-          distance: presetFormData.distance,
-          authenticationKey: retrieveData().authenticationKey,
-        })
-        .then(() => {
-          setVisible(false);
-          Toast.show({
-            type: "default",
-            text1: "Preset successfully added!",
+      if (presetFormData.presetID) {
+        axios
+          .post(process.env.REACT_APP_API_ADDRESS + "/preset/edit", {
+            presetID: presetFormData.presetID,
+            presetName: presetFormData.presetName,
+            distance: presetFormData.distance,
+            authenticationKey: retrieveData().authenticationKey,
+          })
+          .then(() => {
+            setVisible(false);
+            Toast.show({
+              type: "default",
+              text1: "Preset successfully edited!!",
+            });
+            getPresets();
+          })
+          .catch(({ response }) => {
+            console.log(response.message);
           });
-          getPresets();
-        })
-        .catch(({ response }) => {
-          console.log(response.message);
-        });
+      } else
+        axios
+          .post(process.env.REACT_APP_API_ADDRESS + "/preset/add", {
+            presetName: presetFormData.presetName,
+            distance: presetFormData.distance,
+            authenticationKey: retrieveData().authenticationKey,
+          })
+          .then(() => {
+            setVisible(false);
+            Toast.show({
+              type: "default",
+              text1: "Preset successfully added!",
+            });
+            getPresets();
+          })
+          .catch(({ response }) => {
+            console.log(response.message);
+          });
     }
   };
   return (

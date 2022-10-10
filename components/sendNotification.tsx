@@ -36,7 +36,7 @@ export const registerForPushNotificationsAsync = async (
       importance: Notifications.AndroidImportance.MAX,
     });
   }
-
+  if (Platform.OS === "web") return;
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
@@ -51,7 +51,7 @@ export const registerForPushNotificationsAsync = async (
     }
     token = (
       await Notifications.getExpoPushTokenAsync({
-        experienceId: "@rsnfreud/PetrolShare",
+        experienceId: "@rsnfreud/petrolshare",
       })
     ).data;
 
@@ -75,5 +75,7 @@ export const deregisterForPushNotifications = async (emailAddress: string) => {
     .post(process.env.REACT_APP_API_ADDRESS + "/notify/deregister", {
       emailAddress: emailAddress,
     })
-    .catch(() => {});
+    .catch(({ response }) => {
+      console.log(response);
+    });
 };

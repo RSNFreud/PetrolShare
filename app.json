@@ -28,26 +28,23 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./assets/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#001e24"
       },
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "data": [
-            {
-              "scheme": "https",
-              "host": "*.freud-online.co.uk"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
-      ]
+      "intentFilters": [{
+        "action": "VIEW",
+        "data": [{
+          "scheme": "https",
+          "host": "*.freud-online.co.uk"
+        }],
+        "category": [
+          "BROWSABLE",
+          "DEFAULT"
+        ]
+      }]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

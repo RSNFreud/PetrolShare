@@ -6,6 +6,7 @@ import {
   FlexFull,
   Button,
   Text,
+  Box,
 } from "../../components/Themed";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
@@ -46,7 +47,7 @@ export default ({ navigation }: any) => {
 
     Object.entries(data).map(([key, value]) => {
       if (!value) errors[key] = "Please complete this field!";
-      if (value && isNaN(parseFloat(value)))
+      if (value && !/^-?\d+$/.test(value))
         errors[key] = "Please enter a valid numerical value";
     });
     setErrors({ ...errors });
@@ -68,7 +69,8 @@ export default ({ navigation }: any) => {
         console.log(response);
         setErrors({
           ...errors,
-          submit: "There is no distance to generate petrol for!",
+          submit:
+            "You have no distance tracked in your session for us to generate an invoice for.",
         });
         setLoading(false);
       });
@@ -87,6 +89,18 @@ export default ({ navigation }: any) => {
         ]}
       />
       <FlexFull>
+        <Box
+          style={{
+            paddingHorizontal: 15,
+            paddingVertical: 15,
+            marginBottom: 25,
+          }}
+        >
+          <Text>
+            By clicking the Add Petrol button below, an invoice will be
+            generated from the distance tracked in your current session.
+          </Text>
+        </Box>
         <View>
           <Input
             handleInput={(e) => setData({ ...data, litersFilled: e })}
@@ -115,7 +129,7 @@ export default ({ navigation }: any) => {
             placeholder="Enter the current odometer value"
           />
         </View>
-        <View>
+        <View style={{ marginTop: 20 }}>
           <Button loading={loading} handleClick={() => handleSubmit()}>
             Add Petrol
           </Button>

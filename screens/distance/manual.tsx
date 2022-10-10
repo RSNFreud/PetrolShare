@@ -36,7 +36,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
       distance = data.distance;
     }
 
-    if (parseFloat(distance) <= 0 || isNaN(parseFloat(data.distance)))
+    if (parseFloat(distance) <= 0 || !/^-?\d+$/.test(distance))
       return setErrors("Please enter a distance above 0!");
 
     if (!retrieveData) return;

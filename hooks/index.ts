@@ -51,7 +51,7 @@ const alertPolyfill = (title: string, message?: string, buttons?: AlertButton[],
     confirmOption && confirmOption.onPress()
   } else {
     const cancelOption: any = buttons.find(({ style }) => style === 'cancel')
-    cancelOption && cancelOption.onPress()
+    cancelOption && cancelOption.onPress && cancelOption.onPress()
   }
 }
 
