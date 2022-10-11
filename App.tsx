@@ -34,6 +34,7 @@ import {
   registerForPushNotificationsAsync,
   schedulePushNotification,
 } from "./components/sendNotification";
+import gps from "./screens/gps";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -207,6 +208,11 @@ export default function App() {
                       name="ManageDistance"
                       component={distance}
                       options={{ title: "Manage Distance" }}
+                    />
+                    <Stack.Screen
+                      name="GPS"
+                      component={gps}
+                      options={{ title: "GPS Tracking" }}
                     />
                     <Stack.Screen
                       name="AddPreset"

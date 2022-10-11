@@ -102,8 +102,11 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
       )}
       {open && (
         <ScrollView
+          snapToAlignment="center"
+          snapToInterval={30}
+          decelerationRate={"fast"}
           style={{
-            maxHeight: 89,
+            maxHeight: 92,
             borderRadius: 4,
             width: "100%",
             borderColor: "#0B404A",
@@ -121,6 +124,8 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
               onPress={() => setOpen(false)}
               style={{
                 paddingVertical: 5,
+                alignContent: "center",
+                height: 30,
                 paddingHorizontal: 10,
                 backgroundColor: "#0B404A",
                 flexDirection: "row",
@@ -131,26 +136,30 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
               <Text>{(selected as item)?.value}</Text>
             </Pressable>
           )}
-          {data.map((e) => {
-            if (selected && e.value === (selected as item).value) return;
-            return (
-              <Pressable
-                key={e.name}
-                style={{
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
-                  backgroundColor:
-                    (selected as item)?.value === e.value ? "#0B404A" : "",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-                onPress={() => selectOption(e)}
-              >
-                <Text>{e.name}</Text>
-                <Text>{e.value}</Text>
-              </Pressable>
-            );
-          })}
+          {data
+            .sort((a, b) => a["name"].localeCompare(b["name"]))
+            .map((e) => {
+              if (selected && e.value === (selected as item).value) return;
+              return (
+                <Pressable
+                  key={e.name}
+                  style={{
+                    paddingVertical: 5,
+                    alignContent: "center",
+                    height: 30,
+                    paddingHorizontal: 10,
+                    backgroundColor:
+                      (selected as item)?.value === e.value ? "#0B404A" : "",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                  onPress={() => selectOption(e)}
+                >
+                  <Text>{e.name}</Text>
+                  <Text>{e.value}</Text>
+                </Pressable>
+              );
+            })}
         </ScrollView>
       )}
     </View>

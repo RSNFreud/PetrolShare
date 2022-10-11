@@ -49,11 +49,11 @@ export const registerForPushNotificationsAsync = async (
       alert("Failed to get push token for push notification!");
       return;
     }
-    token = (
-      await Notifications.getExpoPushTokenAsync({
-        experienceId: "@rsnfreud/petrolshare",
-      })
-    ).data;
+    try {
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } catch {}
+
+    if (!token) return;
 
     await axios
       .post(process.env.REACT_APP_API_ADDRESS + "/notify/register", {
