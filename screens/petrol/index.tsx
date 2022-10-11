@@ -55,7 +55,7 @@ export default ({ navigation }: any) => {
 
     setLoading(true);
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/petrol/add`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/petrol/add`, {
         authenticationKey: retrieveData().authenticationKey,
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,

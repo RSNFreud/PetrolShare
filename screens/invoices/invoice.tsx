@@ -49,7 +49,7 @@ export default ({ invoiceID }: PropsType) => {
   const markPaid = (userID: number) => {
     setLoading(userID);
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/invoices/pay`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/invoices/pay`, {
         authenticationKey: retrieveData().authenticationKey,
         userID: userID,
         invoiceID: invoiceID,
@@ -70,7 +70,7 @@ export default ({ invoiceID }: PropsType) => {
   const getInvoice = () => {
     axios
       .get(
-        process.env.REACT_APP_API_ADDRESS +
+        (process.env as any).REACT_APP_API_ADDRESS +
           `/invoices/get?authenticationKey=${
             retrieveData().authenticationKey
           }&invoiceID=${invoiceID}`

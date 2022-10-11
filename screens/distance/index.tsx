@@ -85,9 +85,12 @@ export default ({ navigation }: any) => {
         text: "Yes",
         onPress: async () => {
           axios
-            .post(process.env.REACT_APP_API_ADDRESS + `/distance/reset`, {
-              authenticationKey: retrieveData().authenticationKey,
-            })
+            .post(
+              (process.env as any).REACT_APP_API_ADDRESS + `/distance/reset`,
+              {
+                authenticationKey: retrieveData().authenticationKey,
+              }
+            )
             .then(async (e) => {
               await setItem("showToast", "resetDistance");
               navigation.navigate("Dashboard");

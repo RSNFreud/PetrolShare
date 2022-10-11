@@ -28,7 +28,7 @@ export default ({ navigation }: any) => {
   const getData = () => {
     axios
       .get(
-        process.env.REACT_APP_API_ADDRESS +
+        (process.env as any).REACT_APP_API_ADDRESS +
           `/invoices/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {

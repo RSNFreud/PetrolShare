@@ -75,7 +75,7 @@ export default ({
     if (Object.keys(errors).length) return;
     setLoading(true);
     await axios
-      .post(process.env.REACT_APP_API_ADDRESS + "/group/update", {
+      .post((process.env as any).REACT_APP_API_ADDRESS + "/group/update", {
         authenticationKey: retrieveData().authenticationKey,
         distance: data.distance,
         petrol: data.petrol,

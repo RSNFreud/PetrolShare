@@ -26,7 +26,7 @@ export default ({
     // Send email with link to confirm email change
     setLoading(true);
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/user/change-email`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/user/change-email`, {
         authenticationKey: retrieveData().authenticationKey,
         newEmail: emailAddress,
       })

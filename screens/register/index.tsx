@@ -96,7 +96,7 @@ export default React.memo(({ navigation }: any) => {
   const handleRegister = async () => {
     if (register) {
       axios
-        .post(process.env.REACT_APP_API_ADDRESS + "/user/register", {
+        .post((process.env as any).REACT_APP_API_ADDRESS + "/user/register", {
           fullName: formData["fullName"],
           emailAddress: formData["emailAddress"],
           password: formData["password"],

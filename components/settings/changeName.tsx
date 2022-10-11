@@ -24,7 +24,7 @@ export default ({
     if (!name) return setErrors("Please enter a valid name");
     setLoading(true);
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/user/change-name`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/user/change-name`, {
         authenticationKey: retrieveData().authenticationKey,
         newName: name,
       })

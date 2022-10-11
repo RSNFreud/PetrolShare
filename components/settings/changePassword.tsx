@@ -48,10 +48,13 @@ export default ({
     ) {
       setLoading(true);
       axios
-        .post(process.env.REACT_APP_API_ADDRESS + `/user/change-password`, {
-          authenticationKey: retrieveData().authenticationKey,
-          newPassword: data.password,
-        })
+        .post(
+          (process.env as any).REACT_APP_API_ADDRESS + `/user/change-password`,
+          {
+            authenticationKey: retrieveData().authenticationKey,
+            newPassword: data.password,
+          }
+        )
         .then(() => {
           setLoading(false);
           handleClose();

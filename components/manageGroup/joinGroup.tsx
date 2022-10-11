@@ -37,7 +37,8 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
               setLoading(true);
               axios
                 .post(
-                  process.env.REACT_APP_API_ADDRESS + `/user/change-group`,
+                  (process.env as any).REACT_APP_API_ADDRESS +
+                    `/user/change-group`,
                   {
                     authenticationKey: retrieveData().authenticationKey,
                     groupID: form.data,
@@ -65,10 +66,13 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
       );
     else
       axios
-        .post(process.env.REACT_APP_API_ADDRESS + `/user/change-group`, {
-          authenticationKey: retrieveData().authenticationKey,
-          groupID: form.data,
-        })
+        .post(
+          (process.env as any).REACT_APP_API_ADDRESS + `/user/change-group`,
+          {
+            authenticationKey: retrieveData().authenticationKey,
+            groupID: form.data,
+          }
+        )
         .then(async (e) => {
           setLoading(false);
           onComplete(form.data);

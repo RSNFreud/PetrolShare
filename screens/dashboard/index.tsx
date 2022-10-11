@@ -87,7 +87,7 @@ export default ({ navigation }: any) => {
   const getDistance = () => {
     axios
       .get(
-        process.env.REACT_APP_API_ADDRESS +
+        (process.env as any).REACT_APP_API_ADDRESS +
           `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
@@ -121,7 +121,7 @@ export default ({ navigation }: any) => {
     getDistance();
     axios
       .get(
-        process.env.REACT_APP_API_ADDRESS +
+        (process.env as any).REACT_APP_API_ADDRESS +
           `/user/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
@@ -152,7 +152,7 @@ export default ({ navigation }: any) => {
 
     axios
       .get(
-        process.env.REACT_APP_API_ADDRESS +
+        (process.env as any).REACT_APP_API_ADDRESS +
           "/group/get?authenticationKey=" +
           retrieveData().authenticationKey
       )

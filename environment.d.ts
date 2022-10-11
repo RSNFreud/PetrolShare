@@ -1,3 +1,7 @@
-export interface ProcessEnv {
-    [key: string]: string | undefined
+declare global {
+    namespace NodeJS {
+        interface ProcessEnv {
+            REACT_APP_API_ADDRESS: string;
+        }
+    }
 }

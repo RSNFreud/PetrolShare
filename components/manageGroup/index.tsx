@@ -106,10 +106,13 @@ export default ({
     setGroupID(generateGroupID());
     await setItem("groupData", "");
     setNewGroup(true);
-    await axios.post(process.env.REACT_APP_API_ADDRESS + "/group/create", {
-      authenticationKey: retrieveData().authenticationKey,
-      groupID: groupID,
-    });
+    await axios.post(
+      (process.env as any).REACT_APP_API_ADDRESS + "/group/create",
+      {
+        authenticationKey: retrieveData().authenticationKey,
+        groupID: groupID,
+      }
+    );
     changeScreen("Settings");
   };
 

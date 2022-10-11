@@ -67,9 +67,12 @@ export default ({ navigation }: any) => {
     const sendEmail = () => {
       setLoading(true);
       axios
-        .post(process.env.REACT_APP_API_ADDRESS + `/user/forgot-password`, {
-          emailAddress: formData.emailAddress,
-        })
+        .post(
+          (process.env as any).REACT_APP_API_ADDRESS + `/user/forgot-password`,
+          {
+            emailAddress: formData.emailAddress,
+          }
+        )
         .then(() => {
           setLoading(false);
           setIsEmailSent(true);
@@ -145,7 +148,7 @@ export default ({ navigation }: any) => {
 
   const resendVerification = () => {
     axios
-      .post(process.env.REACT_APP_EMAIL_API_ADDRESS + "/resend", {
+      .post((process.env as any).REACT_APP_EMAIL_API_ADDRESS + "/resend", {
         emailAddress: formData.emailAddress,
       })
       .then(async () => {

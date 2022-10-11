@@ -118,7 +118,7 @@ export default () => {
     // setLoading(true);
     if (distance === 0) return;
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/distance/add`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })

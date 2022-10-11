@@ -49,7 +49,7 @@ export default ({ navigation }: any) => {
     if (retrieveData) {
       axios
         .get(
-          process.env.REACT_APP_API_ADDRESS +
+          (process.env as any).REACT_APP_API_ADDRESS +
             `/preset/get?authenticationKey=${retrieveData().authenticationKey}`
         )
         .then(async ({ data }) => {
@@ -103,7 +103,7 @@ export default ({ navigation }: any) => {
     if (!retrieveData) return;
     setLoading(true);
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + `/distance/add`, {
+      .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
@@ -125,7 +125,7 @@ export default ({ navigation }: any) => {
 
   const deletePreset = () => {
     axios
-      .post(process.env.REACT_APP_API_ADDRESS + "/preset/delete", {
+      .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/delete", {
         presetID: selectedToDelete.current,
         authenticationKey: retrieveData().authenticationKey,
       })
@@ -168,7 +168,7 @@ export default ({ navigation }: any) => {
     if (!Object.keys(errors).length && retrieveData) {
       if (presetFormData.presetID) {
         axios
-          .post(process.env.REACT_APP_API_ADDRESS + "/preset/edit", {
+          .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/edit", {
             presetID: presetFormData.presetID,
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
@@ -187,7 +187,7 @@ export default ({ navigation }: any) => {
           });
       } else
         axios
-          .post(process.env.REACT_APP_API_ADDRESS + "/preset/add", {
+          .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/add", {
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
             authenticationKey: retrieveData().authenticationKey,
