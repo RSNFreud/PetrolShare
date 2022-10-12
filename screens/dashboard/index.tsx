@@ -42,8 +42,10 @@ export default ({ navigation }: any) => {
       ) {
         setFirstSteps(true);
         setVisible(true);
+      } else {
+        setFirstSteps(false);
+        setVisible(false);
       }
-      console.log(retrieveData());
 
       if (retrieveData() && retrieveData().groupID !== null) getGroupData();
 
