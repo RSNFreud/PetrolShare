@@ -2,7 +2,7 @@
   "expo": {
     "name": "PetrolShare",
     "slug": "PetrolShare",
-    "version": "1.0.1",
+    "version": "1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "petrolshare",
@@ -33,6 +33,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#001e24"
       },
+      "versionCode": 1.1,
       "permissons": [
         "ACCESS_BACKGROUND_LOCATION",
         "ACCESS_FINE_LOCATION",
