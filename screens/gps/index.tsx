@@ -27,6 +27,7 @@ export default () => {
   })
   const [distanceFormat, setDistanceFormat] = useState('')
   const [isTracking, setIsTracking] = useState(false)
+  const [log, setLog] = useState('')
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   useEffect(() => {
@@ -64,6 +65,7 @@ export default () => {
     await Location.stopLocationUpdatesAsync('gpsTracking')
     setDistance(0)
     await setItem('gpsDistance', '0')
+    setLog('adding task')
     await Location.startLocationUpdatesAsync('gpsTracking', {
       accuracy: Location.Accuracy.BestForNavigation,
       activityType: Location.ActivityType.AutomotiveNavigation,
@@ -79,6 +81,8 @@ export default () => {
     'gpsTracking',
     async ({ data: { locations }, error }) => {
       if (error) {
+        setLog(error.message)
+
         // check `error.message` for more details.
         return
       }
@@ -86,6 +90,12 @@ export default () => {
         longitude: locations[0].coords.longitude,
         latitude: locations[0].coords.latitude,
       })
+      setLog(
+        JSON.stringify({
+          longitude: locations[0].coords.longitude,
+          latitude: locations[0].coords.latitude,
+        }),
+      )
       if (coords.latitude !== undefined && coords.longitude !== undefined) {
         const calcDistance = haversine(
           coords,
@@ -97,7 +107,7 @@ export default () => {
         )
         setDistance(distance + calcDistance)
         await setItem('gpsDistance', distance + calcDistance)
-
+        setLog(calcDistance)
         console.log(calcDistance)
       }
 
@@ -172,6 +182,7 @@ export default () => {
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
             {distance.toFixed(2)} {distanceFormat}
           </Text>
+          <Text>{log}</Text>
         </View>
         <View>
           <Button handleClick={toggleTracking} styles={{ marginBottom: 20 }}>
