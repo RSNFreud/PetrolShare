@@ -41,8 +41,6 @@ const Stack = createNativeStackNavigator();
 TaskManager.defineTask(
   "gpsTracking",
   async ({ data: { locations }, error }) => {
-    console.log("triggered");
-
     if (error) {
       return;
     }

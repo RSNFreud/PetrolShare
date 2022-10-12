@@ -2,16 +2,17 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableWithoutFeedback, Dimensions } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
-import { deleteItem, getItem, setItem } from "../../hooks";
+import { Alert, deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
 import { EventRegister } from "react-native-event-listeners";
 import Layout from "../../components/layout";
 import config from "../../config";
+import * as Location from "expo-location";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -89,6 +90,26 @@ export default ({ navigation }: any) => {
       });
     }
   }, [retrieveData]);
+
+  useEffect(() => {
+    (async () => {
+      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking")) {
+        Alert(
+          "You are currently tracking your GPS. Do you want to go to the Track GPS screen?",
+          undefined,
+          [
+            {
+              text: "Yes",
+              onPress: () => {
+                navigation.navigate("GPS");
+              },
+            },
+            { text: "No", style: "cancel" },
+          ]
+        );
+      }
+    })();
+  }, []);
 
   const getDistance = () => {
     axios
