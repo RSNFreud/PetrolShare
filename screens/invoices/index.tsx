@@ -5,7 +5,7 @@ import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
 import Layout from "../../components/layout";
 import { Text } from "../../components/Themed";
-import { convertToDate } from "../../hooks";
+import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 
@@ -36,9 +36,9 @@ export default ({ navigation }: any) => {
         setData(data);
         setDataLoaded(true);
       })
-      .catch((err) => {
+      .catch(({ response }) => {
         setDataLoaded(true);
-        console.log(err);
+        console.log(response);
       });
   };
   return (

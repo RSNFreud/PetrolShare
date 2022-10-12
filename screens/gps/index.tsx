@@ -35,7 +35,8 @@ export default () => {
       setDistanceFormat(data.distance);
 
       const cachedDistance = await getItem("gpsDistance");
-
+      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+        setIsTracking(true);
       if (cachedDistance && parseFloat(cachedDistance) > 0) {
         setDistance(parseFloat(cachedDistance));
         setIsTracking(true);

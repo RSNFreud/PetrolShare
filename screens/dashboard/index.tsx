@@ -42,6 +42,7 @@ export default ({ navigation }: any) => {
         setFirstSteps(true);
         setVisible(true);
       }
+      console.log(retrieveData());
 
       if (retrieveData() && retrieveData().groupID !== null) getGroupData();
 
@@ -106,8 +107,8 @@ export default ({ navigation }: any) => {
           console.log(err);
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(({ response }) => {
+        console.log(response);
       });
   };
 
