@@ -45,6 +45,8 @@ export default () => {
   }, [])
 
   const toggleTracking = async () => {
+    console.log(await TaskManager.getRegisteredTasksAsync())
+
     if (isTracking) {
       setIsTracking(false)
       setCoords({
@@ -59,10 +61,10 @@ export default () => {
 
   const startTracking = async () => {
     setIsTracking(false)
-    if (!(await requestForeground()) || !(await requestBackground())) {
-      // setErrorMsg("Permission to access location was denied");
-      return
-    }
+    // if (!(await requestForeground()) || !(await requestBackground())) {
+    //   // setErrorMsg("Permission to access location was denied");
+    //   return
+    // }
     await Location.stopLocationUpdatesAsync('gpsTracking')
     setDistance(0)
     await setItem('gpsDistance', '0')
