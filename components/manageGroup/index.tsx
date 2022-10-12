@@ -8,6 +8,7 @@ import Complete from "./complete";
 import JoinGroup from "./joinGroup";
 import GroupSettings from "../groupSettings";
 import { setItem } from "../../hooks";
+import config from "../../config";
 
 type PropsType = {
   onComplete: () => void;
@@ -106,13 +107,10 @@ export default ({
     setGroupID(generateGroupID());
     await setItem("groupData", "");
     setNewGroup(true);
-    await axios.post(
-      (process.env as any).REACT_APP_API_ADDRESS + "/group/create",
-      {
-        authenticationKey: retrieveData().authenticationKey,
-        groupID: groupID,
-      }
-    );
+    await axios.post(config.REACT_APP_API_ADDRESS + "/group/create", {
+      authenticationKey: retrieveData().authenticationKey,
+      groupID: groupID,
+    });
     changeScreen("Settings");
   };
 

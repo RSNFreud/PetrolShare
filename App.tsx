@@ -36,6 +36,7 @@ import {
   schedulePushNotification,
 } from "./components/sendNotification";
 import gps from "./screens/gps";
+import config from "./config";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -68,7 +69,7 @@ export default function App() {
       signIn: async (e: any) => {
         return new Promise((res, rej) => {
           axios
-            .post((process.env as any).REACT_APP_API_ADDRESS + "/user/login", {
+            .post(config.REACT_APP_API_ADDRESS + "/user/login", {
               ...e,
             })
             .then(async ({ data }) => {
@@ -122,7 +123,7 @@ export default function App() {
           }
           axios
             .get(
-              (process.env as any).REACT_APP_API_ADDRESS +
+              config.REACT_APP_API_ADDRESS +
                 "/user/verify?authenticationKey=" +
                 parsed.authenticationKey
             )

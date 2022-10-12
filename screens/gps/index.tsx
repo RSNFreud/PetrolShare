@@ -14,6 +14,7 @@ import haversine from "haversine";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
+import config from "../../config";
 
 export default () => {
   const [distance, setDistance] = useState(0);
@@ -138,7 +139,7 @@ export default () => {
     // setLoading(true);
     if (distance === 0) return;
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
+      .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })

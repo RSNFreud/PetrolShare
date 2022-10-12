@@ -10,6 +10,7 @@ import Svg, { Path } from "react-native-svg";
 import { TouchableOpacity } from "react-native";
 import { deleteItem, getItem, setItem, Alert } from "../../hooks";
 import Layout from "../../components/layout";
+import config from "../../config";
 
 const DistanceButton = ({
   handleClick,
@@ -86,12 +87,9 @@ export default ({ navigation }: any) => {
         text: "Yes",
         onPress: async () => {
           axios
-            .post(
-              (process.env as any).REACT_APP_API_ADDRESS + `/distance/reset`,
-              {
-                authenticationKey: retrieveData().authenticationKey,
-              }
-            )
+            .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
+              authenticationKey: retrieveData().authenticationKey,
+            })
             .then(async (e) => {
               await setItem("showToast", "resetDistance");
               navigation.navigate("Dashboard");

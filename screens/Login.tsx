@@ -7,6 +7,7 @@ import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../hooks/context";
 import axios from "axios";
 import Layout from "../components/layout";
+import config from "../config";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
@@ -67,12 +68,9 @@ export default ({ navigation }: any) => {
     const sendEmail = () => {
       setLoading(true);
       axios
-        .post(
-          (process.env as any).REACT_APP_API_ADDRESS + `/user/forgot-password`,
-          {
-            emailAddress: formData.emailAddress,
-          }
-        )
+        .post(config.REACT_APP_API_ADDRESS + `/user/forgot-password`, {
+          emailAddress: formData.emailAddress,
+        })
         .then(() => {
           setLoading(false);
           setIsEmailSent(true);
@@ -148,7 +146,7 @@ export default ({ navigation }: any) => {
 
   const resendVerification = () => {
     axios
-      .post((process.env as any).REACT_APP_EMAIL_API_ADDRESS + "/resend", {
+      .post(config.REACT_APP_EMAIL_API_ADDRESS + "/resend", {
         emailAddress: formData.emailAddress,
       })
       .then(async () => {

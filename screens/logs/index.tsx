@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 import Popup from "../../components/Popup";
 import Input from "../../components/Input";
 import { Alert, convertToDate } from "../../hooks";
+import config from "../../config";
 
 const DateHead = ({
   data,
@@ -183,7 +184,7 @@ const LogItem = ({
         text: "Yes",
         onPress: async () => {
           axios
-            .post((process.env as any).REACT_APP_API_ADDRESS + `/logs/delete`, {
+            .post(config.REACT_APP_API_ADDRESS + `/logs/delete`, {
               authenticationKey: retrieveData().authenticationKey,
               logID: id,
             })
@@ -205,7 +206,7 @@ const LogItem = ({
 
   const handleEdit = () => {
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/logs/edit`, {
+      .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
         authenticationKey: retrieveData().authenticationKey,
         logID: id,
         distance: formData,
@@ -377,7 +378,7 @@ export default () => {
     if (!retrieveData || !retrieveData().authenticationKey) return;
     await axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           `/logs/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(({ data }) => {

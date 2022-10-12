@@ -5,6 +5,7 @@ import { AuthContext } from "../../hooks/context";
 import SubmitButton from "./submitButton";
 import { useNavigation } from "@react-navigation/native";
 import { deleteItem, setItem } from "../../hooks";
+import config from "../../config";
 
 export default ({
   previousData,
@@ -68,7 +69,7 @@ export default ({
     if (!retrieveData) return;
     setLoading(true);
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
+      .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })

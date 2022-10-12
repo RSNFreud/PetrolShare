@@ -8,6 +8,7 @@ import { Text } from "../../components/Themed";
 import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
+import config from "../../config";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();
@@ -29,7 +30,7 @@ export default ({ navigation }: any) => {
   const getData = () => {
     axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           `/invoices/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {

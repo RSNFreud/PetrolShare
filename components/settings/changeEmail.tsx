@@ -4,6 +4,7 @@ import Toast from "react-native-toast-message";
 import Input from "../Input";
 import { Button } from "../Themed";
 import { AuthContext } from "../../hooks/context";
+import config from "../../config";
 
 export default ({
   handleClose,
@@ -26,7 +27,7 @@ export default ({
     // Send email with link to confirm email change
     setLoading(true);
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/user/change-email`, {
+      .post(config.REACT_APP_API_ADDRESS + `/user/change-email`, {
         authenticationKey: retrieveData().authenticationKey,
         newEmail: emailAddress,
       })

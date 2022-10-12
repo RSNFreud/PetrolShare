@@ -12,6 +12,7 @@ import {
 } from "../../hooks";
 import Toast from "react-native-toast-message";
 import { convertCurrency } from "../../hooks/getCurrencies";
+import config from "../../config";
 
 type PropsType = {
   invoiceID: number;
@@ -49,7 +50,7 @@ export default ({ invoiceID }: PropsType) => {
   const markPaid = (userID: number) => {
     setLoading(userID);
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/invoices/pay`, {
+      .post(config.REACT_APP_API_ADDRESS + `/invoices/pay`, {
         authenticationKey: retrieveData().authenticationKey,
         userID: userID,
         invoiceID: invoiceID,
@@ -70,7 +71,7 @@ export default ({ invoiceID }: PropsType) => {
   const getInvoice = () => {
     axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           `/invoices/get?authenticationKey=${
             retrieveData().authenticationKey
           }&invoiceID=${invoiceID}`

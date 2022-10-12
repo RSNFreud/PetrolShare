@@ -8,6 +8,7 @@ import Stage from "./stage";
 import StepBar from "./stepBar";
 import { AuthContext } from "../../hooks/context";
 import axios from "axios";
+import config from "../../config";
 
 export default React.memo(({ navigation }: any) => {
   const { register } = useContext(AuthContext);
@@ -97,7 +98,7 @@ export default React.memo(({ navigation }: any) => {
   const handleRegister = async () => {
     if (register) {
       axios
-        .post((process.env as any).REACT_APP_API_ADDRESS + "/user/register", {
+        .post(config.REACT_APP_API_ADDRESS + "/user/register", {
           fullName: formData["fullName"],
           emailAddress: formData["emailAddress"],
           password: formData["password"],

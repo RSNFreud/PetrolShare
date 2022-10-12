@@ -2,6 +2,7 @@ import axios from "axios";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import config from "../config";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -56,7 +57,7 @@ export const registerForPushNotificationsAsync = async (
     if (!token) return;
 
     await axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + "/notify/register", {
+      .post(config.REACT_APP_API_ADDRESS + "/notify/register", {
         emailAddress: emailAddress,
         notificationKey: token,
       })
@@ -72,7 +73,7 @@ export const registerForPushNotificationsAsync = async (
 
 export const deregisterForPushNotifications = async (emailAddress: string) => {
   await axios
-    .post((process.env as any).REACT_APP_API_ADDRESS + "/notify/deregister", {
+    .post(config.REACT_APP_API_ADDRESS + "/notify/deregister", {
       emailAddress: emailAddress,
     })
     .catch(({ response }) => {

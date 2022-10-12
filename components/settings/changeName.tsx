@@ -6,6 +6,7 @@ import Input from "../Input";
 import { Button } from "../Themed";
 import { sendCustomEvent, setItem } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
+import config from "../../config";
 
 export default ({
   handleClose,
@@ -24,7 +25,7 @@ export default ({
     if (!name) return setErrors("Please enter a valid name");
     setLoading(true);
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/user/change-name`, {
+      .post(config.REACT_APP_API_ADDRESS + `/user/change-name`, {
         authenticationKey: retrieveData().authenticationKey,
         newName: name,
       })

@@ -4,6 +4,7 @@ import Toast from "react-native-toast-message";
 import Input from "../Input";
 import { Button, Seperator } from "../Themed";
 import { AuthContext } from "../../hooks/context";
+import config from "../../config";
 
 export default ({
   handleClose,
@@ -48,13 +49,10 @@ export default ({
     ) {
       setLoading(true);
       axios
-        .post(
-          (process.env as any).REACT_APP_API_ADDRESS + `/user/change-password`,
-          {
-            authenticationKey: retrieveData().authenticationKey,
-            newPassword: data.password,
-          }
-        )
+        .post(config.REACT_APP_API_ADDRESS + `/user/change-password`, {
+          authenticationKey: retrieveData().authenticationKey,
+          newPassword: data.password,
+        })
         .then(() => {
           setLoading(false);
           handleClose();

@@ -5,6 +5,7 @@ import { Button } from "../../components/Themed";
 import Input from "../../components/Input";
 import { Alert } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
+import config from "../../config";
 
 type PropsType = {
   firstSteps: boolean;
@@ -36,14 +37,10 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
             onPress: async () => {
               setLoading(true);
               axios
-                .post(
-                  (process.env as any).REACT_APP_API_ADDRESS +
-                    `/user/change-group`,
-                  {
-                    authenticationKey: retrieveData().authenticationKey,
-                    groupID: form.data,
-                  }
-                )
+                .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
+                  authenticationKey: retrieveData().authenticationKey,
+                  groupID: form.data,
+                })
                 .then(async () => {
                   setLoading(false);
                   setForm({
@@ -66,13 +63,10 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
       );
     else
       axios
-        .post(
-          (process.env as any).REACT_APP_API_ADDRESS + `/user/change-group`,
-          {
-            authenticationKey: retrieveData().authenticationKey,
-            groupID: form.data,
-          }
-        )
+        .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
+          authenticationKey: retrieveData().authenticationKey,
+          groupID: form.data,
+        })
         .then(async (e) => {
           setLoading(false);
           onComplete(form.data);

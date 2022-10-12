@@ -11,6 +11,7 @@ import { deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
 import { EventRegister } from "react-native-event-listeners";
 import Layout from "../../components/layout";
+import config from "../../config";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -90,7 +91,7 @@ export default ({ navigation }: any) => {
   const getDistance = () => {
     axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
@@ -124,7 +125,7 @@ export default ({ navigation }: any) => {
     getDistance();
     axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           `/user/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
@@ -155,7 +156,7 @@ export default ({ navigation }: any) => {
 
     axios
       .get(
-        (process.env as any).REACT_APP_API_ADDRESS +
+        config.REACT_APP_API_ADDRESS +
           "/group/get?authenticationKey=" +
           retrieveData().authenticationKey
       )

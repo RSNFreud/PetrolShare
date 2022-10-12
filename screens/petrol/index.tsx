@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
+import config from "../../config";
 
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
@@ -55,7 +56,7 @@ export default ({ navigation }: any) => {
 
     setLoading(true);
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + `/petrol/add`, {
+      .post(config.REACT_APP_API_ADDRESS + `/petrol/add`, {
         authenticationKey: retrieveData().authenticationKey,
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,
