@@ -180,7 +180,7 @@ export default () => {
           </Box>
           <Text style={{ fontSize: 18 }}>Distance Travelled:</Text>
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
-            {distance.toFixed(2)} {distanceFormat}
+            TEST {distance.toFixed(2)} {distanceFormat}
           </Text>
           <Text>{log}</Text>
         </View>
