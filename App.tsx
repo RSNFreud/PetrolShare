@@ -21,8 +21,6 @@ import LinkingConfiguration from "./hooks/LinkingConfiguration";
 import distance from "./screens/distance";
 import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
-import manual from "./screens/distance/manual";
-import odometer from "./screens/distance/odometer";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
 import { deleteItem, getItem, setItem } from "./hooks";
@@ -33,7 +31,6 @@ import * as Notifications from "expo-notifications";
 import {
   deregisterForPushNotifications,
   registerForPushNotificationsAsync,
-  schedulePushNotification,
 } from "./components/sendNotification";
 import gps from "./screens/gps";
 import config from "./config";
@@ -44,8 +41,9 @@ const Stack = createNativeStackNavigator();
 TaskManager.defineTask(
   "gpsTracking",
   async ({ data: { locations }, error }) => {
+    console.log("triggered");
+
     if (error) {
-      // check `error.message` for more details.
       return;
     }
     setItem("gpsData", JSON.stringify(locations));
@@ -150,6 +148,8 @@ export default function App() {
     if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
     if (!loading && login.isLoggedIn) {
       Notifications.addNotificationResponseReceivedListener((e) => {
+        console.log(e.notification.request);
+
         const routeName = e.notification.request.content.data["route"] as any;
         const invoiceID = e.notification.request.content.data[
           "invoiceID"
