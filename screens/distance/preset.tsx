@@ -1,223 +1,219 @@
-import {
-  TouchableWithoutFeedback,
-  View,
-  ActivityIndicator,
-} from "react-native";
-import Input from "../../components/Input";
+import { TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native'
+import Input from '../../components/Input'
 import {
   Breadcrumbs,
   Layout,
   Text,
   Button,
   FlexFull,
-} from "../../components/Themed";
-import Svg, { Path } from "react-native-svg";
-import { useContext, useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import Popup from "../../components/Popup";
-import SubmitButton from "./submitButton";
-import Toast from "react-native-toast-message";
-import { deleteItem, getItem, setItem } from "../../hooks";
+} from '../../components/Themed'
+import Svg, { Path } from 'react-native-svg'
+import { useContext, useEffect, useRef, useState } from 'react'
+import axios from 'axios'
+import { AuthContext } from '../../hooks/context'
+import Popup from '../../components/Popup'
+import SubmitButton from './submitButton'
+import Toast from 'react-native-toast-message'
+import { deleteItem, getItem, setItem } from '../../hooks'
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
     selectedPreset: null,
-  });
-  const [errors, setErrors] = useState("");
-  const [distance, setDistance] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { retrieveData } = useContext(AuthContext);
-  const [presets, setPresets] = useState<Array<any> | null>(null);
+  })
+  const [errors, setErrors] = useState('')
+  const [distance, setDistance] = useState('')
+  const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { retrieveData } = useContext(AuthContext)
+  const [presets, setPresets] = useState<Array<any> | null>(null)
   const [presetFormData, setPresetFormData] = useState({
-    presetID: "",
-    presetName: "",
-    distance: "",
-  });
+    presetID: '',
+    presetName: '',
+    distance: '',
+  })
   const [presetFormErrors, setPresetFormErrors] = useState({
-    presetName: "",
-    distance: "",
-  });
-  const [popupType, setPopupType] = useState("new");
-  const selectedToDelete = useRef("");
+    presetName: '',
+    distance: '',
+  })
+  const [popupType, setPopupType] = useState('new')
+  const selectedToDelete = useRef('')
   const getPresets = async () => {
-    const currentPresets = await getItem("presets");
+    const currentPresets = await getItem('presets')
     if (currentPresets) {
-      setPresets(JSON.parse(currentPresets));
+      setPresets(JSON.parse(currentPresets))
     }
 
     if (retrieveData) {
       axios
         .get(
           (process.env as any).REACT_APP_API_ADDRESS +
-            `/preset/get?authenticationKey=${retrieveData().authenticationKey}`
+            `/preset/get?authenticationKey=${retrieveData().authenticationKey}`,
         )
         .then(async ({ data }) => {
-          setPresets(data);
-          await setItem("presets", JSON.stringify(data));
+          setPresets(data)
+          await setItem('presets', JSON.stringify(data))
         })
         .catch(({ response }) => {
-          console.log(response.message);
-        });
+          console.log(response.message)
+        })
     }
-  };
+  }
 
   useEffect(() => {
     if (data.selectedPreset && presets) {
       const filtered: Array<any> = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset
-      );
-      setDistance(filtered[0].distance);
+        (e: any) => e.presetID === data.selectedPreset,
+      )
+      setDistance(filtered[0].distance)
     } else {
-      setDistance("");
+      setDistance('')
     }
-  }, [data]);
+  }, [data])
   useEffect(() => {
-    if (retrieveData && retrieveData().authenticationKey) getPresets();
+    if (retrieveData && retrieveData().authenticationKey) getPresets()
     const getDraft = async () => {
-      const draft = await getItem("draft");
+      const draft = await getItem('draft')
       if (draft) {
-        setData({ ...JSON.parse(draft) });
+        setData({ ...JSON.parse(draft) })
       }
-    };
-    getDraft();
-  }, [retrieveData]);
+    }
+    getDraft()
+  }, [retrieveData])
 
   const handleSubmit = async () => {
-    setErrors("");
+    setErrors('')
     if (!data.selectedPreset) {
-      return setErrors("Please select a preset");
+      return setErrors('Please select a preset')
     }
 
-    let distance;
+    let distance
 
     if (data.selectedPreset && presets) {
       const filtered: Array<any> = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset
-      );
-      distance = filtered[0].distance;
+        (e: any) => e.presetID === data.selectedPreset,
+      )
+      distance = filtered[0].distance
     }
     if (parseInt(distance) <= 0)
-      return setErrors("Please enter a distance above 0!");
+      return setErrors('Please enter a distance above 0!')
 
-    if (!retrieveData) return;
-    setLoading(true);
+    if (!retrieveData) return
+    setLoading(true)
     axios
       .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(async () => {
-        setLoading(false);
-        await deleteItem("draft");
-        await setItem("showToast", "distanceUpdated");
-        navigation.navigate("Dashboard");
+        setLoading(false)
+        await deleteItem('draft')
+        await setItem('showToast', 'distanceUpdated')
+        navigation.navigate('Dashboard')
       })
       .catch(({ response }) => {
-        console.log(response.message);
-      });
-  };
+        console.log(response.message)
+      })
+  }
   const openPopup = (type?: string, id?: string) => {
-    setPopupType(type || "new");
-    setVisible(true);
-    if (id) selectedToDelete.current = id;
-  };
+    setPopupType(type || 'new')
+    setVisible(true)
+    if (id) selectedToDelete.current = id
+  }
 
   const deletePreset = () => {
     axios
-      .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/delete", {
+      .post((process.env as any).REACT_APP_API_ADDRESS + '/preset/delete', {
         presetID: selectedToDelete.current,
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(() => {
-        setVisible(false);
+        setVisible(false)
         Toast.show({
-          type: "default",
-          text1: "Preset successfully deleted!",
-        });
+          type: 'default',
+          text1: 'Preset successfully deleted!',
+        })
         setTimeout(() => {
-          getPresets();
-        }, 300);
+          getPresets()
+        }, 300)
       })
       .catch(({ response }) => {
-        console.log(response.message);
-      });
-  };
+        console.log(response.message)
+      })
+  }
 
   const handleEdit = (id: number) => {
-    if (!presets) return;
-    const item: any = presets.filter((e: any) => e.presetID === id);
-    if (!item) return;
-    setPresetFormData(item[0]);
-    openPopup("new");
-  };
+    if (!presets) return
+    const item: any = presets.filter((e: any) => e.presetID === id)
+    if (!item) return
+    setPresetFormData(item[0])
+    openPopup('new')
+  }
 
   const handlePresetSubmit = () => {
-    let errors: any = {};
+    let errors: any = {}
     Object.entries(presetFormData).map(([key, value]) => {
-      if (key === "presetID") return;
-      if (!value) errors[key] = "Please complete this field!";
-      console.log(key, parseInt(value));
+      if (key === 'presetID') return
+      if (!value) errors[key] = 'Please complete this field!'
+      console.log(key, parseInt(value))
 
-      if (key === "distance" && !/^-?\d+$/.test(value)) {
-        errors[key] = "Please enter a valid numerical value!";
+      if (key === 'distance' && !/^([0-9]|\.)*$/.test(value)) {
+        errors[key] = 'Please enter a valid numerical value!'
       }
-    });
-    setPresetFormErrors(errors);
+    })
+    setPresetFormErrors(errors)
 
     if (!Object.keys(errors).length && retrieveData) {
       if (presetFormData.presetID) {
         axios
-          .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/edit", {
+          .post((process.env as any).REACT_APP_API_ADDRESS + '/preset/edit', {
             presetID: presetFormData.presetID,
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
             authenticationKey: retrieveData().authenticationKey,
           })
           .then(() => {
-            setVisible(false);
+            setVisible(false)
             Toast.show({
-              type: "default",
-              text1: "Preset successfully edited!!",
-            });
-            getPresets();
+              type: 'default',
+              text1: 'Preset successfully edited!!',
+            })
+            getPresets()
           })
           .catch(({ response }) => {
-            console.log(response.message);
-          });
+            console.log(response.message)
+          })
       } else
         axios
-          .post((process.env as any).REACT_APP_API_ADDRESS + "/preset/add", {
+          .post((process.env as any).REACT_APP_API_ADDRESS + '/preset/add', {
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
             authenticationKey: retrieveData().authenticationKey,
           })
           .then(() => {
-            setVisible(false);
+            setVisible(false)
             Toast.show({
-              type: "default",
-              text1: "Preset successfully added!",
-            });
-            getPresets();
+              type: 'default',
+              text1: 'Preset successfully added!',
+            })
+            getPresets()
           })
           .catch(({ response }) => {
-            console.log(response.message);
-          });
+            console.log(response.message)
+          })
     }
-  };
+  }
   return (
     <Layout>
       <Breadcrumbs
         links={[
           {
-            name: "Dashboard",
+            name: 'Dashboard',
           },
           {
-            name: "Manage Distance",
-            screenName: "ManageDistance",
+            name: 'Manage Distance',
+            screenName: 'ManageDistance',
           },
           {
-            name: "Add Preset",
+            name: 'Add Preset',
           },
         ]}
       />
@@ -225,34 +221,34 @@ export default ({ navigation }: any) => {
         <View>
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               marginBottom: 30,
             }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "700" }}>
+            <Text style={{ fontSize: 18, fontWeight: '700' }}>
               Select Preset:
             </Text>
             <Button
               size="small"
-              styles={{ width: "auto", paddingVertical: 4, height: "auto" }}
+              styles={{ width: 'auto', paddingVertical: 4, height: 'auto' }}
               noText
               handleClick={() => {
                 setPresetFormData({
-                  presetID: "",
-                  presetName: "",
-                  distance: "",
+                  presetID: '',
+                  presetName: '',
+                  distance: '',
                 }),
-                  openPopup("new");
+                  openPopup('new')
               }}
             >
               <View
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}
               >
                 <Svg
@@ -273,7 +269,7 @@ export default ({ navigation }: any) => {
               </View>
             </Button>
           </View>
-          {presets === null && <ActivityIndicator size={"large"} />}
+          {presets === null && <ActivityIndicator size={'large'} />}
           {presets && Boolean(presets.length) && (
             <View>
               {presets.map((e: any) => {
@@ -294,60 +290,60 @@ export default ({ navigation }: any) => {
                       style={{
                         backgroundColor:
                           data.selectedPreset === e.presetID
-                            ? "#095362"
-                            : "#001E24",
-                        borderStyle: "solid",
+                            ? '#095362'
+                            : '#001E24',
+                        borderStyle: 'solid',
                         borderWidth: 2,
                         borderColor:
                           data.selectedPreset === e.presetID
-                            ? "#388D9E"
-                            : "#1B5662",
+                            ? '#388D9E'
+                            : '#1B5662',
                         borderRadius: 4,
                         marginBottom: 12,
                         padding: 6,
                         paddingLeft: 15,
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
-                      <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
                         {e.presetName}
                       </Text>
                       <View
                         style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
                         }}
                       >
                         <Button
                           noText
                           styles={{
-                            borderColor: "transparent",
+                            borderColor: 'transparent',
                             paddingVertical: 0,
                             width: 92,
                             marginRight: 5,
                             minHeight: 0,
                             paddingHorizontal: 0,
                             height: 34,
-                            flexDirection: "row",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignContent: "center",
-                            backgroundColor: "#0B404A",
+                            flexDirection: 'row',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignContent: 'center',
+                            backgroundColor: '#0B404A',
                           }}
                           handleClick={() => handleEdit(e.presetID)}
                         >
                           <View
                             style={{
-                              flexDirection: "row",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignContent: "center",
-                              alignItems: "center",
+                              flexDirection: 'row',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignContent: 'center',
+                              alignItems: 'center',
                             }}
                           >
                             <Svg
@@ -365,7 +361,7 @@ export default ({ navigation }: any) => {
                               ></Path>
                               <Path stroke="#fff" d="M7.25 3.25l1.5 1.5"></Path>
                             </Svg>
-                            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
                               Edit
                             </Text>
                           </View>
@@ -377,22 +373,22 @@ export default ({ navigation }: any) => {
                             minHeight: 0,
                             width: 92,
                             height: 34,
-                            flexDirection: "row",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignContent: "center",
+                            flexDirection: 'row',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignContent: 'center',
                           }}
                           style="ghost"
                           color="red"
-                          handleClick={() => openPopup("delete", e.presetID)}
+                          handleClick={() => openPopup('delete', e.presetID)}
                         >
                           <View
                             style={{
-                              flexDirection: "row",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignContent: "center",
-                              alignItems: "center",
+                              flexDirection: 'row',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignContent: 'center',
+                              alignItems: 'center',
                             }}
                           >
                             <Svg
@@ -418,8 +414,8 @@ export default ({ navigation }: any) => {
                             <Text
                               style={{
                                 fontSize: 16,
-                                fontWeight: "bold",
-                                color: "#FA4F4F",
+                                fontWeight: 'bold',
+                                color: '#FA4F4F',
                               }}
                             >
                               Delete
@@ -429,7 +425,7 @@ export default ({ navigation }: any) => {
                       </View>
                     </View>
                   </TouchableWithoutFeedback>
-                );
+                )
               })}
             </View>
           )}
@@ -451,13 +447,13 @@ export default ({ navigation }: any) => {
       <Popup
         visible={visible}
         handleClose={() => {
-          setVisible(false);
+          setVisible(false)
         }}
       >
-        {popupType !== "new" ? (
+        {popupType !== 'new' ? (
           <>
             <Text
-              style={{ marginBottom: 20, fontSize: 18, fontWeight: "bold" }}
+              style={{ marginBottom: 20, fontSize: 18, fontWeight: 'bold' }}
             >
               Are you sure you want to delete this preset?
             </Text>
@@ -498,5 +494,5 @@ export default ({ navigation }: any) => {
         )}
       </Popup>
     </Layout>
-  );
-};
+  )
+}

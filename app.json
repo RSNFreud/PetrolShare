@@ -33,25 +33,38 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#001e24"
       },
-      "permissons": ["ACCESS_BACKGROUND_LOCATION", "ACCESS_FINE_LOCATION", "WAKE_LOCK"],
+      "permissons": [
+        "ACCESS_BACKGROUND_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "WAKE_LOCK"
+      ],
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [{
-        "action": "VIEW",
-        "data": [{
-          "scheme": "https",
-          "host": "*.freud-online.co.uk"
-        }],
-        "category": [
-          "BROWSABLE",
-          "DEFAULT"
-        ]
-      }]
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.freud-online.co.uk"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5a6b67c6-532d-402b-ab54-ceeb04084203"
+      }
     }
   }
 }
