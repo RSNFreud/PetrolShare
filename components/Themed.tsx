@@ -3,8 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { useNavigation } from '@react-navigation/native'
-import { useContext, useEffect } from 'react'
+import { useNavigation } from "@react-navigation/native";
 import {
   ScrollView,
   Text as DefaultText,
@@ -13,37 +12,34 @@ import {
   TouchableWithoutFeedback,
   View as DefaultView,
   Dimensions,
-} from 'react-native'
-import Svg, { Path } from 'react-native-svg'
-import Toast from 'react-native-toast-message'
-import { AuthContext } from '../hooks/context'
-import Header from './Header'
+} from "react-native";
+import Svg, { Path } from "react-native-svg";
 
-export type TextProps = DefaultText['props']
-export type ViewProps = DefaultView['props']
+export type TextProps = DefaultText["props"];
+export type ViewProps = DefaultView["props"];
 
 export function Text(props: TextProps) {
-  const { style, ...otherProps } = props
+  const { style, ...otherProps } = props;
 
   return (
     <DefaultText
-      style={[{ fontFamily: 'Roboto', color: 'white', fontSize: 16 }, style]}
+      style={[{ fontFamily: "Roboto", color: "white", fontSize: 16 }, style]}
       {...otherProps}
     />
-  )
+  );
 }
 
 type ButtonType = {
-  children: JSX.Element | Array<JSX.Element> | string
-  color?: 'blue' | 'red'
-  style?: 'regular' | 'ghost'
-  size?: 'regular' | 'small'
-  handleClick?: () => void
-  styles?: TouchableOpacity['props']['style']
-  noText?: boolean
-  disabled?: boolean
-  loading?: boolean
-}
+  children: JSX.Element | Array<JSX.Element> | string;
+  color?: "blue" | "red";
+  style?: "regular" | "ghost";
+  size?: "regular" | "small";
+  handleClick?: () => void;
+  styles?: TouchableOpacity["props"]["style"];
+  noText?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+};
 
 export const Button = ({
   children,
@@ -59,43 +55,43 @@ export const Button = ({
   let variableProperties = {
     height: 51,
     fontSize: 18,
-    backgroundColor: '#1196B0',
-    borderColor: '#58D3EC',
+    backgroundColor: "#1196B0",
+    borderColor: "#58D3EC",
     paddingHorizontal: 16,
     paddingVertical: 16,
-    textColor: 'white',
-  }
+    textColor: "white",
+  };
 
   switch (size) {
-    case 'small':
-      variableProperties.height = 26
-      variableProperties.paddingVertical = 6
-      variableProperties.paddingHorizontal = 12
-      variableProperties.fontSize = 12
-      break
+    case "small":
+      variableProperties.height = 26;
+      variableProperties.paddingVertical = 6;
+      variableProperties.paddingHorizontal = 12;
+      variableProperties.fontSize = 12;
+      break;
 
     default:
-      break
+      break;
   }
 
   switch (color) {
-    case 'red':
-      variableProperties.borderColor = '#BA3737'
-      variableProperties.backgroundColor = '#FA4F4F'
-      style === 'ghost' && (variableProperties.textColor = '#FA4F4F')
-      break
+    case "red":
+      variableProperties.borderColor = "#BA3737";
+      variableProperties.backgroundColor = "#FA4F4F";
+      style === "ghost" && (variableProperties.textColor = "#FA4F4F");
+      break;
     default:
-      style === 'ghost' && (variableProperties.textColor = '#15CEF3')
-      break
+      style === "ghost" && (variableProperties.textColor = "#15CEF3");
+      break;
   }
 
   switch (style) {
-    case 'ghost':
-      variableProperties.borderColor = variableProperties.textColor
-      variableProperties.backgroundColor = 'transparent'
-      break
+    case "ghost":
+      variableProperties.borderColor = variableProperties.textColor;
+      variableProperties.backgroundColor = "transparent";
+      break;
     default:
-      break
+      break;
   }
 
   return (
@@ -105,15 +101,15 @@ export const Button = ({
       disabled={disabled}
       style={[
         {
-          borderStyle: 'solid',
+          borderStyle: "solid",
           borderRadius: 4,
           borderWidth: 1,
           borderColor: variableProperties.borderColor,
           paddingHorizontal: variableProperties.paddingHorizontal,
           paddingVertical: variableProperties.paddingVertical,
-          width: '100%',
-          alignContent: 'center',
-          alignItems: 'center',
+          width: "100%",
+          alignContent: "center",
+          alignItems: "center",
           opacity: disabled ? 0.6 : 1,
           minHeight: variableProperties.height,
           backgroundColor: variableProperties.backgroundColor,
@@ -130,16 +126,16 @@ export const Button = ({
           style={{
             color: variableProperties.textColor,
             fontSize: variableProperties.fontSize,
-            fontWeight: '700',
-            textAlign: 'center',
+            fontWeight: "700",
+            textAlign: "center",
           }}
         >
           {children}
         </Text>
       )}
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 export const Seperator = ({ style }: ViewProps) => {
   return (
@@ -147,30 +143,30 @@ export const Seperator = ({ style }: ViewProps) => {
       style={[
         {
           height: 1,
-          width: '100%',
-          backgroundColor: '#445C61',
+          width: "100%",
+          backgroundColor: "#445C61",
         },
         style,
       ]}
     />
-  )
-}
+  );
+};
 
 export const Box = ({
   children,
   style,
 }: {
-  children: JSX.Element | JSX.Element[]
-  style?: ViewProps['style']
+  children: JSX.Element | JSX.Element[];
+  style?: ViewProps["style"];
 }) => {
   return (
     <DefaultView
       style={[
         {
-          backgroundColor: 'rgba(7, 95, 113, 0.2)',
+          backgroundColor: "rgba(7, 95, 113, 0.2)",
           paddingHorizontal: 29,
           paddingVertical: 19,
-          borderColor: '#137B91',
+          borderColor: "#137B91",
           borderWidth: 1,
           borderRadius: 4,
         },
@@ -179,123 +175,23 @@ export const Box = ({
     >
       {children}
     </DefaultView>
-  )
-}
-
-import { deleteItem, getItem } from '../hooks'
-import { EventRegister } from 'react-native-event-listeners'
-import Constants from 'expo-constants'
-
-export const Layout = ({
-  children,
-  style,
-  ...rest
-}: {
-  children: any
-  style?: ViewProps['style']
-  onLayout?: any
-}) => {
-  const { isLoggedIn, isLoading } = useContext(AuthContext)
-
-  const ToastConfig = {
-    default: ({ text1 }: { text1?: string }) => (
-      <DefaultView
-        style={{
-          backgroundColor: '#0B404A',
-          borderColor: '#1196B0',
-          borderStyle: 'solid',
-          borderWidth: 1,
-          borderRadius: 4,
-          padding: 20,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 16,
-            color: 'white',
-            fontWeight: '700',
-            lineHeight: 24,
-          }}
-        >
-          {text1}
-        </Text>
-      </DefaultView>
-    ),
-  }
-
-  useEffect(() => {
-    EventRegister.addEventListener('dataUpdated', () => {
-      setTimeout(async () => {
-        if ((await getItem('showToast')) === 'distanceUpdated') {
-          await deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Distance successfully updated!',
-          })
-        }
-        if ((await getItem('showToast')) === 'nameUpdated') {
-          await deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Your name has been successfully updated!',
-          })
-        }
-        if ((await getItem('showToast')) === 'draftSaved') {
-          await deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1:
-              'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
-          })
-        }
-        if ((await getItem('showToast')) === 'resetDistance') {
-          await deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Reset your distance back to 0!',
-          })
-        }
-      }, 300)
-    })
-
-    return () => {
-      EventRegister.removeEventListener('dataUpdated')
-    }
-  }, [])
-
-  if (isLoading) return <></>
-
-  return (
-    <>
-      <ScrollView
-        keyboardShouldPersistTaps={'handled'}
-        style={[{ paddingHorizontal: 20 }, style]}
-        {...rest}
-      >
-        <Header isLoggedIn={isLoggedIn} />
-        <DefaultView>
-          <>{children}</>
-        </DefaultView>
-        <Toast config={ToastConfig} />
-      </ScrollView>
-    </>
-  )
-}
+  );
+};
 
 export const Breadcrumbs = ({
   links,
 }: {
-  links: Array<{ name: string; screenName?: string }>
+  links: Array<{ name: string; screenName?: string }>;
 }) => {
-  const navigation = useNavigation() as any
+  const navigation = useNavigation() as any;
 
   return (
     <DefaultView
       style={{
-        display: 'flex',
+        display: "flex",
         marginBottom: 30,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
       }}
     >
       {links.map((e, c) => {
@@ -303,13 +199,13 @@ export const Breadcrumbs = ({
           <DefaultView
             key={e.name}
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
             {c + 1 === links.length ? (
-              <Text style={{ fontWeight: '400', fontSize: 16 }}>{e.name}</Text>
+              <Text style={{ fontWeight: "400", fontSize: 16 }}>{e.name}</Text>
             ) : (
               <>
                 <TouchableWithoutFeedback
@@ -321,9 +217,9 @@ export const Breadcrumbs = ({
                 >
                   <Text
                     style={{
-                      fontWeight: 'bold',
+                      fontWeight: "bold",
                       fontSize: 16,
-                      textDecorationLine: 'underline',
+                      textDecorationLine: "underline",
                     }}
                   >
                     {e.name}
@@ -344,36 +240,36 @@ export const Breadcrumbs = ({
               </>
             )}
           </DefaultView>
-        )
+        );
       })}
     </DefaultView>
-  )
-}
+  );
+};
 
 export const FlexFull = ({
   children,
 }: {
-  children: JSX.Element | JSX.Element[]
+  children: JSX.Element | JSX.Element[];
 }) => {
   return (
     <DefaultView
       style={{
-        position: 'relative',
+        position: "relative",
         flex: 1,
-        minHeight: Dimensions.get('window').height - 108 - 87,
+        minHeight: Dimensions.get("window").height - 108 - 87,
       }}
     >
       <DefaultView
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          height: '100%',
-          width: '100%',
+          display: "flex",
+          justifyContent: "space-between",
+          height: "100%",
+          width: "100%",
           paddingBottom: 55,
         }}
       >
         {children}
       </DefaultView>
     </DefaultView>
-  )
-}
+  );
+};

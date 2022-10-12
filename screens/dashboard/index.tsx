@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Box, Layout, Text } from "../../components/Themed";
+import { Box, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
 import { View, TouchableWithoutFeedback } from "react-native";
@@ -10,6 +10,7 @@ import * as Clipboard from "expo-clipboard";
 import { deleteItem, getItem, setItem } from "../../hooks";
 import ManageGroup from "../../components/manageGroup";
 import { EventRegister } from "react-native-event-listeners";
+import Layout from "../../components/layout";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -31,6 +32,7 @@ export default ({ navigation }: any) => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
       dataRetrieved.current = true;
+      setCurrentMileage(retrieveData().currentMileage);
       updateData();
       if (
         retrieveData() &&
@@ -232,7 +234,7 @@ export default ({ navigation }: any) => {
           </TouchableWithoutFeedback>
           <Text style={{ fontSize: 16, marginTop: 10 }}>
             <Text style={{ fontWeight: "bold" }}>Current Mileage: </Text>
-            {currentMileage} {groupData.distance}
+            {currentMileage || 0} {groupData.distance}
           </Text>
         </>
       </Box>

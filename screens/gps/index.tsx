@@ -1,171 +1,162 @@
-import * as Location from 'expo-location'
-import React, { useState, useEffect, useContext } from 'react'
+import * as Location from "expo-location";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
   Breadcrumbs,
   Button,
   FlexFull,
-  Layout,
   Text,
-} from '../../components/Themed'
-import { getGroupData, getItem, setItem } from '../../hooks'
-import { View } from 'react-native'
-import * as TaskManager from 'expo-task-manager'
-import haversine from 'haversine'
-import axios from 'axios'
-import { AuthContext } from '../../hooks/context'
-import { useNavigation } from '@react-navigation/native'
+} from "../../components/Themed";
+import { getGroupData, getItem, setItem } from "../../hooks";
+import { View } from "react-native";
+import Layout from "../../components/layout";
+import haversine from "haversine";
+import axios from "axios";
+import { AuthContext } from "../../hooks/context";
+import { useNavigation } from "@react-navigation/native";
 
 export default () => {
-  const [distance, setDistance] = useState(0)
+  const [distance, setDistance] = useState(0);
   const [coords, setCoords] = useState<{
-    longitude: number | undefined
-    latitude: number | undefined
+    longitude: number | undefined;
+    latitude: number | undefined;
   }>({
     longitude: undefined,
     latitude: undefined,
-  })
-  const [distanceFormat, setDistanceFormat] = useState('')
-  const [isTracking, setIsTracking] = useState(false)
-  const [log, setLog] = useState('')
-  const { retrieveData } = useContext(AuthContext)
-  const { navigate } = useNavigation()
+  });
+  const [distanceFormat, setDistanceFormat] = useState("");
+  const [isTracking, setIsTracking] = useState(false);
+  const { retrieveData } = useContext(AuthContext);
+  const { navigate } = useNavigation();
   useEffect(() => {
-    ;(async () => {
-      let data = await getGroupData()
+    (async () => {
+      let data = await getGroupData();
 
-      setDistanceFormat(data.distance)
+      setDistanceFormat(data.distance);
 
-      const cachedDistance = await getItem('gpsDistance')
+      const cachedDistance = await getItem("gpsDistance");
+
       if (cachedDistance && parseFloat(cachedDistance) > 0) {
-        setDistance(parseFloat(cachedDistance))
-        setIsTracking(true)
+        setDistance(parseFloat(cachedDistance));
+        setIsTracking(true);
       }
-    })()
-  }, [])
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!isTracking) return;
+    const timer = setInterval(async () => {
+      await calculateDistance();
+    }, 300);
+    return () => clearInterval(timer);
+  }, [isTracking]);
 
   const toggleTracking = async () => {
-    console.log(await TaskManager.getRegisteredTasksAsync())
-
     if (isTracking) {
-      setIsTracking(false)
+      setIsTracking(false);
       setCoords({
         longitude: undefined,
         latitude: undefined,
-      })
-      await Location.stopLocationUpdatesAsync('gpsTracking')
-      return
+      });
+      await setItem("gpsDistance", "0");
+      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+        await Location.stopLocationUpdatesAsync("gpsTracking");
+      return;
     }
-    startTracking()
-  }
+    startTracking();
+  };
+
+  const calculateDistance = async () => {
+    let locations = await getItem("gpsData");
+    if (!locations) return;
+    locations = JSON.parse(locations);
+    if (!locations) return;
+
+    if (coords.latitude !== undefined && coords.longitude !== undefined) {
+      const calcDistance = haversine(
+        coords,
+        {
+          longitude: locations[0].coords.longitude,
+          latitude: locations[0].coords.latitude,
+        },
+        { unit: distanceFormat != "km" ? "mile" : "km" }
+      );
+      setDistance(distance + calcDistance);
+      await setItem("gpsDistance", distance + calcDistance.toString());
+    }
+
+    setCoords({
+      longitude: locations[0].coords.longitude,
+      latitude: locations[0].coords.latitude,
+    });
+  };
 
   const startTracking = async () => {
-    setIsTracking(false)
-    // if (!(await requestForeground()) || !(await requestBackground())) {
-    //   // setErrorMsg("Permission to access location was denied");
-    //   return
-    // }
-    await Location.stopLocationUpdatesAsync('gpsTracking')
-    setDistance(0)
-    await setItem('gpsDistance', '0')
-    setLog('adding task')
-    await Location.startLocationUpdatesAsync('gpsTracking', {
+    if (!(await requestForeground()) || !(await requestBackground())) {
+      // setErrorMsg("Permission to access location was denied");
+      return;
+    }
+    setIsTracking(true);
+    setDistance(0);
+    await setItem("gpsDistance", "0");
+    await Location.getCurrentPositionAsync();
+    await Location.startLocationUpdatesAsync("gpsTracking", {
       accuracy: Location.Accuracy.BestForNavigation,
       activityType: Location.ActivityType.AutomotiveNavigation,
+      pausesUpdatesAutomatically: false,
+      deferredUpdatesInterval: 10000,
+      deferredUpdatesDistance: 50,
       foregroundService: {
-        notificationTitle: 'Tracking GPS distance!',
+        notificationTitle: "Tracking GPS distance!",
         notificationBody:
           "Don't forget to turn it off when your trip is complete!",
       },
-    })
-  }
-
-  TaskManager.defineTask(
-    'gpsTracking',
-    async ({ data: { locations }, error }) => {
-      setLog('task triggered')
-      if (error) {
-        setLog(error.message)
-
-        // check `error.message` for more details.
-        return
-      }
-      console.log(coords, {
-        longitude: locations[0].coords.longitude,
-        latitude: locations[0].coords.latitude,
-      })
-      setLog(
-        JSON.stringify({
-          longitude: locations[0].coords.longitude,
-          latitude: locations[0].coords.latitude,
-        }),
-      )
-      if (coords.latitude !== undefined && coords.longitude !== undefined) {
-        const calcDistance = haversine(
-          coords,
-          {
-            longitude: locations[0].coords.longitude,
-            latitude: locations[0].coords.latitude,
-          },
-          { unit: distanceFormat != 'km' ? 'mile' : 'km' },
-        )
-        setDistance(distance + calcDistance)
-        await setItem('gpsDistance', distance + calcDistance)
-        setLog(calcDistance)
-        console.log(calcDistance)
-      }
-
-      setCoords({
-        longitude: locations[0].coords.longitude,
-        latitude: locations[0].coords.latitude,
-      })
-      // console.log("Received new locations", locations);
-    },
-  )
+    });
+  };
 
   const requestForeground = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync()
-    if (status !== 'granted') {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
       // setErrorMsg("Permission to access location was denied");
-      return false
+      return false;
     } else {
-      return true
+      return true;
     }
-  }
+  };
   const requestBackground = async () => {
-    let { status } = await Location.requestBackgroundPermissionsAsync()
-    if (status !== 'granted') {
+    let { status } = await Location.requestBackgroundPermissionsAsync();
+    if (status !== "granted") {
       // setErrorMsg("Permission to access location was denied");
-      return false
+      return false;
     } else {
-      return true
+      return true;
     }
-  }
+  };
 
   const saveDistance = async () => {
     // setLoading(true);
-    if (distance === 0) return
+    if (distance === 0) return;
     axios
       .post((process.env as any).REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(async () => {
-        await setItem('showToast', 'distanceUpdated')
-        navigate('Dashboard')
+        await setItem("showToast", "distanceUpdated");
+        navigate("Dashboard");
       })
       .catch(({ response }) => {
-        console.log(response.message)
-      })
-  }
+        console.log(response.message);
+      });
+  };
 
   return (
     <Layout>
       <Breadcrumbs
         links={[
-          { name: 'Dashboard' },
-          { name: 'Manage Distance', screenName: 'ManageDistance' },
-          { name: 'GPS Tracking' },
+          { name: "Dashboard" },
+          { name: "Manage Distance", screenName: "ManageDistance" },
+          { name: "GPS Tracking" },
         ]}
       />
       <FlexFull>
@@ -179,28 +170,29 @@ export default () => {
           >
             <Text>
               By clicking Start Tracking, you agree to allow us to use your GPS
-              in the background in order to track your distance
+              in the background in order to track your distance. PetrolShare
+              collects location data to enable GPS tracking even when the app is
+              closed or not in use.
             </Text>
           </Box>
           <Text style={{ fontSize: 18 }}>Distance Travelled:</Text>
-          <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
+          <Text style={{ fontSize: 32, marginTop: 10, fontWeight: "bold" }}>
             {distance.toFixed(2)} {distanceFormat}
           </Text>
-          <Text>{log}</Text>
         </View>
         <View>
           <Button handleClick={toggleTracking} styles={{ marginBottom: 20 }}>
-            {isTracking ? 'Stop Tracking' : 'Start Tracking'}
+            {isTracking ? "Stop Tracking" : "Start Tracking"}
           </Button>
           <Button
             disabled={isTracking}
             handleClick={saveDistance}
-            style={'ghost'}
+            style={"ghost"}
           >
             Save Distance
           </Button>
         </View>
       </FlexFull>
     </Layout>
-  )
-}
+  );
+};

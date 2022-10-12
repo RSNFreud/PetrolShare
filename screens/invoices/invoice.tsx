@@ -78,8 +78,8 @@ export default ({ invoiceID }: PropsType) => {
       .then(async ({ data }) => {
         setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
       })
-      .catch((err) => {
-        navigate("Invoices");
+      .catch(({ response }) => {
+        console.log(response.message);
       });
   };
 
