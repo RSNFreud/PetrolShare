@@ -155,7 +155,7 @@ export default ({ navigation }: any) => {
       if (!value) errors[key] = 'Please complete this field!'
       console.log(key, parseInt(value))
 
-      if (key === 'distance' && !/^([0-9]|\.)*$/.test(value)) {
+      if (key === 'distance' && !/^[0-9.]*$/.test(value)) {
         errors[key] = 'Please enter a valid numerical value!'
       }
     })

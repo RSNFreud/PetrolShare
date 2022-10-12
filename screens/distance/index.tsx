@@ -1,141 +1,141 @@
-import React, { useContext, useEffect, useState } from "react";
-import Popup from "../../components/Popup";
-import { Layout, Breadcrumbs, Button, Text } from "../../components/Themed";
-import Manual from "./manual";
-import Odometer from "./odometer";
-import Toast from "react-native-toast-message";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import Svg, { Path } from "react-native-svg";
-import { TouchableOpacity } from "react-native";
-import { deleteItem, getItem, setItem, Alert } from "../../hooks";
+import React, { useContext, useEffect, useState } from 'react'
+import Popup from '../../components/Popup'
+import { Layout, Breadcrumbs, Text } from '../../components/Themed'
+import Manual from './manual'
+import Odometer from './odometer'
+import Toast from 'react-native-toast-message'
+import axios from 'axios'
+import { AuthContext } from '../../hooks/context'
+import Svg, { Path } from 'react-native-svg'
+import { TouchableOpacity } from 'react-native'
+import { deleteItem, getItem, setItem, Alert } from '../../hooks'
 
 const DistanceButton = ({
   handleClick,
   text,
   icon,
 }: {
-  marginBottom?: number;
-  handleClick: () => void;
-  text: string;
-  icon: JSX.Element;
+  marginBottom?: number
+  handleClick: () => void
+  text: string
+  icon: JSX.Element
 }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={{
         marginBottom: 20,
-        backgroundColor: "#1196B0",
+        backgroundColor: '#1196B0',
         borderRadius: 4,
         height: 56,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingHorizontal: 20,
       }}
       onPress={handleClick}
     >
       {icon}
-      <Text style={{ fontWeight: "700", fontSize: 18, marginLeft: 20 }}>
+      <Text style={{ fontWeight: '700', fontSize: 18, marginLeft: 20 }}>
         {text}
       </Text>
     </TouchableOpacity>
-  );
-};
+  )
+}
 
 export default ({ navigation }: any) => {
-  const [popupData, setPopupData] = useState(<></>);
-  const [visible, setVisible] = useState(false);
-  const [data, setData] = useState({ startValue: "", endValue: "" });
-  const { retrieveData } = useContext(AuthContext);
-  const [isDraft, setIsDraft] = useState(false);
+  const [popupData, setPopupData] = useState(<></>)
+  const [visible, setVisible] = useState(false)
+  const [data, setData] = useState({ startValue: '', endValue: '' })
+  const { retrieveData } = useContext(AuthContext)
+  const [isDraft, setIsDraft] = useState(false)
 
   const openPopup = (element: JSX.Element) => {
-    setPopupData(element);
-    setVisible(true);
-  };
+    setPopupData(element)
+    setVisible(true)
+  }
 
   useEffect(() => {
     const getDraft = async () => {
-      const draft = await getItem("draft");
+      const draft = await getItem('draft')
 
       if (draft != null) {
-        setData({ ...JSON.parse(draft) });
+        setData({ ...JSON.parse(draft) })
         Toast.show({
-          type: "default",
-          text1: "Recovered draft data!",
-        });
-        setIsDraft(true);
+          type: 'default',
+          text1: 'Recovered draft data!',
+        })
+        setIsDraft(true)
         openPopup(
           <Odometer
             previousData={{ ...JSON.parse(draft) }}
             handleClose={() => handleClose()}
-          />
-        );
+          />,
+        )
       } else {
-        setVisible(false);
+        setVisible(false)
       }
-    };
-    getDraft();
-  }, []);
+    }
+    getDraft()
+  }, [])
 
   const resetDistance = () => {
-    Alert("Are you sure you want to reset your data?", undefined, [
+    Alert('Are you sure you want to reset your data?', undefined, [
       {
-        text: "Yes",
+        text: 'Yes',
         onPress: async () => {
           axios
             .post(
               (process.env as any).REACT_APP_API_ADDRESS + `/distance/reset`,
               {
                 authenticationKey: retrieveData().authenticationKey,
-              }
+              },
             )
             .then(async (e) => {
-              await setItem("showToast", "resetDistance");
-              navigation.navigate("Dashboard");
+              await setItem('showToast', 'resetDistance')
+              navigation.navigate('Dashboard')
             })
             .catch(({ response }) => {
-              console.log(response.message);
-            });
+              console.log(response.message)
+            })
         },
       },
-      { text: "No", style: "cancel" },
-    ]);
-  };
+      { text: 'No', style: 'cancel' },
+    ])
+  }
 
   const handleClose = () => {
-    if (isDraft === false) return setVisible(false);
+    if (isDraft === false) return setVisible(false)
 
-    Alert("Do you want to delete this draft?", undefined, [
+    Alert('Do you want to delete this draft?', undefined, [
       {
-        text: "Yes",
+        text: 'Yes',
         onPress: async () => {
-          await deleteItem("draft");
-          setVisible(false);
-          setIsDraft(false);
-          setData({ startValue: "", endValue: "" });
+          await deleteItem('draft')
+          setVisible(false)
+          setIsDraft(false)
+          setData({ startValue: '', endValue: '' })
         },
       },
       {
-        text: "Save for later",
+        text: 'Save for later',
         onPress: () => {
-          setVisible(false);
+          setVisible(false)
         },
-        style: "cancel",
+        style: 'cancel',
       },
-    ]);
-  };
+    ])
+  }
 
   return (
     <Layout>
       <Breadcrumbs
         links={[
           {
-            name: "Dashboard",
+            name: 'Dashboard',
           },
           {
-            name: "Manage Distance",
+            name: 'Manage Distance',
           },
         ]}
       />
@@ -143,7 +143,7 @@ export default ({ navigation }: any) => {
         handleClick={() =>
           openPopup(<Manual handleClose={() => handleClose()} />)
         }
-        text={"Add Specific Distance"}
+        text={'Add Specific Distance'}
         icon={
           <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
             <Path
@@ -156,10 +156,10 @@ export default ({ navigation }: any) => {
       <DistanceButton
         handleClick={() =>
           openPopup(
-            <Odometer previousData={data} handleClose={() => handleClose()} />
+            <Odometer previousData={data} handleClose={() => handleClose()} />,
           )
         }
-        text={"Record Odometer"}
+        text={'Record Odometer'}
         icon={
           <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
             <Path
@@ -188,10 +188,10 @@ export default ({ navigation }: any) => {
             ></Path>
           </Svg>
         }
-        handleClick={() => navigation.navigate("AddPreset")}
+        handleClick={() => navigation.navigate('AddPreset')}
       />
       <DistanceButton
-        handleClick={() => navigation.navigate("GPS")}
+        handleClick={() => navigation.navigate('GPS')}
         text="GPS Tracking"
         icon={
           <Svg width="23" height="18" fill="none" viewBox="0 0 23 18">
@@ -221,5 +221,5 @@ export default ({ navigation }: any) => {
         animate={isDraft ? false : true}
       />
     </Layout>
-  );
-};
+  )
+}

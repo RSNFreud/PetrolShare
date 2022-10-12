@@ -1,54 +1,51 @@
 import {
   ScrollView,
-  FlatList,
   TouchableWithoutFeedback,
   View,
   Pressable,
-  TouchableOpacity,
-  GestureResponderEvent,
-} from "react-native";
-import { Text } from "./Themed";
-import Svg, { Path } from "react-native-svg";
-import { useEffect, useState } from "react";
-import { EventRegister } from "react-native-event-listeners";
+} from 'react-native'
+import { Text } from './Themed'
+import Svg, { Path } from 'react-native-svg'
+import { useEffect, useState } from 'react'
+import { EventRegister } from 'react-native-event-listeners'
 
-type item = { name: string; value?: string; symbol?: string };
+type item = { name: string; value?: string; symbol?: string }
 
 type PropsType = {
-  data: Array<item>;
-  value?: item | string;
-  handleSelected: (e: item) => void;
-  errorMessage?: string;
-};
+  data: Array<item>
+  value?: item | string
+  handleSelected: (e: item) => void
+  errorMessage?: string
+}
 
 export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(value);
+  const [open, setOpen] = useState(false)
+  const [selected, setSelected] = useState(value)
 
   const selectOption = (e: item) => {
-    setSelected(e);
-    handleSelected(e);
-    setOpen(false);
-  };
+    setSelected(e)
+    handleSelected(e)
+    setOpen(false)
+  }
 
   useEffect(() => {
-    if (!data) return;
-    setSelected(data.filter((e) => e.value === value)[0]);
-  }, [value, data]);
+    if (!data) return
+    setSelected(data.filter((e) => e.value === value)[0])
+  }, [value, data])
 
   useEffect(() => {
-    EventRegister.addEventListener("bodyClicked", () => {
-      setOpen(false);
-    });
+    EventRegister.addEventListener('bodyClicked', () => {
+      setOpen(false)
+    })
     return () => {
-      EventRegister.removeEventListener("bodyClicked");
-    };
-  }, []);
+      EventRegister.removeEventListener('bodyClicked')
+    }
+  }, [])
 
   return (
     <View
       style={{
-        position: "relative",
+        position: 'relative',
         zIndex: 1,
         paddingBottom: 89,
       }}
@@ -56,15 +53,15 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
       <TouchableWithoutFeedback onPress={() => setOpen((open) => !open)}>
         <View
           style={{
-            backgroundColor: "#0B404A",
-            borderStyle: "solid",
+            backgroundColor: '#0B404A',
+            borderStyle: 'solid',
             borderWidth: 1,
-            borderColor: "#1196B0",
+            borderColor: '#1196B0',
             borderRadius: 4,
             height: 41,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             paddingHorizontal: 10,
             paddingVertical: 10,
             zIndex: 3,
@@ -77,7 +74,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             width="16"
             height="16"
             fill="none"
-            style={{ transform: [{ rotate: open ? "0deg" : "180deg" }] }}
+            style={{ transform: [{ rotate: open ? '0deg' : '180deg' }] }}
           >
             <Path
               stroke="#fff"
@@ -93,8 +90,8 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
           style={{
             marginTop: 6,
             fontSize: 14,
-            fontWeight: "400",
-            color: "#FA4F4F",
+            fontWeight: '400',
+            color: '#FA4F4F',
           }}
         >
           {errorMessage}
@@ -104,32 +101,32 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
         <ScrollView
           snapToAlignment="center"
           snapToInterval={30}
-          decelerationRate={"fast"}
+          decelerationRate={'fast'}
           style={{
             maxHeight: 92,
             borderRadius: 4,
-            width: "100%",
-            borderColor: "#0B404A",
-            backgroundColor: "#001e24",
+            width: '100%',
+            borderColor: '#0B404A',
+            backgroundColor: '#001e24',
             borderWidth: 1,
-            position: "absolute",
+            position: 'absolute',
             top: 51,
             left: 0,
-            borderStyle: "solid",
+            borderStyle: 'solid',
           }}
         >
-          {selected && typeof selected !== "string" && (
+          {selected && typeof selected !== 'string' && (
             <Pressable
               key={(selected as item).name}
               onPress={() => setOpen(false)}
               style={{
                 paddingVertical: 5,
-                alignContent: "center",
+                alignContent: 'center',
                 height: 30,
                 paddingHorizontal: 10,
-                backgroundColor: "#0B404A",
-                flexDirection: "row",
-                justifyContent: "space-between",
+                backgroundColor: '#0B404A',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}
             >
               <Text>{(selected as item)?.name}</Text>
@@ -137,31 +134,31 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             </Pressable>
           )}
           {data
-            .sort((a, b) => a["name"].localeCompare(b["name"]))
+            .sort((a, b) => a['name'].localeCompare(b['name']))
             .map((e) => {
-              if (selected && e.value === (selected as item).value) return;
+              if (selected && e.value === (selected as item).value) return
               return (
                 <Pressable
                   key={e.name}
                   style={{
                     paddingVertical: 5,
-                    alignContent: "center",
+                    alignContent: 'center',
                     height: 30,
                     paddingHorizontal: 10,
                     backgroundColor:
-                      (selected as item)?.value === e.value ? "#0B404A" : "",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
+                      (selected as item)?.value === e.value ? '#0B404A' : '',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}
                   onPress={() => selectOption(e)}
                 >
                   <Text>{e.name}</Text>
                   <Text>{e.value}</Text>
                 </Pressable>
-              );
+              )
             })}
         </ScrollView>
       )}
     </View>
-  );
-};
+  )
+}

@@ -1,36 +1,36 @@
-import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
-import { Text, Button } from "../../components/Themed";
-import { getGroupData } from "../../hooks";
+import { useEffect, useState } from 'react'
+import { View } from 'react-native'
+import { Text, Button } from '../../components/Themed'
+import { getGroupData } from '../../hooks'
 
 type PropsType = {
-  loading: boolean;
-  handleClick: () => void;
-  errors: string;
-  distance: string;
-};
+  loading: boolean
+  handleClick: () => void
+  errors: string
+  distance: string
+}
 
 export default ({ loading, handleClick, errors, distance }: PropsType) => {
-  const [distanceFormat, setDistanceFormat] = useState();
+  const [distanceFormat, setDistanceFormat] = useState()
 
   useEffect(() => {
-    getDistanceFormat();
-  });
+    getDistanceFormat()
+  })
 
   const getDistanceFormat = async () => {
-    const data = await getGroupData();
-    if (!data) return;
-    setDistanceFormat(data.distance);
-  };
+    const data = await getGroupData()
+    if (!data) return
+    setDistanceFormat(data.distance)
+  }
 
   return (
     <>
       <Button loading={loading} handleClick={handleClick}>
         <>
-          Add Distance{" "}
+          Add Distance{' '}
           {distance && (
             <>
-              ({distance} {distanceFormat || ""})
+              ({distance} {distanceFormat || ''})
             </>
           )}
         </>
@@ -39,17 +39,17 @@ export default ({ loading, handleClick, errors, distance }: PropsType) => {
         <View
           style={{
             marginTop: 15,
-            backgroundColor: "#EECFCF",
+            backgroundColor: '#EECFCF',
             borderRadius: 4,
             paddingHorizontal: 20,
             paddingVertical: 15,
           }}
         >
-          <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+          <Text style={{ color: '#7B1D1D', fontSize: 16, fontWeight: '400' }}>
             {errors}
           </Text>
         </View>
       )}
     </>
-  );
-};
+  )
+}

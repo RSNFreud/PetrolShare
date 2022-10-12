@@ -47,7 +47,7 @@ export default ({ navigation }: any) => {
 
     Object.entries(data).map(([key, value]) => {
       if (!value) errors[key] = 'Please complete this field!'
-      if (value && !/^([0-9]|\.)*$/.test(value))
+      if (value && !/^[0-9.]*$/.test(value))
         errors[key] = 'Please enter a valid numerical value'
     })
     setErrors({ ...errors })

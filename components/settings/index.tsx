@@ -1,12 +1,10 @@
-import { Breadcrumbs, Button, Layout, Text } from "../Themed";
-import SplitRow from "../../screens/dashboard/splitRow";
-import Svg, { Path } from "react-native-svg";
-import { AuthContext } from "../../hooks/context";
-import { useContext, useEffect, useState } from "react";
-import Popup from "../Popup";
-import ChangeEmail from "./changeEmail";
-import ChangePassword from "./changePassword";
-import ChangeName from "./changeName";
+import { Button, Text } from '../Themed'
+import Svg, { Path } from 'react-native-svg'
+import { useEffect, useState } from 'react'
+import Popup from '../Popup'
+import ChangeEmail from './changeEmail'
+import ChangePassword from './changePassword'
+import ChangeName from './changeName'
 
 const HorizontalButton = ({
   icon,
@@ -14,39 +12,39 @@ const HorizontalButton = ({
   handleClick,
   last,
 }: {
-  icon: JSX.Element;
-  text: string;
-  handleClick: () => void;
-  last?: boolean;
+  icon: JSX.Element
+  text: string
+  handleClick: () => void
+  last?: boolean
 }) => {
   return (
     <Button
       handleClick={handleClick}
       noText
       styles={{
-        flexDirection: "row",
-        alignContent: "center",
+        flexDirection: 'row',
+        alignContent: 'center',
         marginBottom: last ? 0 : 15,
       }}
     >
       {icon}
 
-      <Text style={{ paddingLeft: 10, fontWeight: "700" }}>{text}</Text>
+      <Text style={{ paddingLeft: 10, fontWeight: '700' }}>{text}</Text>
     </Button>
-  );
-};
+  )
+}
 
 export default ({
   visible,
   handleClose,
 }: {
-  visible: boolean;
-  handleClose: () => void;
+  visible: boolean
+  handleClose: () => void
 }) => {
   const Default = () => (
     <>
       <HorizontalButton
-        text={"Change Email"}
+        text={'Change Email'}
         icon={
           <Svg width="24" height="23" fill="none" viewBox="0 0 24 23">
             <Path
@@ -55,10 +53,10 @@ export default ({
             ></Path>
           </Svg>
         }
-        handleClick={() => setScreen("Email")}
+        handleClick={() => setScreen('Email')}
       />
       <HorizontalButton
-        text={"Change Password"}
+        text={'Change Password'}
         icon={
           <Svg width="24" height="23" fill="none" viewBox="0 0 24 23">
             <Path
@@ -67,11 +65,11 @@ export default ({
             ></Path>
           </Svg>
         }
-        handleClick={() => setScreen("Password")}
+        handleClick={() => setScreen('Password')}
       />
       <HorizontalButton
         last
-        text={"Change Name"}
+        text={'Change Name'}
         icon={
           <Svg width="24" height="23" fill="none" viewBox="0 0 24 23">
             <Path
@@ -80,56 +78,56 @@ export default ({
             ></Path>
           </Svg>
         }
-        handleClick={() => setScreen("Name")}
+        handleClick={() => setScreen('Name')}
       />
     </>
-  );
+  )
 
-  const [popupData, setPopupData] = useState(<Default />);
+  const [popupData, setPopupData] = useState(<Default />)
 
   const setScreen = (screen: string) => {
     switch (screen) {
-      case "Email":
+      case 'Email':
         setPopupData(
           <ChangeEmail
             handleClose={handleClose}
-            handleBack={() => setScreen("")}
-          />
-        );
-        break;
-      case "Password":
+            handleBack={() => setScreen('')}
+          />,
+        )
+        break
+      case 'Password':
         setPopupData(
           <ChangePassword
             handleClose={handleClose}
-            handleBack={() => setScreen("")}
-          />
-        );
-        break;
-      case "Name":
+            handleBack={() => setScreen('')}
+          />,
+        )
+        break
+      case 'Name':
         setPopupData(
           <ChangeName
             handleClose={handleClose}
-            handleBack={() => setScreen("")}
-          />
-        );
-        break;
+            handleBack={() => setScreen('')}
+          />,
+        )
+        break
 
       default:
-        setPopupData(<Default />);
-        break;
+        setPopupData(<Default />)
+        break
     }
-  };
+  }
 
   useEffect(() => {
-    if (!visible) setScreen("");
-  }, [visible]);
+    if (!visible) setScreen('')
+  }, [visible])
 
   return (
     <Popup visible={visible} handleClose={handleClose}>
-      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 15 }}>
+      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
         Settings
       </Text>
       {popupData}
     </Popup>
-  );
-};
+  )
+}

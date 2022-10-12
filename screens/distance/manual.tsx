@@ -36,7 +36,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
       distance = data.distance
     }
 
-    if (parseFloat(distance) <= 0 || !/^([0-9]|\.)*$/.test(distance))
+    if (parseFloat(distance) <= 0 || !/^[0-9.]*$/.test(distance))
       return setErrors('Please enter a distance above 0!')
 
     if (!retrieveData) return
