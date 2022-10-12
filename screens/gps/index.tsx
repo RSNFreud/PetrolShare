@@ -45,8 +45,8 @@ export default () => {
   }, [])
 
   const toggleTracking = async () => {
-    setIsTracking((isTracking) => !isTracking)
     if (isTracking) {
+      setIsTracking(false)
       setCoords({
         longitude: undefined,
         latitude: undefined,
@@ -58,6 +58,7 @@ export default () => {
   }
 
   const startTracking = async () => {
+    setIsTracking(false)
     if (!(await requestForeground()) || !(await requestBackground())) {
       // setErrorMsg("Permission to access location was denied");
       return
@@ -80,6 +81,7 @@ export default () => {
   TaskManager.defineTask(
     'gpsTracking',
     async ({ data: { locations }, error }) => {
+      setLog('task triggered')
       if (error) {
         setLog(error.message)
 
@@ -180,7 +182,7 @@ export default () => {
           </Box>
           <Text style={{ fontSize: 18 }}>Distance Travelled:</Text>
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
-            TEST {distance.toFixed(2)} {distanceFormat}
+            {distance.toFixed(2)} {distanceFormat}
           </Text>
           <Text>{log}</Text>
         </View>

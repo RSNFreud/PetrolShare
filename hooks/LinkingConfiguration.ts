@@ -20,6 +20,7 @@ const linking: any = {
       Invoices: 'invoices',
       Dashboard: 'dashboard',
       NotFound: '*',
+      GPS: 'gps-tracking',
       DesktopScreen: '/',
     },
   },
