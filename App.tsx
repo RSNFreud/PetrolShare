@@ -61,19 +61,6 @@ TaskManager.defineTask(
         })
       );
     previousCoords = JSON.parse(previousCoords);
-    console.log(
-      "old coords",
-      {
-        latitude: parseFloat(previousCoords.latitude).toFixed(5),
-        longitude: parseFloat(previousCoords.longitude).toFixed(5),
-      },
-      "new coords",
-      {
-        latitude: parseFloat(locations["coords"].latitude).toFixed(5),
-        longitude: parseFloat(locations["coords"].longitude).toFixed(5),
-      },
-      locations["coords"]
-    );
 
     if (!previousCoords || typeof previousCoords === "string") return;
 
@@ -84,8 +71,6 @@ TaskManager.defineTask(
         parseFloat(locations["coords"].longitude).toFixed(5)
     )
       return;
-    console.log("coords changed?!");
-
     if (
       previousCoords.latitude !== undefined &&
       previousCoords.longitude !== undefined
