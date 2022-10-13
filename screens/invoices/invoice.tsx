@@ -34,14 +34,16 @@ export default ({ invoiceID }: PropsType) => {
   }, []);
 
   const init = async () => {
-    if (await getItem("currencySymbol"))
+    const getSymbol = await getItem("currencySymbol");
+    if (getSymbol)
       setGroupData({
         ...groupData,
-        currency: (await getItem("currencySymbol")) || "",
+        currency: getSymbol || "",
       });
 
     const data = await getGroupData();
     if (!data) return;
+    setGroupData({ ...groupData, distance: data.distance });
     const currency = await convertCurrency(data.currency);
     data.currency = currency;
     setGroupData(data);
