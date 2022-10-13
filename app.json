@@ -2,7 +2,7 @@
   "expo": {
     "name": "PetrolShare",
     "slug": "PetrolShare",
-    "version": "1.1",
+    "version": "1.1.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "petrolshare",
@@ -39,17 +39,21 @@
         "WAKE_LOCK"
       ],
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [{
-        "action": "VIEW",
-        "data": [{
-          "scheme": "https",
-          "host": "*.freud-online.co.uk"
-        }],
-        "category": [
-          "BROWSABLE",
-          "DEFAULT"
-        ]
-      }]
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.freud-online.co.uk"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
