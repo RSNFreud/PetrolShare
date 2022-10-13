@@ -45,6 +45,8 @@ TaskManager.defineTask(
     if (error) {
       return;
     }
+    console.log("triggered");
+
     locations = locations[locations.length - 1];
     const { distance: distanceFormat } = await getGroupData();
     let previousCoords:
@@ -79,8 +81,6 @@ TaskManager.defineTask(
         },
         { unit: distanceFormat !== "km" ? "mile" : "km" }
       );
-      console.log(calcDistance);
-
       const oldDistance = (await getItem("gpsDistance")) || "0";
 
       await setItem(

@@ -2,7 +2,12 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback, Dimensions } from "react-native";
+import {
+  View,
+  TouchableWithoutFeedback,
+  Dimensions,
+  Platform,
+} from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -93,7 +98,10 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     (async () => {
-      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking")) {
+      if (
+        Platform.OS === "android" &&
+        (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+      ) {
         Alert(
           "You are currently tracking your GPS!",
           "Do you want to go to the Track GPS screen?",

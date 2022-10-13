@@ -86,7 +86,7 @@ export default () => {
       accuracy: Location.Accuracy.Highest,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
-      deferredUpdatesDistance: 20,
+      deferredUpdatesDistance: 30,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:
@@ -175,7 +175,7 @@ export default () => {
             {isTracking ? "Stop Tracking" : "Start Tracking"}
           </Button>
           <Button
-            disabled={isTracking}
+            disabled={isTracking || distance <= 0}
             handleClick={saveDistance}
             style={"ghost"}
           >
