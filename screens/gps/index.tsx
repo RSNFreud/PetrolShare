@@ -7,7 +7,7 @@ import {
   FlexFull,
   Text,
 } from "../../components/Themed";
-import { getGroupData, getItem, setItem } from "../../hooks";
+import { Alert, getGroupData, getItem, setItem } from "../../hooks";
 import { View } from "react-native";
 import Layout from "../../components/layout";
 import axios from "axios";
@@ -17,13 +17,6 @@ import config from "../../config";
 
 export default () => {
   const [distance, setDistance] = useState(0);
-  const [coords, setCoords] = useState<{
-    longitude: string | undefined;
-    latitude: string | undefined;
-  }>({
-    longitude: undefined,
-    latitude: undefined,
-  });
   const [distanceFormat, setDistanceFormat] = useState("");
   const [isTracking, setIsTracking] = useState(false);
   const { retrieveData } = useContext(AuthContext);
@@ -55,18 +48,15 @@ export default () => {
       await calculateDistance();
     }, 300);
     return () => clearInterval(timer);
-  }, [isTracking, coords]);
+  }, [isTracking]);
 
   const toggleTracking = async () => {
     if (isTracking) {
-      setIsTracking(false);
-      setCoords({
-        longitude: undefined,
-        latitude: undefined,
-      });
+      await setItem("gpsOldData", "");
       await setItem("gpsDistance", "0");
       if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
         await Location.stopLocationUpdatesAsync("gpsTracking");
+      setIsTracking(false);
       return;
     }
     await startTracking();
@@ -79,23 +69,24 @@ export default () => {
   };
 
   const startTracking = async () => {
-    if (!(await requestForeground()) || !(await requestBackground())) {
-      // setErrorMsg("Permission to access location was denied");
-      console.log("permission denied");
-
-      return;
+    try {
+      await requestForeground();
+      await requestBackground();
+      await requestLocation();
+    } catch (err) {
+      console.log(err);
+      return Alert("Please turn on your GPS services!");
     }
+
     setIsTracking(true);
     setDistance(0);
-    console.log("tracking started!");
-
     await setItem("gpsDistance", "0");
-    await Location.getCurrentPositionAsync();
+
     await Location.startLocationUpdatesAsync("gpsTracking", {
       accuracy: Location.Accuracy.Highest,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
-      deferredUpdatesDistance: 10,
+      deferredUpdatesDistance: 20,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:
@@ -122,6 +113,14 @@ export default () => {
     } else {
       return true;
     }
+  };
+
+  const requestLocation = async () => {
+    return new Promise((res, rej) => {
+      Location.enableNetworkProviderAsync()
+        .then(() => res("accepted"))
+        .catch(() => rej("denied"));
+    });
   };
 
   const saveDistance = async () => {

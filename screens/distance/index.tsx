@@ -7,7 +7,7 @@ import Toast from "react-native-toast-message";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import Svg, { Path } from "react-native-svg";
-import { TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { deleteItem, getItem, setItem, Alert } from "../../hooks";
 import Layout from "../../components/layout";
 import config from "../../config";
@@ -189,18 +189,20 @@ export default ({ navigation }: any) => {
         }
         handleClick={() => navigation.navigate("AddPreset")}
       />
-      <DistanceButton
-        handleClick={() => navigation.navigate("GPS")}
-        text="GPS Tracking"
-        icon={
-          <Svg width="23" height="18" fill="none" viewBox="0 0 23 18">
-            <Path
-              fill="#fff"
-              d="M13.5 18a9 9 0 10-9-9v4.65l-2.7-2.7L.75 12l4.5 4.5 4.5-4.5-1.05-1.05-2.7 2.7V9a7.5 7.5 0 117.5 7.5V18z"
-            ></Path>
-          </Svg>
-        }
-      />
+      {Platform.OS === "android" && (
+        <DistanceButton
+          handleClick={() => navigation.navigate("GPS")}
+          text="GPS Tracking"
+          icon={
+            <Svg width="23" height="18" fill="none" viewBox="0 0 23 18">
+              <Path
+                fill="#fff"
+                d="M13.5 18a9 9 0 10-9-9v4.65l-2.7-2.7L.75 12l4.5 4.5 4.5-4.5-1.05-1.05-2.7 2.7V9a7.5 7.5 0 117.5 7.5V18z"
+              ></Path>
+            </Svg>
+          }
+        />
+      )}
       <DistanceButton
         handleClick={() => resetDistance()}
         text="Reset Distance"

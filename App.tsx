@@ -65,13 +65,6 @@ TaskManager.defineTask(
     if (!previousCoords || typeof previousCoords === "string") return;
 
     if (
-      parseFloat(previousCoords.latitude).toFixed(5) ===
-        parseFloat(locations["coords"].latitude).toFixed(5) &&
-      parseFloat(previousCoords.longitude).toFixed(5) ===
-        parseFloat(locations["coords"].longitude).toFixed(5)
-    )
-      return;
-    if (
       previousCoords.latitude !== undefined &&
       previousCoords.longitude !== undefined
     ) {
@@ -86,6 +79,8 @@ TaskManager.defineTask(
         },
         { unit: distanceFormat !== "km" ? "mile" : "km" }
       );
+      console.log(calcDistance);
+
       const oldDistance = (await getItem("gpsDistance")) || "0";
 
       await setItem(
