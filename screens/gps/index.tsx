@@ -10,18 +10,16 @@ import {
 import { getGroupData, getItem, setItem } from "../../hooks";
 import { View } from "react-native";
 import Layout from "../../components/layout";
-import haversine from "haversine";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
 import config from "../../config";
-import * as TaskManager from "expo-task-manager";
 
 export default () => {
   const [distance, setDistance] = useState(0);
   const [coords, setCoords] = useState<{
-    longitude: number | undefined;
-    latitude: number | undefined;
+    longitude: string | undefined;
+    latitude: string | undefined;
   }>({
     longitude: undefined,
     latitude: undefined,
@@ -32,8 +30,6 @@ export default () => {
   const { navigate } = useNavigation();
   useEffect(() => {
     (async () => {
-      console.log(TaskManager.isTaskDefined("gpsTracking"));
-
       let data = await getGroupData();
 
       setDistanceFormat(data.distance);
@@ -57,7 +53,7 @@ export default () => {
     if (!isTracking) return;
     const timer = setInterval(async () => {
       await calculateDistance();
-    }, 1000);
+    }, 300);
     return () => clearInterval(timer);
   }, [isTracking, coords]);
 
@@ -77,47 +73,9 @@ export default () => {
   };
 
   const calculateDistance = async () => {
-    let locations:
-      | string
-      | null
-      | Array<{ coords: { longitude: string; latitude: string } }> =
-      await getItem("gpsData");
+    let currDistance = await getItem("gpsDistance");
 
-    if (!locations) return;
-    locations = JSON.parse(locations);
-    if (!locations) return;
-
-    if (!coords.latitude && !coords.longitude)
-      return setCoords({
-        longitude: locations[0]["coords"].longitude,
-        latitude: locations[0]["coords"].latitude,
-      });
-
-    if (
-      coords.latitude === locations[0]["coords"].latitude &&
-      coords.longitude === locations[0]["coords"].longitude
-    )
-      return;
-
-    if (coords.latitude !== undefined && coords.longitude !== undefined) {
-      const calcDistance = haversine(
-        coords,
-        {
-          longitude: locations[0].coords.longitude,
-          latitude: locations[0].coords.latitude,
-        },
-        { unit: distanceFormat != "km" ? "mile" : "km" }
-      );
-      setDistance(distance + calcDistance);
-
-      await setItem("gpsDistance", distance + calcDistance.toString());
-    }
-    console.log(distance);
-
-    setCoords({
-      longitude: locations[0]["coords"].longitude,
-      latitude: locations[0]["coords"].latitude,
-    });
+    if (currDistance) setDistance(parseFloat(currDistance));
   };
 
   const startTracking = async () => {
@@ -129,13 +87,15 @@ export default () => {
     }
     setIsTracking(true);
     setDistance(0);
+    console.log("tracking started!");
+
     await setItem("gpsDistance", "0");
     await Location.getCurrentPositionAsync();
     await Location.startLocationUpdatesAsync("gpsTracking", {
-      accuracy: Location.Accuracy.BestForNavigation,
+      accuracy: Location.Accuracy.Highest,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
-      deferredUpdatesDistance: 1,
+      deferredUpdatesDistance: 10,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:

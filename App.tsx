@@ -23,7 +23,7 @@ import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
-import { deleteItem, getItem, setItem } from "./hooks";
+import { deleteItem, getGroupData, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
@@ -34,6 +34,7 @@ import {
 } from "./components/sendNotification";
 import gps from "./screens/gps";
 import config from "./config";
+import haversine from "haversine";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -44,7 +45,77 @@ TaskManager.defineTask(
     if (error) {
       return;
     }
-    setItem("gpsData", JSON.stringify(locations));
+    locations = locations[locations.length - 1];
+    const { distance: distanceFormat } = await getGroupData();
+    let previousCoords:
+      | string
+      | null
+      | { longitude: string; latitude: string } = await getItem("gpsOldData");
+
+    if (!previousCoords)
+      return await setItem(
+        "gpsOldData",
+        JSON.stringify({
+          longitude: locations["coords"].longitude,
+          latitude: locations["coords"].latitude,
+        })
+      );
+    previousCoords = JSON.parse(previousCoords);
+    console.log(
+      "old coords",
+      {
+        latitude: parseFloat(previousCoords.latitude).toFixed(5),
+        longitude: parseFloat(previousCoords.longitude).toFixed(5),
+      },
+      "new coords",
+      {
+        latitude: parseFloat(locations["coords"].latitude).toFixed(5),
+        longitude: parseFloat(locations["coords"].longitude).toFixed(5),
+      },
+      locations["coords"]
+    );
+
+    if (!previousCoords || typeof previousCoords === "string") return;
+
+    if (
+      parseFloat(previousCoords.latitude).toFixed(5) ===
+        parseFloat(locations["coords"].latitude).toFixed(5) &&
+      parseFloat(previousCoords.longitude).toFixed(5) ===
+        parseFloat(locations["coords"].longitude).toFixed(5)
+    )
+      return;
+    console.log("coords changed?!");
+
+    if (
+      previousCoords.latitude !== undefined &&
+      previousCoords.longitude !== undefined
+    ) {
+      const calcDistance = haversine(
+        {
+          longitude: parseFloat(previousCoords.longitude),
+          latitude: parseFloat(previousCoords.latitude),
+        },
+        {
+          longitude: locations.coords.longitude,
+          latitude: locations.coords.latitude,
+        },
+        { unit: distanceFormat !== "km" ? "mile" : "km" }
+      );
+      const oldDistance = (await getItem("gpsDistance")) || "0";
+
+      await setItem(
+        "gpsDistance",
+        (parseFloat(oldDistance) + calcDistance).toString()
+      );
+    }
+
+    await setItem(
+      "gpsOldData",
+      JSON.stringify({
+        longitude: locations["coords"].longitude,
+        latitude: locations["coords"].latitude,
+      })
+    );
   }
 );
 

@@ -95,8 +95,8 @@ export default ({ navigation }: any) => {
     (async () => {
       if (await Location.hasStartedLocationUpdatesAsync("gpsTracking")) {
         Alert(
-          "You are currently tracking your GPS. Do you want to go to the Track GPS screen?",
-          undefined,
+          "You are currently tracking your GPS!",
+          "Do you want to go to the Track GPS screen?",
           [
             {
               text: "Yes",

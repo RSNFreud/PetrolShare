@@ -11,7 +11,8 @@
     "test": "jest --watchAll",
     "build-web": "expo build:web",
     "build-android": "eas build --profile preview --platform android",
-    "build": "yarn build-web && yarn build-android"
+    "build": "yarn build-web && yarn build-android",
+    "submit": "eas build --platform android --auto-submit"
   },
   "jest": {
     "preset": "jest-expo"
