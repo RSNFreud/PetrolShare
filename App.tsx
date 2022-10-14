@@ -23,7 +23,7 @@ import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
-import { deleteItem, getGroupData, getItem, setItem } from "./hooks";
+import { Alert, deleteItem, getGroupData, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
@@ -41,7 +41,7 @@ const Stack = createNativeStackNavigator();
 
 TaskManager.defineTask(
   "gpsTracking",
-  async ({ data: { locations }, error }) => {
+  async ({ data: { locations }, error }: any) => {
     if (error) {
       return;
     }
@@ -180,13 +180,15 @@ export default function App() {
               if (fontsLoaded) setLoading(false);
             })
             .catch(() => {
-              if (fontsLoaded) setLoading(false);
+              setLoading(false);
               return login.signOut;
             });
         } else {
           if (fontsLoaded) setLoading(false);
         }
       } catch (err) {
+        setLoading(false);
+        Alert(`An error has occured! - ${err}`);
         console.log(err);
       }
     };
@@ -197,7 +199,10 @@ export default function App() {
     if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
     if (!loading && login.isLoggedIn) {
       Notifications.addNotificationResponseReceivedListener((e) => {
-        console.log(e.notification.request);
+        console.log(
+          "Notification Title:",
+          e.notification.request.content.title
+        );
 
         const routeName = e.notification.request.content.data["route"] as any;
         const invoiceID = e.notification.request.content.data[

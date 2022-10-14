@@ -2,12 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import {
-  View,
-  TouchableWithoutFeedback,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, TouchableWithoutFeedback, Platform } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -97,6 +92,7 @@ export default ({ navigation }: any) => {
   }, [retrieveData]);
 
   useEffect(() => {
+    if (!dataRetrieved) return;
     (async () => {
       if (
         Platform.OS === "android" &&
@@ -117,7 +113,7 @@ export default ({ navigation }: any) => {
         );
       }
     })();
-  }, []);
+  }, [dataRetrieved]);
 
   const getDistance = () => {
     axios
