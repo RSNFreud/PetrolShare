@@ -45,6 +45,7 @@ export default () => {
   useEffect(() => {
     if (!isTracking) return;
     const timer = setInterval(async () => {
+      if (!isTracking) return;
       await calculateDistance();
     }, 300);
     return () => clearInterval(timer);
@@ -52,11 +53,11 @@ export default () => {
 
   const toggleTracking = async () => {
     if (isTracking) {
-      await setItem("gpsOldData", "");
-      await setItem("gpsDistance", "0");
       if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
         await Location.stopLocationUpdatesAsync("gpsTracking");
       setIsTracking(false);
+      await setItem("gpsOldData", "");
+      await setItem("gpsDistance", "0");
       return;
     }
     await startTracking();
@@ -83,10 +84,10 @@ export default () => {
     await setItem("gpsDistance", "0");
 
     await Location.startLocationUpdatesAsync("gpsTracking", {
-      accuracy: Location.Accuracy.Highest,
+      accuracy: Location.Accuracy.BestForNavigation,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
-      deferredUpdatesDistance: 30,
+      deferredUpdatesDistance: 25,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:
