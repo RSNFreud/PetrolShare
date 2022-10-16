@@ -88,7 +88,7 @@ export default () => {
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
       deferredUpdatesDistance: 25,
-      deferredUpdatesInterval: 500,
+      deferredUpdatesInterval: 1000,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:

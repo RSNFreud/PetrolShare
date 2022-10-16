@@ -35,6 +35,7 @@ import {
 import gps from "./screens/gps";
 import config from "./config";
 import haversine from "haversine";
+import { AndroidNotificationPriority } from "expo-notifications";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -224,6 +225,7 @@ export default function App() {
         shouldShowAlert: true,
         shouldPlaySound: false,
         shouldSetBadge: true,
+        priority: AndroidNotificationPriority.DEFAULT,
       }),
     });
   }, []);
