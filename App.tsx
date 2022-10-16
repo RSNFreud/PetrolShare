@@ -81,6 +81,9 @@ TaskManager.defineTask(
         },
         { unit: distanceFormat !== "km" ? "mile" : "km" }
       );
+      console.log(84, calcDistance);
+      if (calcDistance < 0.002) return;
+
       const oldDistance = (await getItem("gpsDistance")) || "0";
 
       await setItem(

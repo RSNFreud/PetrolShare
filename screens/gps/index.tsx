@@ -65,7 +65,6 @@ export default () => {
 
   const calculateDistance = async () => {
     let currDistance = await getItem("gpsDistance");
-
     if (currDistance) setDistance(parseFloat(currDistance));
   };
 
@@ -82,12 +81,14 @@ export default () => {
     setIsTracking(true);
     setDistance(0);
     await setItem("gpsDistance", "0");
+    console.log("Started Tracking");
 
     await Location.startLocationUpdatesAsync("gpsTracking", {
       accuracy: Location.Accuracy.BestForNavigation,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
       deferredUpdatesDistance: 25,
+      deferredUpdatesInterval: 500,
       foregroundService: {
         notificationTitle: "Tracking GPS distance!",
         notificationBody:
