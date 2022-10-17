@@ -67,7 +67,12 @@ export default ({
   }, [visible]);
 
   return (
-    <Modal animationType="fade" visible={isVisible} transparent={true}>
+    <Modal
+      animationType="fade"
+      visible={isVisible}
+      transparent={true}
+      accessibilityLabel={"popup"}
+    >
       <Pressable
         onPress={() => handleClose()}
         android_disableSound={true}
@@ -99,14 +104,18 @@ export default ({
             onPress={() => {
               handleClose();
             }}
+            accessibilityHint={"closes the popup"}
             style={{
               position: "absolute",
-              right: 0,
-              top: 10,
+              right: 4,
+              top: 4,
+              padding: 10,
               zIndex: 1,
-              width: 20,
-              height: 20,
+              width: 30,
+              height: 30,
               alignContent: "center",
+              display: "flex",
+              alignItems: "center",
               justifyContent: "center",
             }}
           >

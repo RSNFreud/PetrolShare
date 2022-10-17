@@ -90,7 +90,7 @@ export default ({
     <>
       <ScrollView
         keyboardShouldPersistTaps={"handled"}
-        style={[{ paddingHorizontal: 20 }, style]}
+        style={[{ paddingHorizontal: 20, paddingBottom: 55 }, style]}
         {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />

@@ -101,6 +101,19 @@ TaskManager.defineTask(
   }
 );
 
+Notifications.addNotificationResponseReceivedListener((e) => {
+  console.log("Notification Title:", e.notification.request);
+});
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: true,
+    priority: AndroidNotificationPriority.DEFAULT,
+  }),
+});
+
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<any>({});
@@ -218,14 +231,6 @@ export default function App() {
 
   useEffect(() => {
     setItem("firstLoad", "true");
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: false,
-        shouldSetBadge: true,
-        priority: AndroidNotificationPriority.DEFAULT,
-      }),
-    });
   }, []);
 
   useEffect(() => {

@@ -52,11 +52,10 @@ export default React.memo(
         style={{
           display: "flex",
           justifyContent: "space-between",
-          height: "100%",
+          minHeight: "100%",
           position: "absolute",
           width: "100%",
           transform: [{ translateX: position }],
-          paddingBottom: 55,
         }}
       >
         {children}

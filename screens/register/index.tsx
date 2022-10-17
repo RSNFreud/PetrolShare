@@ -168,6 +168,7 @@ export default React.memo(({ navigation }: any) => {
           value={formData["confirmPassword"]}
           errorMessage={formErrors["confirmPassword"]}
           placeholder="Confirm your password"
+          style={{ marginBottom: 20 }}
           label="Confirm Password:"
           password
         />
@@ -217,7 +218,7 @@ export default React.memo(({ navigation }: any) => {
         style={{
           position: "relative",
           flex: 1,
-          minHeight: Dimensions.get("window").height - 108 - 87,
+          minHeight: Dimensions.get("screen").height - 108 - 87,
         }}
       >
         {Steps.map((children, count) => (

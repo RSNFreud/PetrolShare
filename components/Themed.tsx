@@ -284,7 +284,6 @@ export const FlexFull = ({
           justifyContent: "space-between",
           height: "100%",
           width: "100%",
-          paddingBottom: 55,
         }}
       >
         {children}

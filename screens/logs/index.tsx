@@ -414,7 +414,7 @@ export default () => {
         ]}
       />
       {pageData.currentPage >= 1 && (
-        <View style={{ paddingBottom: 55 }}>
+        <View>
           <DateHead
             data={currentData}
             handlePrevious={previousPage}
