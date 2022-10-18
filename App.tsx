@@ -10,7 +10,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import React from 'react'
 import axios from 'axios'
-import { Platform, useWindowDimensions } from 'react-native'
+import { Platform, ToastAndroid, useWindowDimensions } from 'react-native'
 import * as TaskManager from 'expo-task-manager'
 
 import Dashboard from './screens/dashboard'
@@ -81,6 +81,7 @@ TaskManager.defineTask(
         },
         { unit: distanceFormat !== 'km' ? 'mile' : 'km' },
       )
+      ToastAndroid.show(calcDistance, ToastAndroid.SHORT)
 
       if (calcDistance < 0.002) return
 
