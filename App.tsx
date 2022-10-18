@@ -83,7 +83,8 @@ TaskManager.defineTask(
       )
 
       if (calcDistance < 0.008) return
-      ToastAndroid.show(calcDistance.toString(), ToastAndroid.SHORT)
+      if (Platform.OS === 'android')
+        ToastAndroid.show(calcDistance.toString(), ToastAndroid.SHORT)
 
       const oldDistance = (await getItem('gpsDistance')) || '0'
 
