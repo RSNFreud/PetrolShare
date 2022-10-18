@@ -81,7 +81,7 @@ TaskManager.defineTask(
         },
         { unit: distanceFormat !== 'km' ? 'mile' : 'km' },
       )
-      ToastAndroid.show(calcDistance, ToastAndroid.SHORT)
+      ToastAndroid.show(calcDistance.toString(), ToastAndroid.SHORT)
 
       if (calcDistance < 0.002) return
 
