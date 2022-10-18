@@ -1,154 +1,154 @@
-import * as Location from "expo-location";
-import React, { useState, useEffect, useContext } from "react";
+import * as Location from 'expo-location'
+import React, { useState, useEffect, useContext } from 'react'
 import {
   Box,
   Breadcrumbs,
   Button,
   FlexFull,
   Text,
-} from "../../components/Themed";
-import { Alert, getGroupData, getItem, setItem } from "../../hooks";
-import { View } from "react-native";
-import Layout from "../../components/layout";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import { useNavigation } from "@react-navigation/native";
-import config from "../../config";
+} from '../../components/Themed'
+import { Alert, getGroupData, getItem, setItem } from '../../hooks'
+import { View } from 'react-native'
+import Layout from '../../components/layout'
+import axios from 'axios'
+import { AuthContext } from '../../hooks/context'
+import { useNavigation } from '@react-navigation/native'
+import config from '../../config'
 
 export default () => {
-  const [distance, setDistance] = useState(0);
-  const [distanceFormat, setDistanceFormat] = useState("");
-  const [isTracking, setIsTracking] = useState(false);
-  const { retrieveData } = useContext(AuthContext);
-  const { navigate } = useNavigation();
+  const [distance, setDistance] = useState(0)
+  const [distanceFormat, setDistanceFormat] = useState('')
+  const [isTracking, setIsTracking] = useState(false)
+  const { retrieveData } = useContext(AuthContext)
+  const { navigate } = useNavigation()
   useEffect(() => {
-    (async () => {
-      let data = await getGroupData();
+    ;(async () => {
+      let data = await getGroupData()
 
-      setDistanceFormat(data.distance);
+      setDistanceFormat(data.distance)
 
-      const cachedDistance = await getItem("gpsDistance");
+      const cachedDistance = await getItem('gpsDistance')
       if (cachedDistance && parseFloat(cachedDistance) > 0) {
-        setDistance(parseFloat(cachedDistance));
-        setIsTracking(true);
+        setDistance(parseFloat(cachedDistance))
+        setIsTracking(true)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   useEffect(() => {
-    (async () => {
-      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-        setIsTracking(true);
-    })();
-  }, []);
+    ;(async () => {
+      if (await Location.hasStartedLocationUpdatesAsync('gpsTracking'))
+        setIsTracking(true)
+    })()
+  }, [])
 
   useEffect(() => {
-    if (!isTracking) return;
+    if (!isTracking) return
     const timer = setInterval(async () => {
-      if (!isTracking) return;
-      await calculateDistance();
-    }, 300);
-    return () => clearInterval(timer);
-  }, [isTracking]);
+      if (!isTracking) return
+      await calculateDistance()
+    }, 300)
+    return () => clearInterval(timer)
+  }, [isTracking])
 
   const toggleTracking = async () => {
     if (isTracking) {
-      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-        await Location.stopLocationUpdatesAsync("gpsTracking");
-      setIsTracking(false);
-      await setItem("gpsOldData", "");
-      await setItem("gpsDistance", "0");
-      return;
+      if (await Location.hasStartedLocationUpdatesAsync('gpsTracking'))
+        await Location.stopLocationUpdatesAsync('gpsTracking')
+      setIsTracking(false)
+      await setItem('gpsOldData', '')
+      await setItem('gpsDistance', '0')
+      return
     }
-    await startTracking();
-  };
+    await startTracking()
+  }
 
   const calculateDistance = async () => {
-    let currDistance = await getItem("gpsDistance");
-    if (currDistance) setDistance(parseFloat(currDistance));
-  };
+    let currDistance = await getItem('gpsDistance')
+    if (currDistance) setDistance(parseFloat(currDistance))
+  }
 
   const startTracking = async () => {
     try {
-      await requestForeground();
-      await requestBackground();
-      await requestLocation();
+      await requestForeground()
+      await requestBackground()
+      await requestLocation()
     } catch (err) {
-      console.log(err);
-      return Alert("Please turn on your GPS services!");
+      console.log(err)
+      return Alert('Please turn on your GPS services!')
     }
 
-    setIsTracking(true);
-    setDistance(0);
-    await setItem("gpsDistance", "0");
-    console.log("Started Tracking");
+    setIsTracking(true)
+    setDistance(0)
+    await setItem('gpsDistance', '0')
+    console.log('Started Tracking')
 
-    await Location.startLocationUpdatesAsync("gpsTracking", {
+    await Location.startLocationUpdatesAsync('gpsTracking', {
       accuracy: Location.Accuracy.BestForNavigation,
       activityType: Location.ActivityType.AutomotiveNavigation,
       pausesUpdatesAutomatically: false,
       deferredUpdatesDistance: 20,
       deferredUpdatesInterval: 1000,
       foregroundService: {
-        notificationTitle: "Tracking GPS distance!",
+        notificationTitle: 'Tracking GPS distance!',
         notificationBody:
           "Don't forget to turn it off when your trip is complete!",
       },
-    });
-  };
+    })
+  }
 
   const requestForeground = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
+    let { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
       // setErrorMsg("Permission to access location was denied");
-      return false;
+      return false
     } else {
-      return true;
+      return true
     }
-  };
+  }
   const requestBackground = async () => {
-    let { status } = await Location.requestBackgroundPermissionsAsync();
+    let { status } = await Location.requestBackgroundPermissionsAsync()
 
-    if (status !== "granted") {
+    if (status !== 'granted') {
       // setErrorMsg("Permission to access location was denied");
-      return false;
+      return false
     } else {
-      return true;
+      return true
     }
-  };
+  }
 
   const requestLocation = async () => {
     return new Promise((res, rej) => {
       Location.enableNetworkProviderAsync()
-        .then(() => res("accepted"))
-        .catch(() => rej("denied"));
-    });
-  };
+        .then(() => res('accepted'))
+        .catch(() => rej('denied'))
+    })
+  }
 
   const saveDistance = async () => {
     // setLoading(true);
-    if (distance === 0) return;
+    if (distance === 0) return
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(async () => {
-        await setItem("showToast", "distanceUpdated");
-        navigate("Dashboard");
+        await setItem('showToast', 'distanceUpdated')
+        navigate('Dashboard')
       })
       .catch(({ response }) => {
-        console.log(response.message);
-      });
-  };
+        console.log(response.message)
+      })
+  }
 
   return (
     <Layout>
       <Breadcrumbs
         links={[
-          { name: "Dashboard" },
-          { name: "Manage Distance", screenName: "ManageDistance" },
-          { name: "GPS Tracking" },
+          { name: 'Dashboard' },
+          { name: 'Manage Distance', screenName: 'ManageDistance' },
+          { name: 'GPS Tracking' },
         ]}
       />
       <FlexFull>
@@ -168,23 +168,26 @@ export default () => {
             </Text>
           </Box>
           <Text style={{ fontSize: 18 }}>Distance Travelled:</Text>
-          <Text style={{ fontSize: 32, marginTop: 10, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
             {distance.toFixed(2)} {distanceFormat}
+          </Text>
+          <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
+            {distance} {distanceFormat}
           </Text>
         </View>
         <View>
           <Button handleClick={toggleTracking} styles={{ marginBottom: 20 }}>
-            {isTracking ? "Stop Tracking" : "Start Tracking"}
+            {isTracking ? 'Stop Tracking' : 'Start Tracking'}
           </Button>
           <Button
             disabled={isTracking || distance <= 0}
             handleClick={saveDistance}
-            style={"ghost"}
+            style={'ghost'}
           >
             Save Distance
           </Button>
         </View>
       </FlexFull>
     </Layout>
-  );
-};
+  )
+}
