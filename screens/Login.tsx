@@ -170,7 +170,7 @@ export default ({ navigation }: any) => {
       />
       <Input
         password={true}
-        testID={"password"}
+        testID={testID("password")}
         value={formData.password}
         placeholder="Enter password"
         label="Password:"
