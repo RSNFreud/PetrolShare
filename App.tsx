@@ -82,9 +82,9 @@ TaskManager.defineTask(
         { unit: distanceFormat !== 'km' ? 'mile' : 'km' },
       )
 
+      if (calcDistance < 0.009) return
       if (Platform.OS === 'android')
         ToastAndroid.show(calcDistance.toString(), ToastAndroid.SHORT)
-      if (calcDistance < 0.009) return
 
       const oldDistance = (await getItem('gpsDistance')) || '0'
 

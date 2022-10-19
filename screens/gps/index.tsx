@@ -168,7 +168,7 @@ export default () => {
           </Box>
           <Text style={{ fontSize: 18 }}>Distance Travelled:</Text>
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
-            {distance.toFixed(2)} {distanceFormat}
+            {distance.toFixed(1)} {distanceFormat}
           </Text>
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
             {distance} {distanceFormat}
