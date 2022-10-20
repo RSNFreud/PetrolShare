@@ -1,20 +1,21 @@
-import { View, TextInput, TouchableWithoutFeedback } from 'react-native'
-import React, { useState } from 'react'
-import { Text } from './Themed'
-import Svg, { Path } from 'react-native-svg'
+import { View, TextInput, TouchableWithoutFeedback } from "react-native";
+import React, { useState } from "react";
+import { Text } from "./Themed";
+import Svg, { Path } from "react-native-svg";
 
 type PropsType = {
-  label: string
-  password?: boolean
-  value?: string
-  placeholder: string
-  style?: any
-  handleInput?: (e: string) => void
-  handleBlur?: (e: any) => void
-  errorMessage?: string
-  keyboardType?: TextInput['props']['keyboardType']
-  testID?: string
-}
+  label: string;
+  password?: boolean;
+  value?: string;
+  placeholder: string;
+  style?: any;
+  handleInput?: (e: string) => void;
+  nativeID?: string;
+  handleBlur?: (e: any) => void;
+  errorMessage?: string;
+  keyboardType?: TextInput["props"]["keyboardType"];
+  testID?: string;
+};
 
 export default ({
   label,
@@ -26,31 +27,33 @@ export default ({
   keyboardType,
   handleInput,
   handleBlur,
+  nativeID,
   errorMessage,
 }: PropsType) => {
-  const [passwordShown, setPasswordShown] = useState(password)
+  const [passwordShown, setPasswordShown] = useState(password);
 
   const handlePassword = () => {
-    setPasswordShown((showPassword) => !showPassword)
-  }
+    setPasswordShown((showPassword) => !showPassword);
+  };
 
   return (
     <View style={{ ...style }}>
       <>
         <Text
           style={{
-            fontWeight: '700',
+            fontWeight: "700",
             fontSize: 16,
             lineHeight: 16,
             marginBottom: 6,
-            color: 'white',
+            color: "white",
           }}
         >
           {label}
         </Text>
-        <View style={{ position: 'relative' }}>
+        <View style={{ position: "relative" }}>
           <TextInput
             testID={testID}
+            nativeID={nativeID}
             autoCapitalize="none"
             onChangeText={handleInput}
             onEndEditing={(e) => handleBlur && handleBlur(e)}
@@ -59,13 +62,13 @@ export default ({
             keyboardType={keyboardType}
             placeholderTextColor="rgba(255,255,255,0.8)"
             style={{
-              borderColor: '#137B91',
+              borderColor: "#137B91",
               borderWidth: 1,
-              borderStyle: 'solid',
-              backgroundColor: '#0B404A',
+              borderStyle: "solid",
+              backgroundColor: "#0B404A",
               borderRadius: 4,
-              color: 'white',
-              fontWeight: '400',
+              color: "white",
+              fontWeight: "400",
               height: 53,
               fontSize: 18,
               paddingHorizontal: 16,
@@ -77,13 +80,13 @@ export default ({
             <TouchableWithoutFeedback onPress={() => handlePassword()}>
               <View
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   right: 0,
                   paddingHorizontal: 10,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  height: '100%',
+                  display: "flex",
+                  justifyContent: "center",
+                  height: "100%",
                 }}
               >
                 {passwordShown ? (
@@ -118,8 +121,8 @@ export default ({
             style={{
               marginTop: 6,
               fontSize: 14,
-              fontWeight: '400',
-              color: '#FA4F4F',
+              fontWeight: "400",
+              color: "#FA4F4F",
             }}
           >
             {errorMessage}
@@ -127,5 +130,5 @@ export default ({
         )}
       </>
     </View>
-  )
-}
+  );
+};

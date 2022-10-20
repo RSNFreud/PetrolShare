@@ -159,7 +159,8 @@ export default ({ navigation }: any) => {
   return (
     <Layout>
       <Input
-        testID={testID("emailAddress")}
+        testID={testID("emailaddress")}
+        nativeID="emailaddress"
         keyboardType="email-address"
         handleInput={(e) => setFormData({ ...formData, emailAddress: e })}
         placeholder="Enter email address"
@@ -172,6 +173,7 @@ export default ({ navigation }: any) => {
         password={true}
         testID={testID("password")}
         value={formData.password}
+        nativeID="password"
         placeholder="Enter password"
         label="Password:"
         errorMessage={formErrors.password}
