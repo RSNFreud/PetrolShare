@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Pressable } from "react-native";
 import config from "../config";
-import { getItem, sendCustomEvent } from "../hooks";
+import { Alert, getItem, sendCustomEvent } from "../hooks";
 import { AuthContext } from "../hooks/context";
 import { getAllCurrencies } from "../hooks/getCurrencies";
 import Dropdown from "./Dropdown";
@@ -76,7 +76,27 @@ export default ({
 
     setErrors({ ...errors });
     if (Object.keys(errors).length) return;
-    setLoading(true);
+    if (firstSteps) return updateGroup();
+    Alert("Are you sure you want to reset your data?", undefined, [
+      {
+        text: "Yes",
+        onPress: async () => {
+          setLoading(true);
+          axios
+            .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
+              authenticationKey: retrieveData().authenticationKey,
+            })
+            .then(async () => {
+              updateGroup();
+            })
+            .catch();
+        },
+      },
+      { text: "No", style: "cancel" },
+    ]);
+  };
+
+  const updateGroup = async () => {
     await axios
       .post(config.REACT_APP_API_ADDRESS + "/group/update", {
         authenticationKey: retrieveData().authenticationKey,
@@ -112,6 +132,24 @@ export default ({
             >
               Thank you for creating a group, please select your preferences
               below.
+            </Text>
+          </Box>
+        )}
+        {!firstSteps && (
+          <Box
+            style={{
+              marginBottom: 20,
+              paddingHorizontal: 15,
+              paddingVertical: 15,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+              }}
+            >
+              By changing group settings you will reset your current tracked
+              session.
             </Text>
           </Box>
         )}
