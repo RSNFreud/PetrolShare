@@ -1,0 +1,8 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+        "namespace": "android_app",
+        "package_name": "com.rsnfreud.PetrolShare",
+        "sha256_cert_fingerprints": ["03:ED:3F:64:E9:D6:8C:A1:47:FC:98:F2:8E:1F:2B:6D:E6:DF:0F:6A:AC:17:FF:F4:79:A5:1E:66:A8:9E:F8:E9"]
+    }
+}]

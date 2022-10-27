@@ -34,14 +34,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#001e24"
       },
-      "permissions": [
-        "ACCESS_BACKGROUND_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "WAKE_LOCK"
-      ],
       "package": "com.rsnfreud.PetrolShare",
       "intentFilters": [{
         "action": "VIEW",
+        "autoVerify": true,
         "data": [{
           "scheme": "https",
           "host": "*.freud-online.co.uk"
