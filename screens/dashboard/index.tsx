@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import Layout from "../../components/layout";
 import config from "../../config";
 import * as Location from "expo-location";
+import { useRoute } from "@react-navigation/native";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -20,6 +21,7 @@ export default ({ navigation }: any) => {
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData()?.currentMileage : 0
   );
+  const route = useRoute();
   const dataRetrieved = useRef(false);
   const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -33,6 +35,7 @@ export default ({ navigation }: any) => {
   useEffect(() => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData().authenticationKey) {
+      pageLoaded();
       dataRetrieved.current = true;
       setCurrentMileage(retrieveData().currentMileage);
       updateData();
@@ -114,6 +117,64 @@ export default ({ navigation }: any) => {
       }
     })();
   }, [dataRetrieved]);
+
+  const pageLoaded = async () => {
+    let referallCode = await getItem("referalCode");
+    if (referallCode) {
+      return sendReferal(referallCode);
+    }
+
+    if (route && route.params) {
+      const groupID = route.params["groupID"];
+      if (groupID) {
+        sendReferal(groupID);
+      }
+    }
+  };
+
+  const sendReferal = (groupID: string) => {
+    setTimeout(() => {
+      Alert(
+        "We have located a referal code!",
+        `Do you want to change your group ID to ${groupID}? Doing so will reset your current session.`,
+        [
+          {
+            text: "Yes",
+            onPress: () => {
+              axios
+                .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
+                  authenticationKey: retrieveData().authenticationKey,
+                  groupID: groupID,
+                })
+                .then(async (e) => {
+                  updateData();
+                  Toast.show({
+                    text1: "Group ID updated succesfully!",
+                    type: "default",
+                  });
+                  setItem("referalCode", "");
+                })
+                .catch(() => {
+                  Toast.show({
+                    text1: "There is no group with that ID!",
+                    type: "default",
+                  });
+                  setItem("referalCode", "");
+                });
+            },
+          },
+          {
+            text: "No",
+            style: "cancel",
+            onPress: () => {
+              setItem("referalCode", "");
+            },
+          },
+        ]
+      );
+      navigation.setParams({ groupID: "" });
+    }, 400);
+  };
 
   const getDistance = () => {
     axios

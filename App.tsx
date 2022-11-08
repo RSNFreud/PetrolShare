@@ -231,6 +231,14 @@ export default function App() {
         navRef.navigate(routeName, { id: invoiceID });
       });
     }
+    if (!loading) {
+      if (navRef.getCurrentRoute()?.params) {
+        const groupID = navRef.getCurrentRoute()?.params["groupID"];
+        if (groupID) {
+          setItem("referalCode", groupID);
+        }
+      }
+    }
   }, [loading]);
 
   useEffect(() => {
