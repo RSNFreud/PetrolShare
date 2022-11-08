@@ -167,6 +167,7 @@ export default function App() {
         deregisterForPushNotifications(userData.emailAddress);
         setUserData({});
         await deleteItem("userData");
+        await deleteItem("groupData");
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),

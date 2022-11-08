@@ -122,7 +122,7 @@ export default ({
 
   useEffect(() => {
     if (screen) {
-      return changeScreen("SettingsChange");
+      return changeScreen(firstSteps ? "Settings" : "SettingsChange");
     }
     changeScreen("Default");
   }, [visible]);

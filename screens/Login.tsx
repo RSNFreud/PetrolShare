@@ -214,7 +214,8 @@ export default ({ navigation }: any) => {
             <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
               {formErrors.verification === "Please verify your account!" ? (
                 <>
-                  Please verify your account! Click{" "}
+                  Please verify your account by clicking the link in the email
+                  we sent! Click{" "}
                   <TouchableWithoutFeedback onPress={resendVerification}>
                     <Text
                       style={{

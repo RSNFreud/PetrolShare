@@ -90,11 +90,11 @@ export default ({
     <>
       <ScrollView
         keyboardShouldPersistTaps={"handled"}
-        style={[{ paddingHorizontal: 20, paddingBottom: 55 }, style]}
+        style={[{ paddingHorizontal: 20 }, style]}
         {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />
-        <View>
+        <View style={{ paddingBottom: 55 }}>
           <>{children}</>
         </View>
         <Toast config={ToastConfig} />
