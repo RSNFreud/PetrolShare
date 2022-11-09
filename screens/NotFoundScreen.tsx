@@ -7,7 +7,6 @@ import { RootStackScreenProps } from "../types";
 export default function NotFoundScreen({
   navigation,
 }: RootStackScreenProps<"NotFound">) {
-  console.log(navigation);
   const route = useRoute();
 
   return (
