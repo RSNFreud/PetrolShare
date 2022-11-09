@@ -39,7 +39,7 @@
         "action": "VIEW",
         "autoVerify": true,
         "data": [{
-          "scheme": "https",
+          "scheme": "petrolshare",
           "host": "*.freud-online.co.uk"
         }],
         "category": [
