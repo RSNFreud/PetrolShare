@@ -13,7 +13,7 @@ import { AuthContext } from "../../hooks/context";
 import Popup from "../../components/Popup";
 import SubmitButton from "./submitButton";
 import Toast from "react-native-toast-message";
-import { deleteItem, getItem, setItem } from "../../hooks";
+import { Alert, deleteItem, getItem, setItem } from "../../hooks";
 import config from "../../config";
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
@@ -53,7 +53,7 @@ export default ({ navigation }: any) => {
           await setItem("presets", JSON.stringify(data));
         })
         .catch(({ response }) => {
-          console.log(response.message);
+          Alert("Error!", response.message);
         });
     }
   };
@@ -68,6 +68,7 @@ export default ({ navigation }: any) => {
       setDistance("");
     }
   }, [data]);
+
   useEffect(() => {
     if (retrieveData && retrieveData().authenticationKey) getPresets();
     const getDraft = async () => {
