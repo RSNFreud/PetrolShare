@@ -55,7 +55,6 @@ export default ({ navigation }: any) => {
 
       navigation.addListener("focus", async () => {
         updateData();
-        getGroupData();
 
         if ((await getItem("showToast")) === "distanceUpdated") {
           await deleteItem("showToast");
@@ -209,7 +208,7 @@ export default ({ navigation }: any) => {
         type: "default",
       });
     }
-    getGroupData();
+    await getGroupData();
     getDistance();
     axios
       .get(
@@ -240,7 +239,6 @@ export default ({ navigation }: any) => {
 
   const getGroupData = async () => {
     let sessionStorage = await getItem("groupData");
-
     if (sessionStorage) setGroupData(JSON.parse(sessionStorage));
 
     if (!retrieveData()?.groupID) return;
