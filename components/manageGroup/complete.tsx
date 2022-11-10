@@ -1,27 +1,30 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../../hooks/context";
-import { View, TouchableWithoutFeedback } from "react-native";
-import { Button, Text, Box } from "../../components/Themed";
-import Svg, { Path } from "react-native-svg";
-import * as Clipboard from "expo-clipboard";
+import { useState, useContext } from 'react'
+import { AuthContext } from '../../hooks/context'
+import { View, TouchableWithoutFeedback } from 'react-native'
+import { Button, Text, Box } from '../../components/Themed'
+import Svg, { Path } from 'react-native-svg'
+import * as Clipboard from 'expo-clipboard'
 
 type PropsType = {
-  firstSteps: boolean;
-  groupID: string;
-  closeScreen: () => void;
-};
+  firstSteps: boolean
+  groupID: string
+  closeScreen: () => void
+}
 
 export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
-  const [copied, setCopied] = useState(false);
-  const { retrieveData } = useContext(AuthContext);
+  const [copied, setCopied] = useState(false)
+  const { retrieveData } = useContext(AuthContext)
 
   const copyToClipboard = async () => {
-    Clipboard.setStringAsync(groupID || "test");
-    setCopied(true);
+    Clipboard.setStringAsync(
+      `https://petrolshare.freud-online.co.uk/short/referral?groupID=${groupID}` ||
+        'test',
+    )
+    setCopied(true)
     setTimeout(() => {
-      setCopied(false);
-    }, 500);
-  };
+      setCopied(false)
+    }, 500)
+  }
 
   return (
     <View>
@@ -29,26 +32,26 @@ export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
         <Text style={{ fontSize: 16, lineHeight: 25 }}>
           {firstSteps && (
             <>
-              Thank you for registering for PetrolShare{" "}
-              <Text style={{ fontWeight: "bold" }}>
+              Thank you for registering for PetrolShare{' '}
+              <Text style={{ fontWeight: 'bold' }}>
                 {retrieveData && retrieveData().fullName}
               </Text>
-              .{"\n"}
-              {"\n"}
+              .{'\n'}
+              {'\n'}
             </>
           )}
           Your Group ID number is:
         </Text>
         <View
           style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Text
-            style={{ fontWeight: "bold", fontSize: 32, marginVertical: 21 }}
+            style={{ fontWeight: 'bold', fontSize: 32, marginVertical: 21 }}
           >
             {groupID}
           </Text>
@@ -87,5 +90,5 @@ export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
         Close
       </Button>
     </View>
-  );
-};
+  )
+}
