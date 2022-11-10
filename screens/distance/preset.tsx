@@ -38,6 +38,7 @@ export default ({ navigation }: any) => {
   const selectedToDelete = useRef("");
   const getPresets = async () => {
     const currentPresets = await getItem("presets");
+
     if (currentPresets) {
       setPresets(JSON.parse(currentPresets));
     }
@@ -67,7 +68,7 @@ export default ({ navigation }: any) => {
     } else {
       setDistance("");
     }
-  }, [data]);
+  }, [data, presets]);
 
   useEffect(() => {
     if (retrieveData && retrieveData().authenticationKey) getPresets();
