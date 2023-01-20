@@ -16,9 +16,11 @@ type PropsType = {
   value?: item | string;
   handleSelected: (e: item) => void;
   errorMessage?: string;
+  placeholder: string
+  height?: number
 };
 
-export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
+export default ({ data, value, handleSelected, errorMessage, placeholder, height }: PropsType) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(value);
 
@@ -30,7 +32,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
 
   useEffect(() => {
     if (!data) return;
-    setSelected(data.filter((e) => e.value === value)[0]);
+    setSelected(data.filter((e) => e.value === value || e.name === value)[0]);
   }, [value, data]);
 
   useEffect(() => {
@@ -58,17 +60,17 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             borderWidth: 1,
             borderColor: "#1196B0",
             borderRadius: 4,
-            height: 41,
+            height: height || 41,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            paddingHorizontal: 10,
-            paddingVertical: 10,
+            paddingHorizontal: 16,
+            paddingVertical: 13,
             zIndex: 3,
           }}
         >
           <Text>
-            {selected ? (selected as item).name : <>Choose a currency</>}
+            {selected ? (selected as item).name : placeholder}
           </Text>
           <Svg
             width="16"
@@ -110,7 +112,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
             backgroundColor: "#001e24",
             borderWidth: 1,
             position: "absolute",
-            top: 51,
+            top: (height || 41) + 10,
             left: 0,
             borderStyle: "solid",
           }}
@@ -120,10 +122,10 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
               key={(selected as item).name}
               onPress={() => setOpen(false)}
               style={{
-                paddingVertical: 5,
                 alignContent: "center",
-                height: 30,
-                paddingHorizontal: 10,
+                height: 45,
+                paddingHorizontal: 16,
+                paddingVertical: 13,
                 backgroundColor: "#0B404A",
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -136,15 +138,15 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
           {data
             .sort((a, b) => a["name"].localeCompare(b["name"]))
             .map((e) => {
-              if (selected && e.value === (selected as item).value) return;
+              if (selected && (e.value ? e.value === (selected as item)?.value : e.name === (selected as item).name)) return console.log(e)
               return (
                 <Pressable
                   key={e.name}
                   style={{
-                    paddingVertical: 5,
                     alignContent: "center",
-                    height: 30,
-                    paddingHorizontal: 10,
+                    height: 45,
+                    paddingHorizontal: 16,
+                    paddingVertical: 13,
                     backgroundColor:
                       (selected as item)?.value === e.value ? "#0B404A" : "",
                     flexDirection: "row",
@@ -153,7 +155,7 @@ export default ({ data, value, handleSelected, errorMessage }: PropsType) => {
                   onPress={() => selectOption(e)}
                 >
                   <Text>{e.name}</Text>
-                  <Text>{e.value}</Text>
+                  <Text>{e?.value}</Text>
                 </Pressable>
               );
             })}

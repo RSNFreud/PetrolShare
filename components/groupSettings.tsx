@@ -212,7 +212,7 @@ export default ({
         >
           What currency are you using?
         </Text>
-        <Dropdown
+        <Dropdown placeholder="Choose a currency"
           value={data.currency}
           data={dropdownData}
           handleSelected={(e) =>

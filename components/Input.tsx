@@ -8,7 +8,8 @@ type PropsType = {
   password?: boolean
   value?: string
   placeholder: string
-  style?: any
+  style?: TextInput['props']['style']
+  inputStyle?: TextInput['props']['style']
   handleInput?: (e: string) => void
   nativeID?: string
   handleBlur?: (e: any) => void
@@ -28,7 +29,7 @@ export default ({
   handleInput,
   handleBlur,
   nativeID,
-  errorMessage,
+  errorMessage, inputStyle
 }: PropsType) => {
   const [passwordShown, setPasswordShown] = useState(password)
 
@@ -37,7 +38,7 @@ export default ({
   }
 
   return (
-    <View style={{ ...style }}>
+    <View style={style}>
       <>
         <Text
           style={{
@@ -61,7 +62,7 @@ export default ({
             secureTextEntry={password ? passwordShown : false}
             keyboardType={keyboardType}
             placeholderTextColor="rgba(255,255,255,0.8)"
-            style={{
+            style={[{
               borderColor: '#137B91',
               borderWidth: 1,
               borderStyle: 'solid',
@@ -74,7 +75,7 @@ export default ({
               paddingHorizontal: 16,
               paddingVertical: 13,
               paddingRight: 50,
-            }}
+            }, inputStyle]}
             value={value}
           />
           {password && (

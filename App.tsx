@@ -142,7 +142,7 @@ export default function App() {
               setUserData(data);
               try {
                 await setItem("userData", JSON.stringify(data));
-              } catch {}
+              } catch { }
               res(data);
             })
             .catch(({ response }) => {
@@ -154,7 +154,7 @@ export default function App() {
         setUserData(e);
         try {
           await setItem("userData", JSON.stringify(e));
-        } catch {}
+        } catch { }
       },
       retrieveData: () => {
         return userData;
@@ -190,8 +190,8 @@ export default function App() {
           axios
             .get(
               config.REACT_APP_API_ADDRESS +
-                "/user/verify?authenticationKey=" +
-                parsed.authenticationKey
+              "/user/verify?authenticationKey=" +
+              parsed.authenticationKey
             )
             .then(async ({ data }) => {
               await setItem("userData", JSON.stringify({ ...parsed, ...data }));

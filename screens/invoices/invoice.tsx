@@ -13,6 +13,7 @@ import {
 import Toast from "react-native-toast-message";
 import { convertCurrency } from "../../hooks/getCurrencies";
 import config from "../../config";
+import AssignDistance from "../../components/assignDistance";
 
 type PropsType = {
   invoiceID: number;
@@ -26,6 +27,7 @@ export default ({ invoiceID }: PropsType) => {
     getInvoice();
   }, []);
   const [loading, setLoading] = useState(0);
+  const [manageDistanceOpen, setManageDistanceOpen] = useState(false)
 
   const [groupData, setGroupData] = useState({ distance: "", currency: "" });
 
@@ -49,34 +51,34 @@ export default ({ invoiceID }: PropsType) => {
     setGroupData(data);
   };
 
-  const markPaid = (userID: number) => {
-    setLoading(userID);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/invoices/pay`, {
-        authenticationKey: retrieveData().authenticationKey,
-        userID: userID,
-        invoiceID: invoiceID,
-      })
-      .then(async ({ data }) => {
-        Toast.show({
-          type: "default",
-          text1: "Successfully marked as paid!",
-        });
-        getInvoice();
-        setLoading(0);
-      })
-      .catch((err) => {
-        setLoading(0);
-      });
+  const assignDistance = (userID: number) => {
+    setManageDistanceOpen(true)
+    // setLoading(userID);
+    // axios
+    //   .post(config.REACT_APP_API_ADDRESS + `/invoices/assign`, {
+    //     authenticationKey: retrieveData().authenticationKey,
+    //     userID: userID,
+    //     invoiceID: invoiceID,
+    //   })
+    //   .then(async ({ data }) => {
+    //     Toast.show({
+    //       type: "default",
+    //       text1: "Successfully marked as paid!",
+    //     });
+    //     getInvoice();
+    //     setLoading(0);
+    //   })
+    //   .catch((err) => {
+    //     setLoading(0);
+    //   });
   };
 
   const getInvoice = () => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/invoices/get?authenticationKey=${
-            retrieveData().authenticationKey
-          }&invoiceID=${invoiceID}`
+        `/invoices/get?authenticationKey=${retrieveData().authenticationKey
+        }&invoiceID=${invoiceID}`
       )
       .then(async ({ data }) => {
         setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
@@ -154,27 +156,6 @@ export default ({ invoiceID }: PropsType) => {
                   marginBottom: 10,
                 }}
               >
-                {value.paid ? (
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "#7CFF5B",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    PAID
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "#FA4F4F",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    PAYMENT DUE
-                  </Text>
-                )}
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                   {currencyPosition(value.paymentDue, groupData.currency)}
                 </Text>
@@ -194,31 +175,31 @@ export default ({ invoiceID }: PropsType) => {
                   )
                 </Text>
               </View>
-              {value.paid ? (
-                <></>
-              ) : (
+              {value.fullName === "Unaccounted Distance" ? (
                 <Button
                   loading={loading === key}
                   size="small"
-                  disabled={data.fullName !== retrieveData().fullName}
                   styles={{
-                    marginTop: 20,
+                    marginTop: 10,
+                    height: 30,
                     borderWidth: 0,
-                    height: 40,
                     justifyContent: "center",
                   }}
                   noText
-                  handleClick={() => markPaid(key)}
+                  handleClick={() => assignDistance(key)}
                 >
                   <Text style={{ fontWeight: "bold", fontSize: 14 }}>
-                    Mark as paid
+                    Assign Distance
                   </Text>
                 </Button>
+              ) : (
+                <></>
               )}
             </Box>
           );
         }
       )}
+      <AssignDistance active={manageDistanceOpen} handleClose={() => setManageDistanceOpen(false)} data={data.invoiceData} />
     </>
   );
 };
