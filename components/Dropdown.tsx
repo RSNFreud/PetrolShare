@@ -18,9 +18,10 @@ type PropsType = {
   errorMessage?: string;
   placeholder: string
   height?: number
+  hiddenValue?: boolean
 };
 
-export default ({ data, value, handleSelected, errorMessage, placeholder, height }: PropsType) => {
+export default ({ data, value, handleSelected, errorMessage, placeholder, height, hiddenValue }: PropsType) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(value);
 
@@ -132,13 +133,14 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, height
               }}
             >
               <Text>{(selected as item)?.name}</Text>
-              <Text>{(selected as item)?.value}</Text>
+              {!hiddenValue &&
+                <Text>{(selected as item)?.value}</Text>}
             </Pressable>
           )}
           {data
             .sort((a, b) => a["name"].localeCompare(b["name"]))
             .map((e) => {
-              if (selected && (e.value ? e.value === (selected as item)?.value : e.name === (selected as item).name)) return console.log(e)
+              if (selected && (e.value ? e.value === (selected as item)?.value : e.name === (selected as item).name)) return
               return (
                 <Pressable
                   key={e.name}
@@ -155,7 +157,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, height
                   onPress={() => selectOption(e)}
                 >
                   <Text>{e.name}</Text>
-                  <Text>{e?.value}</Text>
+                  {!hiddenValue && <Text>{e?.value}</Text>}
                 </Pressable>
               );
             })}

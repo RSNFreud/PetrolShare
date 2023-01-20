@@ -35,6 +35,20 @@ export default ({ invoiceID }: PropsType) => {
     init();
   }, []);
 
+  const handleUpdate = () => {
+    handleClose()
+    getInvoice();
+    Toast.show({
+      type: "default",
+      text1: "Successfully updated distances!",
+    });
+  }
+
+  const handleClose = () => {
+    setManageDistanceOpen(false)
+
+  }
+
   const init = async () => {
     const getSymbol = await getItem("currencySymbol");
     if (getSymbol)
@@ -49,28 +63,6 @@ export default ({ invoiceID }: PropsType) => {
     const currency = await convertCurrency(data.currency);
     data.currency = currency;
     setGroupData(data);
-  };
-
-  const assignDistance = (userID: number) => {
-    setManageDistanceOpen(true)
-    // setLoading(userID);
-    // axios
-    //   .post(config.REACT_APP_API_ADDRESS + `/invoices/assign`, {
-    //     authenticationKey: retrieveData().authenticationKey,
-    //     userID: userID,
-    //     invoiceID: invoiceID,
-    //   })
-    //   .then(async ({ data }) => {
-    //     Toast.show({
-    //       type: "default",
-    //       text1: "Successfully marked as paid!",
-    //     });
-    //     getInvoice();
-    //     setLoading(0);
-    //   })
-    //   .catch((err) => {
-    //     setLoading(0);
-    //   });
   };
 
   const getInvoice = () => {
@@ -186,7 +178,7 @@ export default ({ invoiceID }: PropsType) => {
                     justifyContent: "center",
                   }}
                   noText
-                  handleClick={() => assignDistance(key)}
+                  handleClick={() => setManageDistanceOpen(true)}
                 >
                   <Text style={{ fontWeight: "bold", fontSize: 14 }}>
                     Assign Distance
@@ -199,7 +191,7 @@ export default ({ invoiceID }: PropsType) => {
           );
         }
       )}
-      <AssignDistance active={manageDistanceOpen} handleClose={() => setManageDistanceOpen(false)} data={data.invoiceData} />
+      <AssignDistance active={manageDistanceOpen} handleClose={() => setManageDistanceOpen(false)} handleUpdate={handleUpdate} data={data.invoiceData} invoiceID={invoiceID} />
     </>
   );
 };
