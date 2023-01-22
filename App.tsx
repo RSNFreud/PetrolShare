@@ -146,7 +146,7 @@ export default function App() {
               res(data);
             })
             .catch(({ response }) => {
-              rej(response.message);
+              rej(response.data);
             });
         });
       },

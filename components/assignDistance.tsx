@@ -24,31 +24,26 @@ export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsTyp
     const [loading, setLoading] = useState(false)
     const { retrieveData } = useContext(AuthContext);
 
-
-    const checkDistance = (e: string) => {
-        const distance = parseFloat(e)
-        setErrors({ ...errors, distance: "" })
-        setValues({ ...values, distance: e })
-        if (isNaN(distance)) {
-            setErrors({ ...errors, distance: "Please enter a value above 0 and below " + maxDistance })
-            return false
-        }
-        if (distance > maxDistance || distance === 0) {
-            setErrors({ ...errors, distance: "Please enter a value above 0 and below " + maxDistance })
-            return false
-        }
-        return true
-    }
-
     const submit = () => {
+        setLoading(false)
         setErrors({ name: "", distance: "" })
-        if (!checkDistance(values.distance)) return
         const errors: { name: string, distance: string } = {}
         Object.entries(values).map(([key, value]) => {
+            if (key === "distance") {
+                const distance = parseFloat(value)
+                if (isNaN(distance)) {
+                    errors[key] = "Please enter a value above 0 and below " + maxDistance
+                }
+                if (distance > maxDistance || distance === 0) {
+                    errors[key] = "Please enter a value above 0 and below " + maxDistance
+                }
+            }
             if (value) return
             errors[key] = "Please enter a value!"
         })
+
         setErrors(errors)
+        if (Object.values(errors).length != 0) return
         if (!values.distance || !values.name) return
         setLoading(true);
         axios
@@ -68,8 +63,8 @@ export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsTyp
     }
 
     return <Popup visible={active} handleClose={handleClose}>
-        <Input handleInput={e => checkDistance(e)} label={`Distance to apply`} errorMessage={errors.distance} placeholder={`Enter amount (Max: ${maxDistance})`} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20, marginTop: 20 }} />
-        <Dropdown placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e.value || e.name })} value={values.name} height={53} errorMessage={errors.name} hiddenValue />
+        <Input handleInput={e => setValues({ ...values, distance: e })} label={`Distance to apply`} errorMessage={errors.distance} placeholder={`Enter amount (Max: ${maxDistance})`} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20, marginTop: 20 }} />
+        <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue />
         <Button loading={loading} handleClick={submit}>Assign Distance</Button>
     </Popup>
 }

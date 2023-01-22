@@ -173,7 +173,6 @@ export default ({ invoiceID }: PropsType) => {
                   size="small"
                   styles={{
                     marginTop: 10,
-                    height: 30,
                     borderWidth: 0,
                     justifyContent: "center",
                   }}

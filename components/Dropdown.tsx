@@ -6,88 +6,108 @@ import {
 } from "react-native";
 import { Text } from "./Themed";
 import Svg, { Path } from "react-native-svg";
-import { useEffect, useState } from "react";
-import { EventRegister } from "react-native-event-listeners";
+import { useEffect, useRef, useState } from "react";
+import { Picker } from '@react-native-picker/picker';
 
-type item = { name: string; value?: string; symbol?: string };
+type item = { name: string; value: string; symbol?: string };
 
 type PropsType = {
   data: Array<item>;
-  value?: item | string;
-  handleSelected: (e: item) => void;
+  value?: string;
+  handleSelected: (e: string) => void;
   errorMessage?: string;
   placeholder: string
   height?: number
   hiddenValue?: boolean
+  label?: string
 };
 
-export default ({ data, value, handleSelected, errorMessage, placeholder, height, hiddenValue }: PropsType) => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(value);
+export default ({ data, value, handleSelected, errorMessage, placeholder, hiddenValue, label }: PropsType) => {
+  const [selected, setSelected] = useState("");
+  const dropdownRef = useRef<any>("")
 
-  const selectOption = (e: item) => {
+  const selectOption = (e: string) => {
     setSelected(e);
     handleSelected(e);
-    setOpen(false);
   };
 
   useEffect(() => {
-    if (!data) return;
-    setSelected(data.filter((e) => e.value === value || e.name === value)[0]);
-  }, [value, data]);
+    if (!data || selected) return;
+    setSelected(data.filter((e) => e.value === value || e.name === value)[0]?.value);
+  }, [data, value, selected]);
 
-  useEffect(() => {
-    EventRegister.addEventListener("bodyClicked", () => {
-      setOpen(false);
-    });
-    return () => {
-      EventRegister.removeEventListener("bodyClicked");
-    };
-  }, []);
-
-  return (
-    <View
-      style={{
-        position: "relative",
-        zIndex: 1,
-        paddingBottom: 89,
-      }}
-    >
-      <TouchableWithoutFeedback onPress={() => setOpen((open) => !open)}>
-        <View
+  return (<TouchableWithoutFeedback onPress={() => dropdownRef.current.focus()} >
+    <View style={{
+      marginBottom: 20,
+    }}>
+      {!!label &&
+        <Text
           style={{
-            backgroundColor: "#0B404A",
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "#1196B0",
-            borderRadius: 4,
-            height: height || 41,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 16,
-            paddingVertical: 13,
-            zIndex: 3,
+            fontWeight: '700',
+            fontSize: 16,
+            lineHeight: 16,
+            marginBottom: 6,
+            color: 'white',
           }}
         >
-          <Text>
-            {selected ? (selected as item).name : placeholder}
-          </Text>
-          <Svg
-            width="16"
-            height="16"
-            fill="none"
-            style={{ transform: [{ rotate: open ? "0deg" : "180deg" }] }}
-          >
-            <Path
-              stroke="#fff"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M8.133 2.933V13.6m4.667-6L8.133 2.933 3.467 7.6"
-            ></Path>
-          </Svg>
-        </View>
-      </TouchableWithoutFeedback>
+          {label}
+        </Text>}
+      <View
+        style={{
+          position: "relative",
+          zIndex: 1,
+          borderRadius: 4,
+          width: "100%",
+          backgroundColor: "#0B404A",
+          borderStyle: "solid",
+          borderWidth: 1,
+          height: 51,
+          overflow: 'hidden',
+          borderColor: "#1196B0",
+          paddingLeft: 10,
+          display: 'flex',
+          flexDirection: 'row',
+          alignContent: 'center'
+        }}
+      >
+        <Picker
+          ref={dropdownRef}
+          selectedValue={selected}
+          onValueChange={(itemValue) => selectOption(itemValue)}
+          dropdownIconColor="white"
+          mode="dialog"
+          style={{
+            width: "100%",
+            backgroundColor: 'transparent',
+            fontSize: 16,
+            marginRight: 10,
+            borderColor: 'transparent',
+            fontWeight: "400",
+            color: "#fff",
+          }}
+          itemStyle={{
+            color: 'black'
+          }}
+        >
+          {value !== undefined && !Boolean(selected) &&
+            <Picker.Item
+              color="black" key={"blank"}
+              value={""}
+              label={placeholder}
+            />}
+          {data
+            .sort((a, b) => a["name"].localeCompare(b["name"]))
+            .map((e) => {
+              return (
+                <Picker.Item
+                  color="black" key={e.name}
+                  value={e.value}
+                  label={`${e.name} ${!hiddenValue && e.value ? `(${e.value})` : ''}`}
+                />
+              );
+            })}
+        </Picker>
+      </View>
       {!!errorMessage && (
         <Text
           style={{
@@ -100,69 +120,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, height
           {errorMessage}
         </Text>
       )}
-      {open && (
-        <ScrollView
-          snapToAlignment="center"
-          snapToInterval={30}
-          decelerationRate={"fast"}
-          style={{
-            maxHeight: 92,
-            borderRadius: 4,
-            width: "100%",
-            borderColor: "#0B404A",
-            backgroundColor: "#001e24",
-            borderWidth: 1,
-            position: "absolute",
-            top: (height || 41) + 10,
-            left: 0,
-            borderStyle: "solid",
-          }}
-        >
-          {selected && typeof selected !== "string" && (
-            <Pressable
-              key={(selected as item).name}
-              onPress={() => setOpen(false)}
-              style={{
-                alignContent: "center",
-                height: 45,
-                paddingHorizontal: 16,
-                paddingVertical: 13,
-                backgroundColor: "#0B404A",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text>{(selected as item)?.name}</Text>
-              {!hiddenValue &&
-                <Text>{(selected as item)?.value}</Text>}
-            </Pressable>
-          )}
-          {data
-            .sort((a, b) => a["name"].localeCompare(b["name"]))
-            .map((e) => {
-              if (selected && (e.value ? e.value === (selected as item)?.value : e.name === (selected as item).name)) return
-              return (
-                <Pressable
-                  key={e.name}
-                  style={{
-                    alignContent: "center",
-                    height: 45,
-                    paddingHorizontal: 16,
-                    paddingVertical: 13,
-                    backgroundColor:
-                      (selected as item)?.value === e.value ? "#0B404A" : "",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                  onPress={() => selectOption(e)}
-                >
-                  <Text>{e.name}</Text>
-                  {!hiddenValue && <Text>{e?.value}</Text>}
-                </Pressable>
-              );
-            })}
-        </ScrollView>
-      )}
     </View>
+  </TouchableWithoutFeedback>
   );
 };

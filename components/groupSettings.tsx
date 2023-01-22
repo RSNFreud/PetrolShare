@@ -216,7 +216,7 @@ export default ({
           value={data.currency}
           data={dropdownData}
           handleSelected={(e) =>
-            setData({ ...data, currency: e.value || e.name })
+            setData({ ...data, currency: e })
           }
           errorMessage={errors.currency}
         />

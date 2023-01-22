@@ -140,6 +140,8 @@ export default ({ navigation }: any) => {
     setFormErrors({ emailAddress: "", password: "", verification: "" });
     setLoading(true);
     signIn({ ...formData }).catch((err: string) => {
+      console.log(err);
+
       setLoading(false);
       setFormErrors({ emailAddress: "", password: "", verification: err });
     });
@@ -153,7 +155,7 @@ export default ({ navigation }: any) => {
       .then(async () => {
         setVerificationEmailSent(true);
       })
-      .catch(({ response }) => {});
+      .catch(({ response }) => { });
   };
 
   return (
