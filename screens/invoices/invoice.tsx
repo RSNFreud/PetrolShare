@@ -29,7 +29,7 @@ export default ({ invoiceID }: PropsType) => {
   const [loading, setLoading] = useState(0);
   const [manageDistanceOpen, setManageDistanceOpen] = useState(false)
 
-  const [groupData, setGroupData] = useState({ distance: "", currency: "" });
+  const [groupData, setGroupData] = useState({ distance: "", currency: "", petrol: "" });
 
   useEffect(() => {
     init();
@@ -124,6 +124,16 @@ export default ({ invoiceID }: PropsType) => {
             {currencyPosition(data.totalPrice, groupData.currency)}
           </Text>
         </View>
+        {Boolean(data.pricePerLiter) ? <View
+          style={{ display: "flex", flexDirection: "row", marginTop: 10 }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            Price Per Liter:{" "}
+          </Text>
+          <Text style={{ fontSize: 16 }}>
+            {currencyPosition(data.pricePerLiter, groupData.currency)}
+          </Text>
+        </View> : <></>}
       </Box>
       {Object.entries(data.invoiceData).map(
         ([key, value]: any, count: number) => {
@@ -151,6 +161,10 @@ export default ({ invoiceID }: PropsType) => {
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                   {currencyPosition(value.paymentDue, groupData.currency)}
                 </Text>
+                {value.liters ?
+                  <Text style={{ fontSize: 16 }}>
+                    {value?.liters} {groupData.petrol}
+                  </Text> : <></>}
               </View>
               <View>
                 <Text
