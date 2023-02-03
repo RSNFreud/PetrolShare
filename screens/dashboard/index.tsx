@@ -123,6 +123,20 @@ export default ({ navigation }: any) => {
     }
   }, [retrieveData().groupID]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (route && route.params) {
+        const groupID = (route.params as { groupID?: string })["groupID"];
+        if (groupID) {
+          sendReferal(groupID);
+        }
+      }
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [])
+
   const pageLoaded = async () => {
     let referallCode = await getItem("referalCode");
     if (referallCode) {
@@ -185,7 +199,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/distance/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
         setCurrentMileage(data);
@@ -219,7 +233,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/user/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/user/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
         let sessionStorage;
@@ -252,8 +266,8 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          "/group/get?authenticationKey=" +
-          retrieveData().authenticationKey
+        "/group/get?authenticationKey=" +
+        retrieveData().authenticationKey
       )
       .then(async ({ data }) => {
         if (!data.distance) {
@@ -266,15 +280,14 @@ export default ({ navigation }: any) => {
         await setItem("groupData", JSON.stringify(data));
         setGroupData(data);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const copyToClipboard = async () => {
     Clipboard.setStringAsync(
       retrieveData
-        ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${
-            retrieveData()?.groupID
-          }`
+        ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${retrieveData()?.groupID
+        }`
         : ""
     );
     setCopied(true);

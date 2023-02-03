@@ -1,4 +1,5 @@
-import * as Location from "expo-location";
+import RNLocation from 'react-native-location';
+import * as Location from 'expo-location';
 import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
@@ -37,24 +38,24 @@ export default () => {
 
   useEffect(() => {
     (async () => {
-      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-        setIsTracking(true);
+      // if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+      // setIsTracking(true);
     })();
   }, []);
 
-  useEffect(() => {
-    if (!isTracking) return;
-    const timer = setInterval(async () => {
-      if (!isTracking) return;
-      await calculateDistance();
-    }, 300);
-    return () => clearInterval(timer);
-  }, [isTracking]);
+  // useEffect(() => {
+  //   if (!isTracking) return;
+  //   const timer = setInterval(async () => {
+  //     if (!isTracking) return;
+  //     await calculateDistance();
+  //   }, 300);
+  //   return () => clearInterval(timer);
+  // }, [isTracking]);
 
   const toggleTracking = async () => {
     if (isTracking) {
-      if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-        await Location.stopLocationUpdatesAsync("gpsTracking");
+      // if (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+      //   await Location.stopLocationUpdatesAsync("gpsTracking");
       setIsTracking(false);
       await setItem("gpsOldData", "");
       await setItem("gpsDistance", "0");
@@ -63,10 +64,26 @@ export default () => {
     await startTracking();
   };
 
-  const calculateDistance = async () => {
-    let currDistance = await getItem("gpsDistance");
-    if (currDistance) setDistance(parseFloat(currDistance));
-  };
+  // const calculateDistance = async () => {
+  //   let currDistance = await getItem("gpsDistance");
+  //   if (currDistance) setDistance(parseFloat(currDistance));
+  // };
+  RNLocation.configure({
+    distanceFilter: 5, // Meters
+    desiredAccuracy: {
+      ios: "best",
+      android: "highAccuracy"
+    },
+    // Android only
+    androidProvider: "auto",
+    interval: 1000, // Milliseconds
+    maxWaitTime: 5000, // Milliseconds
+    // iOS Only
+    activityType: "automotiveNavigation",
+    allowsBackgroundLocationUpdates: true,
+    pausesLocationUpdatesAutomatically: false,
+    showsBackgroundLocationIndicator: true,
+  })
 
   const startTracking = async () => {
     try {
@@ -82,28 +99,41 @@ export default () => {
     setDistance(0);
     await setItem("gpsDistance", "0");
     console.log("Started Tracking");
-
-    await Location.startLocationUpdatesAsync("gpsTracking", {
-      accuracy: Location.Accuracy.BestForNavigation,
-      activityType: Location.ActivityType.AutomotiveNavigation,
-      pausesUpdatesAutomatically: false,
-      deferredUpdatesDistance: 5,
-      deferredUpdatesInterval: 1000,
-      foregroundService: {
-        notificationTitle: "Tracking GPS distance!",
-        notificationBody:
-          "Don't forget to turn it off when your trip is complete!",
-      },
-    });
+    RNLocation.subscribeToLocationUpdates(locations => {
+      console.log(locations)
+    })
+    // await Location.startLocationUpdatesAsync("gpsTracking", {
+    //   accuracy: Location.Accuracy.BestForNavigation,
+    //   activityType: Location.ActivityType.AutomotiveNavigation,
+    //   pausesUpdatesAutomatically: false,
+    //   deferredUpdatesDistance: 5,
+    //   deferredUpdatesInterval: 1000,
+    //   foregroundService: {
+    //     notificationTitle: "Tracking GPS distance!",
+    //     notificationBody:
+    //       "Don't forget to turn it off when your trip is complete!",
+    //   },
+    // });
   };
 
   const requestForeground = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
+    let permissionGranted = await RNLocation.requestPermission({
+      ios: 'whenInUse', // or 'always'
+      android: {
+        detail: 'coarse', // or 'fine'
+        rationale: {
+          title: "We need to access your location",
+          message: "This will be used to keep track of your position for distance tracking",
+          buttonPositive: "OK",
+          buttonNegative: "Cancel"
+        }
+      }
+    });
+    if (permissionGranted) {
       // setErrorMsg("Permission to access location was denied");
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   };
   const requestBackground = async () => {
