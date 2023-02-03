@@ -301,7 +301,7 @@ export default ({ navigation }: any) => {
       <Box>
         <>
           <Text style={{ fontSize: 18 }}>
-            Welcome (test)
+            Welcome
             <Text style={{ fontWeight: "bold", fontSize: 18 }}>
               &nbsp;
               {retrieveData ? retrieveData()?.fullName || "User" : "User"}
