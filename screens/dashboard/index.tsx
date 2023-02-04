@@ -125,12 +125,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (route && route.params) {
-        const groupID = (route.params as { groupID?: string })["groupID"];
-        if (groupID) {
-          sendReferal(groupID);
-        }
-      }
+      pageLoaded()
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
