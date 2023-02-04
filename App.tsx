@@ -212,7 +212,7 @@ export default function App() {
         setUserData({});
         await deleteItem("userData");
         await deleteItem("groupData");
-        Alert(`An error has occured!`, (data as string).toString());
+        // Alert(`An error has occured!`, (data as string).toString());
       }
     };
     async();
