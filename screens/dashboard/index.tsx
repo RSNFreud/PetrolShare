@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Text } from "../../components/Themed";
 import { AuthContext } from "../../hooks/context";
 import SplitRow from "./splitRow";
-import { View, TouchableWithoutFeedback, Platform } from "react-native";
+import { View, TouchableWithoutFeedback, Platform, AppState } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -30,6 +30,7 @@ export default ({ navigation }: any) => {
     petrol?: string;
     currency?: string;
   }>({});
+  const appState = useRef(AppState.currentState);
   const [currentScreen, setCurrentScreen] = useState<string>("");
 
   useEffect(() => {
@@ -124,12 +125,32 @@ export default ({ navigation }: any) => {
   }, [retrieveData().groupID]);
 
   useEffect(() => {
+
+
     const unsubscribe = navigation.addListener('focus', () => {
       pageLoaded()
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
+  }, [])
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        pageLoaded()
+        console.log('App has come to the foreground!');
+      }
+
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [])
 
   const pageLoaded = async () => {
