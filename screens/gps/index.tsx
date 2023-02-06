@@ -8,8 +8,6 @@ import {
     FlexFull,
     Text,
 } from "../../components/Themed";
-import * as Notifications from 'expo-notifications';
-
 import { Alert, deleteItem, getGroupData, getItem, setItem } from "../../hooks";
 import { View } from "react-native";
 import Layout from "../../components/layout";
@@ -110,9 +108,6 @@ export default () => {
         setDistance(0);
         await setItem("gpsDistance", "0");
         await setItem("tracking", "true");
-        await Notifications.scheduleNotificationAsync({
-
-        })
         const trackNumber = Geolocation.watchPosition(success => {
             calculateDistance(success.coords.latitude, success.coords.longitude)
         }, error => {

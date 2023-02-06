@@ -35,21 +35,22 @@
         "backgroundColor": "#001e24"
       },
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "petrolshare",
-              "host": "*.freud-online.co.uk"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
+      "intentFilters": [{
+        "action": "VIEW",
+        "autoVerify": true,
+        "data": [{
+          "scheme": "petrolshare",
+          "host": "*.freud-online.co.uk"
+        }],
+        "category": [
+          "BROWSABLE",
+          "DEFAULT"
+        ]
+      }],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
       ]
     },
     "web": {
