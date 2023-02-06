@@ -13,7 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import Layout from "../../components/layout";
 import config from "../../config";
 import * as Location from "expo-location";
-import { useRoute } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -32,6 +32,7 @@ export default ({ navigation }: any) => {
   }>({});
   const appState = useRef(AppState.currentState);
   const [currentScreen, setCurrentScreen] = useState<string>("");
+  const isFocused = useIsFocused()
 
   useEffect(() => {
     if (dataRetrieved.current) return;
@@ -125,8 +126,6 @@ export default ({ navigation }: any) => {
   }, [retrieveData().groupID]);
 
   useEffect(() => {
-
-
     const unsubscribe = navigation.addListener('focus', () => {
       pageLoaded()
     });
@@ -137,6 +136,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
+      if (!isFocused) return
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
@@ -144,14 +144,15 @@ export default ({ navigation }: any) => {
         pageLoaded()
         console.log('App has come to the foreground!');
       }
-
       appState.current = nextAppState;
     });
+
+    if (!isFocused) return subscription.remove()
 
     return () => {
       subscription.remove();
     };
-  }, [])
+  }, [isFocused])
 
   const pageLoaded = async () => {
     let referallCode = await getItem("referalCode");
