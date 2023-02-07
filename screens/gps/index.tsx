@@ -61,9 +61,9 @@ export default () => {
   const testFunc = async () => {
     const oldData = await getItem('gpsOldData')
     Alert(
-      'old coords',
-      `${oldData || ''
-      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version idk`,
+      'Test Data',
+      `coords: ${oldData || ''
+      },  stored distance: ${distance.toString()}, actual distance: ${distance.toString()}, version: please work`,
     )
   }
 
@@ -147,10 +147,10 @@ export default () => {
         Alert('An error occured!', error.message)
       },
       {
-        interval: 10,
+        interval: 5,
         enableHighAccuracy: true,
         distanceFilter: 10,
-        timeout: 400,
+        timeout: 300,
       },
     )
 
