@@ -10,7 +10,7 @@ import {
 } from '../../components/Themed'
 import Constants from 'expo-constants'
 import { Alert, deleteItem, getGroupData, getItem, setItem } from '../../hooks'
-import { View } from 'react-native'
+import { ToastAndroid, View } from 'react-native'
 import Layout from '../../components/layout'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
@@ -49,7 +49,7 @@ export default () => {
     const timer = setInterval(async () => {
       if (!isTracking) return
       await updateDistance()
-    }, 300)
+    }, 100)
     return () => clearInterval(timer)
   }, [isTracking])
 
@@ -63,7 +63,7 @@ export default () => {
     Alert(
       'Test Data',
       `coords: ${oldData || ''
-      },  stored distance: ${distance.toString()}, actual distance: ${distance.toString()}, version: please work`,
+      },  stored distance: ${distance.toString()}, actual distance: ${distance.toString()}, version: kms`,
     )
   }
 
@@ -84,6 +84,7 @@ export default () => {
   }
 
   const calculateDistance = async (latitude: number, longitude: number) => {
+    ToastAndroid.show("Triggered", ToastAndroid.SHORT)
     const oldData = await getItem('gpsOldData')
     if (!oldData)
       return await setItem(
@@ -147,10 +148,10 @@ export default () => {
         Alert('An error occured!', error.message)
       },
       {
-        interval: 5,
+        interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 10,
-        timeout: 300,
+        timeout: 100,
       },
     )
 
