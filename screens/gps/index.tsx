@@ -25,7 +25,7 @@ export default () => {
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
       const cachedDistance = await getItem('gpsDistance')
@@ -37,7 +37,7 @@ export default () => {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (await getItem('trackingRef')) {
         setIsTracking(true)
       }
@@ -62,11 +62,8 @@ export default () => {
     const oldData = await getItem('gpsOldData')
     Alert(
       'old coords',
-      `${
-        oldData || ''
-      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version ${
-        Constants.expoVersion
-      }`,
+      `${oldData || ''
+      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version idk`,
     )
   }
 
@@ -150,10 +147,10 @@ export default () => {
         Alert('An error occured!', error.message)
       },
       {
-        interval: 200,
+        interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 10,
-        timeout: 1000,
+        timeout: 400,
       },
     )
 
