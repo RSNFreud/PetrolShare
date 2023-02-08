@@ -18,6 +18,19 @@ import { useNavigation } from '@react-navigation/native'
 import config from '../../config'
 import haversine from 'haversine'
 
+const parseData = (e?: string | null) => {
+  if (!e) return {
+    distance: "0", coords: {
+      latitude: 0, longitude: 0
+    }
+  }
+  return JSON.parse(e) as {
+    distance: string, coords: {
+      latitude: number, longitude: number
+    }
+  }
+}
+
 export default () => {
   const [distance, setDistance] = useState(0)
   const [distanceFormat, setDistanceFormat] = useState('')
@@ -28,9 +41,9 @@ export default () => {
     ; (async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
-      const cachedDistance = await getItem('gpsDistance')
-      if (cachedDistance && parseFloat(cachedDistance) > 0) {
-        setDistance(parseFloat(cachedDistance))
+      const cachedDistance = parseData(await getItem('gpsData'))
+      if (cachedDistance && parseFloat(cachedDistance.distance) > 0) {
+        setDistance(parseFloat(cachedDistance.distance))
         setIsTracking(true)
       }
     })()
@@ -54,16 +67,16 @@ export default () => {
   }, [isTracking])
 
   const updateDistance = async () => {
-    let currDistance = await getItem('gpsDistance')
-    if (currDistance) setDistance(parseFloat(currDistance))
+    let currDistance = parseData(await getItem('gpsData'))
+    if (currDistance) setDistance(parseFloat(currDistance.distance))
   }
 
   const testFunc = async () => {
-    const oldData = await getItem('gpsOldData')
+    const oldData = await getItem('gpsData')
     Alert(
       'Test Data',
       `coords: ${oldData || ''
-      },  stored distance: ${distance.toString()}, actual distance: ${distance.toString()}, version: kms`,
+      }, actual distance: ${distance.toString()}, version: kms`,
     )
   }
 
@@ -75,9 +88,8 @@ export default () => {
         await deleteItem('trackingRef')
       }
       setIsTracking(false)
-      await setItem('gpsOldData', '')
       await setItem('tracking', 'false')
-      await setItem('gpsDistance', '0')
+      await setItem('gpsData', '')
       return
     }
     await startTracking()
@@ -85,16 +97,15 @@ export default () => {
 
   const calculateDistance = async (latitude: number, longitude: number) => {
     ToastAndroid.show("Triggered", ToastAndroid.SHORT)
-    const oldData = await getItem('gpsOldData')
+    const oldData = parseData(await getItem('gpsData'))
     if (!oldData)
       return await setItem(
-        'gpsOldData',
-        JSON.stringify({ latitude: latitude, longitude: longitude }),
+        'gpsData',
+        JSON.stringify({ distance: "0", coords: { latitude: latitude, longitude: longitude } }),
       )
-    const currDistance: { longitude: number; latitude: number } = JSON.parse(
-      oldData,
-    )
-    let currDistanceNumber = parseFloat((await getItem('gpsDistance')) || '0')
+    const currDistance: { longitude: number; latitude: number } = oldData.coords
+
+    let currDistanceNumber = parseFloat(oldData.distance)
 
     const calcDistance = haversine(
       {
@@ -108,10 +119,9 @@ export default () => {
       { unit: distanceFormat !== 'km' ? 'mile' : 'km' },
     )
     await setItem(
-      'gpsOldData',
-      JSON.stringify({ latitude: latitude, longitude: longitude }),
+      'gpsData',
+      JSON.stringify({ distance: (currDistanceNumber + calcDistance).toFixed(2), coords: { latitude: latitude, longitude: longitude } }),
     )
-    await setItem('gpsDistance', (currDistanceNumber + calcDistance).toString())
   }
 
   const startTracking = async () => {
@@ -126,15 +136,16 @@ export default () => {
 
     setIsTracking(true)
     setDistance(0)
-    await setItem('gpsDistance', '0')
     await setItem('tracking', 'true')
 
     Geolocation.getCurrentPosition(async (data) => {
       await setItem(
-        'gpsOldData',
+        'gpsData',
         JSON.stringify({
-          latitude: data.coords.latitude,
-          longitude: data.coords.longitude,
+          distance: "0", coords: {
+            latitude: data.coords.latitude,
+            longitude: data.coords.longitude,
+          }
         }),
       )
     })
