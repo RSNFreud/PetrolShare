@@ -6,23 +6,23 @@ import {
   Alert as DefaultAlert,
 } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-import { MMKV } from 'react-native-mmkv'
+// import { MMKV } from 'react-native-mmkv'
 
-const storage = new MMKV()
+// const storage = new MMKV()
 
 export const getItem = (key: string) => {
   if (Platform.OS === 'web') return window.localStorage.getItem(key)
-  else return storage.getString(key)
+  else return SecureStore.getItemAsync(key)
 }
 
 export const setItem = (key: string, data: string) => {
   if (Platform.OS === 'web') return window.localStorage.setItem(key, data)
-  else return storage.set(key, data)
+  else return SecureStore.setItemAsync(key, data)
 }
 
 export const deleteItem = (key: string) => {
   if (Platform.OS === 'web') return window.localStorage.removeItem(key)
-  else return storage.delete(key)
+  else return SecureStore.deleteItemAsync(key)
 }
 
 export const convertToSentenceCase = (string: string) => {
