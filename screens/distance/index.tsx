@@ -59,7 +59,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     const getDraft = async () => {
-      const draft = await getItem('draft')
+      const draft = getItem('draft')
 
       if (draft != null) {
         setData({ ...JSON.parse(draft) })
@@ -91,7 +91,7 @@ export default ({ navigation }: any) => {
               authenticationKey: retrieveData().authenticationKey,
             })
             .then(async (e) => {
-              await setItem('showToast', 'resetDistance')
+              setItem('showToast', 'resetDistance')
               navigation.navigate('Dashboard')
             })
             .catch(({ response }) => {
@@ -110,7 +110,7 @@ export default ({ navigation }: any) => {
       {
         text: 'Yes',
         onPress: async () => {
-          await deleteItem('draft')
+          deleteItem('draft')
           setVisible(false)
           setIsDraft(false)
           setData({ startValue: '', endValue: '' })

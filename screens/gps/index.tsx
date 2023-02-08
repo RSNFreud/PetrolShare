@@ -46,7 +46,7 @@ export default () => {
     ;(async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
-      const cachedDistance = parseData(await getItem('gpsData'))
+      const cachedDistance = parseData(getItem('gpsData'))
       if (cachedDistance && parseFloat(cachedDistance.distance) > 0) {
         setDistance(parseFloat(cachedDistance.distance))
         setIsTracking(true)
@@ -56,7 +56,7 @@ export default () => {
 
   useEffect(() => {
     ;(async () => {
-      if (await getItem('trackingRef')) {
+      if (getItem('trackingRef')) {
         setIsTracking(true)
       }
     })()
@@ -72,12 +72,12 @@ export default () => {
   }, [isTracking])
 
   const updateDistance = async () => {
-    let currDistance = parseData(await getItem('gpsData'))
+    let currDistance = parseData(getItem('gpsData'))
     if (currDistance) setDistance(parseFloat(currDistance.distance))
   }
 
   const testFunc = async () => {
-    const oldData = await getItem('gpsData')
+    const oldData = getItem('gpsData')
     Alert(
       'old coords',
       `${
@@ -88,14 +88,14 @@ export default () => {
 
   const toggleTracking = async () => {
     if (isTracking) {
-      const locationRef = await getItem('trackingRef')
+      const locationRef = getItem('trackingRef')
       if (locationRef) {
         Geolocation.clearWatch(parseFloat(locationRef))
-        await deleteItem('trackingRef')
+        deleteItem('trackingRef')
       }
       setIsTracking(false)
-      await setItem('tracking', 'false')
-      await setItem('gpsData', '')
+      setItem('tracking', 'false')
+      setItem('gpsData', '')
       return
     }
     await startTracking()
@@ -103,9 +103,9 @@ export default () => {
 
   const calculateDistance = async (latitude: number, longitude: number) => {
     ToastAndroid.show('Triggered', ToastAndroid.SHORT)
-    const oldData = parseData(await getItem('gpsData'))
+    const oldData = parseData(getItem('gpsData'))
     if (!oldData)
-      return await setItem(
+      return setItem(
         'gpsData',
         JSON.stringify({
           distance: '0',
@@ -127,7 +127,7 @@ export default () => {
       },
       { unit: distanceFormat !== 'km' ? 'mile' : 'km' },
     )
-    await setItem(
+    setItem(
       'gpsData',
       JSON.stringify({
         distance: (currDistanceNumber + calcDistance).toFixed(2),
@@ -148,10 +148,10 @@ export default () => {
 
     setIsTracking(true)
     setDistance(0)
-    await setItem('tracking', 'true')
+    setItem('tracking', 'true')
 
     Geolocation.getCurrentPosition(async (data) => {
-      await setItem(
+      setItem(
         'gpsData',
         JSON.stringify({
           distance: '0',
@@ -179,7 +179,7 @@ export default () => {
       },
     )
 
-    await setItem('trackingRef', trackNumber.toString())
+    setItem('trackingRef', trackNumber.toString())
   }
 
   const requestForeground = async () => {
@@ -220,7 +220,7 @@ export default () => {
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(async () => {
-        await setItem('showToast', 'distanceUpdated')
+        setItem('showToast', 'distanceUpdated')
         navigate('Dashboard')
       })
       .catch(({ response }) => {

@@ -1,89 +1,89 @@
-import Input from "../../components/Input";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import SubmitButton from "./submitButton";
-import { useNavigation } from "@react-navigation/native";
-import { deleteItem, setItem } from "../../hooks";
-import config from "../../config";
+import Input from '../../components/Input'
+import { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
+import { AuthContext } from '../../hooks/context'
+import SubmitButton from './submitButton'
+import { useNavigation } from '@react-navigation/native'
+import { deleteItem, setItem } from '../../hooks'
+import config from '../../config'
 
 export default ({
   previousData,
   handleClose,
 }: {
   previousData?: {
-    startValue: string;
-    endValue: string;
-  };
-  handleClose: () => void;
+    startValue: string
+    endValue: string
+  }
+  handleClose: () => void
 }) => {
   const [data, setData] = useState({
     ...previousData,
-  });
-  const [errors, setErrors] = useState("");
-  const [distance, setDistance] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { retrieveData } = useContext(AuthContext);
-  const { navigate } = useNavigation() as any;
+  })
+  const [errors, setErrors] = useState('')
+  const [distance, setDistance] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { retrieveData } = useContext(AuthContext)
+  const { navigate } = useNavigation() as any
 
   useEffect(() => {
     if (previousData) {
-      setData({ ...previousData });
+      setData({ ...previousData })
     }
-  }, [previousData]);
+  }, [previousData])
 
   useEffect(() => {
     if (data.startValue && data.endValue) {
-      const start = parseFloat(data.startValue);
-      const end = parseFloat(data.endValue);
-      if (isNaN(start) || isNaN(end)) return;
-      if (end - start < 0) return;
-      setDistance((end - start).toString());
+      const start = parseFloat(data.startValue)
+      const end = parseFloat(data.endValue)
+      if (isNaN(start) || isNaN(end)) return
+      if (end - start < 0) return
+      setDistance((end - start).toString())
     } else {
-      setDistance("");
+      setDistance('')
     }
-  }, [data]);
+  }, [data])
 
   const handleSubmit = async () => {
-    setErrors("");
+    setErrors('')
     if (!data.startValue) {
-      return setErrors("Please enter a start value");
+      return setErrors('Please enter a start value')
     }
 
-    let distance: number = 0;
+    let distance: number = 0
 
     if (data.startValue && data.endValue) {
-      distance = parseFloat(data.endValue) - parseFloat(data.startValue);
+      distance = parseFloat(data.endValue) - parseFloat(data.startValue)
     }
 
     if (data.startValue && !data.endValue) {
-      handleClose();
-      await setItem("draft", JSON.stringify(data));
-      await setItem("showToast", "draftSaved");
-      navigate("Dashboard");
-      return;
+      handleClose()
+      setItem('draft', JSON.stringify(data))
+      setItem('showToast', 'draftSaved')
+      navigate('Dashboard')
+      return
     }
     if (distance <= 0 || isNaN(distance))
-      return setErrors("Please enter a distance above 0!");
+      return setErrors('Please enter a distance above 0!')
 
-    if (!retrieveData) return;
-    setLoading(true);
+    if (!retrieveData) return
+    setLoading(true)
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData().authenticationKey,
       })
       .then(async () => {
-        setLoading(false);
-        handleClose();
-        await deleteItem("draft");
-        await setItem("showToast", "distanceUpdated");
-        navigate("Dashboard");
+        setLoading(false)
+        handleClose()
+        deleteItem('draft')
+        setItem('showToast', 'distanceUpdated')
+        navigate('Dashboard')
       })
       .catch(({ response }) => {
-        console.log(response.message);
-      });
-  };
+        console.log(response.message)
+      })
+  }
 
   return (
     <>
@@ -110,5 +110,5 @@ export default ({
         distance={distance}
       />
     </>
-  );
-};
+  )
+}
