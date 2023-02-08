@@ -19,14 +19,19 @@ import config from '../../config'
 import haversine from 'haversine'
 
 const parseData = (e?: string | null) => {
-  if (!e) return {
-    distance: "0", coords: {
-      latitude: 0, longitude: 0
+  if (!e)
+    return {
+      distance: '0',
+      coords: {
+        latitude: 0,
+        longitude: 0,
+      },
     }
-  }
   return JSON.parse(e) as {
-    distance: string, coords: {
-      latitude: number, longitude: number
+    distance: string
+    coords: {
+      latitude: number
+      longitude: number
     }
   }
 }
@@ -38,7 +43,7 @@ export default () => {
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
       const cachedDistance = parseData(await getItem('gpsData'))
@@ -50,7 +55,7 @@ export default () => {
   }, [])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (await getItem('trackingRef')) {
         setIsTracking(true)
       }
@@ -74,9 +79,10 @@ export default () => {
   const testFunc = async () => {
     const oldData = await getItem('gpsData')
     Alert(
-      'Test Data',
-      `coords: ${oldData || ''
-      }, actual distance: ${distance.toString()}, version: kms`,
+      'old coords',
+      `${
+        oldData || ''
+      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: baron hasnt published his book yet`,
     )
   }
 
@@ -96,12 +102,15 @@ export default () => {
   }
 
   const calculateDistance = async (latitude: number, longitude: number) => {
-    ToastAndroid.show("Triggered", ToastAndroid.SHORT)
+    ToastAndroid.show('Triggered', ToastAndroid.SHORT)
     const oldData = parseData(await getItem('gpsData'))
     if (!oldData)
       return await setItem(
         'gpsData',
-        JSON.stringify({ distance: "0", coords: { latitude: latitude, longitude: longitude } }),
+        JSON.stringify({
+          distance: '0',
+          coords: { latitude: latitude, longitude: longitude },
+        }),
       )
     const currDistance: { longitude: number; latitude: number } = oldData.coords
 
@@ -120,7 +129,10 @@ export default () => {
     )
     await setItem(
       'gpsData',
-      JSON.stringify({ distance: (currDistanceNumber + calcDistance).toFixed(2), coords: { latitude: latitude, longitude: longitude } }),
+      JSON.stringify({
+        distance: (currDistanceNumber + calcDistance).toFixed(2),
+        coords: { latitude: latitude, longitude: longitude },
+      }),
     )
   }
 
@@ -142,10 +154,11 @@ export default () => {
       await setItem(
         'gpsData',
         JSON.stringify({
-          distance: "0", coords: {
+          distance: '0',
+          coords: {
             latitude: data.coords.latitude,
             longitude: data.coords.longitude,
-          }
+          },
         }),
       )
     })
@@ -161,8 +174,8 @@ export default () => {
       {
         interval: 10,
         enableHighAccuracy: true,
-        distanceFilter: 10,
-        timeout: 100,
+        distanceFilter: 15,
+        timeout: 1000,
       },
     )
 
