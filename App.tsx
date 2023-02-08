@@ -23,7 +23,7 @@ import DesktopScreen from './screens/desktopScreen'
 import logs from './screens/logs'
 import preset from './screens/distance/preset'
 import { AuthContext } from './hooks/context'
-import { Alert, deleteItem, getGroupData, getItem, setItem } from './hooks'
+import { deleteItem, getItem, setItem } from './hooks'
 import petrol from './screens/petrol'
 import invoices from './screens/invoices'
 import { useFonts } from 'expo-font'
@@ -34,7 +34,6 @@ import {
 } from './components/sendNotification'
 import gps from './screens/gps'
 import config from './config'
-import haversine from 'haversine'
 import { AndroidNotificationPriority } from 'expo-notifications'
 
 SplashScreen.preventAutoHideAsync()
