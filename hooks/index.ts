@@ -6,23 +6,23 @@ import {
   Alert as DefaultAlert,
 } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
-// import { MMKV } from 'react-native-mmkv'
+import { MMKV } from 'react-native-mmkv'
 
-// const storage = new MMKV()
+const storage = new MMKV()
 
 export const getItem = (key: string) => {
   if (Platform.OS === 'web') return window.localStorage.getItem(key)
-  else return SecureStore.getItemAsync(key)
+  else return storage.getString(key)
 }
 
 export const setItem = (key: string, data: string) => {
   if (Platform.OS === 'web') return window.localStorage.setItem(key, data)
-  else return SecureStore.setItemAsync(key, data)
+  else return storage.set(key, data)
 }
 
 export const deleteItem = (key: string) => {
   if (Platform.OS === 'web') return window.localStorage.removeItem(key)
-  else return SecureStore.deleteItemAsync(key)
+  else return storage.delete(key)
 }
 
 export const convertToSentenceCase = (string: string) => {
@@ -34,16 +34,12 @@ export const convertToDate = (date: string, time?: boolean) => {
   const month = x.getMonth() + 1
 
   if (!time)
-    return `${x.getDate() < 10 ? '0' : ''}${x.getDate()}/${
-      month < 10 ? '0' : ''
-    }${month}/${x.getFullYear()}`
-  return `${x.getDate() < 10 ? '0' : ''}${x.getDate()}/${
-    month < 10 ? '0' : ''
-  }${month}/${x.getFullYear()}, ${
-    x.getHours() > 12 ? x.getHours() - 12 : x.getHours()
-  }:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${
-    x.getHours() > 12 ? 'pm' : 'am'
-  }`
+    return `${x.getDate() < 10 ? '0' : ''}${x.getDate()}/${month < 10 ? '0' : ''
+      }${month}/${x.getFullYear()}`
+  return `${x.getDate() < 10 ? '0' : ''}${x.getDate()}/${month < 10 ? '0' : ''
+    }${month}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()
+    }:${x.getMinutes() < 10 ? '0' : ''}${x.getMinutes()}${x.getHours() > 12 ? 'pm' : 'am'
+    }`
 }
 
 export const getGroupData = async () => {
