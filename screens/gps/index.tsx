@@ -130,7 +130,7 @@ export default () => {
     setItem(
       'gpsData',
       JSON.stringify({
-        distance: (currDistanceNumber + calcDistance).toFixed(2),
+        distance: (currDistanceNumber + calcDistance).toString(),
         coords: { latitude: latitude, longitude: longitude },
       }),
     )
@@ -176,7 +176,7 @@ export default () => {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 15,
-        timeout: 1000,
+        timeout: 100,
       },
     )
 
