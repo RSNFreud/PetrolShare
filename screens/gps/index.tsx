@@ -82,7 +82,7 @@ export default () => {
       'old coords',
       `${
         oldData || ''
-      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: baron hasnt published his book yet`,
+      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: one day this will work`,
     )
   }
 
@@ -102,7 +102,7 @@ export default () => {
   }
 
   const calculateDistance = async (latitude: number, longitude: number) => {
-    ToastAndroid.show('Triggered', ToastAndroid.SHORT)
+    // ToastAndroid.show('Triggered', ToastAndroid.SHORT)
     const oldData = parseData(getItem('gpsData'))
     if (!oldData)
       return setItem(
@@ -130,7 +130,7 @@ export default () => {
     setItem(
       'gpsData',
       JSON.stringify({
-        distance: (currDistanceNumber + calcDistance).toFixed(2),
+        distance: (currDistanceNumber + calcDistance).toString(),
         coords: { latitude: latitude, longitude: longitude },
       }),
     )
@@ -170,12 +170,13 @@ export default () => {
       (error) => {
         console.log(error)
         Alert('An error occured!', error.message)
+        toggleTracking()
       },
       {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 15,
-        timeout: 1000,
+        timeout: 100,
       },
     )
 
