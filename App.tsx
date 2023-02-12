@@ -63,6 +63,9 @@ export default function App() {
     'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
     'Roboto-Light': require('./assets/fonts/Roboto-Light.ttf'),
   })
+
+  const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" })
+
   const login = React.useMemo(
     () => ({
       signIn: async (e: any) => {
@@ -76,7 +79,7 @@ export default function App() {
               setUserData(data)
               try {
                 setItem('userData', JSON.stringify(data))
-              } catch {}
+              } catch { }
               res(data)
             })
             .catch(({ response }) => {
@@ -88,7 +91,7 @@ export default function App() {
         setUserData(e)
         try {
           setItem('userData', JSON.stringify(e))
-        } catch {}
+        } catch { }
       },
       retrieveData: () => {
         return userData
@@ -124,8 +127,8 @@ export default function App() {
           axios
             .get(
               config.REACT_APP_API_ADDRESS +
-                '/user/verify?authenticationKey=' +
-                parsed.authenticationKey,
+              '/user/verify?authenticationKey=' +
+              parsed.authenticationKey,
             )
             .then(async ({ data }) => {
               setItem('userData', JSON.stringify({ ...parsed, ...data }))
@@ -154,19 +157,24 @@ export default function App() {
 
   useEffect(() => {
     if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500)
-    if (!loading && login.isLoggedIn) {
-      Notifications.addNotificationResponseReceivedListener((e) => {
-        console.log('Notification Title:', e.notification.request.content.title)
-
-        const routeName = e.notification.request.content.data['route'] as any
-        const invoiceID = e.notification.request.content.data[
-          'invoiceID'
-        ] as string
-        if (!routeName) return
-        navRef.navigate(routeName, { id: invoiceID })
-      })
-    }
+    Notifications.addNotificationResponseReceivedListener((e) => {
+      console.log('Notification Title:', e.notification.request.content.title)
+      const routeName = e.notification.request.content.data['route'] as any
+      const invoiceID = e.notification.request.content.data[
+        'invoiceID'
+      ] as string
+      if (!routeName) return
+      setNotifData({ routeName: routeName, invoiceID: invoiceID })
+    })
   }, [loading])
+
+  useEffect(() => {
+    if (loading) return
+    if (notifData.invoiceID || notifData.routeName) {
+      setNotifData({ routeName: "", invoiceID: "" })
+      navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID })
+    }
+  }, [notifData, loading])
 
   useEffect(() => {
     setItem('firstLoad', 'true')

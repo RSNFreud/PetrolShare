@@ -36,6 +36,9 @@ const parseData = (e?: string | null) => {
   }
 }
 
+Geolocation.setRNConfiguration({ skipPermissionRequests: false })
+
+
 export default () => {
   const [distance, setDistance] = useState(0)
   const [distanceFormat, setDistanceFormat] = useState('')
@@ -43,7 +46,7 @@ export default () => {
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
       const cachedDistance = parseData(getItem('gpsData'))
@@ -55,7 +58,7 @@ export default () => {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (getItem('trackingRef')) {
         setIsTracking(true)
       }
@@ -80,8 +83,7 @@ export default () => {
     const oldData = getItem('gpsData')
     Alert(
       'old coords',
-      `${
-        oldData || ''
+      `${oldData || ''
       }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: one day this will work`,
     )
   }
@@ -173,6 +175,7 @@ export default () => {
         toggleTracking()
       },
       {
+
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 15,
