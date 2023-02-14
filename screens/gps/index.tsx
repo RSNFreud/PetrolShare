@@ -179,7 +179,7 @@ export default () => {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 15,
-        timeout: 100,
+        timeout: 150,
       },
     )
 
