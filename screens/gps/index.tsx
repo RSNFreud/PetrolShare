@@ -1,4 +1,4 @@
-import Geolocation from '@react-native-community/geolocation'
+import Geolocation from 'react-native-geolocation-service'
 import * as Location from 'expo-location'
 import React, { useState, useEffect, useContext } from 'react'
 import {
@@ -10,7 +10,7 @@ import {
 } from '../../components/Themed'
 import Constants from 'expo-constants'
 import { Alert, deleteItem, getGroupData, getItem, setItem } from '../../hooks'
-import { ToastAndroid, View } from 'react-native'
+import { Platform, ToastAndroid, View } from 'react-native'
 import Layout from '../../components/layout'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
@@ -35,11 +35,6 @@ const parseData = (e?: string | null) => {
     }
   }
 }
-
-Geolocation.setRNConfiguration({
-  skipPermissionRequests: false,
-  authorizationLevel: 'always',
-})
 
 export default () => {
   const [distance, setDistance] = useState(0)
@@ -178,10 +173,14 @@ export default () => {
         toggleTracking()
       },
       {
+        accuracy: {
+          ios: 'bestForNavigation',
+          android: 'high',
+        },
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 15,
-        timeout: 150,
+        forceLocationManager: true,
       },
     )
 
@@ -190,8 +189,8 @@ export default () => {
 
   const requestForeground = async () => {
     try {
-      const status = Geolocation.requestAuthorization()
-      return true
+      const status = await Geolocation.requestAuthorization('always')
+      if (status || Platform.OS === 'android') return true
     } catch {
       return false
     }
