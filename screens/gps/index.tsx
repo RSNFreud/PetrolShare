@@ -87,7 +87,7 @@ export default () => {
       'old coords',
       `${
         oldData || ''
-      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: one day this will work`,
+      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: last try before i cry`,
     )
   }
 
