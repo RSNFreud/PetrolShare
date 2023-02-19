@@ -187,13 +187,11 @@ export default () => {
   }
 
   const requestForeground = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync()
-
-    if (status !== 'granted') {
-      // setErrorMsg("Permission to access location was denied");
-      return false
-    } else {
+    try {
+      const status = Geolocation.requestAuthorization()
       return true
+    } catch {
+      return false
     }
   }
   const requestBackground = async () => {
