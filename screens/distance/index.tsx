@@ -189,7 +189,7 @@ export default ({ navigation }: any) => {
         }
         handleClick={() => navigation.navigate('AddPreset')}
       />
-      {Platform.OS !== 'web' && (
+      {/* {Platform.OS !== 'web' && (
         <DistanceButton
           handleClick={() => navigation.navigate('GPS')}
           text="GPS Tracking"
@@ -202,7 +202,7 @@ export default ({ navigation }: any) => {
             </Svg>
           }
         />
-      )}
+      )} */}
       <DistanceButton
         handleClick={() => resetDistance()}
         text="Reset Distance"

@@ -43,7 +43,7 @@ export default () => {
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       let data = await getGroupData()
       setDistanceFormat(data.distance)
       const cachedDistance = parseData(getItem('gpsData'))
@@ -55,7 +55,7 @@ export default () => {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (getItem('trackingRef')) {
         setIsTracking(true)
       }
@@ -80,8 +80,7 @@ export default () => {
     const oldData = getItem('gpsData')
     Alert(
       'old coords',
-      `${
-        oldData || ''
+      `${oldData || ''
       }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: last try before i cry`,
     )
   }
@@ -164,10 +163,10 @@ export default () => {
     })
 
     const trackNumber = Geolocation.watchPosition(
-      (success) => {
+      (success: { coords: { latitude: number; longitude: number } }) => {
         calculateDistance(success.coords.latitude, success.coords.longitude)
       },
-      (error) => {
+      (error: { message: string | undefined }) => {
         console.log(error)
         Alert('An error occured!', error.message)
         toggleTracking()

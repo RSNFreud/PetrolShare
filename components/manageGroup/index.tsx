@@ -7,7 +7,7 @@ import generateGroupID from '../../hooks/generateGroupID'
 import Complete from './complete'
 import JoinGroup from './joinGroup'
 import GroupSettings from '../groupSettings'
-import { setItem } from '../../hooks'
+import { Alert, setItem } from '../../hooks'
 import config from '../../config'
 
 type PropsType = {
@@ -105,13 +105,34 @@ export default ({
 
   const createGroup = async () => {
     setGroupID(generateGroupID())
-    setItem('groupData', '')
     setNewGroup(true)
-    await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
-      authenticationKey: retrieveData().authenticationKey,
-      groupID: groupID,
-    })
-    changeScreen('Settings')
+    if (!firstSteps)
+      Alert(
+        "Are you sure you want to join a new group?",
+        "This will delete all the current data you have saved.",
+        [
+          {
+            text: "Yes",
+            onPress: async () => {
+              setItem('groupData', '')
+              await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
+                authenticationKey: retrieveData().authenticationKey,
+                groupID: groupID,
+              })
+              changeScreen('Settings')
+            },
+          },
+          { text: "No", style: "cancel", onPress: handleClose },
+        ]
+      );
+    else {
+      setItem('groupData', '')
+      await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
+        authenticationKey: retrieveData().authenticationKey,
+        groupID: groupID,
+      })
+      changeScreen('Settings')
+    }
   }
 
   useEffect(() => {
@@ -121,16 +142,17 @@ export default ({
   }, [firstSteps])
 
   useEffect(() => {
-    if (screen) {
-      return changeScreen(firstSteps ? 'Settings' : 'SettingsChange')
-    }
-    changeScreen('Default')
+    // if (screen) {
+    //   return changeScreen(firstSteps ? 'Settings' : 'SettingsChange')
+    // }
+    // changeScreen('Default')
   }, [visible])
 
   useEffect(() => {
-    if (screen) {
-      return changeScreen('SettingsChange')
-    }
+    // if (screen) {
+    //   return changeScreen('SettingsChange')
+    // }
+    changeScreen(screen as any)
   }, [screen])
 
   return (

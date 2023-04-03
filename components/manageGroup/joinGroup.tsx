@@ -49,11 +49,11 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
                   });
                   onComplete(form.data);
                 })
-                .catch(() => {
+                .catch(({ response }) => {
                   setLoading(false);
                   setForm({
                     ...form,
-                    errors: "There was no group found with that ID!",
+                    errors: response.data,
                   });
                 });
             },
@@ -71,11 +71,11 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
           setLoading(false);
           onComplete(form.data);
         })
-        .catch(() => {
+        .catch(({ response }) => {
           setLoading(false);
           setForm({
             ...form,
-            errors: "There was no group found with that ID!",
+            errors: response.data,
           });
         });
   };

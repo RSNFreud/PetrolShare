@@ -31,9 +31,11 @@ import {
   deregisterForPushNotifications,
   registerForPushNotificationsAsync,
 } from './components/sendNotification'
-import gps from './screens/gps'
+// import gps from './archive/gps'
 import config from './config'
 import { AndroidNotificationPriority } from 'expo-notifications'
+import manageGroup from './screens/manageGroup'
+import Purchases, { LOG_LEVEL } from 'react-native-purchases'
 
 SplashScreen.preventAutoHideAsync()
 const Stack = createNativeStackNavigator()
@@ -110,6 +112,13 @@ export default function App() {
     }),
     [userData, loading],
   )
+
+  useEffect(() => {
+    // Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+    if (Platform.OS === 'android') {
+      Purchases.configure({ apiKey: "goog_lTKKSMIRMQmuaTqjQwdeuRjLqQc" });
+    }
+  }, [])
 
   useEffect(() => {
     if (!fontsLoaded) return
@@ -234,11 +243,11 @@ export default function App() {
                       component={distance}
                       options={{ title: 'Manage Distance' }}
                     />
-                    <Stack.Screen
+                    {/* <Stack.Screen
                       name="GPS"
                       component={gps}
                       options={{ title: 'GPS Tracking' }}
-                    />
+                    /> */}
                     <Stack.Screen
                       name="AddPreset"
                       component={preset}
@@ -251,6 +260,8 @@ export default function App() {
                     />
                     <Stack.Screen name="Logs" component={logs} />
                     <Stack.Screen name="Invoices" component={invoices} />
+                    <Stack.Screen name="ManageGroup" component={manageGroup} options={{ title: 'Manage Group' }}
+                    />
                   </>
                 )}
               </>

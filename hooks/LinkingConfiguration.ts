@@ -14,6 +14,7 @@ const linking: any = {
       Logs: 'logs',
       AddManual: 'manage-distance/manual',
       Invoices: 'invoices',
+      ManageGroup: 'manage-group',
       Dashboard: 'dashboard/:groupID?',
       NotFound: '*/:groupID?',
       GPS: 'gps-tracking',
@@ -34,11 +35,11 @@ const linking: any = {
 
     return url
   },
-  subscribe(listener) {
-    const onReceiveURL = ({ url }: { url: string }) => listener(url)
-
+  subscribe(listener: (arg0: string) => void) {
     // Listen to incoming links from deep linking
-    Linking.addEventListener('url', onReceiveURL)
+    const linkingSubscription = Linking.addEventListener('url', ({ url }) => {
+      listener(url);
+    });
 
     // Listen to expo push notifications
     const subscription = Notifications.addNotificationResponseReceivedListener(
@@ -50,7 +51,7 @@ const linking: any = {
 
     return () => {
       // Clean up the event listeners
-      Linking.removeEventListener('url', onReceiveURL)
+      linkingSubscription.remove();
       subscription.remove()
     }
   },
