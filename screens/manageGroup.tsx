@@ -56,7 +56,32 @@ export default () => {
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } = getItem('groupData')
         if (data) data = JSON.parse(data)
         if ((data as GroupType).premium) setPremium(true)
+        Purchases.getCustomerInfo().then(customerInfo => {
+            if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
+                setPremium(true)
+            }
+        }).catch(() => { })
+
+        Purchases.addCustomerInfoUpdateListener(info => {
+            if (info.entitlements.active["premium"]?.isActive) setPremium(true)
+            else setPremium(false)
+        });
     }, [])
+
+    useEffect(() => {
+        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } = getItem('groupData')
+        if (data) data = JSON.parse(data)
+        if (!(data as GroupType).premium && premium) {
+            axios
+                .post(
+                    config.REACT_APP_API_ADDRESS +
+                    '/group/subscribe', {
+                    authenticationKey: retrieveData().authenticationKey
+                }).catch(err => {
+                    console.log(err.message);
+                })
+        }
+    }, [premium])
 
     const createGroup = async () => {
         let groupID = generateGroupID()
@@ -82,10 +107,33 @@ export default () => {
 
     const openPayment = () => {
         Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
-            console.log(e);
+            axios
+                .post(
+                    config.REACT_APP_API_ADDRESS +
+                    '/group/subscribe', {
+                    authenticationKey: retrieveData().authenticationKey,
+                }
+                )
+                .then(async () => {
+                    axios
+                        .get(
+                            config.REACT_APP_API_ADDRESS +
+                            '/group/get?authenticationKey=' +
+                            retrieveData().authenticationKey,
+                        )
+                        .then(async ({ data }) => {
+                            setItem('groupData', JSON.stringify(data))
+                        })
+                        .catch(() => { })
+                })
+                .catch(() => { })
             setPremium(true)
         }).catch(err => {
-            console.log(err);
+            if (err.message === 'The payment is pending.') {
+                setTimeout(() => {
+                    Alert("Your payment is being processed", "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!")
+                }, 700);
+            }
         })
     }
 
