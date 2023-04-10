@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View, ScrollView, Dimensions } from "react-native";
 import { Breadcrumbs, Button, Text } from "../../components/Themed";
 import Layout from "../../components/Layout";
 import Svg, { Path } from "react-native-svg";
@@ -403,7 +403,7 @@ export default () => {
   };
 
   return (
-    <Layout>
+    <Layout noScrollView noBottomPadding>
       <Breadcrumbs
         links={[
           {
@@ -426,6 +426,7 @@ export default () => {
           {Boolean(Object.keys(summary).length) && (
             <>
               <Summary summary={summary} />
+              <ScrollView keyboardShouldPersistTaps={'handled'} overscrollMode={'always'} contentContainerStyle={{paddingBottom: 55}} style={{maxHeight: Dimensions.get('window').height - 95 - 77 - 250}}>
               {currentData &&
                 currentData["logs"].map((e: any, c: number) => {
                   return (
@@ -447,6 +448,7 @@ export default () => {
                     />
                   );
                 })}
+                </ScrollView>
             </>
           )}
           {currentData && !Boolean(currentData["logs"].length) && (

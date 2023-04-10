@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
 import Layout from "../../components/Layout";
 import { Text } from "../../components/Themed";
@@ -10,6 +10,7 @@ import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 import config from "../../config";
 import Colors from "../../constants/Colors";
+import ScreenDimensions from "../../constants/ScreenDimensions";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();
@@ -40,11 +41,11 @@ export default ({ navigation }: any) => {
       })
       .catch(({ response }) => {
         setDataLoaded(true);
-        console.log(response);
+        console.log(response.data);
       });
   };
   return (
-    <Layout>
+    <Layout noScrollView noBottomPadding>
       {params && params["id"] ? (
         <Breadcrumbs
           links={[
@@ -89,6 +90,7 @@ export default ({ navigation }: any) => {
                 >
                   Please select an invoice to view
                 </Text>
+                <ScrollView keyboardShouldPersistTaps={'handled'} overscrollMode={'always'} contentContainerStyle={{paddingBottom: 55}}  >
                 {data.map((e, c) => (
                   <TouchableOpacity
                     activeOpacity={0.9}
@@ -117,6 +119,7 @@ export default ({ navigation }: any) => {
                     </Text>
                   </TouchableOpacity>
                 ))}
+                </ScrollView>
               </>
             ) : (
               <Box style={{ paddingHorizontal: 20 }}>

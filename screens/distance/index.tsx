@@ -147,6 +147,7 @@ export default ({ navigation }: any) => {
         handleClick={() => navigate('AddPreset')}
       />
       <LongButton
+      last
         handleClick={() => resetDistance()}
         text="Reset Distance"
         icon={

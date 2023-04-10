@@ -131,8 +131,10 @@ export default ({
           keyboardShouldPersistTaps={"always"}
           style={{
             height: "100%",
+          }}
+          contentContainerStyle={{         
             paddingVertical: 30,
-            paddingHorizontal: 25,
+            paddingHorizontal: 25
           }}
         >
           {children}

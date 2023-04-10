@@ -319,7 +319,7 @@ export default ({ navigation }: any) => {
   }
 
   return (
-    <Layout style={{ display: 'flex' }} noContainerPadding noScrollView>
+    <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>
         <View style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row', backgroundColor: Colors.primary, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 8, borderColor: Colors.border, borderStyle: 'solid', borderWidth: 1 }}>
           <View>
@@ -405,12 +405,11 @@ export default ({ navigation }: any) => {
           ></Path>
         </Svg>} text='Group' />
       </View>
-      <ScrollView keyboardShouldPersistTaps={'handled'} style={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30 }}>
+      <ScrollView  overscrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30}}>
         {currentTab === "Distance" && <Distance />}
         {currentTab === "Petrol" && <Petrol />}
         {currentTab === "Group" && <Group />}
       </ScrollView>
-
       <ManageGroup
         closeButton={false}
         handleClose={() => setVisible(false)}

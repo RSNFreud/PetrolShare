@@ -306,18 +306,20 @@ export const FlexFull = ({
 export const LongButton = ({
   handleClick,
   text,
+  last,
   icon,
 }: {
   marginBottom?: number
   handleClick: () => void
   text: string
   icon: JSX.Element
+  last:boolean
 }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={{
-        marginBottom: 20,
+        marginBottom: last ? 0 : 20,
         backgroundColor: Colors.primary,
         borderColor: Colors.border,
         borderRadius: 4,
