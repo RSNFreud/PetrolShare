@@ -1,16 +1,15 @@
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { ActivityIndicator, TouchableOpacity, ScrollView, View } from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
 import Layout from "../../components/Layout";
 import { Text } from "../../components/Themed";
-import { Alert, convertToDate } from "../../hooks";
+import { convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 import config from "../../config";
 import Colors from "../../constants/Colors";
-import ScreenDimensions from "../../constants/ScreenDimensions";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();
@@ -53,10 +52,10 @@ export default ({ navigation }: any) => {
               name: "Dashboard",
             },
             {
-              name: "Invoices",
+              name: "Payments",
             },
             {
-              name: "Invoice #" + params["id"],
+              name: "Payments #" + params["id"],
             },
           ]}
         />
@@ -67,7 +66,7 @@ export default ({ navigation }: any) => {
               name: "Dashboard",
             },
             {
-              name: "Invoices",
+              name: "Payments",
             },
           ]}
         />
@@ -76,7 +75,7 @@ export default ({ navigation }: any) => {
       {params && params["id"] ? (
         <Invoice invoiceID={params["id"]} />
       ) : (
-        <>
+        <View style={{ flex: 1, display: 'flex', marginBottom: 55 }}>
           {dataLoaded ? (
             Boolean(data.length > 0) ? (
               <>
@@ -88,37 +87,37 @@ export default ({ navigation }: any) => {
                     marginBottom: 15,
                   }}
                 >
-                  Please select an invoice to view
+                  Please select an payment to view
                 </Text>
-                <ScrollView keyboardShouldPersistTaps={'handled'} overscrollMode={'always'} contentContainerStyle={{paddingBottom: 55}}  >
-                {data.map((e, c) => (
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() =>
-                      navigation.navigate("Invoices", { id: e["invoiceID"] })
-                    }
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      padding: 15,
-                      backgroundColor: Colors.primary,
-                      borderColor: Colors.border,
-                      borderStyle: 'solid',
-                      borderWidth: 1,
-                      borderRadius: 4,
-                      marginBottom: data.length === c + 1 ? 0 : 8,
-                    }}
-                    key={c}
-                  >
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                      Invoice #{e["invoiceID"]}
-                    </Text>
-                    <Text style={{ fontSize: 16 }}>
-                      {convertToDate(e["sessionEnd"], true)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                <ScrollView keyboardShouldPersistTaps={'handled'}  >
+                  {data.map((e, c) => (
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() =>
+                        navigation.navigate("Invoices", { id: e["invoiceID"] })
+                      }
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: 15,
+                        backgroundColor: Colors.primary,
+                        borderColor: Colors.border,
+                        borderStyle: 'solid',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        marginBottom: data.length === c + 1 ? 0 : 8,
+                      }}
+                      key={c}
+                    >
+                      <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                        Payment #{e["invoiceID"]}
+                      </Text>
+                      <Text style={{ fontSize: 16 }}>
+                        {convertToDate(e["sessionEnd"], true)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </ScrollView>
               </>
             ) : (
@@ -139,7 +138,7 @@ export default ({ navigation }: any) => {
           ) : (
             <ActivityIndicator size={"large"} />
           )}
-        </>
+        </View>
       )}
     </Layout>
   );

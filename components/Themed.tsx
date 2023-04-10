@@ -313,7 +313,7 @@ export const LongButton = ({
   handleClick: () => void
   text: string
   icon: JSX.Element
-  last:boolean
+  last?: boolean
 }) => {
   return (
     <TouchableOpacity

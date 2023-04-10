@@ -1,14 +1,15 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
-import Input from "../components/Input";
-import { Button, Seperator, Text } from "../components/Themed";
-import Popup from "../components/Popup";
+import Input from "../../components/Input";
+import { Button, Seperator, Text } from "../../components/Themed";
+import Popup from "../../components/Popup";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
-import { AuthContext } from "../hooks/context";
+import { AuthContext } from "../../hooks/context";
 import axios from "axios";
-import Layout from "../components/Layout";
-import config from "../config";
-import testID from "../hooks/testID";
+import Layout from "../../components/Layout";
+import config from "../../config";
+import testID from "../../hooks/testID";
+import ForgotPassword from "./forgotPassword";
 
 export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
@@ -55,84 +56,6 @@ export default ({ navigation }: any) => {
       submitAction();
     }
   };
-
-  const ForgotPassword = useCallback(() => {
-    const [formData, setFormData] = useState({
-      emailAddress: "",
-    });
-    const [formErrors, setFormErrors] = useState({
-      emailAddress: "",
-    });
-    const [isEmailSent, setIsEmailSent] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const sendEmail = () => {
-      setLoading(true);
-      axios
-        .post(config.REACT_APP_API_ADDRESS + `/user/forgot-password`, {
-          emailAddress: formData.emailAddress,
-        })
-        .then(() => {
-          setLoading(false);
-          setIsEmailSent(true);
-        })
-        .catch(() => {
-          setLoading(false);
-          setIsEmailSent(true);
-        });
-    };
-
-    useEffect(() => {
-      if (isEmailSent) {
-      }
-    }, [isEmailSent]);
-
-    return (
-      <Popup
-        visible={visible}
-        handleClose={() => {
-          setVisible(false);
-          setIsEmailSent(false);
-        }}
-      >
-        {isEmailSent ? (
-          <View>
-            <>
-              <Text
-                style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}
-              >
-                Thank you for your request
-              </Text>
-              <Text style={{ lineHeight: 21, fontSize: 16 }}>
-                Your request has been received and if the email exists in our
-                database you will recieve an email within the next few minutes
-                with password reset instructions.
-              </Text>
-            </>
-          </View>
-        ) : (
-          <>
-            <Input
-              placeholder="Enter email address"
-              label="Enter email address"
-              keyboardType="email-address"
-              handleInput={(e) => setFormData({ emailAddress: e })}
-              style={{ marginBottom: 25 }}
-              errorMessage={formErrors.emailAddress}
-            />
-            <Button
-              loading={loading}
-              handleClick={() =>
-                handleSubmit(formData, setFormErrors, () => sendEmail())
-              }
-            >
-              Send Recovery Email
-            </Button>
-          </>
-        )}
-      </Popup>
-    );
-  }, [visible]);
 
   const handleLogin = () => {
     if (!signIn) return;
@@ -266,7 +189,7 @@ export default ({ navigation }: any) => {
       <Button handleClick={() => navigation.navigate("Register")} style="ghost">
         Register
       </Button>
-      <ForgotPassword />
+      <ForgotPassword visible={visible} setVisible={e => setVisible(e)} handleSubmit={handleSubmit} />
     </Layout>
   );
 };

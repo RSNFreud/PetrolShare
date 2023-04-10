@@ -13,7 +13,7 @@ import axios from "axios";
 import { Platform, useWindowDimensions } from "react-native";
 
 import Dashboard from "./screens/dashboard";
-import Login from "./screens/Login";
+import Login from "./screens/login";
 import Register from "./screens/register";
 import NotFoundScreen from "./screens/NotFoundScreen";
 import LinkingConfiguration from "./hooks/LinkingConfiguration";
@@ -58,7 +58,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<any>({});
   const [firstSteps, setFirstSteps] = useState(false);
-  const [screen, setScreen] = useState();
+  const [screen, setScreen] = useState("");
   const navRef = useNavigationContainerRef();
   const { width } = useWindowDimensions();
   const [fontsLoaded] = useFonts({
@@ -83,7 +83,7 @@ export default function App() {
               setUserData(data);
               try {
                 setItem("userData", JSON.stringify(data));
-              } catch {}
+              } catch { }
               res(data);
             })
             .catch(({ response }) => {
@@ -95,7 +95,7 @@ export default function App() {
         setUserData(e);
         try {
           setItem("userData", JSON.stringify(e));
-        } catch {}
+        } catch { }
       },
       retrieveData: () => {
         return userData;
@@ -138,8 +138,8 @@ export default function App() {
           axios
             .get(
               config.REACT_APP_API_ADDRESS +
-                "/user/verify?authenticationKey=" +
-                parsed.authenticationKey
+              "/user/verify?authenticationKey=" +
+              parsed.authenticationKey
             )
             .then(async ({ data }) => {
               setItem("userData", JSON.stringify({ ...parsed, ...data }));
@@ -191,10 +191,10 @@ export default function App() {
     setItem("firstLoad", "true");
   }, []);
 
-  const checkFirstTime = (ref) => {
+  const checkFirstTime = () => {
     if (
-      ref &&
-      ref.getCurrentRoute()?.name != "Dashboard" &&
+      navRef &&
+      navRef.getCurrentRoute()?.name != "Dashboard" &&
       "groupID" in userData &&
       userData["groupID"] === null
     )
@@ -202,8 +202,9 @@ export default function App() {
     else setFirstSteps(false);
   };
 
-  const updateScreen = ()=> {
-    setScreen(navRef.getCurrentRoute().name)
+  const updateScreen = () => {
+    if (!navRef || !navRef.getCurrentRoute()) return
+    setScreen(navRef.getCurrentRoute()?.name || "")
   }
 
   useEffect(() => {
@@ -215,8 +216,8 @@ export default function App() {
   return (
     <>
       <NavigationContainer
-        onComplete={(ref) => checkFirstTime()}
-        onStateChange={()=> updateScreen()}
+        onReady={() => checkFirstTime()}
+        onStateChange={() => updateScreen()}
         ref={navRef}
         linking={LinkingConfiguration}
         theme={{
@@ -248,11 +249,6 @@ export default function App() {
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 {!firstSteps && (
                   <>
-                    <Stack.Screen
-                      name="ManageDistance"
-                      component={distance}
-                      options={{ title: "Manage Distance" }}
-                    />
                     {/* <Stack.Screen
                       name="GPS"
                       component={gps}
@@ -268,13 +264,8 @@ export default function App() {
                       component={petrol}
                       options={{ title: "Add Petrol" }}
                     />
-                    <Stack.Screen name="Logs" component={logs} />
-                    <Stack.Screen name="Invoices" component={invoices} />
-                    <Stack.Screen
-                      name="ManageGroup"
-                      component={manageGroup}
-                      options={{ title: "Manage Group" }}
-                    />
+                    <Stack.Screen name="History" component={logs} />
+                    <Stack.Screen name="Payments" component={invoices} />
                   </>
                 )}
               </>

@@ -13,7 +13,7 @@ const linking: any = {
       AddPreset: 'manage-distance/select-preset',
       Logs: 'logs',
       AddManual: 'manage-distance/manual',
-      Invoices: 'invoices',
+      Invoices: 'payments',
       ManageGroup: 'manage-group',
       Dashboard: 'dashboard/:groupID?',
       NotFound: '*/:groupID?',

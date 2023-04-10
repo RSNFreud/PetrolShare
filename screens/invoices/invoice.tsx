@@ -3,7 +3,6 @@ import { Box, Text, Button } from '../../components/Themed'
 import { ActivityIndicator, View } from 'react-native'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
-import { useNavigation } from '@react-navigation/native'
 import {
   convertToDate,
   currencyPosition,
@@ -23,11 +22,9 @@ type PropsType = {
 export default ({ invoiceID }: PropsType) => {
   const [data, setData] = useState<any>({})
   const { retrieveData } = useContext(AuthContext)
-  const { navigate } = useNavigation()
   useEffect(() => {
     getInvoice()
   }, [])
-  const [loading, setLoading] = useState(0)
   const [manageDistanceOpen, setManageDistanceOpen] = useState(false)
 
   const [groupData, setGroupData] = useState({
@@ -194,7 +191,6 @@ export default ({ invoiceID }: PropsType) => {
               </View>
               {value.fullName === 'Unaccounted Distance' ? (
                 <Button
-                  loading={loading === key}
                   size="medium"
                   styles={{
                     marginTop: 10,

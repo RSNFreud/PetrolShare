@@ -13,15 +13,15 @@ import Purchases from "react-native-purchases"
 
 type GroupType = { currency: string, distance: string, groupID: string, petrol: string, premium: boolean }
 
-export default () => {
+export default ({ onUpdate }: { onUpdate: () => void }) => {
     const [visible, setVisible] = useState(false)
     const [currentScreen, setCurrentScreen] = useState('')
     const [premium, setPremium] = useState(false)
     const { retrieveData } = useContext(AuthContext)
 
     useEffect(() => {
-        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } = getItem('groupData')
-        if (data) data = JSON.parse(data)
+        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
+        if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType).premium) setPremium(true)
         Purchases.getCustomerInfo().then(customerInfo => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
@@ -36,8 +36,8 @@ export default () => {
     }, [])
 
     useEffect(() => {
-        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } = getItem('groupData')
-        if (data) data = JSON.parse(data)
+        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
+        if (data && typeof data === "string") data = JSON.parse(data)
         if (!(data as GroupType).premium && premium) {
             axios
                 .post(
@@ -154,7 +154,7 @@ export default () => {
             } handleClick={() => openModal("SettingsChange")} />
             <ManageGroup
                 closeButton={true}
-                handleClose={() => setVisible(false)}
+                handleClose={() => { setVisible(false), onUpdate() }}
                 visible={visible}
                 onComplete={() => { }}
                 firstSteps={false}

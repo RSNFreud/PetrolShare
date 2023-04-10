@@ -11,7 +11,7 @@ import { deleteItem, getItem, setItem, Alert } from '../../hooks'
 import config from '../../config'
 import { useNavigation } from '@react-navigation/native'
 
-export default ({ navigation }: any) => {
+export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [popupData, setPopupData] = useState(<></>)
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState({ startValue: '', endValue: '' })
@@ -59,7 +59,7 @@ export default ({ navigation }: any) => {
             })
             .then(async (e) => {
               setItem('showToast', 'resetDistance')
-              navigation.navigate('Dashboard')
+              navigate('Dashboard')
             })
             .catch(({ response }) => {
               console.log(response.message)
@@ -71,8 +71,10 @@ export default ({ navigation }: any) => {
   }
 
   const handleClose = () => {
-    if (isDraft === false) return setVisible(false)
-
+    if (isDraft === false) {
+      onUpdate()
+      return setVisible(false)
+    }
     Alert('Do you want to delete this draft?', undefined, [
       {
         text: 'Yes',
@@ -147,7 +149,7 @@ export default ({ navigation }: any) => {
         handleClick={() => navigate('AddPreset')}
       />
       <LongButton
-      last
+        last
         handleClick={() => resetDistance()}
         text="Reset Distance"
         icon={

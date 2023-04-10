@@ -1,16 +1,14 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Box, Text } from '../../components/Themed'
 import { AuthContext } from '../../hooks/context'
-import SplitRow from './splitRow'
 import {
   View,
   TouchableWithoutFeedback,
   Platform,
   AppState,
   ScrollView,
-  Dimensions,
 } from 'react-native'
-import Svg, { G, Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg'
 import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import * as Clipboard from 'expo-clipboard'
@@ -44,7 +42,7 @@ export default ({ navigation }: any) => {
   const appState = useRef(AppState.currentState)
   const [currentScreen, setCurrentScreen] = useState<string>('')
   const [currentTab, setCurrentTab] = useState('Distance')
-  const scrollRef = useRef()
+  const scrollRef = useRef(null)
   const isFocused = useIsFocused()
 
   useEffect(() => {
@@ -68,36 +66,7 @@ export default ({ navigation }: any) => {
 
       navigation.addListener('focus', async () => {
         updateData()
-
-        if (getItem('showToast') === 'distanceUpdated') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Distance successfully updated!',
-          })
-        }
-        if (getItem('showToast') === 'nameUpdated') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Your name has been successfully updated!',
-          })
-        }
-        if (getItem('showToast') === 'draftSaved') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1:
-              'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
-          })
-        }
-        if (getItem('showToast') === 'resetDistance') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Reset your distance back to 0!',
-          })
-        }
+        checkAlerts()
       })
 
       EventRegister.addEventListener('dataUpdated', () => {
@@ -145,11 +114,10 @@ export default ({ navigation }: any) => {
     return unsubscribe
   }, [])
 
-  useEffect(()=> {
-if (scrollRef.current) {
-    // console.log(scrollRef.current);
-    scrollRef.current.scrollTo({x: 0, y: 0})
-}
+  useEffect(() => {
+    if (scrollRef.current) {
+      (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 })
+    }
   }, [currentTab])
 
   useEffect(() => {
@@ -173,6 +141,9 @@ if (scrollRef.current) {
   }, [isFocused])
 
   const pageLoaded = async () => {
+    if (scrollRef.current) {
+      (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 })
+    }
     let referallCode = getItem('referalCode')
     if (referallCode) {
       return sendReferal(referallCode)
@@ -256,6 +227,7 @@ if (scrollRef.current) {
   }
 
   const updateData = async () => {
+    checkAlerts()
     if (getItem('showToast') === 'groupSettingsUpdated') {
       deleteItem('showToast')
       Toast.show({
@@ -326,6 +298,37 @@ if (scrollRef.current) {
     }, 500)
   }
 
+  const checkAlerts = () => {
+    if (getItem('showToast') === 'distanceUpdated') {
+      deleteItem('showToast')
+      Toast.show({
+        type: 'default',
+        text1: 'Distance successfully updated!',
+      })
+    }
+    if (getItem('showToast') === 'nameUpdated') {
+      deleteItem('showToast')
+      Toast.show({
+        type: 'default',
+        text1: 'Your name has been successfully updated!',
+      })
+    }
+    if (getItem('showToast') === 'draftSaved') {
+      deleteItem('showToast')
+      Toast.show({
+        type: 'default',
+        text1:
+          'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
+      })
+    }
+    if (getItem('showToast') === 'resetDistance') {
+      deleteItem('showToast')
+      Toast.show({
+        type: 'default',
+        text1: 'Reset your distance back to 0!',
+      })
+    }
+  }
   return (
     <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>
@@ -389,7 +392,7 @@ if (scrollRef.current) {
           </TouchableWithoutFeedback>
         </View>
       </View>
-      <View style={{ display: 'flex', flexDirection: 'row', paddingVertical: 15, paddingHorizontal: 25, backgroundColor: Colors.primary, justifyContent: 'center' }}>
+      <View style={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 25, backgroundColor: Colors.primary, justifyContent: 'center' }}>
         <NavItem active={currentTab} handleClick={e => setCurrentTab(e)} text='Distance' icon={<Svg width="15" height="15" fill="none" viewBox="0 0 24 23" style={{ marginRight: 10 }}>
           <Path
             fill="#fff"
@@ -397,7 +400,7 @@ if (scrollRef.current) {
           ></Path>
         </Svg>} />
 
-        <View style={{ marginHorizontal: 25, backgroundColor: Colors.border, height: '100%', width: 1 }} />
+        <View style={{ marginHorizontal: 20, backgroundColor: Colors.border, width: 1, marginVertical: 15 }} />
         <NavItem active={currentTab} handleClick={e => setCurrentTab(e)} icon={<Svg width="15" height="15" fill="none" viewBox="0 0 24 23" style={{ marginRight: 10 }}>
           <Path
             fill="#fff"
@@ -405,7 +408,7 @@ if (scrollRef.current) {
           ></Path>
         </Svg>} text='Petrol' />
 
-        <View style={{ marginHorizontal: 25, backgroundColor: Colors.border, height: '100%', width: 1 }} />
+        <View style={{ marginHorizontal: 20, backgroundColor: Colors.border, width: 1, marginVertical: 15 }} />
         <NavItem active={currentTab} handleClick={e => setCurrentTab(e)} icon={<Svg width="15" height="15" fill="none" viewBox="0 0 24 23" style={{ marginRight: 10 }}>
           <Path
             fill="#fff"
@@ -413,10 +416,10 @@ if (scrollRef.current) {
           ></Path>
         </Svg>} text='Group' />
       </View>
-      <ScrollView  ref={scrollRef} overscrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30}}>
-        {currentTab === "Distance" && <Distance />}
+      <ScrollView ref={scrollRef} overScrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30 }}>
+        {currentTab === "Distance" && <Distance onUpdate={updateData} />}
         {currentTab === "Petrol" && <Petrol />}
-        {currentTab === "Group" && <Group />}
+        {currentTab === "Group" && <Group onUpdate={updateData} />}
       </ScrollView>
       <ManageGroup
         closeButton={false}
