@@ -2,6 +2,7 @@ import { View, TextInput, TouchableWithoutFeedback } from 'react-native'
 import React, { useState } from 'react'
 import { Text } from './Themed'
 import Svg, { Path } from 'react-native-svg'
+import Colors from '../constants/Colors'
 
 type PropsType = {
   label: string
@@ -45,7 +46,7 @@ export default ({
             fontWeight: '700',
             fontSize: 16,
             lineHeight: 16,
-            marginBottom: 6,
+            marginBottom: 10,
             color: 'white',
           }}
         >
@@ -63,10 +64,10 @@ export default ({
             keyboardType={keyboardType}
             placeholderTextColor="rgba(255,255,255,0.8)"
             style={[{
-              borderColor: '#137B91',
+              borderColor: Colors.border,
               borderWidth: 1,
               borderStyle: 'solid',
-              backgroundColor: '#0B404A',
+              backgroundColor: Colors.primary,
               borderRadius: 4,
               color: 'white',
               fontWeight: '400',
@@ -122,7 +123,7 @@ export default ({
         {!!errorMessage && (
           <Text
             style={{
-              marginTop: 6,
+              marginTop: 10,
               fontSize: 14,
               fontWeight: '400',
               color: '#FA4F4F',

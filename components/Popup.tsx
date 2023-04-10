@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import Svg, { Path } from "react-native-svg";
+import Colors from "../constants/Colors";
 
 type ModalType = {
   visible: boolean;
@@ -41,7 +42,7 @@ export default ({
     ]).start(() => {
       if (isVisible || visible) setOpened(true);
     });
-    position.addListener(({ value }) => {});
+    position.addListener(({ value }) => { });
 
     return () => {
       position.removeAllListeners();
@@ -83,7 +84,7 @@ export default ({
       />
       <Animated.View
         style={{
-          backgroundColor: "#001E24",
+          backgroundColor: Colors.secondary,
           height: height,
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
@@ -95,7 +96,7 @@ export default ({
           zIndex: 2,
           borderStyle: "solid",
           borderWidth: 1,
-          borderColor: "#063943",
+          borderColor: Colors.border,
         }}
       >
         {showClose && (
@@ -130,8 +131,8 @@ export default ({
           keyboardShouldPersistTaps={"always"}
           style={{
             height: "100%",
-            paddingVertical: 40,
-            paddingHorizontal: 20,
+            paddingVertical: 30,
+            paddingHorizontal: 25,
           }}
         >
           {children}

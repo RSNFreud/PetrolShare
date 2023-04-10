@@ -117,7 +117,7 @@ export default ({ navigation }: any) => {
               label="Enter email address"
               keyboardType="email-address"
               handleInput={(e) => setFormData({ emailAddress: e })}
-              style={{ marginBottom: 20 }}
+              style={{ marginBottom: 25 }}
               errorMessage={formErrors.emailAddress}
             />
             <Button

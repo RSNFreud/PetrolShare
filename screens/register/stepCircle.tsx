@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import Colors from "../../constants/Colors";
 
 type PropTypes = {
   active?: boolean;
@@ -24,11 +25,11 @@ export default ({
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 100,
-      backgroundColor: active ? "#1196B0" : "#0B404A",
+      backgroundColor: active ? Colors.tertiary : Colors.secondary,
     },
     bar: {
       height: 4,
-      backgroundColor: active && barHighlight ? "#1196B0" : "#0B404A",
+      backgroundColor: active && barHighlight ? Colors.tertiary : Colors.secondary,
       width: width,
     },
     wrapper: {

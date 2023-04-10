@@ -1,55 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Popup from '../../components/Popup'
-import { Breadcrumbs, Text } from '../../components/Themed'
+import { LongButton } from '../../components/Themed'
 import Manual from './manual'
 import Odometer from './odometer'
 import Toast from 'react-native-toast-message'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import Svg, { Path } from 'react-native-svg'
-import { Platform, TouchableOpacity } from 'react-native'
 import { deleteItem, getItem, setItem, Alert } from '../../hooks'
-import Layout from '../../components/layout'
 import config from '../../config'
-
-const DistanceButton = ({
-  handleClick,
-  text,
-  icon,
-}: {
-  marginBottom?: number
-  handleClick: () => void
-  text: string
-  icon: JSX.Element
-}) => {
-  return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      style={{
-        marginBottom: 20,
-        backgroundColor: '#1196B0',
-        borderRadius: 4,
-        height: 56,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-      }}
-      onPress={handleClick}
-    >
-      {icon}
-      <Text style={{ fontWeight: '700', fontSize: 18, marginLeft: 20 }}>
-        {text}
-      </Text>
-    </TouchableOpacity>
-  )
-}
+import { useNavigation } from '@react-navigation/native'
 
 export default ({ navigation }: any) => {
   const [popupData, setPopupData] = useState(<></>)
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState({ startValue: '', endValue: '' })
   const { retrieveData } = useContext(AuthContext)
+  const { navigate } = useNavigation()
   const [isDraft, setIsDraft] = useState(false)
 
   const openPopup = (element: JSX.Element) => {
@@ -127,24 +94,14 @@ export default ({ navigation }: any) => {
   }
 
   return (
-    <Layout>
-      <Breadcrumbs
-        links={[
-          {
-            name: 'Dashboard',
-          },
-          {
-            name: 'Manage Distance',
-          },
-        ]}
-      />
-      <DistanceButton
+    <>
+      <LongButton
         handleClick={() =>
           openPopup(<Manual handleClose={() => handleClose()} />)
         }
         text={'Add Specific Distance'}
         icon={
-          <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <Path
               fill="#fff"
               d="M5 2a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zm7 6a3 3 0 100-6 3 3 0 000 6zM5 9a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zM5 16a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 5.999A3 3 0 0012 16zm7 0a3 3 0 100 5.999A3 3 0 0019 16z"
@@ -152,7 +109,7 @@ export default ({ navigation }: any) => {
           </Svg>
         }
       />
-      <DistanceButton
+      <LongButton
         handleClick={() =>
           openPopup(
             <Odometer previousData={data} handleClose={() => handleClose()} />,
@@ -160,7 +117,7 @@ export default ({ navigation }: any) => {
         }
         text={'Record Odometer'}
         icon={
-          <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <Path
               fill="#fff"
               d="M12 22.286a10.286 10.286 0 100-20.572 10.286 10.286 0 000 20.572zM12 24a12 12 0 110-24 12 12 0 010 24z"
@@ -177,37 +134,23 @@ export default ({ navigation }: any) => {
         }
       />
 
-      <DistanceButton
+      <LongButton
         text="Select Preset"
         icon={
-          <Svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <Path
               fill="#fff"
               d="M0 10.5h18v3H0v-3zM0 3h24v3H0V3zm0 18h10.852v-3H0v3z"
             ></Path>
           </Svg>
         }
-        handleClick={() => navigation.navigate('AddPreset')}
+        handleClick={() => navigate('AddPreset')}
       />
-      {/* {Platform.OS !== 'web' && (
-        <DistanceButton
-          handleClick={() => navigation.navigate('GPS')}
-          text="GPS Tracking"
-          icon={
-            <Svg width="23" height="18" fill="none" viewBox="0 0 23 18">
-              <Path
-                fill="#fff"
-                d="M13.5 18a9 9 0 10-9-9v4.65l-2.7-2.7L.75 12l4.5 4.5 4.5-4.5-1.05-1.05-2.7 2.7V9a7.5 7.5 0 117.5 7.5V18z"
-              ></Path>
-            </Svg>
-          }
-        />
-      )} */}
-      <DistanceButton
+      <LongButton
         handleClick={() => resetDistance()}
         text="Reset Distance"
         icon={
-          <Svg width="23" height="18" fill="none" viewBox="0 0 23 18">
+          <Svg width="20" height="20" fill="none" viewBox="0 0 23 18">
             <Path
               fill="#fff"
               d="M13.5 18a9 9 0 10-9-9v4.65l-2.7-2.7L.75 12l4.5 4.5 4.5-4.5-1.05-1.05-2.7 2.7V9a7.5 7.5 0 117.5 7.5V18z"
@@ -221,6 +164,6 @@ export default ({ navigation }: any) => {
         children={popupData}
         animate={isDraft ? false : true}
       />
-    </Layout>
+    </>
   )
 }

@@ -36,6 +36,7 @@ import config from './config'
 import { AndroidNotificationPriority } from 'expo-notifications'
 import manageGroup from './screens/manageGroup'
 import Purchases, { LOG_LEVEL } from 'react-native-purchases'
+import Colors from './constants/Colors'
 
 SplashScreen.preventAutoHideAsync()
 const Stack = createNativeStackNavigator()
@@ -213,7 +214,7 @@ export default function App() {
           dark: true,
           colors: {
             ...DefaultTheme.colors,
-            background: '#001E24',
+            background: Colors.background,
             text: 'white',
           },
         }}
@@ -279,7 +280,7 @@ export default function App() {
           </Stack.Navigator>
         </AuthContext.Provider>
       </NavigationContainer>
-      <StatusBar style="light" backgroundColor="#001E24" />
+      <StatusBar style="light" backgroundColor={Colors.background} />
     </SafeAreaProvider>
   )
 }

@@ -1,8 +1,7 @@
 import Svg, { Path, G } from "react-native-svg"
-import Layout from "../components/layout"
 import ManageGroup from "../components/manageGroup"
-import { TouchableOpacity, TouchableWithoutFeedback } from "react-native"
-import { Box, Breadcrumbs, Text } from '../components/Themed'
+import { TouchableWithoutFeedback } from "react-native"
+import { Box, LongButton, Text } from '../components/Themed'
 import { useContext, useEffect, useState } from "react"
 import { Alert, getItem, setItem } from "../hooks"
 import generateGroupID from "../hooks/generateGroupID"
@@ -11,38 +10,6 @@ import config from "../config"
 import { AuthContext } from "../hooks/context"
 import Purchases from "react-native-purchases"
 
-const Button = ({
-    handleClick,
-    text,
-    icon,
-}: {
-    marginBottom?: number
-    handleClick?: () => void
-    text: string
-    icon?: JSX.Element
-}) => {
-    return (
-        <TouchableOpacity
-            activeOpacity={0.9}
-            style={{
-                marginBottom: 20,
-                backgroundColor: '#1196B0',
-                borderRadius: 4,
-                height: 56,
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 20,
-            }}
-            onPress={handleClick}
-        >
-            {icon}
-            <Text style={{ fontWeight: '700', fontSize: 18, marginLeft: 20 }}>
-                {text}
-            </Text>
-        </TouchableOpacity>
-    )
-}
 
 type GroupType = { currency: string, distance: string, groupID: string, petrol: string, premium: boolean }
 
@@ -143,18 +110,8 @@ export default () => {
     }
 
     return (
-        <Layout style={{ display: 'flex' }}>
-            <Breadcrumbs
-                links={[
-                    {
-                        name: 'Dashboard',
-                    },
-                    {
-                        name: 'Manage Group',
-                    },
-                ]}
-            />
-            <Box style={{ marginBottom: 25 }}>
+        <>
+            <Box style={{ marginBottom: 25, paddingHorizontal: 25, paddingVertical: 25 }}>
                 {premium ?
                     <Text>
                         You are currently on the <Text style={{ color: '#7CFF5B' }}>PREMIUM</Text> version of Petrolshare. This unlocks all the features of the application. Thank you for supporting us!
@@ -170,18 +127,18 @@ export default () => {
                     </>
                 }
             </Box>
-            <Button text="Join a new group" icon={
+            <LongButton text="Create group" icon={
                 <Svg width="24" height="24" fill="none">
                     <Path fill="#fff" d="M11 19v-6H5v-2h6V5h2v6h6v2h-6v6h-2z"></Path>
                 </Svg>
             } handleClick={createGroup} />
-            <Button text="Join an existing group" icon={<Svg width="24" height="24" fill="none">
+            <LongButton text="Join Group" icon={<Svg width="24" height="24" fill="none">
                 <Path
                     fill="#fff"
                     d="M20 20l-.728-9.453L16 13.819 10.181 8l3.272-3.272L4 4l.728 9.453L8 10.181 13.819 16l-3.272 3.272L20 20z"
                 ></Path>
             </Svg>} handleClick={() => openModal('JoinGroup')} />
-            <Button text="Group Settings" icon={
+            <LongButton text="Group Settings" icon={
                 <Svg width="24" height="24" viewBox="0 0 60 56.34">
                     <G>
                         <Path
@@ -203,6 +160,6 @@ export default () => {
                 firstSteps={false}
                 screen={currentScreen}
             />
-        </Layout>
+        </>
     )
 }

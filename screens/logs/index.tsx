@@ -10,6 +10,7 @@ import Popup from "../../components/Popup";
 import Input from "../../components/Input";
 import { Alert, convertToDate } from "../../hooks";
 import config from "../../config";
+import Colors from "../../constants/Colors";
 
 const DateHead = ({
   data,
@@ -94,7 +95,7 @@ const Summary = ({ summary }: { summary: {} }) => {
     <>
       <View
         style={{
-          backgroundColor: "#1196B0",
+          backgroundColor: Colors.primary,
           paddingHorizontal: 20,
           paddingVertical: 10,
         }}
@@ -103,7 +104,7 @@ const Summary = ({ summary }: { summary: {} }) => {
       </View>
       <View
         style={{
-          backgroundColor: "rgba(7, 95, 113, 0.2);",
+          backgroundColor: Colors.secondary,
           paddingHorizontal: 20,
           paddingVertical: 15,
           marginBottom: 20,
@@ -227,7 +228,7 @@ const LogItem = ({
   return (
     <View
       style={[
-        { backgroundColor: "#0B404A", borderRadius: 4, padding: 15 },
+        { backgroundColor: Colors.primary, borderColor: Colors.border, borderStyle: 'solid', borderWidth: 1, borderRadius: 4, padding: 15 },
         style,
       ]}
     >
@@ -256,8 +257,8 @@ const LogItem = ({
               paddingVertical: 0,
               paddingHorizontal: 0,
               width: "auto",
-              backgroundColor: "#137B90",
-              borderColor: "#1196B0",
+              backgroundColor: Colors.tertiary,
+              borderColor: Colors.border,
               minHeight: 0,
               justifyContent: "center",
               height: 32,
@@ -379,7 +380,7 @@ export default () => {
     await axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/logs/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/logs/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(({ data }) => {
         logData.current = data;

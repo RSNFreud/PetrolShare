@@ -14,6 +14,7 @@ import {
   Dimensions,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
+import Colors from '../constants/Colors'
 
 export type TextProps = DefaultText['props']
 export type ViewProps = DefaultView['props']
@@ -52,7 +53,7 @@ type ButtonType = {
   children: JSX.Element | Array<JSX.Element> | string
   color?: 'blue' | 'red'
   style?: 'regular' | 'ghost'
-  size?: 'regular' | 'small'
+  size?: 'regular' | 'small' | 'medium'
   handleClick?: () => void
   styles?: TouchableOpacity['props']['style']
   noText?: boolean
@@ -74,8 +75,8 @@ export const Button = ({
   let variableProperties = {
     height: 51,
     fontSize: 18,
-    backgroundColor: '#1196B0',
-    borderColor: '#58D3EC',
+    backgroundColor: Colors.tertiary,
+    borderColor: Colors.border,
     paddingHorizontal: 16,
     paddingVertical: 16,
     textColor: 'white',
@@ -87,6 +88,12 @@ export const Button = ({
       variableProperties.paddingVertical = 6
       variableProperties.paddingHorizontal = 12
       variableProperties.fontSize = 12
+      break
+    case 'medium':
+      variableProperties.height = 40
+      variableProperties.paddingVertical = 0
+      variableProperties.paddingHorizontal = 0
+      variableProperties.fontSize = 14
       break
 
     default:
@@ -106,8 +113,9 @@ export const Button = ({
 
   switch (style) {
     case 'ghost':
-      variableProperties.borderColor = variableProperties.textColor
+      variableProperties.borderColor = Colors.tertiary
       variableProperties.backgroundColor = 'transparent'
+      variableProperties.textColor = Colors.tertiary
       break
     default:
       break
@@ -163,7 +171,7 @@ export const Seperator = ({ style }: ViewProps) => {
         {
           height: 1,
           width: '100%',
-          backgroundColor: '#445C61',
+          backgroundColor: Colors.border,
         },
         style,
       ]}
@@ -182,10 +190,10 @@ export const Box = ({
     <DefaultView
       style={[
         {
-          backgroundColor: 'rgba(7, 95, 113, 0.2)',
+          backgroundColor: Colors.secondary,
           paddingHorizontal: 29,
           paddingVertical: 19,
-          borderColor: '#137B91',
+          borderColor: Colors.border,
           borderWidth: 1,
           borderRadius: 4,
         },
@@ -266,16 +274,17 @@ export const Breadcrumbs = ({
 }
 
 export const FlexFull = ({
-  children,
+  children, additionalHeight
 }: {
   children: JSX.Element | JSX.Element[]
+  additionalHeight?: number
 }) => {
   return (
     <DefaultView
       style={{
         position: 'relative',
         flex: 1,
-        minHeight: Dimensions.get('window').height - 108 - 87,
+        minHeight: Dimensions.get('window').height - 108 - 95 - (additionalHeight || 0),
         paddingBottom: 55,
       }}
     >
@@ -290,5 +299,42 @@ export const FlexFull = ({
         {children}
       </DefaultView>
     </DefaultView>
+  )
+}
+
+
+export const LongButton = ({
+  handleClick,
+  text,
+  icon,
+}: {
+  marginBottom?: number
+  handleClick: () => void
+  text: string
+  icon: JSX.Element
+}) => {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={{
+        marginBottom: 20,
+        backgroundColor: Colors.primary,
+        borderColor: Colors.border,
+        borderRadius: 4,
+        padding: 15,
+        borderStyle: 'solid',
+        borderWidth: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+      }}
+      onPress={handleClick}
+    >
+      {icon}
+      <Text style={{ fontWeight: '700', fontSize: 16, marginLeft: 15 }}>
+        {text}
+      </Text>
+    </TouchableOpacity>
   )
 }

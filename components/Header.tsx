@@ -6,6 +6,7 @@ import { AuthContext } from "../hooks/context";
 import { useContext, useState } from "react";
 import Settings from "./settings";
 import { Alert } from "../hooks";
+import Colors from "../constants/Colors";
 
 type PropsType = {
   isLoggedIn: boolean;
@@ -29,18 +30,20 @@ export default ({ isLoggedIn }: PropsType) => {
     ]);
   };
 
+
   return (
     <View
       style={{
-        paddingTop: 55,
+        paddingTop: 30,
+        paddingHorizontal: 25,
         display: "flex",
-        height: 132,
         flexDirection: "row",
         position: "relative",
         alignItems: "center",
         alignContent: "center",
+        backgroundColor: isLoggedIn && route.name === "Dashboard" ? Colors.secondary : '',
         justifyContent: isLoggedIn ? "space-between" : "center",
-        paddingBottom: isLoggedIn ? 44 : 22,
+        paddingBottom: 25,
       }}
     >
       <TouchableWithoutFeedback onPress={() => navigation.popToTop()}>
@@ -48,6 +51,10 @@ export default ({ isLoggedIn }: PropsType) => {
           style={{
             fontWeight: "700",
             fontSize: 26,
+            height: 40,
+            display: 'flex',
+            alignItems: 'center',
+            verticalAlign: 'middle',
             lineHeight: 31,
             color: "white",
             textAlign: isLoggedIn ? "left" : "center",
@@ -65,13 +72,13 @@ export default ({ isLoggedIn }: PropsType) => {
             styles={{
               paddingHorizontal: 0,
               position: "absolute",
-              right: 0,
+              right: 25,
               paddingVertical: 0,
-              top: 46,
+              top: 25,
               width: 40,
-              backgroundColor: "rgba(7, 95, 113, 0.2)",
+              backgroundColor: Colors.primary,
               height: 40,
-              borderColor: "#1196B0",
+              borderColor: Colors.border,
               alignItems: "center",
               alignContent: "center",
               justifyContent: "center",
@@ -95,13 +102,13 @@ export default ({ isLoggedIn }: PropsType) => {
             styles={{
               paddingHorizontal: 0,
               position: "absolute",
-              right: 60,
+              right: 85,
               paddingVertical: 0,
-              top: 46,
+              top: 25,
               width: 40,
-              backgroundColor: "rgba(7, 95, 113, 0.2)",
+              backgroundColor: Colors.primary,
               height: 40,
-              borderColor: "#1196B0",
+              borderColor: Colors.border,
               alignItems: "center",
               alignContent: "center",
               justifyContent: "center",

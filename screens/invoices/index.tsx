@@ -9,6 +9,7 @@ import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 import config from "../../config";
+import Colors from "../../constants/Colors";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();
@@ -31,7 +32,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/invoices/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/invoices/get?authenticationKey=${retrieveData().authenticationKey}`
       )
       .then(async ({ data }) => {
         setData(data);
@@ -99,7 +100,10 @@ export default ({ navigation }: any) => {
                       flexDirection: "row",
                       justifyContent: "space-between",
                       padding: 15,
-                      backgroundColor: "#0B404A",
+                      backgroundColor: Colors.primary,
+                      borderColor: Colors.border,
+                      borderStyle: 'solid',
+                      borderWidth: 1,
                       borderRadius: 4,
                       marginBottom: data.length === c + 1 ? 0 : 8,
                     }}

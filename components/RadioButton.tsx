@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from './Themed'
+import Colors from '../constants/Colors'
 
 type PropsType = {
   buttons: Array<{ name: string; value: string }>
@@ -15,9 +16,9 @@ const Button = ({ active }: { active: boolean }) => {
       borderRadius: 300,
       borderStyle: 'solid',
       borderWidth: 1,
-      borderColor: '#1196B0',
+      borderColor: Colors.border,
       width: 16,
-      backgroundColor: '#0B404A',
+      backgroundColor: Colors.primary,
       height: 16,
       display: 'flex',
       alignItems: 'center',
@@ -28,7 +29,7 @@ const Button = ({ active }: { active: boolean }) => {
       width: 6,
       height: 6,
       borderRadius: 100,
-      backgroundColor: '#137B91',
+      backgroundColor: Colors.tertiary,
     },
   })
 
@@ -78,7 +79,7 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
       {!!errorMessage && (
         <Text
           style={{
-            marginTop: 6,
+            marginTop: 10,
             fontSize: 14,
             fontWeight: '400',
             color: '#FA4F4F',

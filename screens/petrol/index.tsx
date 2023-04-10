@@ -78,85 +78,73 @@ export default ({ navigation }: any) => {
   };
 
   return (
-    <Layout>
-      <Breadcrumbs
-        links={[
-          {
-            name: "Dashboard",
-          },
-          {
-            name: "Add Petrol",
-          },
-        ]}
-      />
-      <FlexFull>
-        <Box
-          style={{
-            paddingHorizontal: 15,
-            paddingVertical: 15,
-            marginBottom: 25,
-          }}
-        >
-          <Text>
-            By clicking the Add Petrol button below, an invoice will be
-            generated from the distance tracked in your current session.
-          </Text>
-        </Box>
-        <View>
-          <Input
-            handleInput={(e) => setData({ ...data, litersFilled: e })}
-            value={data.litersFilled}
-            errorMessage={errors.litersFilled}
-            keyboardType={"decimal-pad"}
-            label={`${convertToSentenceCase(fuelFormat)} Filled`}
-            placeholder={`Enter amount of ${fuelFormat} filled`}
-            style={{ marginBottom: 20 }}
-          />
-          <Input
-            handleInput={(e) => setData({ ...data, totalPrice: e })}
-            value={data.totalPrice}
-            errorMessage={errors.totalPrice}
-            keyboardType={"decimal-pad"}
-            label="Total Cost"
-            placeholder="Enter the total cost of refueling"
-            style={{ marginBottom: 20 }}
-          />
-          <Input
-            handleInput={(e) => setData({ ...data, odometer: e })}
-            value={data.odometer}
-            errorMessage={errors.odometer}
-            keyboardType={"numeric"}
-            label="Current Odometer"
-            placeholder="Enter the current odometer value"
-          />
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Button loading={loading} handleClick={() => handleSubmit()}>
-            Add Petrol
-          </Button>
-          {!!errors.submit && (
-            <View
+    <>
+      <Box
+        style={{
+          paddingHorizontal: 15,
+          paddingVertical: 15,
+          marginBottom: 30,
+        }}
+      >
+        <Text>
+          By clicking the Add Petrol button below, an invoice will be
+          generated from the distance tracked in your current session.
+        </Text>
+      </Box>
+      <View>
+        <Input
+          handleInput={(e) => setData({ ...data, litersFilled: e })}
+          value={data.litersFilled}
+          errorMessage={errors.litersFilled}
+          keyboardType={"decimal-pad"}
+          label={`${convertToSentenceCase(fuelFormat)} Filled`}
+          placeholder={`Enter amount of ${fuelFormat} filled`}
+          style={{ marginBottom: 20 }}
+        />
+        <Input
+          handleInput={(e) => setData({ ...data, totalPrice: e })}
+          value={data.totalPrice}
+          errorMessage={errors.totalPrice}
+          keyboardType={"decimal-pad"}
+          label="Total Cost"
+          placeholder="Enter the total cost of refueling"
+          style={{ marginBottom: 20 }}
+        />
+        <Input
+          handleInput={(e) => setData({ ...data, odometer: e })}
+          value={data.odometer}
+          errorMessage={errors.odometer}
+          keyboardType={"numeric"}
+          label="Current Odometer"
+          placeholder="Enter the current odometer value"
+        />
+      </View>
+      <View style={{ marginTop: 30 }}>
+        <Button loading={loading} handleClick={() => handleSubmit()}>
+          Add Petrol
+        </Button>
+        {!!errors.submit && (
+          <View
+            style={{
+              marginTop: 15,
+              backgroundColor: "#EECFCF",
+              borderRadius: 4,
+              paddingHorizontal: 20,
+              paddingVertical: 15,
+            }}
+          >
+            <Text
               style={{
-                marginTop: 15,
-                backgroundColor: "#EECFCF",
-                borderRadius: 4,
-                paddingHorizontal: 20,
-                paddingVertical: 15,
+                fontSize: 14,
+                fontWeight: "400",
+                color: "#7B1D1D",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "400",
-                  color: "#7B1D1D",
-                }}
-              >
-                {errors.submit}
-              </Text>
-            </View>
-          )}
-        </View>
-      </FlexFull>
-    </Layout>
+              {errors.submit}
+            </Text>
+          </View>
+        )}
+      </View>
+    </>
   );
 };

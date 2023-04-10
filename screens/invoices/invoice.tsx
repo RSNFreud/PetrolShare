@@ -14,6 +14,7 @@ import Toast from 'react-native-toast-message'
 import { convertCurrency } from '../../hooks/getCurrencies'
 import config from '../../config'
 import AssignDistance from '../../components/assignDistance'
+import Colors from '../../constants/Colors'
 
 type PropsType = {
   invoiceID: number
@@ -72,9 +73,8 @@ export default ({ invoiceID }: PropsType) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/invoices/get?authenticationKey=${
-            retrieveData().authenticationKey
-          }&invoiceID=${invoiceID}`,
+        `/invoices/get?authenticationKey=${retrieveData().authenticationKey
+        }&invoiceID=${invoiceID}`,
       )
       .then(async ({ data }) => {
         setData({ ...data, invoiceData: JSON.parse(data.invoiceData) })
@@ -151,8 +151,8 @@ export default ({ invoiceID }: PropsType) => {
               style={{
                 paddingHorizontal: 15,
                 paddingVertical: 15,
-                backgroundColor: '#0B404A',
-                borderColor: '#075F71',
+                backgroundColor: Colors.primary,
+                borderColor: Colors.border,
                 marginBottom:
                   Object.keys(data.invoiceData).length === count ? 0 : 10,
               }}
@@ -195,10 +195,9 @@ export default ({ invoiceID }: PropsType) => {
               {value.fullName === 'Unaccounted Distance' ? (
                 <Button
                   loading={loading === key}
-                  size="small"
+                  size="medium"
                   styles={{
                     marginTop: 10,
-                    borderWidth: 0,
                     justifyContent: 'center',
                   }}
                   noText

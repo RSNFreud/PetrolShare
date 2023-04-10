@@ -123,26 +123,19 @@ export default ({
     <Pressable onPress={handleTouch}>
       <>
         {firstSteps && (
-          <Box
+
+          <Text
             style={{
-              marginBottom: 20,
-              paddingHorizontal: 15,
-              paddingVertical: 15,
+              color: 'white', marginBottom: 20, lineHeight: 24
             }}
           >
-            <Text
-              style={{
-                color: 'white',
-              }}
-            >
-              Thank you for creating a group, please select your preferences
-              below.
-            </Text>
-          </Box>
+            To finish creating your group, please fill out the following options.
+          </Text>
         )}
         {!firstSteps && (
           <Box
             style={{
+              marginTop: 20,
               marginBottom: 20,
               paddingHorizontal: 15,
               paddingVertical: 15,
@@ -160,7 +153,7 @@ export default ({
         )}
         <Text
           style={{
-            fontSize: 18,
+            fontSize: 16,
             lineHeight: 27,
             fontWeight: '700',
             color: 'white',
@@ -181,7 +174,7 @@ export default ({
 
         <Text
           style={{
-            fontSize: 18,
+            fontSize: 16,
             marginBottom: 10,
             lineHeight: 27,
             fontWeight: '700',
@@ -202,7 +195,7 @@ export default ({
         />
         <Text
           style={{
-            fontSize: 18,
+            fontSize: 16,
             marginBottom: 10,
             lineHeight: 27,
             fontWeight: '700',
@@ -210,7 +203,7 @@ export default ({
             marginTop: 30,
           }}
         >
-          What currency are you using?
+          Which currency format are you using?
         </Text>
         <Dropdown
           placeholder="Choose a currency"
@@ -220,7 +213,7 @@ export default ({
           errorMessage={errors.currency}
         />
         <Button loading={isLoading} handleClick={handleSubmit}>
-          Save Settings
+          {firstSteps ? 'Create Group' : 'Save Settings'}
         </Button>
       </>
     </Pressable>

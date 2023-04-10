@@ -8,6 +8,7 @@ import { Text } from "./Themed";
 import Svg, { Path } from "react-native-svg";
 import { useEffect, useRef, useState } from "react";
 import { Picker } from '@react-native-picker/picker';
+import Colors from "../constants/Colors";
 
 type item = { name: string; value: string; symbol?: string };
 
@@ -38,7 +39,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
 
   return (<TouchableWithoutFeedback onPress={() => dropdownRef.current.focus()} >
     <View style={{
-      marginBottom: 20,
+      marginBottom: 25,
     }}>
       {!!label &&
         <Text
@@ -58,12 +59,12 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
           zIndex: 1,
           borderRadius: 4,
           width: "100%",
-          backgroundColor: "#0B404A",
+          backgroundColor: Colors.primary,
           borderStyle: "solid",
           borderWidth: 1,
           height: 51,
           overflow: 'hidden',
-          borderColor: "#1196B0",
+          borderColor: Colors.border,
           paddingLeft: 10,
           display: 'flex',
           flexDirection: 'row',
@@ -111,7 +112,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
       {!!errorMessage && (
         <Text
           style={{
-            marginTop: 6,
+            marginTop: 10,
             fontSize: 14,
             fontWeight: "400",
             color: "#FA4F4F",
