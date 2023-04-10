@@ -14,9 +14,9 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#001E24"
+      "backgroundColor": "#292B36"
     },
-    "backgroundColor": "#001E24",
+    "backgroundColor": "#292B36",
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/5a6b67c6-532d-402b-ab54-ceeb04084203"
@@ -32,7 +32,7 @@
       "googleServicesFile": "./assets/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#001e24"
+        "backgroundColor": "#292B36"
       },
       "package": "com.rsnfreud.PetrolShare",
       "intentFilters": [{

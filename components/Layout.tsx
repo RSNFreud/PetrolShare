@@ -7,6 +7,7 @@ import { Text } from './Themed'
 import { AuthContext } from '../hooks/context'
 import Header from './Header'
 import Colors from '../constants/Colors'
+import Constants from 'expo-constants';
 import Svg, { Path } from 'react-native-svg'
 import { useNavigation, useRoute } from '@react-navigation/native'
 
@@ -114,7 +115,7 @@ export default ({
   return (
     <>
       <View
-        style={[style, { minHeight: Dimensions.get('window').height, position: 'relative' }]}
+        style={[style, { minHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight }]}
         {...rest}
       >
         <Header isLoggedIn={isLoggedIn} />
