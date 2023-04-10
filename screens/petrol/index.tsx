@@ -7,7 +7,7 @@ import {
   Text,
   Box,
 } from "../../components/Themed";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";

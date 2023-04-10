@@ -1,6 +1,6 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { Breadcrumbs, Button, Text } from "../../components/Themed";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout";
 import Svg, { Path } from "react-native-svg";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";

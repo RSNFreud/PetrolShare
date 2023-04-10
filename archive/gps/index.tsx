@@ -11,7 +11,7 @@ import {
 import Constants from 'expo-constants'
 import { Alert, deleteItem, getGroupData, getItem, setItem } from '../../hooks'
 import { Platform, ToastAndroid, View } from 'react-native'
-import Layout from '../../components/layout'
+import Layout from '../../components/Layout'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import { useNavigation } from '@react-navigation/native'

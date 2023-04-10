@@ -1,7 +1,7 @@
 import { TouchableWithoutFeedback, View, ActivityIndicator, Dimensions } from 'react-native'
 import Input from '../../components/Input'
 import { Breadcrumbs, Text, Button, FlexFull } from '../../components/Themed'
-import Layout from '../../components/layout'
+import Layout from '../../components/Layout'
 import Svg, { Path } from 'react-native-svg'
 import { useContext, useEffect, useRef, useState } from 'react'
 import axios from 'axios'

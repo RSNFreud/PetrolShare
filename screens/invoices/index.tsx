@@ -3,7 +3,7 @@ import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout";
 import { Text } from "../../components/Themed";
 import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
