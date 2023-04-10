@@ -44,6 +44,7 @@ export default ({ navigation }: any) => {
   const appState = useRef(AppState.currentState)
   const [currentScreen, setCurrentScreen] = useState<string>('')
   const [currentTab, setCurrentTab] = useState('Distance')
+  const scrollRef = useRef()
   const isFocused = useIsFocused()
 
   useEffect(() => {
@@ -143,6 +144,13 @@ export default ({ navigation }: any) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe
   }, [])
+
+  useEffect(()=> {
+if (scrollRef.current) {
+    // console.log(scrollRef.current);
+    scrollRef.current.scrollTo({x: 0, y: 0})
+}
+  }, [currentTab])
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -405,7 +413,7 @@ export default ({ navigation }: any) => {
           ></Path>
         </Svg>} text='Group' />
       </View>
-      <ScrollView  overscrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30}}>
+      <ScrollView  ref={scrollRef} overscrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30}}>
         {currentTab === "Distance" && <Distance />}
         {currentTab === "Petrol" && <Petrol />}
         {currentTab === "Group" && <Group />}
