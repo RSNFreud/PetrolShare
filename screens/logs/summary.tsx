@@ -20,7 +20,7 @@ export default ({ summary }: { summary: {} }) => {
                     backgroundColor: Colors.secondary,
                     paddingHorizontal: 20,
                     paddingVertical: 15,
-                    marginBottom: 20,
+                    marginBottom: 25,
                 }}
             >
                 {Object.entries(summary).map(([key, value], c) => (

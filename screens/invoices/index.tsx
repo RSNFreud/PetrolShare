@@ -75,7 +75,7 @@ export default ({ navigation }: any) => {
       {params && params["id"] ? (
         <Invoice invoiceID={params["id"]} />
       ) : (
-        <View style={{ flex: 1, display: 'flex', marginBottom: 55 }}>
+        <View style={{ flex: 1, display: 'flex', marginBottom: 25 }}>
           {dataLoaded ? (
             Boolean(data.length > 0) ? (
               <>
@@ -121,7 +121,7 @@ export default ({ navigation }: any) => {
                 </ScrollView>
               </>
             ) : (
-              <Box style={{ paddingHorizontal: 20 }}>
+              <Box style={{ paddingHorizontal: 25 }}>
                 <Text
                   style={{
                     fontSize: 16,
@@ -130,7 +130,7 @@ export default ({ navigation }: any) => {
                     lineHeight: 24,
                   }}
                 >
-                  There are no invoices to display.{"\n"} Generate one by
+                  There are no payments to display.{"\n"} Generate one by
                   filling up with petrol
                 </Text>
               </Box>

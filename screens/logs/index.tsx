@@ -1,5 +1,5 @@
 import { ActivityIndicator, View, ScrollView } from "react-native";
-import { Breadcrumbs, Text } from "../../components/Themed";
+import { Box, Breadcrumbs, Text } from "../../components/Themed";
 import Layout from "../../components/Layout";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
@@ -115,7 +115,7 @@ export default () => {
         ]}
       />
       {pageData.currentPage >= 1 && (
-        <View style={{ flex: 1, display: 'flex', marginBottom: 55 }}>
+        <View style={{ flex: 1, display: 'flex', marginBottom: 25 }}>
           <DateHead
             data={currentData}
             handlePrevious={previousPage}
@@ -159,9 +159,18 @@ export default () => {
         </View>
       )}
       {loaded && pageData.currentPage === 0 && (
-        <Text style={{ fontSize: 16, textAlign: "center" }}>
-          There are no logs available to display
-        </Text>
+        <Box style={{ paddingHorizontal: 25 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",
+              lineHeight: 24,
+            }}
+          >
+            There are is no history available to display. Add distance for it to be shown
+          </Text>
+        </Box>
       )}
 
       {!loaded && <ActivityIndicator size={"large"} />}

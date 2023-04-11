@@ -136,7 +136,7 @@ export default ({
         </ScrollView>
         }
         {isLoggedIn &&
-          <View style={{ backgroundColor: Colors.secondary, position: 'absolute', bottom: 0, left: 0, width: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 25 }}>
+          <View style={{ backgroundColor: Colors.secondary, width: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 25 }}>
             <BottomNavItem active={route.name === "Dashboard"} handleClick={() => navigate("Dashboard")} text='Home' icon={<Svg width="20" height="20" viewBox='0 0 18 20' fill="none">
               <Path
                 fill="#fff"

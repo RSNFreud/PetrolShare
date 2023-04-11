@@ -24,7 +24,7 @@ export default ({
             alignItems: "center",
             justifyContent: "space-between",
             flexDirection: "row",
-            marginBottom: 30,
+            marginBottom: 25,
         },
         button: {
             display: "flex",
