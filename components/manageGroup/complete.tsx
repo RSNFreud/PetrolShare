@@ -6,12 +6,12 @@ import Svg, { Path } from 'react-native-svg'
 import * as Clipboard from 'expo-clipboard'
 
 type PropsType = {
-  firstSteps: boolean
+  newGroup?: boolean
   groupID: string
-  closeScreen: () => void
+  handleClose: () => void
 }
 
-export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
+export default ({ groupID, newGroup, handleClose }: PropsType) => {
   const [copied, setCopied] = useState(false)
   const { retrieveData } = useContext(AuthContext)
 
@@ -28,18 +28,15 @@ export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
 
   return (
     <View>
-
       <Text style={{ fontSize: 16, lineHeight: 25 }}>
-        {firstSteps && (
-          <>
-            Thank you for registering for PetrolShare{' '}
-            <Text style={{ fontWeight: 'bold' }}>
-              {retrieveData && retrieveData().fullName}
-            </Text>
-            .{'\n'}
-            {'\n'}
-          </>
-        )}
+        {newGroup && <>
+          Thank you for creating a group with PetrolShare{' '}
+          <Text style={{ fontWeight: 'bold' }}>
+            {retrieveData && retrieveData().fullName}
+          </Text>
+          .{'\n'}
+          {'\n'}</>}
+
         Your Group ID number is:
       </Text>
       <View
@@ -86,7 +83,7 @@ export default ({ groupID, firstSteps, closeScreen }: PropsType) => {
         dashboard.
       </Text>
 
-      <Button styles={{ marginTop: 25 }} handleClick={closeScreen}>
+      <Button styles={{ marginTop: 25 }} handleClick={handleClose}>
         Start Driving
       </Button>
     </View>

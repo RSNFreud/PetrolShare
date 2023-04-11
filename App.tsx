@@ -34,7 +34,7 @@ import {
 // import gps from './archive/gps'
 import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
-import manageGroup from "./screens/manageGroup";
+import manageGroup from "./screens/group";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import Colors from "./constants/Colors";
 

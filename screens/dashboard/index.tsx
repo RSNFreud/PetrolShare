@@ -23,7 +23,7 @@ import Colors from '../../constants/Colors'
 import NavItem from './navItem'
 import Distance from '../distance'
 import Petrol from '../petrol'
-import Group from '../manageGroup'
+import Group from '../group'
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)

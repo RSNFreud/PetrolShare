@@ -65,26 +65,25 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
           height: 51,
           overflow: 'hidden',
           borderColor: Colors.border,
-          paddingLeft: 10,
+          paddingHorizontal: 15,
           display: 'flex',
+          justifyContent: 'space-between',
           flexDirection: 'row',
-          alignContent: 'center'
+          alignContent: 'center',
+          alignItems: 'center'
         }}
       >
         <Picker
           ref={dropdownRef}
           selectedValue={selected}
           onValueChange={(itemValue) => selectOption(itemValue)}
-          dropdownIconColor="white"
           mode="dialog"
           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            opacity: 0,
             width: "100%",
-            backgroundColor: 'transparent',
-            fontSize: 16,
-            marginRight: 10,
-            borderColor: 'transparent',
-            fontWeight: "400",
-            color: "#fff",
           }}
           itemStyle={{
             color: 'black'
@@ -108,6 +107,20 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
               );
             })}
         </Picker>
+        <Text style={{ zIndex: 3 }}>{selected || "Choose a currency"}</Text>
+        <Svg
+          width="11"
+          height="13"
+          fill="none"
+          viewBox="0 0 11 13"
+        >
+          <Path
+            stroke="#fff"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5.333 11.833V1.167m-4.666 6l4.666 4.666L10 7.166"
+          ></Path>
+        </Svg>
       </View>
       {!!errorMessage && (
         <Text
@@ -122,6 +135,6 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
         </Text>
       )}
     </View>
-  </TouchableWithoutFeedback>
+  </TouchableWithoutFeedback >
   );
 };

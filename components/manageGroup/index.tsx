@@ -5,7 +5,7 @@ import Default from './default'
 import axios from 'axios'
 import generateGroupID from '../../hooks/generateGroupID'
 import Complete from './complete'
-import JoinGroup from './joinGroup'
+import JoinGroup from './joinGroupForm'
 import GroupSettings from '../groupSettings'
 import { Alert, setItem } from '../../hooks'
 import config from '../../config'
@@ -54,7 +54,7 @@ export default ({
           <Complete
             firstSteps={firstSteps}
             groupID={currentGroupID}
-            closeScreen={closePopup}
+            handleClose={closePopup}
           />,
         )
         setNewGroup(false)
@@ -73,7 +73,7 @@ export default ({
       case 'Settings':
         setCurrentScreen(
           <GroupSettings
-            firstSteps={newGroup}
+            newGroup={newGroup}
             handleClose={(e) =>
               newGroup ? changeScreen('Complete', e) : handleGroupClose()
             }
@@ -82,7 +82,7 @@ export default ({
         break
       case 'SettingsChange':
         setCurrentScreen(
-          <GroupSettings firstSteps={false} handleClose={handleGroupClose} />,
+          <GroupSettings newGroup={false} handleClose={handleGroupClose} />,
         )
         break
       default:

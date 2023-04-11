@@ -9,6 +9,10 @@ import axios from "axios"
 import config from "../config"
 import { AuthContext } from "../hooks/context"
 import Purchases from "react-native-purchases"
+import Popup from "../components/Popup"
+import CreateGroup from "../components/createGroup"
+import GroupSettings from "../components/groupSettings"
+import JoinGroup from "../components/joinGroup"
 
 
 type GroupType = { currency: string, distance: string, groupID: string, petrol: string, premium: boolean }
@@ -51,20 +55,14 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
     }, [premium])
 
     const createGroup = async () => {
-        let groupID = generateGroupID()
         Alert(
-            "Are you sure you want to join a new group?",
+            "Are you sure you want to create a new group?",
             "This will delete all the current data you have saved.",
             [
                 {
                     text: "Yes",
                     onPress: async () => {
-                        setItem('groupData', '')
-                        await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
-                            authenticationKey: retrieveData().authenticationKey,
-                            groupID: groupID,
-                        })
-                        openModal("Settings")
+                        openModal("CreateGroup")
                     },
                 },
                 { text: "No", style: "cancel" },
@@ -109,6 +107,11 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         setVisible(true)
     }
 
+    const handleClose = () => {
+        setVisible(false);
+        onUpdate();
+    }
+
     return (
         <>
             <Box style={{ marginBottom: 25, paddingHorizontal: 25, paddingVertical: 25 }}>
@@ -151,15 +154,21 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
                         ></Path>
                     </G>
                 </Svg>
-            } handleClick={() => openModal("SettingsChange")} />
-            <ManageGroup
+            } handleClick={() => openModal("Settings")} />
+            <Popup visible={visible} handleClose={() => { setVisible(false), onUpdate() }}
+            >
+                {currentScreen === "JoinGroup" ? <JoinGroup handleClose={handleClose} handleUpdate={onUpdate} /> : <></>}
+                {currentScreen === "CreateGroup" ? <CreateGroup handleClose={handleClose} handleUpdate={onUpdate} /> : <></>}
+                {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} /> : <></>}
+            </Popup>
+            {/* <ManageGroup
                 closeButton={true}
                 handleClose={() => { setVisible(false), onUpdate() }}
                 visible={visible}
                 onComplete={() => { }}
                 firstSteps={false}
                 screen={currentScreen}
-            />
+            /> */}
         </>
     )
 }

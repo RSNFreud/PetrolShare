@@ -8,13 +8,16 @@ import { getAllCurrencies } from '../hooks/getCurrencies'
 import Dropdown from './Dropdown'
 import RadioButton from './RadioButton'
 import { Button, Box, Text } from './Themed'
+import generateGroupID from '../hooks/generateGroupID'
 
 export default ({
-  handleClose,
-  firstSteps,
+  handleComplete,
+  handleCancel,
+  newGroup,
 }: {
-  handleClose: (e?: string) => void
-  firstSteps?: boolean
+  handleComplete: (e?: string) => void
+  handleCancel?: () => void
+  newGroup?: boolean
 }) => {
   const [data, setData] = useState({
     distance: '',
@@ -36,18 +39,18 @@ export default ({
   }, [])
 
   useEffect(() => {
-    if (firstSteps)
+    if (newGroup)
       setData({
         distance: '',
         petrol: '',
         currency: '',
       })
     else setGroupData()
-  }, [firstSteps])
+  }, [newGroup])
 
   const setGroupData = async () => {
     const groupData = getItem('groupData')
-    if (!groupData || firstSteps) return
+    if (!groupData || newGroup) return
     setData(JSON.parse(groupData))
   }
 
@@ -76,7 +79,7 @@ export default ({
 
     setErrors({ ...errors })
     if (Object.keys(errors).length) return
-    if (firstSteps) return updateGroup()
+    if (newGroup) return createGroup()
     Alert(
       'Are you sure you want to reset your data?',
       'By clicking yes your session will be reset back to 0 for your group.',
@@ -100,8 +103,21 @@ export default ({
     )
   }
 
-  const updateGroup = async () => {
+  const createGroup = async () => {
+    const groupID = generateGroupID()
+    console.log(groupID);
+
     setLoading(true)
+    await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
+      authenticationKey: retrieveData().authenticationKey,
+      groupID: groupID,
+    })
+    updateGroup(groupID)
+  }
+
+  const updateGroup = async (groupID?: string) => {
+    setLoading(true)
+
     await axios
       .post(config.REACT_APP_API_ADDRESS + '/group/update', {
         authenticationKey: retrieveData().authenticationKey,
@@ -111,7 +127,7 @@ export default ({
       })
       .then(() => {
         setLoading(false)
-        handleClose()
+        handleComplete(groupID)
       })
   }
 
@@ -122,7 +138,7 @@ export default ({
   return (
     <Pressable onPress={handleTouch}>
       <>
-        {firstSteps && (
+        {newGroup && (
 
           <Text
             style={{
@@ -132,7 +148,7 @@ export default ({
             To finish creating your group, please fill out the following options.
           </Text>
         )}
-        {!firstSteps && (
+        {!newGroup && (
           <Box
             style={{
               marginTop: 20,
@@ -213,8 +229,11 @@ export default ({
           errorMessage={errors.currency}
         />
         <Button loading={isLoading} handleClick={handleSubmit}>
-          {firstSteps ? 'Create Group' : 'Save Settings'}
+          {newGroup ? 'Create Group' : 'Save Settings'}
         </Button>
+        {newGroup && <Button handleClick={handleCancel} style='ghost' styles={{ marginTop: 20 }}>
+          Return to Menu
+        </Button>}
       </>
     </Pressable>
   )

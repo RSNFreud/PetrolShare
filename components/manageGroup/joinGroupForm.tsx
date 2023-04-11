@@ -1,19 +1,19 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Button } from "../../components/Themed";
-import Input from "../../components/Input";
+import { Button } from "../Themed";
+import Input from "../Input";
 import { Alert } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 
 type PropsType = {
-  firstSteps: boolean;
-  onComplete: (groupID: string) => void;
-  onBack: () => void;
+  firstSteps?: boolean;
+  handleComplete: (groupID: string) => void;
+  handleCancel: () => void;
 };
 
-export default ({ firstSteps, onComplete, onBack }: PropsType) => {
+export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
   const { retrieveData } = useContext(AuthContext);
 
   const [form, setForm] = useState({
@@ -47,7 +47,7 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
                     data: "",
                     errors: "",
                   });
-                  onComplete(form.data);
+                  handleComplete(form.data);
                 })
                 .catch(({ response }) => {
                   setLoading(false);
@@ -69,7 +69,7 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
         })
         .then(async (e) => {
           setLoading(false);
-          onComplete(form.data);
+          handleComplete(form.data);
         })
         .catch(({ response }) => {
           setLoading(false);
@@ -93,7 +93,7 @@ export default ({ firstSteps, onComplete, onBack }: PropsType) => {
       <Button loading={loading} handleClick={updateGroup}>
         Join Group
       </Button>
-      <Button style="ghost" styles={{ marginTop: 20 }} handleClick={onBack}>
+      <Button style="ghost" styles={{ marginTop: 20 }} handleClick={handleCancel}>
         Back
       </Button>
     </View>
