@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Button } from "../Themed";
-import Input from "../Input";
-import { Alert } from "../../hooks";
-import { AuthContext } from "../../hooks/context";
-import config from "../../config";
+import { Button } from "./Themed";
+import Input from "./Input";
+import { Alert } from "../hooks";
+import { AuthContext } from "../hooks/context";
+import config from "../config";
 
 type PropsType = {
   firstSteps?: boolean;
