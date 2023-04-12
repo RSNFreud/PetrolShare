@@ -64,14 +64,14 @@ export default ({ navigation }: any) => {
       })
       .then(({ data }) => {
         setLoading(false);
-        navigation.navigate("Invoices", { id: data });
+        navigation.navigate("Payments", { id: data });
       })
       .catch(({ response }) => {
         console.log(response);
         setErrors({
           ...errors,
           submit:
-            "You have no distance tracked in your session for us to generate an invoice for.",
+            "You have no distance tracked in your session for us to generate a payment for.",
         });
         setLoading(false);
       });
@@ -87,7 +87,7 @@ export default ({ navigation }: any) => {
         }}
       >
         <Text>
-          By clicking the Add Petrol button below, an invoice will be
+          By clicking the Add Petrol button below, a payment log will be
           generated from the distance tracked in your current session.
         </Text>
       </Box>

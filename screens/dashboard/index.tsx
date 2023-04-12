@@ -13,7 +13,6 @@ import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import * as Clipboard from 'expo-clipboard'
 import { Alert, deleteItem, getItem, setItem } from '../../hooks'
-import ManageGroup from '../../components/manageGroup'
 import { EventRegister } from 'react-native-event-listeners'
 import Layout from '../../components/Layout'
 import config from '../../config'
@@ -24,6 +23,9 @@ import NavItem from './navItem'
 import Distance from '../distance'
 import Petrol from '../petrol'
 import Group from '../group'
+import Popup from '../../components/Popup'
+import Demo from '../../components/demo'
+import GroupSettings from '../../components/groupSettings'
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
@@ -40,7 +42,7 @@ export default ({ navigation }: any) => {
     currency?: string
   }>({})
   const appState = useRef(AppState.currentState)
-  const [currentScreen, setCurrentScreen] = useState<string>('')
+  const [currentScreen, setCurrentScreen] = useState<string>('Settings')
   const [currentTab, setCurrentTab] = useState('Distance')
   const scrollRef = useRef(null)
   const isFocused = useIsFocused()
@@ -329,6 +331,12 @@ export default ({ navigation }: any) => {
       })
     }
   }
+
+  const handleClose = () => {
+    setVisible(false);
+    updateData();
+  }
+
   return (
     <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>
@@ -421,14 +429,10 @@ export default ({ navigation }: any) => {
         {currentTab === "Petrol" && <Petrol />}
         {currentTab === "Group" && <Group onUpdate={updateData} />}
       </ScrollView>
-      <ManageGroup
-        closeButton={false}
-        handleClose={() => setVisible(false)}
-        visible={visible}
-        onComplete={updateData}
-        firstSteps={true}
-        screen={currentScreen}
-      />
+      <Popup visible={visible} handleClose={() => { }} showClose={false}>
+        {currentScreen === '' ? <Demo handleClose={handleClose} handleUpdate={updateData} /> : <></>}
+        {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} newGroup hideCancel /> : <></>}
+      </Popup>
     </Layout>
   )
 }

@@ -20,7 +20,7 @@ export const schedulePushNotification = async (
     content: {
       title: "You've got mail! 📬",
       body: 'Here is the notification body',
-      data: { route: 'Invoices', invoiceID: 417 },
+      data: { route: 'Payments', invoiceID: 417 },
     },
     trigger: { seconds: 2 },
   })
@@ -51,7 +51,7 @@ export const registerForPushNotificationsAsync = async (
     }
     try {
       token = (await Notifications.getExpoPushTokenAsync()).data
-    } catch {}
+    } catch { }
 
     if (!token) return
 

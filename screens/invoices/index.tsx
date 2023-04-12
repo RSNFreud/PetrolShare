@@ -94,7 +94,7 @@ export default ({ navigation }: any) => {
                     <TouchableOpacity
                       activeOpacity={0.9}
                       onPress={() =>
-                        navigation.navigate("Invoices", { id: e["invoiceID"] })
+                        navigation.navigate("Payments", { id: e["invoiceID"] })
                       }
                       style={{
                         display: "flex",

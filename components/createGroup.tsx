@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import GroupSettings from "./groupSettings"
-import Complete from "./manageGroup/complete"
+import Complete from "./complete"
 import { setItem } from "../hooks"
 
 type PropsType = {

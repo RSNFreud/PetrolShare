@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react'
-import { AuthContext } from '../../hooks/context'
+import { AuthContext } from '../hooks/context'
 import { View, TouchableWithoutFeedback } from 'react-native'
-import { Button, Text, Box } from '../../components/Themed'
+import { Button, Text, Box } from './Themed'
 import Svg, { Path } from 'react-native-svg'
 import * as Clipboard from 'expo-clipboard'
 

@@ -161,14 +161,6 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
                 {currentScreen === "CreateGroup" ? <CreateGroup handleClose={handleClose} handleUpdate={onUpdate} /> : <></>}
                 {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} /> : <></>}
             </Popup>
-            {/* <ManageGroup
-                closeButton={true}
-                handleClose={() => { setVisible(false), onUpdate() }}
-                visible={visible}
-                onComplete={() => { }}
-                firstSteps={false}
-                screen={currentScreen}
-            /> */}
         </>
     )
 }

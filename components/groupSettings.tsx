@@ -10,15 +10,19 @@ import RadioButton from './RadioButton'
 import { Button, Box, Text } from './Themed'
 import generateGroupID from '../hooks/generateGroupID'
 
-export default ({
-  handleComplete,
-  handleCancel,
-  newGroup,
-}: {
+type PropsType = {
   handleComplete: (e?: string) => void
   handleCancel?: () => void
   newGroup?: boolean
-}) => {
+  hideCancel?: boolean
+}
+
+export default ({
+  handleComplete,
+  hideCancel,
+  handleCancel,
+  newGroup,
+}: PropsType) => {
   const [data, setData] = useState({
     distance: '',
     petrol: '',
@@ -231,7 +235,7 @@ export default ({
         <Button loading={isLoading} handleClick={handleSubmit}>
           {newGroup ? 'Create Group' : 'Save Settings'}
         </Button>
-        {newGroup && <Button handleClick={handleCancel} style='ghost' styles={{ marginTop: 20 }}>
+        {!hideCancel && newGroup && <Button handleClick={handleCancel} style='ghost' styles={{ marginTop: 20 }}>
           Return to Menu
         </Button>}
       </>
