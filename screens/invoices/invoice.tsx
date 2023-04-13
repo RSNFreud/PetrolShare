@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Box, Text, Button } from '../../components/Themed'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, ScrollView, View } from 'react-native'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import {
@@ -140,76 +140,78 @@ export default ({ invoiceID }: PropsType) => {
           <></>
         )}
       </Box>
-      {Object.entries(data.invoiceData).map(
-        ([key, value]: any, count: number) => {
-          return (
-            <Box
-              key={key}
-              style={{
-                paddingHorizontal: 15,
-                paddingVertical: 15,
-                backgroundColor: Colors.primary,
-                borderColor: Colors.border,
-                marginBottom:
-                  Object.keys(data.invoiceData).length === count ? 0 : 10,
-              }}
-            >
-              <View
+      <ScrollView keyboardShouldPersistTaps={'handled'} style={{ marginBottom: 20 }}>
+        {Object.entries(data.invoiceData).map(
+          ([key, value]: any, count: number) => {
+            return (
+              <Box
+                key={key}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  marginBottom: 10,
+                  paddingHorizontal: 15,
+                  paddingVertical: 15,
+                  backgroundColor: Colors.primary,
+                  borderColor: Colors.border,
+                  marginBottom:
+                    Object.keys(data.invoiceData).length === count ? 0 : 10,
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                  {currencyPosition(value.paymentDue, groupData.currency)}
-                </Text>
-                {value.liters ? (
-                  <Text style={{ fontSize: 16 }}>
-                    {value?.liters} {groupData.petrol}
+                <View
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    marginBottom: 10,
+                  }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                    {currencyPosition(value.paymentDue, groupData.currency)}
                   </Text>
+                  {value.liters ? (
+                    <Text style={{ fontSize: 16 }}>
+                      {value?.liters} {groupData.petrol}
+                    </Text>
+                  ) : (
+                    <></>
+                  )}
+                </View>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      marginBottom: 5,
+                    }}
+                  >
+                    {value.fullName} (
+                    <Text style={{ fontSize: 17 }}>
+                      {value.distance} {groupData.distance}
+                    </Text>
+                    )
+                  </Text>
+                </View>
+                {value.fullName === 'Unaccounted Distance' ? (
+                  <Button
+                    size="medium"
+                    styles={{
+                      marginTop: 10,
+                      justifyContent: 'center',
+                    }}
+                    noText
+                    handleClick={() => setManageDistanceOpen(true)}
+                  >
+                    <Text style={{ fontWeight: 'bold', fontSize: 14 }}>
+                      Assign Distance
+                    </Text>
+                  </Button>
                 ) : (
                   <></>
                 )}
-              </View>
-              <View>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    marginBottom: 5,
-                  }}
-                >
-                  {value.fullName} (
-                  <Text style={{ fontSize: 17 }}>
-                    {value.distance} {groupData.distance}
-                  </Text>
-                  )
-                </Text>
-              </View>
-              {value.fullName === 'Unaccounted Distance' ? (
-                <Button
-                  size="medium"
-                  styles={{
-                    marginTop: 10,
-                    justifyContent: 'center',
-                  }}
-                  noText
-                  handleClick={() => setManageDistanceOpen(true)}
-                >
-                  <Text style={{ fontWeight: 'bold', fontSize: 14 }}>
-                    Assign Distance
-                  </Text>
-                </Button>
-              ) : (
-                <></>
-              )}
-            </Box>
-          )
-        },
-      )}
+              </Box>
+            )
+          },
+        )}
+      </ScrollView>
       <AssignDistance
         active={manageDistanceOpen}
         handleClose={() => setManageDistanceOpen(false)}

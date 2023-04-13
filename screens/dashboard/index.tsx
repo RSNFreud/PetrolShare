@@ -157,6 +157,9 @@ export default ({ navigation }: any) => {
         sendReferal(groupID)
       }
     }
+
+    if (retrieveData().authenticationKey)
+      updateData()
   }
 
   const sendReferal = (groupID: string) => {
@@ -224,7 +227,7 @@ export default ({ navigation }: any) => {
         }
       })
       .catch(({ response }) => {
-        console.log(response)
+        console.log(response.data)
       })
   }
 
@@ -265,6 +268,7 @@ export default ({ navigation }: any) => {
 
   const getGroupData = async () => {
     let sessionStorage = getItem('groupData')
+
     if (sessionStorage) setGroupData(JSON.parse(sessionStorage))
 
     if (!retrieveData()?.groupID) return

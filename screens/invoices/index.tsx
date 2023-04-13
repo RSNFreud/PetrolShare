@@ -89,7 +89,7 @@ export default ({ navigation }: any) => {
                 >
                   Please select an payment to view
                 </Text>
-                <ScrollView keyboardShouldPersistTaps={'handled'}  >
+                <ScrollView keyboardShouldPersistTaps={'handled'}>
                   {data.map((e, c) => (
                     <TouchableOpacity
                       activeOpacity={0.9}

@@ -37,14 +37,14 @@ export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsTyp
     const submit = () => {
         setLoading(false)
         setErrors({ name: "", distance: "" })
-        const errors: { name: string, distance: string } = {}
+        const errors: { name?: string, distance?: string } = {}
         Object.entries(values).map(([key, value]) => {
             if (key === "distance") {
                 const distance = parseFloat(value)
                 if (isNaN(distance)) {
                     errors[key] = "Please enter a value above 0 and below " + maxDistance
                 }
-                if (distance > maxDistance || distance === 0) {
+                if (distance > (maxDistance as number) || distance === 0) {
                     errors[key] = "Please enter a value above 0 and below " + maxDistance
                 }
             }

@@ -1,10 +1,8 @@
 import Svg, { Path, G } from "react-native-svg"
-import ManageGroup from "../components/manageGroup"
 import { TouchableWithoutFeedback } from "react-native"
 import { Box, LongButton, Text } from '../components/Themed'
 import { useContext, useEffect, useState } from "react"
 import { Alert, getItem, setItem } from "../hooks"
-import generateGroupID from "../hooks/generateGroupID"
 import axios from "axios"
 import config from "../config"
 import { AuthContext } from "../hooks/context"
@@ -27,6 +25,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType).premium) setPremium(true)
+        else setPremium(false)
         Purchases.getCustomerInfo().then(customerInfo => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
                 setPremium(true)
@@ -35,9 +34,15 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
 
         Purchases.addCustomerInfoUpdateListener(info => {
             if (info.entitlements.active["premium"]?.isActive) setPremium(true)
-            else setPremium(false)
         });
     }, [])
+
+    useEffect(() => {
+        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
+        if (data && typeof data === "string") data = JSON.parse(data)
+        if ((data as GroupType).premium) setPremium(true)
+        else setPremium(false)
+    }, [getItem('groupData')])
 
     useEffect(() => {
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')

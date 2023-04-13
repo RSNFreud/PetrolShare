@@ -131,7 +131,7 @@ export default ({
           paddingBottom: noBottomPadding ? 0
             : 55, paddingHorizontal: homepage ? 0 : 25
         }}
-          style={{ maxHeight: Dimensions.get('window').height - 95 - 77 }} >
+          style={{ maxHeight: Dimensions.get('window').height - 95 - 77, flex: 1, display: 'flex' }} >
           <>{children}</>
         </ScrollView>
         }
