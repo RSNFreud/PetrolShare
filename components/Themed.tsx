@@ -320,7 +320,7 @@ export const LongButton = ({
       activeOpacity={0.9}
       style={{
         marginBottom: last ? 0 : 20,
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.tertiary,
         borderColor: Colors.border,
         borderRadius: 4,
         padding: 15,

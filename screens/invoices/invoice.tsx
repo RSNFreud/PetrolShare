@@ -84,7 +84,7 @@ export default ({ invoiceID }: PropsType) => {
   if (Object.keys(data).length === 0)
     return (
       <>
-        <ActivityIndicator size={'large'} />
+        <ActivityIndicator size={'large'} color={Colors.tertiary} />
       </>
     )
 
@@ -140,7 +140,7 @@ export default ({ invoiceID }: PropsType) => {
           <></>
         )}
       </Box>
-      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ marginBottom: 25 }}>
+      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
         {Object.entries(data.invoiceData).map(
           ([key, value]: any, count: number) => {
             return (

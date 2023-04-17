@@ -11,6 +11,7 @@ import SubmitButton from './submitButton'
 import Toast from 'react-native-toast-message'
 import { Alert, deleteItem, getItem, setItem } from '../../hooks'
 import config from '../../config'
+import Colors from '../../constants/Colors'
 export default ({ navigation }: any) => {
   const [data, setData] = useState({
     selectedPreset: null,
@@ -277,7 +278,7 @@ export default ({ navigation }: any) => {
                 </View>
               </Button>
             </View>
-            {presets === null && <ActivityIndicator size={'large'} />}
+            {presets === null && <ActivityIndicator size={'large'} color={Colors.tertiary} />}
             {presets && Boolean(presets.length) && (
               <View>
                 {presets.map((e: any) => {

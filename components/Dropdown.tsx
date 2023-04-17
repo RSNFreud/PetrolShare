@@ -107,7 +107,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
               );
             })}
         </Picker>
-        <Text style={{ zIndex: 3 }}>{selected || "Choose a currency"}</Text>
+        <Text style={{ zIndex: 3 }}>{selected || placeholder}</Text>
         <Svg
           width="11"
           height="13"

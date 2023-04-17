@@ -89,7 +89,7 @@ export default ({ navigation }: any) => {
                 >
                   Please select an payment to view
                 </Text>
-                <ScrollView keyboardShouldPersistTaps={'handled'} style={{ paddingBottom: 25 }}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
                   {data.map((e, c) => (
                     <TouchableOpacity
                       activeOpacity={0.9}
@@ -136,7 +136,7 @@ export default ({ navigation }: any) => {
               </Box>
             )
           ) : (
-            <ActivityIndicator size={"large"} />
+            <ActivityIndicator size={"large"} color={Colors.tertiary} />
           )}
         </View>
       )}

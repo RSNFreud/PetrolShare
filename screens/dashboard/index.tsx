@@ -143,6 +143,8 @@ export default ({ navigation }: any) => {
   }, [isFocused])
 
   const pageLoaded = async () => {
+    if (route.name === "Dashboard") setCurrentTab("Distance")
+
     if (scrollRef.current) {
       (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 })
     }
@@ -430,7 +432,7 @@ export default ({ navigation }: any) => {
       </View>
       <ScrollView ref={scrollRef} overScrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30 }}>
         {currentTab === "Distance" && <Distance onUpdate={updateData} />}
-        {currentTab === "Petrol" && <Petrol />}
+        {currentTab === "Petrol" && <Petrol handleClose={() => setCurrentTab('Distance')} />}
         {currentTab === "Group" && <Group onUpdate={updateData} />}
       </ScrollView>
       <Popup visible={visible} handleClose={() => { }} showClose={false}>

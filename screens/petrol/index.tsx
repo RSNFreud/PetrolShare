@@ -1,22 +1,24 @@
 import Input from "../../components/Input";
 import { View } from "react-native";
 import {
-  Breadcrumbs,
-  FlexFull,
   Button,
   Text,
   Box,
 } from "../../components/Themed";
-import Layout from "../../components/Layout";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
 import config from "../../config";
 import { useNavigation } from "@react-navigation/native";
+import Popup from "../../components/Popup";
+type PropsType = {
+  handleClose: () => void
+}
 
-export default () => {
+export default ({ handleClose }: PropsType) => {
   const { navigate } = useNavigation()
+  const [open, setOpen] = useState(false)
   const [data, setData] = useState({
     litersFilled: "",
     totalPrice: "",
@@ -35,6 +37,10 @@ export default () => {
   const [fuelFormat, setFuelFormat] = useState("");
 
   useEffect(() => {
+    setTimeout(() => {
+      setOpen(true)
+    }, 10);
+
     init();
   }, []);
 
@@ -80,7 +86,7 @@ export default () => {
   };
 
   return (
-    <>
+    <Popup visible={open} handleClose={handleClose}>
       <Box
         style={{
           paddingHorizontal: 15,
@@ -147,6 +153,6 @@ export default () => {
           </View>
         )}
       </View>
-    </>
+    </Popup>
   );
 };

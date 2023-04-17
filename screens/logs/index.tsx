@@ -8,6 +8,7 @@ import config from "../../config";
 import DateHead from "./dateHead";
 import LogItem from "./logItem";
 import Summary from "./summary";
+import Colors from "../../constants/Colors";
 
 export default () => {
   const { retrieveData } = useContext(AuthContext);
@@ -115,7 +116,7 @@ export default () => {
         ]}
       />
       {pageData.currentPage >= 1 && (
-        <View style={{ flex: 1, display: 'flex', marginBottom: 25 }}>
+        <View style={{ flex: 1, display: 'flex' }}>
           <DateHead
             data={currentData}
             handlePrevious={previousPage}
@@ -126,7 +127,7 @@ export default () => {
           {Boolean(Object.keys(summary).length) && (
             <>
               <Summary summary={summary} />
-              <ScrollView keyboardShouldPersistTaps={'handled'} >
+              <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }} >
                 {currentData &&
                   currentData["logs"].map((e: any, c: number) => {
                     return (
@@ -173,7 +174,7 @@ export default () => {
         </Box>
       )}
 
-      {!loaded && <ActivityIndicator size={"large"} />}
+      {!loaded && <ActivityIndicator size={"large"} color={Colors.tertiary} />}
     </Layout>
   );
 };
