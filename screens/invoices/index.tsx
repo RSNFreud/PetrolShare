@@ -75,7 +75,7 @@ export default ({ navigation }: any) => {
       {params && params["id"] ? (
         <Invoice invoiceID={params["id"]} />
       ) : (
-        <View style={{ flex: 1, display: 'flex', marginBottom: 25 }}>
+        <View style={{ flex: 1, display: 'flex' }}>
           {dataLoaded ? (
             Boolean(data.length > 0) ? (
               <>
@@ -89,7 +89,7 @@ export default ({ navigation }: any) => {
                 >
                   Please select an payment to view
                 </Text>
-                <ScrollView keyboardShouldPersistTaps={'handled'}>
+                <ScrollView keyboardShouldPersistTaps={'handled'} style={{ paddingBottom: 25 }}>
                   {data.map((e, c) => (
                     <TouchableOpacity
                       activeOpacity={0.9}

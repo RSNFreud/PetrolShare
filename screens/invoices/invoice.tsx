@@ -140,7 +140,7 @@ export default ({ invoiceID }: PropsType) => {
           <></>
         )}
       </Box>
-      <ScrollView keyboardShouldPersistTaps={'handled'} style={{ marginBottom: 20 }}>
+      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ marginBottom: 25 }}>
         {Object.entries(data.invoiceData).map(
           ([key, value]: any, count: number) => {
             return (

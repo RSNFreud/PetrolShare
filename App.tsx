@@ -17,7 +17,6 @@ import Login from "./screens/login";
 import Register from "./screens/register";
 import NotFoundScreen from "./screens/NotFoundScreen";
 import LinkingConfiguration from "./hooks/LinkingConfiguration";
-import distance from "./screens/distance";
 import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
@@ -34,8 +33,7 @@ import {
 // import gps from './archive/gps'
 import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
-import manageGroup from "./screens/group";
-import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
 
 SplashScreen.preventAutoHideAsync();

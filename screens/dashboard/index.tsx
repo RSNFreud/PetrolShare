@@ -232,7 +232,6 @@ export default ({ navigation }: any) => {
   }
 
   const updateData = async () => {
-    checkAlerts()
     if (getItem('showToast') === 'groupSettingsUpdated') {
       deleteItem('showToast')
       Toast.show({
@@ -242,6 +241,7 @@ export default ({ navigation }: any) => {
     }
     await getGroupData()
     getDistance()
+    checkAlerts()
     axios
       .get(
         config.REACT_APP_API_ADDRESS +

@@ -13,8 +13,10 @@ import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
 import config from "../../config";
+import { useNavigation } from "@react-navigation/native";
 
-export default ({ navigation }: any) => {
+export default () => {
+  const { navigate } = useNavigation()
   const [data, setData] = useState({
     litersFilled: "",
     totalPrice: "",
@@ -64,7 +66,7 @@ export default ({ navigation }: any) => {
       })
       .then(({ data }) => {
         setLoading(false);
-        navigation.navigate("Payments", { id: data });
+        navigate("Payments", { id: (data as string) });
       })
       .catch(({ response }) => {
         console.log(response);

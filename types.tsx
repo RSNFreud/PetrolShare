@@ -38,6 +38,7 @@ export type RootStackScreenProps<
 
 export type RootTabParamList = {
   Dashboard: { groupID?: string }
+  Payments: { id?: string }
   TabTwo: undefined
 }
 
