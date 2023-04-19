@@ -26,6 +26,7 @@ import Group from '../group'
 import Popup from '../../components/Popup'
 import Demo from '../../components/demo'
 import GroupSettings from '../../components/groupSettings'
+import ConfirmDistance from './confirmDistance'
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
@@ -41,6 +42,11 @@ export default ({ navigation }: any) => {
     petrol?: string
     currency?: string
   }>({})
+  const [confirmDistanceData, setConfirmDistanceData] = useState<{
+    distance: string
+    assignedBy: string
+    id: string
+  }>()
   const appState = useRef(AppState.currentState)
   const [currentScreen, setCurrentScreen] = useState<string>('Settings')
   const [currentTab, setCurrentTab] = useState('Distance')
@@ -161,7 +167,6 @@ export default ({ navigation }: any) => {
     }
 
     if (retrieveData().authenticationKey) {
-      checkForUnconfirmedDistance()
       updateData()
     }
   }
@@ -243,7 +248,11 @@ export default ({ navigation }: any) => {
       )
       .then(async ({ data }) => {
         if (data) {
-          console.log('do something');
+          setConfirmDistanceData(data)
+          setCurrentScreen("ConfirmDistance")
+          setTimeout(() => {
+            setVisible(true)
+          }, 300);
         }
       })
       .catch(({ response }) => {
@@ -260,6 +269,7 @@ export default ({ navigation }: any) => {
       })
     }
     await getGroupData()
+    checkForUnconfirmedDistance()
     getDistance()
     checkAlerts()
     axios
@@ -456,6 +466,7 @@ export default ({ navigation }: any) => {
       <Popup visible={visible} handleClose={() => { }} showClose={false}>
         {currentScreen === '' ? <Demo handleClose={handleClose} handleUpdate={updateData} /> : <></>}
         {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} newGroup hideCancel /> : <></>}
+        {currentScreen === "ConfirmDistance" && confirmDistanceData ? <ConfirmDistance handleComplete={handleClose} {...confirmDistanceData} /> : <></>}
       </Popup>
     </Layout>
   )
