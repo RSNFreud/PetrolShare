@@ -13,10 +13,10 @@ import config from "../../config";
 import { useNavigation } from "@react-navigation/native";
 import Popup from "../../components/Popup";
 type PropsType = {
-  handleClose: () => void
+  onClose: () => void
 }
 
-export default ({ handleClose }: PropsType) => {
+export default ({ onClose }: PropsType) => {
   const { navigate } = useNavigation()
   const [open, setOpen] = useState(false)
   const [data, setData] = useState({
@@ -84,9 +84,15 @@ export default ({ handleClose }: PropsType) => {
         setLoading(false);
       });
   };
+  const handleClose = () => {
+    setOpen(false)
+    setTimeout(() => {
+      onClose()
+    }, 500);
+  }
 
   return (
-    <Popup visible={open} handleClose={handleClose}>
+    <Popup visible={open} handleClose={handleClose} >
       <Box
         style={{
           paddingHorizontal: 15,

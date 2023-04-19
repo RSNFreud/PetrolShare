@@ -10,6 +10,7 @@ import Svg, { Path } from 'react-native-svg'
 import { deleteItem, getItem, setItem, Alert } from '../../hooks'
 import config from '../../config'
 import { useNavigation } from '@react-navigation/native'
+import AssignDistance from './assignDistance'
 
 export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [popupData, setPopupData] = useState(<></>)
@@ -147,6 +148,20 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
           </Svg>
         }
         handleClick={() => navigate('AddPreset')}
+      />
+      <LongButton
+        text="Assign Distance"
+        icon={
+          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+            <Path
+              fill="#fff"
+              d="M0 10.5h18v3H0v-3zM0 3h24v3H0V3zm0 18h10.852v-3H0v3z"
+            ></Path>
+          </Svg>
+        }
+        handleClick={() =>
+          openPopup(<AssignDistance handleClose={() => handleClose()} />)
+        }
       />
       <LongButton
         last

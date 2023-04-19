@@ -1,7 +1,7 @@
 import Popup from "./Popup"
 import { useState, useEffect, useContext } from 'react'
 import Input from "./Input"
-import Dropdown from "./Dropdown"
+import Dropdown, { item } from "./Dropdown"
 import { Button } from "./Themed"
 import axios from "axios"
 import config from "../config"
@@ -16,7 +16,7 @@ type PropsType = {
 }
 
 export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsType) => {
-    const [usernames, setUsernames] = useState<Array<string>>([])
+    const [usernames, setUsernames] = useState<Array<item>>([])
     let maxDistance: { fullName: string, distance: number } | number = Object.values(data).filter(e => e.fullName === "Unaccounted Distance")[0]
     if (maxDistance) maxDistance = maxDistance.distance
     const [errors, setErrors] = useState({ name: "", distance: "" })

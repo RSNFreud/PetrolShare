@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { Picker } from '@react-native-picker/picker';
 import Colors from "../constants/Colors";
 
-type item = { name: string; value: string; symbol?: string };
+export type item = { name: string; value: string; symbol?: string };
 
 type PropsType = {
   data: Array<item>;
@@ -25,16 +25,22 @@ type PropsType = {
 
 export default ({ data, value, handleSelected, errorMessage, placeholder, hiddenValue, label }: PropsType) => {
   const [selected, setSelected] = useState("");
+  const [displayText, setDisplayText] = useState(selected)
   const dropdownRef = useRef<any>("")
 
   const selectOption = (e: string) => {
     setSelected(e);
     handleSelected(e);
+    setDisplayText(data.filter((q) => q.value.toString() === e || q.name.toString() === e)[0]?.name);
   };
 
   useEffect(() => {
+    setDisplayText(data.filter((q) => q.value.toString() === value || q.name.toString() === value)[0]?.name);
+  }, [selected])
+
+  useEffect(() => {
     if (!data || selected) return;
-    setSelected(data.filter((e) => e.value === value || e.name === value)[0]?.value);
+    setSelected(data.filter((e) => e.value.toString() === value || e.name.toString() === value)[0]?.name);
   }, [data, value, selected]);
 
   return (<TouchableWithoutFeedback onPress={() => dropdownRef.current.focus()} >
@@ -107,7 +113,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
               );
             })}
         </Picker>
-        <Text style={{ zIndex: 3 }}>{selected || placeholder}</Text>
+        <Text style={{ zIndex: 3 }}>{displayText || placeholder}</Text>
         <Svg
           width="11"
           height="13"

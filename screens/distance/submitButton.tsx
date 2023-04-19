@@ -5,12 +5,13 @@ import { getGroupData } from '../../hooks'
 
 type PropsType = {
   loading: boolean
+  text?: string
   handleClick: () => void
   errors: string
   distance: string
 }
 
-export default ({ loading, handleClick, errors, distance }: PropsType) => {
+export default ({ loading, handleClick, errors, distance, text }: PropsType) => {
   const [distanceFormat, setDistanceFormat] = useState()
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default ({ loading, handleClick, errors, distance }: PropsType) => {
     <>
       <Button loading={loading} handleClick={handleClick}>
         <>
-          Add Distance{' '}
+          {text || <>Add Distance</>}{' '}
           {distance && (
             <>
               ({distance} {distanceFormat || ''})

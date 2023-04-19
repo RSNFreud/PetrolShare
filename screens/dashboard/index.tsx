@@ -160,8 +160,10 @@ export default ({ navigation }: any) => {
       }
     }
 
-    if (retrieveData().authenticationKey)
+    if (retrieveData().authenticationKey) {
+      checkForUnconfirmedDistance()
       updateData()
+    }
   }
 
   const sendReferal = (groupID: string) => {
@@ -226,6 +228,22 @@ export default ({ navigation }: any) => {
           setItem('userData', JSON.stringify(sessionStorage))
         } catch (err) {
           console.log(err)
+        }
+      })
+      .catch(({ response }) => {
+        console.log(response.data)
+      })
+  }
+
+  const checkForUnconfirmedDistance = () => {
+    axios
+      .get(
+        config.REACT_APP_API_ADDRESS +
+        `/distance/check-distance?authenticationKey=${retrieveData().authenticationKey}`,
+      )
+      .then(async ({ data }) => {
+        if (data) {
+          console.log('do something');
         }
       })
       .catch(({ response }) => {
@@ -432,7 +450,7 @@ export default ({ navigation }: any) => {
       </View>
       <ScrollView ref={scrollRef} overScrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30 }}>
         {currentTab === "Distance" && <Distance onUpdate={updateData} />}
-        {currentTab === "Petrol" && <Petrol handleClose={() => setCurrentTab('Distance')} />}
+        {currentTab === "Petrol" && <Petrol onClose={() => setCurrentTab('Distance')} />}
         {currentTab === "Group" && <Group onUpdate={updateData} />}
       </ScrollView>
       <Popup visible={visible} handleClose={() => { }} showClose={false}>
