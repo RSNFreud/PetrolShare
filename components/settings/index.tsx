@@ -20,17 +20,14 @@ const HorizontalButton = ({
   return (
     <Button
       handleClick={handleClick}
-      noText
       styles={{
-        flexDirection: 'row',
-        alignContent: 'center',
+        justifyContent: 'flex-start',
         marginBottom: last ? 0 : 15,
       }}
-    >
-      {icon}
-
-      <Text style={{ paddingLeft: 10, fontWeight: '700' }}>{text}</Text>
-    </Button>
+      textStyle={{ fontSize: 16 }}
+      icon={icon}
+      children={text}
+    />
   )
 }
 

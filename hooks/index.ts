@@ -55,7 +55,7 @@ export const Alert = (
   options?: AlertOptions,
 ) => {
   if (Platform.OS !== 'web')
-    DefaultAlert.alert(title, message, buttons, options)
+    DefaultAlert.alert(title, message, buttons, { userInterfaceStyle: 'dark' })
   else alertPolyfill(title, message, buttons, options)
 }
 

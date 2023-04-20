@@ -51,12 +51,14 @@ export function Text(props: TextProps) {
 
 type ButtonType = {
   children: JSX.Element | Array<JSX.Element> | string
+  icon?: JSX.Element
   color?: 'blue' | 'red'
   style?: 'regular' | 'ghost'
   size?: 'regular' | 'small' | 'medium'
   handleClick?: () => void
   styles?: TouchableOpacity['props']['style']
   noText?: boolean
+  textStyle?: TextProps['style']
   disabled?: boolean
   loading?: boolean
 }
@@ -69,8 +71,9 @@ export const Button = ({
   disabled,
   style,
   color,
+  icon,
   loading,
-  styles,
+  styles, textStyle
 }: ButtonType) => {
   let variableProperties = {
     height: 51,
@@ -113,7 +116,8 @@ export const Button = ({
 
   switch (style) {
     case 'ghost':
-      variableProperties.borderColor = Colors.tertiary
+      if (color !== "red")
+        variableProperties.borderColor = Colors.tertiary
       variableProperties.backgroundColor = 'transparent'
       variableProperties.textColor = Colors.tertiary
       break
@@ -130,6 +134,10 @@ export const Button = ({
         {
           borderStyle: 'solid',
           borderRadius: 4,
+          flexDirection: 'row',
+          gap: 10,
+          display: 'flex',
+          justifyContent: 'center',
           borderWidth: 1,
           borderColor: variableProperties.borderColor,
           paddingHorizontal: variableProperties.paddingHorizontal,
@@ -149,16 +157,18 @@ export const Button = ({
       ) : noText ? (
         children
       ) : (
-        <Text
-          style={{
-            color: variableProperties.textColor,
-            fontSize: variableProperties.fontSize,
-            fontWeight: '700',
-            textAlign: 'center',
-          }}
-        >
-          {children}
-        </Text>
+        <>
+          {icon}
+          <Text
+            style={[{
+              color: variableProperties.textColor,
+              fontSize: variableProperties.fontSize,
+              fontWeight: '700',
+              textAlign: 'center',
+            }, textStyle]}
+          >
+            {children}
+          </Text></>
       )}
     </TouchableOpacity>
   )

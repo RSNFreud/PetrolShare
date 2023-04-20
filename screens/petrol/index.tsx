@@ -12,11 +12,12 @@ import { convertToSentenceCase, getGroupData } from "../../hooks";
 import config from "../../config";
 import { useNavigation } from "@react-navigation/native";
 import Popup from "../../components/Popup";
+import React from "react";
 type PropsType = {
   onClose: () => void
 }
 
-export default ({ onClose }: PropsType) => {
+export default React.memo(({ onClose }: PropsType) => {
   const { navigate } = useNavigation()
   const [open, setOpen] = useState(false)
   const [data, setData] = useState({
@@ -161,4 +162,4 @@ export default ({ onClose }: PropsType) => {
       </View>
     </Popup>
   );
-};
+});

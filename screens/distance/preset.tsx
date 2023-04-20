@@ -1,6 +1,6 @@
-import { TouchableWithoutFeedback, View, ActivityIndicator, Dimensions } from 'react-native'
+import { TouchableWithoutFeedback, View, ActivityIndicator, Dimensions, ScrollView } from 'react-native'
 import Input from '../../components/Input'
-import { Breadcrumbs, Text, Button, FlexFull } from '../../components/Themed'
+import { Breadcrumbs, Text, Button, FlexFull, Seperator } from '../../components/Themed'
 import Layout from '../../components/Layout'
 import Svg, { Path } from 'react-native-svg'
 import { useContext, useEffect, useRef, useState } from 'react'
@@ -201,14 +201,14 @@ export default ({ navigation }: any) => {
     }
   }
   return (
-    <Layout>
+    <Layout noScrollView>
       <Breadcrumbs
         links={[
           {
             name: 'Dashboard',
           },
           {
-            name: 'Add Preset',
+            name: 'Presets',
           },
         ]}
       />
@@ -228,59 +228,42 @@ export default ({ navigation }: any) => {
           }}
         >
           <View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 30,
-              }}
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 25 }}>
+              Presets:
+            </Text>
+            <Button icon={<Svg
+              width="11"
+              height="11"
+              fill="none"
+              viewBox="0 0 11 11"
             >
-              <Text style={{ fontSize: 18, fontWeight: '700' }}>
-                Select Preset:
-              </Text>
-              <Button
-                size="small"
-                styles={{ width: 'auto', paddingVertical: 4, height: 'auto' }}
-                noText
-                handleClick={() => {
-                  setPresetFormData({
-                    presetID: '',
-                    presetName: '',
-                    distance: '',
-                  }),
-                    openPopup('new')
-                }}
-              >
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Svg
-                    width="11"
-                    height="10"
-                    fill="none"
-                    viewBox="0 0 11 10"
-                    style={{ marginRight: 8 }}
-                  >
-                    <Path
-                      stroke="#fff"
-                      strokeLinecap="round"
-                      strokeWidth="1.5"
-                      d="M6 5H1m5 5V5v5zm0-5V0v5zm0 0h5-5z"
-                    ></Path>
-                  </Svg>
-                  <Text style={{ fontSize: 14 }}> Add New</Text>
-                </View>
-              </Button>
+              <Path
+                stroke="#fff"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+                d="M6 5.5H1m5 5v-5 5zm0-5v-5 5zm0 0h5-5z"
+              ></Path>
+            </Svg>}
+
+              handleClick={() => {
+                setPresetFormData({
+                  presetID: '',
+                  presetName: '',
+                  distance: '',
+                }),
+                  openPopup('new')
+              }}
+              children={'Add Preset'} />
+
+          </View>
+          <View style={{ flex: 1 }}>
+            <View style={{ position: 'relative', marginVertical: 40, display: 'flex', justifyContent: 'center', flexDirection: 'row' }}>
+              <Text style={{ textAlign: 'center', height: 20, backgroundColor: Colors.background, zIndex: 2, position: 'relative', width: 'auto', paddingHorizontal: 10 }}>OR</Text>
+              <Seperator style={{ position: 'absolute', top: 10 }} />
             </View>
             {presets === null && <ActivityIndicator size={'large'} color={Colors.tertiary} />}
             {presets && Boolean(presets.length) && (
-              <View>
+              <ScrollView style={{ flex: 1, marginBottom: 25 }} >
                 {presets.map((e: any) => {
                   return (
                     <TouchableWithoutFeedback
@@ -299,16 +282,13 @@ export default ({ navigation }: any) => {
                         style={{
                           backgroundColor:
                             data.selectedPreset === e.presetID
-                              ? '#095362'
-                              : '#001E24',
+                              ? Colors.primary
+                              : Colors.secondary,
                           borderStyle: 'solid',
                           borderWidth: 2,
-                          borderColor:
-                            data.selectedPreset === e.presetID
-                              ? '#388D9E'
-                              : '#1B5662',
+                          borderColor: Colors.border,
                           borderRadius: 4,
-                          marginBottom: 12,
+                          marginBottom: 15,
                           padding: 6,
                           paddingLeft: 15,
                           display: 'flex',
@@ -333,55 +313,41 @@ export default ({ navigation }: any) => {
                             styles={{
                               borderColor: 'transparent',
                               paddingVertical: 0,
-                              width: 92,
-                              marginRight: 5,
+                              width: 32,
+                              marginRight: 10,
                               minHeight: 0,
                               paddingHorizontal: 0,
-                              height: 34,
+                              height: 32,
                               flexDirection: 'row',
                               display: 'flex',
                               justifyContent: 'center',
                               alignContent: 'center',
-                              backgroundColor: '#0B404A',
+                              backgroundColor: Colors.tertiary,
                             }}
                             handleClick={() => handleEdit(e.presetID)}
                           >
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                                alignItems: 'center',
-                              }}
+                            <Svg
+                              width="12"
+                              height="12"
+                              fill="none"
+                              viewBox="0 0 12 12"
                             >
-                              <Svg
-                                style={{ marginRight: 8 }}
-                                width="12"
-                                height="12"
-                                fill="none"
-                                viewBox="0 0 12 12"
-                              >
-                                <Path
-                                  stroke="#fff"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M2.167 8.024l6.118-6.119a1.28 1.28 0 011.81 1.81l-6.12 6.119a1 1 0 01-.51.273L1.5 10.5l.393-1.965a1 1 0 01.274-.511v0z"
-                                ></Path>
-                                <Path stroke="#fff" d="M7.25 3.25l1.5 1.5"></Path>
-                              </Svg>
-                              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                                Edit
-                              </Text>
-                            </View>
+                              <Path
+                                stroke="#fff"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.167 8.024l6.118-6.119a1.28 1.28 0 011.81 1.81l-6.12 6.119a1 1 0 01-.51.273L1.5 10.5l.393-1.965a1 1 0 01.274-.511v0z"
+                              ></Path>
+                              <Path stroke="#fff" d="M7.25 3.25l1.5 1.5"></Path>
+                            </Svg>
                           </Button>
                           <Button
                             styles={{
                               paddingVertical: 0,
                               paddingHorizontal: 0,
                               minHeight: 0,
-                              width: 92,
-                              height: 34,
+                              width: 32,
+                              height: 32,
                               flexDirection: 'row',
                               display: 'flex',
                               justifyContent: 'center',
@@ -391,52 +357,32 @@ export default ({ navigation }: any) => {
                             color="red"
                             handleClick={() => openPopup('delete', e.presetID)}
                           >
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                                alignItems: 'center',
-                              }}
+                            <Svg
+                              width="12"
+                              height="14"
+                              fill="none"
+                              viewBox="0 0 12 14"
                             >
-                              <Svg
-                                width="12"
-                                height="14"
-                                fill="none"
-                                style={{ marginRight: 7 }}
-                                viewBox="0 0 12 14"
-                              >
-                                <Path
-                                  stroke="#FA4F4F"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M1 2.58l1.28 7.82a2.223 2.223 0 001.52 1.76l.183.058a6.666 6.666 0 004.034 0l.182-.058a2.222 2.222 0 001.522-1.759L11 2.581"
-                                ></Path>
-                                <Path
-                                  stroke="#FA4F4F"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M6 3.692c2.761 0 5-.498 5-1.111 0-.614-2.239-1.111-5-1.111s-5 .497-5 1.11c0 .614 2.239 1.112 5 1.112z"
-                                ></Path>
-                              </Svg>
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  fontWeight: 'bold',
-                                  color: '#FA4F4F',
-                                }}
-                              >
-                                Delete
-                              </Text>
-                            </View>
+                              <Path
+                                stroke="#FA4F4F"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M1 2.58l1.28 7.82a2.223 2.223 0 001.52 1.76l.183.058a6.666 6.666 0 004.034 0l.182-.058a2.222 2.222 0 001.522-1.759L11 2.581"
+                              ></Path>
+                              <Path
+                                stroke="#FA4F4F"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 3.692c2.761 0 5-.498 5-1.111 0-.614-2.239-1.111-5-1.111s-5 .497-5 1.11c0 .614 2.239 1.112 5 1.112z"
+                              ></Path>
+                            </Svg>
                           </Button>
                         </View>
                       </View>
                     </TouchableWithoutFeedback>
                   )
                 })}
-              </View>
+              </ScrollView>
             )}
             {presets && Boolean(presets?.length === 0) && (
               <Text style={{ fontSize: 16, lineHeight: 24 }}>
@@ -446,6 +392,7 @@ export default ({ navigation }: any) => {
             )}
           </View>
           <SubmitButton
+            style='ghost'
             loading={loading}
             handleClick={handleSubmit}
             errors={errors}

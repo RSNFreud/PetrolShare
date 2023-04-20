@@ -21,44 +21,6 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
     const [premium, setPremium] = useState(false)
     const { retrieveData } = useContext(AuthContext)
 
-    useEffect(() => {
-        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-        if (data && typeof data === "string") data = JSON.parse(data)
-        if ((data as GroupType).premium) setPremium(true)
-        else setPremium(false)
-        Purchases.getCustomerInfo().then(customerInfo => {
-            if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                setPremium(true)
-            }
-        }).catch(() => { })
-
-        Purchases.addCustomerInfoUpdateListener(info => {
-            if (info.entitlements.active["premium"]?.isActive) setPremium(true)
-        });
-    }, [])
-
-    useEffect(() => {
-        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-        if (data && typeof data === "string") data = JSON.parse(data)
-        if ((data as GroupType).premium) setPremium(true)
-        else setPremium(false)
-    }, [getItem('groupData')])
-
-    useEffect(() => {
-        let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-        if (data && typeof data === "string") data = JSON.parse(data)
-        if (!(data as GroupType).premium && premium) {
-            axios
-                .post(
-                    config.REACT_APP_API_ADDRESS +
-                    '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey
-                }).catch(err => {
-                    console.log(err.message);
-                })
-        }
-    }, [premium])
-
     const createGroup = async () => {
         Alert(
             "Are you sure you want to create a new group?",
@@ -75,38 +37,6 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         );
     }
 
-    const openPayment = () => {
-        Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
-            axios
-                .post(
-                    config.REACT_APP_API_ADDRESS +
-                    '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey,
-                }
-                )
-                .then(async () => {
-                    axios
-                        .get(
-                            config.REACT_APP_API_ADDRESS +
-                            '/group/get?authenticationKey=' +
-                            retrieveData().authenticationKey,
-                        )
-                        .then(async ({ data }) => {
-                            setItem('groupData', JSON.stringify(data))
-                        })
-                        .catch(() => { })
-                })
-                .catch(() => { })
-            setPremium(true)
-        }).catch(err => {
-            if (err.message === 'The payment is pending.') {
-                setTimeout(() => {
-                    Alert("Your payment is being processed", "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!")
-                }, 700);
-            }
-        })
-    }
-
     const openModal = (modal: string) => {
         setCurrentScreen(modal)
         setVisible(true)
@@ -119,22 +49,6 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
 
     return (
         <>
-            <Box style={{ marginBottom: 25, paddingHorizontal: 25, paddingVertical: 25 }}>
-                {premium ?
-                    <Text>
-                        You are currently on the <Text style={{ color: '#7CFF5B' }}>PREMIUM</Text> version of Petrolshare. This unlocks all the features of the application. Thank you for supporting us!
-                    </Text> :
-                    <>
-                        <Text>
-                            You are currently on the <Text style={{ color: '#FA4F4F' }}>FREE</Text> version of Petrolshare. This locks you to having a maximum of 2 users in your group.
-                        </Text>
-                        <Text style={{ marginTop: 10 }}>
-                            To upgrade,
-                            <TouchableWithoutFeedback><Text style={{ fontWeight: 'bold' }} onPress={openPayment}> click here!</Text></TouchableWithoutFeedback>
-                        </Text>
-                    </>
-                }
-            </Box>
             <LongButton text="Create group" icon={
                 <Svg
                     width="20"

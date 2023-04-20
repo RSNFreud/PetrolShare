@@ -41,13 +41,13 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
                   authenticationKey: retrieveData().authenticationKey,
                   groupID: form.data,
                 })
-                .then(async () => {
+                .then(async ({ data }) => {
                   setLoading(false);
                   setForm({
                     data: "",
                     errors: "",
                   });
-                  handleComplete(form.data);
+                  handleComplete(data);
                 })
                 .catch(({ response }) => {
                   setLoading(false);
@@ -67,9 +67,9 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
           authenticationKey: retrieveData().authenticationKey,
           groupID: form.data,
         })
-        .then(async (e) => {
+        .then(async ({ data }) => {
           setLoading(false);
-          handleComplete(form.data);
+          handleComplete(data);
         })
         .catch(({ response }) => {
           setLoading(false);

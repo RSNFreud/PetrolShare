@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Box, Text } from '../../components/Themed'
+import { Text } from '../../components/Themed'
 import { AuthContext } from '../../hooks/context'
 import {
   View,
@@ -27,6 +27,8 @@ import Popup from '../../components/Popup'
 import Demo from '../../components/demo'
 import GroupSettings from '../../components/groupSettings'
 import ConfirmDistance from './confirmDistance'
+import React from 'react'
+import FadeWrapper from './fadeWrapper'
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
@@ -52,6 +54,7 @@ export default ({ navigation }: any) => {
   const [currentTab, setCurrentTab] = useState('Distance')
   const scrollRef = useRef(null)
   const isFocused = useIsFocused()
+  const [previousTab, setPreviousTab] = useState(currentTab)
 
   useEffect(() => {
     if (dataRetrieved.current) return
@@ -126,6 +129,9 @@ export default ({ navigation }: any) => {
     if (scrollRef.current) {
       (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 })
     }
+
+    if (currentTab === "Petrol" || currentTab === previousTab) return
+    setPreviousTab(currentTab)
   }, [currentTab])
 
   useEffect(() => {
@@ -149,7 +155,7 @@ export default ({ navigation }: any) => {
   }, [isFocused])
 
   const pageLoaded = async () => {
-    if (route.name === "Dashboard") setCurrentTab("Distance")
+    // if (route.name === "Dashboard") setCurrentTab("Distance")
 
     if (scrollRef.current) {
       (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 })
@@ -371,6 +377,10 @@ export default ({ navigation }: any) => {
     updateData();
   }
 
+  const closePetrol = () => {
+    setCurrentTab(previousTab)
+  }
+
   return (
     <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>
@@ -459,9 +469,13 @@ export default ({ navigation }: any) => {
         </Svg>} text='Group' />
       </View>
       <ScrollView ref={scrollRef} overScrollMode={'always'} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 55, paddingTop: 30 }}>
-        {currentTab === "Distance" && <Distance onUpdate={updateData} />}
-        {currentTab === "Petrol" && <Petrol onClose={() => setCurrentTab('Distance')} />}
-        {currentTab === "Group" && <Group onUpdate={updateData} />}
+        <FadeWrapper currentTab={currentTab}>
+          <>
+            {currentTab === "Distance" && <Distance onUpdate={updateData} />}
+            {currentTab === "Petrol" && <Petrol onClose={closePetrol} />}
+            {currentTab === "Group" && <Group onUpdate={updateData} />}
+          </>
+        </FadeWrapper>
       </ScrollView>
       <Popup visible={visible} handleClose={() => { }} showClose={false}>
         {currentScreen === '' ? <Demo handleClose={handleClose} handleUpdate={updateData} /> : <></>}

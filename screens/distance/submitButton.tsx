@@ -6,12 +6,13 @@ import { getGroupData } from '../../hooks'
 type PropsType = {
   loading: boolean
   text?: string
+  style?: 'regular' | 'ghost'
   handleClick: () => void
   errors: string
   distance: string
 }
 
-export default ({ loading, handleClick, errors, distance, text }: PropsType) => {
+export default ({ loading, handleClick, errors, distance, text, style }: PropsType) => {
   const [distanceFormat, setDistanceFormat] = useState()
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default ({ loading, handleClick, errors, distance, text }: PropsType) => 
 
   return (
     <>
-      <Button loading={loading} handleClick={handleClick}>
+      <Button loading={loading} handleClick={handleClick} style={style}>
         <>
           {text || <>Add Distance</>}{' '}
           {distance && (

@@ -31,11 +31,11 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
   const selectOption = (e: string) => {
     setSelected(e);
     handleSelected(e);
-    setDisplayText(data.filter((q) => q.value.toString() === e || q.name.toString() === e)[0]?.name);
+    setDisplayText(data.filter((q) => q.value.toString() === e?.toString() || q.name.toString() === e?.toString())[0]?.name);
   };
 
   useEffect(() => {
-    setDisplayText(data.filter((q) => q.value.toString() === value || q.name.toString() === value)[0]?.name);
+    setDisplayText(data.filter((q) => q.value.toString() === value?.toString() || q.name.toString() === value?.toString())[0]?.name);
   }, [selected])
 
   useEffect(() => {
