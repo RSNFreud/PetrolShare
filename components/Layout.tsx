@@ -197,7 +197,7 @@ export default ({
   return (
     <>
       <View
-        style={[style, { maxHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1, overflow: 'hidden' }]}
+        style={[style, { minHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1, overflow: 'hidden' }]}
         {...rest}
       >
         {!!isLoggedIn && !premium && <TouchableWithoutFeedback onPress={() => setShowPremiumInfo(true)}>
