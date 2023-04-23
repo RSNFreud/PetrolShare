@@ -56,8 +56,8 @@ export default ({ handleClose }: { handleClose: () => void }) => {
     }
 
     return <>
-        {Boolean(usernames.length) ?
-            <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue /> : <></>}
+
+        <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue />
         <Input handleInput={e => setValues({ ...values, distance: e })} label={`Distance to apply`} errorMessage={errors.distance} placeholder={'Enter amount'} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20 }} />
         <SubmitButton
             text="Assign Distance"

@@ -18,8 +18,6 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
     const { retrieveData } = useContext(AuthContext)
 
     useEffect(() => {
-        console.log(id);
-
         ; (async () => {
             let i = await getGroupData()
             if (!i) return

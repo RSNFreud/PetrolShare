@@ -1,13 +1,16 @@
 import {
   Animated,
   Dimensions,
+  LayoutChangeEvent,
   Modal,
   Pressable,
   ScrollView,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Svg, { Path } from "react-native-svg";
 import Colors from "../constants/Colors";
+
+const TIME_TO_CLOSE = 300
 
 type ModalType = {
   visible: boolean;
@@ -27,44 +30,55 @@ export default ({
   animate = true,
 }: ModalType) => {
   const [opened, setOpened] = useState(false);
+  const [modalHeight, setModalHeight] = useState(0)
   const [isVisible, setIsVisible] = useState(false);
-  let position = new Animated.Value(1000);
-  useEffect(() => {
-    if (opened) return;
-    if (!animate) return position.setValue(0);
+  let position = useRef(new Animated.Value(modalHeight)).current;
 
+  const getHeight = (event: LayoutChangeEvent) => {
+    setModalHeight(event?.nativeEvent?.layout.height)
+  }
+
+  const open = () => {
     Animated.sequence([
       Animated.timing(position, {
         toValue: 0,
-        duration: 400,
+        duration: TIME_TO_CLOSE,
+        delay: 200,
         useNativeDriver: true,
-      }),
-    ]).start(() => {
-      if (isVisible || visible) setOpened(true);
-    });
-    position.addListener(({ value }) => { });
+      })]).start((e) => {
 
-    return () => {
-      position.removeAllListeners();
-    };
-  }, [position]);
+        if (isVisible || visible) setOpened(true);
+      });
+  }
 
   const close = () => {
     position.setValue(0);
+    setOpened(true)
     Animated.sequence([
       Animated.timing(position, {
-        toValue: 1000,
-        duration: 400,
+        toValue: modalHeight,
+        duration: TIME_TO_CLOSE,
         useNativeDriver: true,
       }),
     ]).start((e) => {
+      handleClose()
       setIsVisible(false);
       setOpened(false);
     });
   };
+
+  useEffect(() => {
+    if (!isVisible || opened) return
+    position.setValue(modalHeight || 1000)
+
+    if (!animate) return position.setValue(0);
+    if (modalHeight >= 1) open()
+  }, [isVisible, modalHeight])
+
+
   useEffect(() => {
     if (!visible && isVisible) return close();
-    else setIsVisible(visible);
+    setIsVisible(visible);
   }, [visible]);
 
   return (
@@ -75,7 +89,7 @@ export default ({
       accessibilityLabel={"popup"}
     >
       <Pressable
-        onPress={() => handleClose()}
+        onPress={close}
         android_disableSound={true}
         style={{
           backgroundColor: "rgba(35, 35, 35, 0.8)",
@@ -83,6 +97,7 @@ export default ({
         }}
       />
       <Animated.View
+        onLayout={(e) => getHeight(e)}
         style={{
           backgroundColor: Colors.secondary,
           height: height,
@@ -102,9 +117,7 @@ export default ({
         {showClose && (
           <Pressable
             android_disableSound={true}
-            onPress={() => {
-              handleClose();
-            }}
+            onPress={close}
             accessibilityHint={"closes the popup"}
             style={{
               position: "absolute",
@@ -132,7 +145,7 @@ export default ({
           style={{
             height: "100%",
           }}
-          contentContainerStyle={{         
+          contentContainerStyle={{
             paddingVertical: 30,
             paddingHorizontal: 25
           }}

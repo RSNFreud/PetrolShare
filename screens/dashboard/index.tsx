@@ -180,12 +180,13 @@ export default ({ navigation }: any) => {
   const sendReferal = (groupID: string) => {
     setTimeout(() => {
       Alert(
-        'We have located a referal code!',
+        'We have located a referral code!',
         `Do you want to change your group ID to ${groupID}? Doing so will reset your current session.`,
         [
           {
             text: 'Yes',
             onPress: () => {
+              if (route.name === "Login") return
               axios
                 .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
                   authenticationKey: retrieveData().authenticationKey,
@@ -199,7 +200,9 @@ export default ({ navigation }: any) => {
                   })
                   setItem('referalCode', '')
                 })
-                .catch(() => {
+                .catch((e) => {
+                  console.log(e);
+
                   Toast.show({
                     text1: 'There is no group with that ID!',
                     type: 'default',

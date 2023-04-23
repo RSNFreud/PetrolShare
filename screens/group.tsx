@@ -49,7 +49,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
 
     return (
         <>
-            <LongButton text="Create group" icon={
+            <LongButton text="Create Group" icon={
                 <Svg
                     width="20"
                     height="20"

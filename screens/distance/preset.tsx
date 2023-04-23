@@ -216,11 +216,11 @@ export default ({ navigation }: any) => {
         style={{
           position: 'relative',
           flex: 1,
-          minHeight: Dimensions.get('window').height - 108 - 95 - 77,
         }}
       >
         <View
           style={{
+            flex: 1,
             display: 'flex',
             justifyContent: 'space-between',
             height: '100%',
@@ -400,7 +400,6 @@ export default ({ navigation }: any) => {
           />
         </View>
       </View>
-
 
       <Popup
         visible={visible}

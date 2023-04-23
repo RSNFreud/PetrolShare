@@ -30,7 +30,6 @@ import {
   deregisterForPushNotifications,
   registerForPushNotificationsAsync,
 } from "./components/sendNotification";
-// import gps from './archive/gps'
 import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
@@ -256,11 +255,6 @@ export default function App() {
                       name="AddPreset"
                       component={preset}
                       options={{ title: "Add Preset" }}
-                    />
-                    <Stack.Screen
-                      name="AddPetrol"
-                      component={petrol}
-                      options={{ title: "Add Petrol" }}
                     />
                     <Stack.Screen name="History" component={logs} />
                     <Stack.Screen name="Payments" component={invoices} />

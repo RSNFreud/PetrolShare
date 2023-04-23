@@ -56,7 +56,7 @@ export default ({
   useEffect(() => {
     let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
     if (data && typeof data === "string") data = JSON.parse(data)
-    if ((data as GroupType).premium) setPremium(true)
+    if ((data as GroupType)?.premium) setPremium(true)
     else setPremium(false)
     Purchases.getCustomerInfo().then(customerInfo => {
       if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
@@ -72,14 +72,14 @@ export default ({
   useEffect(() => {
     let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
     if (data && typeof data === "string") data = JSON.parse(data)
-    if ((data as GroupType).premium) setPremium(true)
+    if ((data as GroupType)?.premium) setPremium(true)
     else setPremium(false)
   }, [getItem('groupData')])
 
   useEffect(() => {
     let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
     if (data && typeof data === "string") data = JSON.parse(data)
-    if (!(data as GroupType).premium && premium) {
+    if (!(data as GroupType)?.premium && premium) {
       axios
         .post(
           config.REACT_APP_API_ADDRESS +
@@ -197,11 +197,11 @@ export default ({
   return (
     <>
       <View
-        style={[style, { minHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1 }]}
+        style={[style, { maxHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1, overflow: 'hidden' }]}
         {...rest}
       >
         {!!isLoggedIn && !premium && <TouchableWithoutFeedback onPress={() => setShowPremiumInfo(true)}>
-          <View style={{ alignItems: 'center', backgroundColor: Colors.background }}>
+          <View style={{ alignItems: 'center', backgroundColor: Colors.tertiary }}>
             <Text style={{ maxWidth: 300, textAlign: 'center', fontSize: 14, lineHeight: 24, padding: 10 }}>You are currently using the trial version of PetrolShare!
               <Text style={{ fontWeight: 'bold', fontSize: 14 }}> Click here to learn more...</Text>
             </Text>
@@ -211,14 +211,14 @@ export default ({
         {homepage || noScrollView ? <View
           style={{
             paddingBottom: homepage
-              || noBottomPadding ? 0 : 55, paddingHorizontal: homepage ? 0 : 25, maxHeight: Dimensions.get('window').height - 95 - 77, flex: 1, display: 'flex'
+              || noBottomPadding ? 0 : 55, paddingHorizontal: homepage ? 0 : 25, flex: 1, display: 'flex'
           }}>
           <>{children}</>
         </View> : <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps={'handled'} contentContainerStyle={{
           paddingBottom: noBottomPadding ? 0
             : 55, paddingHorizontal: homepage ? 0 : 25
         }}
-          style={{ maxHeight: Dimensions.get('window').height - 95 - 77, flex: 1, display: 'flex' }} >
+          style={{ flex: 1, display: 'flex' }} >
           <>{children}</>
         </ScrollView>
         }
