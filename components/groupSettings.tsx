@@ -113,8 +113,10 @@ export default ({
     await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
       authenticationKey: retrieveData().authenticationKey,
       groupID: groupID,
+    }).then(({ data: { groupID, message } }) => {
+      if (message) Alert('', message)
+      updateGroup(groupID)
     })
-    updateGroup(groupID)
   }
 
   const updateGroup = async (groupID?: string) => {

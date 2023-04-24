@@ -9,7 +9,7 @@ import { AuthContext } from '../../hooks/context'
 import Popup from '../../components/Popup'
 import SubmitButton from './submitButton'
 import Toast from 'react-native-toast-message'
-import { Alert, deleteItem, getItem, setItem } from '../../hooks'
+import { Alert, deleteItem, getItem, sendCustomEvent, setItem } from '../../hooks'
 import config from '../../config'
 import Colors from '../../constants/Colors'
 export default ({ navigation }: any) => {
@@ -105,7 +105,7 @@ export default ({ navigation }: any) => {
       .then(async () => {
         setLoading(false)
         deleteItem('draft')
-        setItem('showToast', 'distanceUpdated')
+        sendCustomEvent('sendAlert', 'Distance successfully updated!')
         navigation.navigate('Dashboard')
       })
       .catch(({ response }) => {

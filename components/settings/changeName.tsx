@@ -32,10 +32,9 @@ export default ({
       .then(async () => {
         setLoading(false)
         handleClose()
-        setItem('showToast', 'nameUpdated')
-        sendCustomEvent('dataUpdated')
+        sendCustomEvent('sendAlert', 'Your name has been successfully updated!')
       })
-      .catch((err) => {})
+      .catch((err) => { })
   }
 
   return (

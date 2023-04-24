@@ -4,7 +4,7 @@ import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import { useNavigation } from '@react-navigation/native'
 import SubmitButton from './submitButton'
-import { deleteItem, setItem } from '../../hooks'
+import { deleteItem, sendCustomEvent } from '../../hooks'
 import config from '../../config'
 
 export default ({ handleClose }: { handleClose: () => void }) => {
@@ -51,8 +51,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
         setLoading(false)
         handleClose()
         deleteItem('draft')
-        setItem('showToast', 'distanceUpdated')
-        navigate('Dashboard')
+        sendCustomEvent('sendAlert', 'Distance successfully updated!')
       })
       .catch(({ response }) => {
         console.log(response.message)

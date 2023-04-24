@@ -101,7 +101,8 @@ export default ({
           borderWidth: 1,
           borderRadius: 4,
           paddingVertical: 15,
-          paddingHorizontal: 25
+          paddingHorizontal: 25,
+          marginHorizontal: 20
         }}
       >
         <Text
@@ -109,12 +110,13 @@ export default ({
             fontSize: 16,
             color: 'white',
             fontWeight: '700',
+            textAlign: 'center',
             lineHeight: 24,
           }}
         >
           {text1}
         </Text>
-      </View>
+      </View >
     ),
   }
 
@@ -153,42 +155,15 @@ export default ({
   }
 
   useEffect(() => {
-    EventRegister.addEventListener('dataUpdated', () => {
-      setTimeout(async () => {
-        if (getItem('showToast') === 'distanceUpdated') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Distance successfully updated!',
-          })
-        }
-        if (getItem('showToast') === 'nameUpdated') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Your name has been successfully updated!',
-          })
-        }
-        if (getItem('showToast') === 'draftSaved') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1:
-              'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
-          })
-        }
-        if (getItem('showToast') === 'resetDistance') {
-          deleteItem('showToast')
-          Toast.show({
-            type: 'default',
-            text1: 'Reset your distance back to 0!',
-          })
-        }
-      }, 300)
+    EventRegister.addEventListener('sendAlert', (e) => {
+      Toast.show({
+        type: 'default',
+        text1: e,
+      })
     })
 
     return () => {
-      EventRegister.removeEventListener('dataUpdated')
+      EventRegister.removeEventListener('sendAlert')
     }
   }, [])
 

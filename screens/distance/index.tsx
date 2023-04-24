@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import Svg, { Path } from 'react-native-svg'
-import { deleteItem, getItem, setItem, Alert } from '../../hooks'
+import { deleteItem, getItem, Alert, sendCustomEvent } from '../../hooks'
 import config from '../../config'
 import { useNavigation } from '@react-navigation/native'
 import AssignDistance from './assignDistance'
@@ -59,8 +59,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
               authenticationKey: retrieveData().authenticationKey,
             })
             .then(async (e) => {
-              setItem('showToast', 'resetDistance')
-              navigate('Dashboard')
+              sendCustomEvent('sendAlert', 'Reset your distance back to 0!')
             })
             .catch(({ response }) => {
               console.log(response.message)

@@ -77,12 +77,8 @@ export default ({ navigation }: any) => {
 
       navigation.addListener('focus', async () => {
         updateData()
-        checkAlerts()
       })
 
-      EventRegister.addEventListener('dataUpdated', () => {
-        updateData()
-      })
     }
   }, [retrieveData])
 
@@ -270,17 +266,9 @@ export default ({ navigation }: any) => {
   }
 
   const updateData = async () => {
-    if (getItem('showToast') === 'groupSettingsUpdated') {
-      deleteItem('showToast')
-      Toast.show({
-        text1: 'Group settings succesfully updated!',
-        type: 'default',
-      })
-    }
     await getGroupData()
     checkForUnconfirmedDistance()
     getDistance()
-    checkAlerts()
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
@@ -341,38 +329,6 @@ export default ({ navigation }: any) => {
     setTimeout(() => {
       setCopied(false)
     }, 500)
-  }
-
-  const checkAlerts = () => {
-    if (getItem('showToast') === 'distanceUpdated') {
-      deleteItem('showToast')
-      Toast.show({
-        type: 'default',
-        text1: 'Distance successfully updated!',
-      })
-    }
-    if (getItem('showToast') === 'nameUpdated') {
-      deleteItem('showToast')
-      Toast.show({
-        type: 'default',
-        text1: 'Your name has been successfully updated!',
-      })
-    }
-    if (getItem('showToast') === 'draftSaved') {
-      deleteItem('showToast')
-      Toast.show({
-        type: 'default',
-        text1:
-          'Saved your distance as a draft! Access it by clicking on Manage Distance again!',
-      })
-    }
-    if (getItem('showToast') === 'resetDistance') {
-      deleteItem('showToast')
-      Toast.show({
-        type: 'default',
-        text1: 'Reset your distance back to 0!',
-      })
-    }
   }
 
   const handleClose = () => {

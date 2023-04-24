@@ -4,7 +4,7 @@ import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import SubmitButton from './submitButton'
 import { useNavigation } from '@react-navigation/native'
-import { deleteItem, setItem } from '../../hooks'
+import { deleteItem, sendCustomEvent, setItem } from '../../hooks'
 import config from '../../config'
 
 export default ({
@@ -59,7 +59,7 @@ export default ({
     if (data.startValue && !data.endValue) {
       handleClose()
       setItem('draft', JSON.stringify(data))
-      setItem('showToast', 'draftSaved')
+      sendCustomEvent('sendAlert', 'Saved your distance as a draft! Access it by clicking on Manage Distance again!')
       navigate('Dashboard')
       return
     }
@@ -77,8 +77,7 @@ export default ({
         setLoading(false)
         handleClose()
         deleteItem('draft')
-        setItem('showToast', 'distanceUpdated')
-        navigate('Dashboard')
+        sendCustomEvent('sendAlert', 'Distance successfully updated!')
       })
       .catch(({ response }) => {
         console.log(response.message)
@@ -104,6 +103,7 @@ export default ({
         style={{ marginBottom: 30 }}
       />
       <SubmitButton
+        text={data.startValue && !data.endValue ? 'Save Draft' : 'Add Distance'}
         loading={loading}
         handleClick={handleSubmit}
         errors={errors}
