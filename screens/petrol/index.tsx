@@ -89,7 +89,7 @@ export default React.memo(({ onClose }: PropsType) => {
     setOpen(false)
     setTimeout(() => {
       onClose()
-    }, 500);
+    }, 200);
   }
 
   return (

@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import Svg, { Path } from "react-native-svg";
 import Colors from "../constants/Colors";
 
-const TIME_TO_CLOSE = 300
+const TIME_TO_CLOSE = 200
 
 type ModalType = {
   visible: boolean;
