@@ -11,7 +11,7 @@ import { Button, Box, Text } from './Themed'
 import generateGroupID from '../hooks/generateGroupID'
 
 type PropsType = {
-  handleComplete: (e?: string) => void
+  handleComplete: (e?: string, message?: string) => void
   handleCancel?: () => void
   newGroup?: boolean
   hideCancel?: boolean
@@ -78,6 +78,7 @@ export default ({
     let errors: any = {}
 
     Object.entries(data).map(([key, value]) => {
+      if (key === 'premium') return
       if (!value) errors[key] = 'Please complete this field!'
     })
 
@@ -114,12 +115,11 @@ export default ({
       authenticationKey: retrieveData().authenticationKey,
       groupID: groupID,
     }).then(({ data: { groupID, message } }) => {
-      if (message) Alert('', message)
-      updateGroup(groupID)
+      updateGroup(groupID, message)
     })
   }
 
-  const updateGroup = async (groupID?: string) => {
+  const updateGroup = async (groupID?: string, message?: string) => {
     setLoading(true)
 
     await axios
@@ -131,7 +131,9 @@ export default ({
       })
       .then(() => {
         setLoading(false)
-        handleComplete(groupID)
+        if (!newGroup)
+          sendCustomEvent('sendAlert', 'Group settings successfully updated!')
+        handleComplete(groupID, message)
       })
   }
 

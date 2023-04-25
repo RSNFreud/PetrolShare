@@ -1,12 +1,8 @@
 import Svg, { Path, G } from "react-native-svg"
-import { TouchableWithoutFeedback } from "react-native"
-import { Box, LongButton, Text } from '../components/Themed'
-import { useContext, useEffect, useState } from "react"
-import { Alert, getItem, setItem } from "../hooks"
-import axios from "axios"
-import config from "../config"
-import { AuthContext } from "../hooks/context"
-import Purchases from "react-native-purchases"
+import { LongButton } from '../components/Themed'
+import { useState } from "react"
+import { Alert } from "../hooks"
+
 import Popup from "../components/Popup"
 import CreateGroup from "../components/createGroup"
 import GroupSettings from "../components/groupSettings"

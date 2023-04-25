@@ -1,21 +1,21 @@
 import { useRef, useState } from "react"
 import GroupSettings from "./groupSettings"
 import Complete from "./complete"
-import { setItem } from "../hooks"
+import { Alert, setItem } from "../hooks"
 
 type PropsType = {
-    firstSteps?: boolean
     handleClose: () => void
     handleCancel?: () => void
     handleUpdate?: () => void
 }
 
-export default ({ firstSteps, handleClose, handleUpdate }: PropsType) => {
+export default ({ handleClose, handleUpdate }: PropsType) => {
     const [stage, setStage] = useState(0)
     const groupID = useRef("")
 
-    const createGroup = async (e?: string) => {
+    const createGroup = async (e?: string, message?: string) => {
         setItem('groupData', '')
+        if (message) Alert('Notice:', message)
         handleUpdate && handleUpdate()
         if (e)
             groupID.current = e

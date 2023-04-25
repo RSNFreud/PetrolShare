@@ -9,6 +9,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import Svg, { Path } from "react-native-svg";
 import Colors from "../constants/Colors";
+import AlertBox from "./alertBox";
+import { sendCustomEvent } from "../hooks";
 
 const TIME_TO_CLOSE = 200
 
@@ -32,6 +34,7 @@ export default ({
   const [opened, setOpened] = useState(false);
   const [modalHeight, setModalHeight] = useState(0)
   const [isVisible, setIsVisible] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   let position = useRef(new Animated.Value(modalHeight)).current;
 
   const getHeight = (event: LayoutChangeEvent) => {
@@ -61,9 +64,11 @@ export default ({
         useNativeDriver: true,
       }),
     ]).start((e) => {
-      handleClose()
       setIsVisible(false);
       setOpened(false);
+      setTimeout(() => {
+        handleClose()
+      }, 300);
     });
   };
 
@@ -78,8 +83,10 @@ export default ({
 
   useEffect(() => {
     if (!visible && isVisible) return close();
+    sendCustomEvent('popupVisible', visible)
     setIsVisible(visible);
   }, [visible]);
+
 
   return (
     <Modal
@@ -88,6 +95,7 @@ export default ({
       transparent={true}
       accessibilityLabel={"popup"}
     >
+      <AlertBox />
       <Pressable
         onPress={close}
         android_disableSound={true}

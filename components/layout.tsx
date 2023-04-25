@@ -49,6 +49,7 @@ export default ({
 }) => {
   const { isLoggedIn, isLoading, retrieveData } = useContext(AuthContext)
   const [premium, setPremium] = useState(false)
+  const [popupVisible, setPopupVisible] = useState(false)
   const [showPremiumInfo, setShowPremiumInfo] = useState(false)
 
   const { navigate } = useNavigation()
@@ -124,6 +125,7 @@ export default ({
   const openPayment = () => {
     Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
       setShowPremiumInfo(false)
+
       axios
         .post(
           config.REACT_APP_API_ADDRESS +
@@ -161,6 +163,9 @@ export default ({
         type: 'default',
         text1: e,
       })
+    })
+    EventRegister.addEventListener('popupVisible', e => {
+      setPopupVisible(e)
     })
 
     return () => {
@@ -225,7 +230,7 @@ export default ({
             </Svg>} />
           </View>}
         <Toast config={ToastConfig} />
-        <AlertBox />
+        {!popupVisible && <AlertBox />}
         <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)}>
           <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
             {'\n\n'}

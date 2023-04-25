@@ -57,8 +57,6 @@ export const Alert = (
   sendCustomEvent('openAlert', ({ title: title, message: message, buttons: buttons }))
 }
 
-
-
 export const currencyPosition = (value: number, symbol: string) => {
   if (symbol === '$' || symbol === '£' || symbol === '€')
     return `${symbol.trim()}${value}`

@@ -9,7 +9,7 @@ import config from "../config";
 
 type PropsType = {
   firstSteps?: boolean;
-  handleComplete: (groupID: string) => void;
+  handleComplete: (data: { groupID?: string, message?: string }) => void;
   handleCancel: () => void;
 };
 
@@ -29,7 +29,7 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
     setLoading(true);
     if (!firstSteps)
       Alert(
-        "Are you sure you want to join a new group?",
+        "Are you sure you want to join a\nnew group?",
         "This will delete all the current data you have saved.",
         [
           {

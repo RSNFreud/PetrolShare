@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import Complete from "./complete"
-import { setItem } from "../hooks"
+import { Alert, setItem } from "../hooks"
 import JoinGroupForm from "./joinGroupForm"
 
 type PropsType = {
@@ -14,11 +14,14 @@ export default ({ firstSteps, handleClose, handleUpdate }: PropsType) => {
     const [stage, setStage] = useState(0)
     const groupID = useRef("")
 
-    const createGroup = async (e?: string) => {
+    const createGroup = async (e?: { groupID?: string, message?: string }) => {
         setItem('groupData', '')
+        console.log(e);
+
+        if (e?.message) Alert('Notice:', e?.message)
         handleUpdate && handleUpdate()
-        if (e)
-            groupID.current = e
+        if (e?.groupID)
+            groupID.current = e.groupID
         setStage(1)
     }
 
