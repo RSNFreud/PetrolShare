@@ -47,8 +47,9 @@ export default () => {
         animationType="fade"
         transparent={true}
         accessibilityLabel={"popup"}
+        style={{ width: '100%' }}
     >
-        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, alignContent: 'center', paddingHorizontal: 25 }}
+        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, alignContent: 'center' }}
         >
             <Pressable
                 onPress={close}
@@ -60,21 +61,24 @@ export default () => {
                     height: Dimensions.get("window").height, position: 'absolute',
                 }}
             />
-            <View style={{
-                backgroundColor: Colors.secondary,
-                borderRadius: 8,
-                borderStyle: "solid",
-                width: '100%',
-                padding: 25,
-                borderWidth: 1,
-                borderColor: Colors.border,
-                zIndex: 4
-            }} onLayout={handleButtons}>
-                {!!data?.title && <Text style={{ fontWeight: 'bold', lineHeight: 24 }}>{data.title}</Text>}
-                {!!data?.message && <Text style={{ lineHeight: 24, marginTop: data?.title ? 10 : 0, }}>{data?.message}</Text>}
-                {!!data?.buttons && <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', gap: 25 }}>
-                    {data?.buttons.map(button => (<Button size="medium" handleClick={() => handleButtonClick(button)} children={button.text} styles={{ width: buttonWidth }} style={button.style !== 'cancel' ? 'regular' : 'ghost'} />))}
-                </View>}
+            <View style={{ paddingHorizontal: 25, width: '100%', zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}>
+                <View style={{
+                    backgroundColor: Colors.secondary,
+                    borderRadius: 8,
+                    borderStyle: "solid",
+                    width: '100%',
+                    padding: 25,
+                    marginHorizontal: 25,
+                    borderWidth: 1,
+                    borderColor: Colors.border,
+                    zIndex: 4
+                }} onLayout={handleButtons}>
+                    {!!data?.title && <Text style={{ fontWeight: 'bold', lineHeight: 24 }}>{data.title}</Text>}
+                    {!!data?.message && <Text style={{ lineHeight: 24, marginTop: data?.title ? 10 : 0, }}>{data?.message}</Text>}
+                    {!!data?.buttons && <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', gap: 25 }}>
+                        {data?.buttons.map(button => (<Button key={button.text} size="medium" handleClick={() => handleButtonClick(button)} children={button.text} styles={{ width: buttonWidth }} style={button.style !== 'cancel' ? 'regular' : 'ghost'} />))}
+                    </View>}
+                </View>
             </View>
         </View>
     </Modal>
