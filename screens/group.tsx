@@ -18,12 +18,10 @@ type GroupType = { currency: string, distance: string, groupID: string, petrol: 
 export default ({ onUpdate }: { onUpdate: () => void }) => {
     const [visible, setVisible] = useState(false)
     const [currentScreen, setCurrentScreen] = useState('')
-    const [premium, setPremium] = useState(false)
-    const { retrieveData } = useContext(AuthContext)
 
     const createGroup = async () => {
         Alert(
-            "Are you sure you want to create a new group?",
+            "Are you sure you want to create a\nnew group?",
             "This will delete all the current data you have saved.",
             [
                 {

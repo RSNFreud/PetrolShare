@@ -60,6 +60,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
             })
             .then(async (e) => {
               sendCustomEvent('sendAlert', 'Reset your distance back to 0!')
+              onUpdate()
             })
             .catch(({ response }) => {
               console.log(response.message)

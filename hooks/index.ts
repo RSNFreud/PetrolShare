@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { MMKV } from 'react-native-mmkv'
+import { ButtonType } from '../components/alertBox'
 
 const storage = new MMKV()
 
@@ -51,30 +52,12 @@ export const getGroupData = async () => {
 export const Alert = (
   title: string,
   message?: string,
-  buttons?: AlertButton[],
-  options?: AlertOptions,
+  buttons?: ButtonType[],
 ) => {
-  if (Platform.OS !== 'web')
-    DefaultAlert.alert(title, message, buttons, { userInterfaceStyle: 'dark' })
-  else alertPolyfill(title, message, buttons, options)
+  sendCustomEvent('openAlert', ({ title: title, message: message, buttons: buttons }))
 }
 
-const alertPolyfill = (
-  title: string,
-  message?: string,
-  buttons?: AlertButton[],
-  options?: AlertOptions,
-) => {
-  const result = window.confirm([title, message].filter(Boolean).join('\n'))
-  if (!buttons) return
-  if (result) {
-    const confirmOption: any = buttons.find(({ style }) => style !== 'cancel')
-    confirmOption && confirmOption.onPress()
-  } else {
-    const cancelOption: any = buttons.find(({ style }) => style === 'cancel')
-    cancelOption && cancelOption.onPress && cancelOption.onPress()
-  }
-}
+
 
 export const currencyPosition = (value: number, symbol: string) => {
   if (symbol === '$' || symbol === '£' || symbol === '€')
@@ -82,6 +65,6 @@ export const currencyPosition = (value: number, symbol: string) => {
   return `${value} ${symbol}`
 }
 
-export const sendCustomEvent = (event: string, data?: string) => {
+export const sendCustomEvent = (event: string, data?: any) => {
   EventRegister.emit(event, data)
 }

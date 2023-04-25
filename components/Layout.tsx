@@ -14,6 +14,7 @@ import Purchases from 'react-native-purchases'
 import axios from 'axios'
 import config from '../config'
 import Popup from './Popup'
+import AlertBox from './alertBox'
 
 type BottonNavPropTypes = {
   icon: JSX.Element,
@@ -224,6 +225,7 @@ export default ({
             </Svg>} />
           </View>}
         <Toast config={ToastConfig} />
+        <AlertBox />
         <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)}>
           <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
             {'\n\n'}
