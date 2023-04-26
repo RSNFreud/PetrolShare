@@ -50,7 +50,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
   }, [])
 
   const resetDistance = () => {
-    Alert('Are you sure you want to reset your data?', undefined, [
+    Alert('Are you sure you want to reset your distance?', 'This will reset your distance back to 0 without creating a payment log!', [
       {
         text: 'Yes',
         onPress: async () => {

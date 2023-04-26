@@ -155,7 +155,8 @@ export default ({
           }}
           contentContainerStyle={{
             paddingVertical: 30,
-            paddingHorizontal: 25
+            paddingHorizontal: 25,
+            paddingTop: 40
           }}
         >
           {children}

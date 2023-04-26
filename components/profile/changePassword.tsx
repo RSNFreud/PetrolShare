@@ -5,14 +5,12 @@ import Input from "../Input";
 import { Button, Seperator } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
+import { PropsType } from "./default";
 
 export default ({
   handleClose,
-  handleBack,
-}: {
-  handleClose: () => void;
-  handleBack: () => void;
-}) => {
+  handleChange,
+}: PropsType) => {
   const [data, setData] = useState({
     currentPassword: "",
     password: "",
@@ -65,7 +63,7 @@ export default ({
             signOut();
           }, 1200);
         })
-        .catch((err) => {});
+        .catch((err) => { });
     }
   };
 
@@ -105,7 +103,7 @@ export default ({
       >
         Change password
       </Button>
-      <Button handleClick={handleBack} style={"ghost"}>
+      <Button handleClick={() => handleChange('Settings')} style={"ghost"}>
         Back
       </Button>
     </>

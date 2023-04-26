@@ -317,18 +317,19 @@ export const LongButton = ({
   handleClick,
   text,
   last,
-  icon,
+  icon, style
 }: {
   marginBottom?: number
   handleClick: () => void
   text: string
   icon: JSX.Element
   last?: boolean
+  style?: TouchableOpacity["props"]["style"]
 }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      style={{
+      style={[{
         marginBottom: last ? 0 : 20,
         backgroundColor: Colors.tertiary,
         borderColor: Colors.border,
@@ -340,7 +341,7 @@ export const LongButton = ({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 20,
-      }}
+      }, style]}
       onPress={handleClick}
     >
       {icon}

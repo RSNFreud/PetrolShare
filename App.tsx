@@ -21,7 +21,7 @@ import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
-import { deleteItem, getItem, setItem } from "./hooks";
+import { Alert, deleteItem, getItem, setItem } from "./hooks";
 import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
@@ -34,6 +34,7 @@ import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
+import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from "expo-updates";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -164,7 +165,10 @@ export default function App() {
   }, [fontsLoaded]);
 
   useEffect(() => {
-    if (!loading) setTimeout(() => SplashScreen.hideAsync(), 500);
+    if (!loading) setTimeout(() => {
+      SplashScreen.hideAsync()
+      checkForUpdates()
+    }, 500);
     Notifications.addNotificationResponseReceivedListener((e) => {
       console.log("Notification Title:", e.notification.request.content.title);
       const routeName = e.notification.request.content.data["route"] as any;
@@ -175,6 +179,18 @@ export default function App() {
       setNotifData({ routeName: routeName, invoiceID: invoiceID });
     });
   }, [loading]);
+
+  const checkForUpdates = async () => {
+    try {
+      const res = await checkForUpdateAsync()
+      if (res.isAvailable) {
+        await fetchUpdateAsync()
+        Alert("Update Available", "There is an update waiting for you! Would you like to update your app? The app will reload with the latest update installed",
+          [{ text: 'Dismiss' }, { text: "Update", onPress: async () => await reloadAsync() }]
+        )
+      }
+    } catch { }
+  }
 
   useEffect(() => {
     if (loading) return;

@@ -6,6 +6,7 @@ import SubmitButton from './submitButton'
 import { useNavigation } from '@react-navigation/native'
 import { deleteItem, sendCustomEvent, setItem } from '../../hooks'
 import config from '../../config'
+import { Box, Text } from '../../components/Themed'
 
 export default ({
   previousData,
@@ -86,6 +87,9 @@ export default ({
 
   return (
     <>
+      <Box style={{ paddingHorizontal: 15, paddingVertical: 15, marginBottom: 25 }}>
+        <Text>The odometer is the readout typically displayed behind the steering wheel in an LED readout. It is a series of numbers displaying the total amount of distance the car has travelled.</Text>
+      </Box>
       <Input
         placeholder="Enter odemetor start value"
         label="Start Odometer"

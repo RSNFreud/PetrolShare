@@ -67,6 +67,8 @@ export default ({
     }).catch(() => { })
 
     Purchases.addCustomerInfoUpdateListener(info => {
+      // console.log(info.entitlements.active["premium"].identifier);
+
       if (info.entitlements.active["premium"]?.isActive) setPremium(true)
     });
   }, [])

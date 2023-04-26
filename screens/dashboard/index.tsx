@@ -29,6 +29,9 @@ import GroupSettings from '../../components/groupSettings'
 import ConfirmDistance from './confirmDistance'
 import React from 'react'
 import FadeWrapper from './fadeWrapper'
+import Tooltip from '../../components/tooltip'
+import * as Sharing from 'expo-sharing';
+
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
@@ -319,12 +322,14 @@ export default ({ navigation }: any) => {
   }
 
   const copyToClipboard = async () => {
+
     Clipboard.setStringAsync(
       retrieveData
         ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${retrieveData()?.groupID
         }`
         : '',
     )
+    Alert('Information:', 'Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!')
     setCopied(true)
     setTimeout(() => {
       setCopied(false)
@@ -352,9 +357,14 @@ export default ({ navigation }: any) => {
                   d="M11.94 3.613c-1.981 0-3.587 1.874-3.587 4.187 0 1.604.772 2.997 1.907 3.7l-4.815 2.233c-.339.169-.507.455-.507.861v3.855c.028.482.317.93.786.938h12.45c.536-.046.806-.477.812-.938v-3.855c0-.405-.169-.692-.507-.861l-3.373-1.623-1.402-.665c1.088-.719 1.822-2.082 1.822-3.645 0-2.313-1.606-4.187-3.586-4.187zM6.155 5.085c-.853.033-1.528.401-2.042.99a3.832 3.832 0 00-.85 2.383c.035 1.235.588 2.405 1.573 3.017l-3.93 1.827c-.27.101-.406.338-.406.71v3.093c.021.41.234.755.634.761h2.612v-3.272c.043-.875.454-1.582 1.192-1.927l2.611-1.242c.203-.118.397-.28.583-.482A5.876 5.876 0 017.6 5.542c-.451-.276-.958-.454-1.445-.457zm11.664 0c-.557.012-1.072.217-1.496.507.675 1.766.49 3.757-.507 5.3.22.254.448.448.685.583l2.51 1.192c.765.42 1.16 1.133 1.167 1.927v3.272h2.688c.442-.038.63-.39.634-.76v-3.094c0-.338-.135-.575-.406-.71l-3.88-1.852a3.716 3.716 0 001.522-2.992c-.027-.902-.302-1.738-.85-2.384-.573-.62-1.283-.982-2.067-.989z"
                 ></Path>
               </Svg>
-              <Text style={{ fontSize: 18, fontWeight: "500" }}>
-                {retrieveData ? retrieveData()?.groupID || 'Loading...' : null}
-              </Text>
+              <TouchableWithoutFeedback onPress={() => Alert("Group ID", 'This unique ID is used to identify your group. Share it with others to invite them to your group.')}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                    {retrieveData ? retrieveData()?.groupID || 'Loading...' : null}
+                  </Text>
+                  <Tooltip style={{ marginLeft: 6 }} title='Group ID' message='This unique ID is used to identify your group. Share it with others to invite them to your group.' />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Svg width="15" height="15" fill="none" viewBox="0 0 24 23" style={{ marginRight: 10 }}>
@@ -377,28 +387,18 @@ export default ({ navigation }: any) => {
               }}
             >
               {!!(retrieveData && retrieveData()?.groupID) &&
-                (copied ? (
-                  <Svg width="25" height="25" fill="none" viewBox="0 0 26 26">
-                    <Path
-                      stroke="#fff"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="1.5"
-                      d="M4.469 14.219l5.687 5.687L21.531 7.72"
-                    ></Path>
-                  </Svg>
-                ) : (
-                  <Svg width="25" height="25" fill="none" viewBox="0 0 26 26">
-                    <Path
-                      fill="#fff"
-                      d="M21.306 5.056H7.583A1.083 1.083 0 006.5 6.139v17.333a1.084 1.084 0 001.083 1.084h13.723a1.084 1.084 0 001.083-1.084V6.14a1.083 1.083 0 00-1.083-1.083zm-.362 18.055h-13V6.5h13v16.611z"
-                    ></Path>
-                    <Path
-                      fill="#fff"
-                      d="M18.778 2.528a1.083 1.083 0 00-1.083-1.084H3.972A1.083 1.083 0 002.89 2.528V19.86a1.083 1.083 0 001.083 1.083h.361V2.89h14.445v-.361z"
-                    ></Path>
-                  </Svg>
-                ))}
+                <Svg
+                  width="25"
+                  height="25"
+                  fill="none"
+                  viewBox="0 0 18 15"
+                >
+                  <Path
+                    fill="#fff"
+                    d="M18 7l-7-7v4C4 5 1 10 0 15c2.5-3.5 6-5.1 11-5.1V14l7-7z"
+                  ></Path>
+                </Svg>
+              }
             </View>
           </TouchableWithoutFeedback>
         </View>

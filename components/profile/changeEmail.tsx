@@ -5,14 +5,12 @@ import Input from "../Input";
 import { Button } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
+import { PropsType } from "./default";
 
 export default ({
   handleClose,
-  handleBack,
-}: {
-  handleClose: () => void;
-  handleBack: () => void;
-}) => {
+  handleChange,
+}: PropsType) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
@@ -40,7 +38,7 @@ export default ({
             "A confirmation email has been sent to your inbox to change your address",
         });
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   return (
@@ -60,7 +58,7 @@ export default ({
       >
         Change email
       </Button>
-      <Button handleClick={handleBack} style={"ghost"}>
+      <Button handleClick={() => handleChange('Settings')} style={"ghost"}>
         Back
       </Button>
     </>

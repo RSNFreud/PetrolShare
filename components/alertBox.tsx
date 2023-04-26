@@ -40,9 +40,9 @@ export default () => {
         animationType="fade"
         transparent={true}
         accessibilityLabel={"alertBox"}
-        style={{ width: '100%', zIndex: 1000 }}
+        style={{ width: Dimensions.get("window").width }}
     >
-        <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, alignContent: 'center' }}
+        <View style={{ display: 'flex', alignItems: 'center', maxWidth: Dimensions.get("window").width, justifyContent: 'center', flex: 1, alignContent: 'center' }}
         >
             <Pressable
                 onPress={close}
@@ -54,7 +54,7 @@ export default () => {
                     height: Dimensions.get("window").height, position: 'absolute',
                 }}
             />
-            <View style={{ paddingHorizontal: 25, width: '100%', zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}>
+            <View style={{ paddingHorizontal: 25, zIndex: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}>
                 <View style={{
                     backgroundColor: Colors.secondary,
                     borderRadius: 8,
@@ -62,10 +62,10 @@ export default () => {
                     padding: 20,
                     borderWidth: 1,
                     borderColor: Colors.border,
-                    zIndex: 4
+                    zIndex: 4,
                 }}>
                     {!!data?.title && <Text style={{ fontWeight: 'bold', lineHeight: 24 }}>{data.title}</Text>}
-                    {!!data?.message && <Text style={{ lineHeight: 24, marginTop: data?.title ? 10 : 0, width: '100%' }}>{data?.message}</Text>}
+                    {!!data?.message && <Text style={{ lineHeight: 24, marginTop: data?.title ? 10 : 0 }}>{data?.message}</Text>}
                     <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', gap: 30, justifyContent: 'flex-end' }}>
                         {data?.buttons?.map(button => (
                             <TouchableWithoutFeedback key={button.text} onPress={() => handleButtonClick(button)}>
@@ -79,6 +79,6 @@ export default () => {
                 </View>
             </View>
         </View>
-    </Modal>
+    </Modal >
 
 }

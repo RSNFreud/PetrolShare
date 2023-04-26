@@ -7,18 +7,15 @@ import { Button } from '../Themed'
 import { sendCustomEvent, setItem } from '../../hooks'
 import { AuthContext } from '../../hooks/context'
 import config from '../../config'
+import { PropsType } from './default'
 
 export default ({
   handleClose,
-  handleBack,
-}: {
-  handleClose: () => void
-  handleBack: () => void
-}) => {
+  handleChange,
+}: PropsType) => {
   const [name, setName] = useState<string>()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState('')
-  const { navigate } = useNavigation()
   const { retrieveData } = useContext(AuthContext)
 
   const validateForm = () => {
@@ -32,7 +29,7 @@ export default ({
       .then(async () => {
         setLoading(false)
         handleClose()
-        sendCustomEvent('sendAlert', 'Your name has been successfully updated!')
+        sendCustomEvent('sendAlert', 'Your name has been\nsuccessfully updated!')
       })
       .catch((err) => { })
   }
@@ -54,7 +51,7 @@ export default ({
       >
         Change name
       </Button>
-      <Button handleClick={handleBack} style={'ghost'}>
+      <Button handleClick={() => handleChange('Settings')} style={'ghost'}>
         Back
       </Button>
     </>
