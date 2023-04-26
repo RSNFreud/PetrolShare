@@ -1,4 +1,4 @@
-import { TouchableWithoutFeedback, View } from "react-native"
+import { Platform, TouchableWithoutFeedback, View } from "react-native"
 import { Text } from "./Themed"
 import Colors from "../constants/Colors"
 import { Alert } from "../hooks"
@@ -15,8 +15,8 @@ export default ({ style, title, message }: PropsType) => {
     }
 
     return <TouchableWithoutFeedback onPress={openTooltip}>
-        <View style={[{ borderRadius: 100, width: 16, height: 16, backgroundColor: Colors.tertiary, justifyContent: 'center', alignItems: 'center' }, style]}>
-            <Text style={{ fontSize: 14, marginTop: -2 }}>?</Text>
+        <View style={[{ borderRadius: 100, width: 17, height: 17, backgroundColor: Colors.tertiary, justifyContent: 'center', alignItems: 'center' }, style]}>
+            <Text style={{ fontSize: 14, marginTop: Platform.OS !== "web" ? -2 : 0 }}>?</Text>
         </View>
     </TouchableWithoutFeedback>
 }
