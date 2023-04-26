@@ -60,11 +60,6 @@ export default ({
     if (data && typeof data === "string") data = JSON.parse(data)
     if ((data as GroupType)?.premium) setPremium(true)
     else setPremium(false)
-    Purchases.getCustomerInfo().then(customerInfo => {
-      if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-        setPremium(true)
-      }
-    }).catch(() => { })
 
     Purchases.addCustomerInfoUpdateListener(info => {
       // console.log(info.entitlements.active["premium"].identifier);
@@ -174,6 +169,18 @@ export default ({
       EventRegister.removeEventListener('sendAlert')
     }
   }, [])
+
+  useEffect(() => {
+    if (!isLoggedIn || premium || isLoading) return
+    Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
+      if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
+        if (!premium) {
+          Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
+        }
+        setPremium(true)
+      }
+    })
+  }, [isLoggedIn, premium, isLoading])
 
   if (isLoading) return <></>
 

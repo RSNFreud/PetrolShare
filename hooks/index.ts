@@ -8,6 +8,7 @@ import {
 import { EventRegister } from 'react-native-event-listeners'
 import { MMKV } from 'react-native-mmkv'
 import { ButtonType } from '../components/alertBox'
+import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from 'expo-updates'
 
 const storage = new MMKV()
 
@@ -65,4 +66,17 @@ export const currencyPosition = (value: number, symbol: string) => {
 
 export const sendCustomEvent = (event: string, data?: any) => {
   EventRegister.emit(event, data)
+}
+
+
+export const checkForUpdates = async () => {
+  try {
+    const res = await checkForUpdateAsync()
+    if (res.isAvailable) {
+      await fetchUpdateAsync()
+      Alert("Update Available", "An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app",
+        [{ text: 'Dismiss' }, { text: "Update", onPress: async () => await reloadAsync() }]
+      )
+    }
+  } catch { }
 }

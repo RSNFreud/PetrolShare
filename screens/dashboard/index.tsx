@@ -12,8 +12,7 @@ import Svg, { Path } from 'react-native-svg'
 import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import * as Clipboard from 'expo-clipboard'
-import { Alert, deleteItem, getItem, setItem } from '../../hooks'
-import { EventRegister } from 'react-native-event-listeners'
+import { Alert, checkForUpdates, getItem, setItem } from '../../hooks'
 import Layout from '../../components/Layout'
 import config from '../../config'
 import * as Location from 'expo-location'
@@ -30,8 +29,6 @@ import ConfirmDistance from './confirmDistance'
 import React from 'react'
 import FadeWrapper from './fadeWrapper'
 import Tooltip from '../../components/tooltip'
-import * as Sharing from 'expo-sharing';
-
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
@@ -141,6 +138,8 @@ export default ({ navigation }: any) => {
         nextAppState === 'active'
       ) {
         pageLoaded()
+        if (route.name === "Dashboard")
+          checkForUpdates()
         console.log('App has come to the foreground!')
       }
       appState.current = nextAppState
