@@ -171,16 +171,19 @@ export default ({
   }, [])
 
   useEffect(() => {
-    if (!isLoggedIn || premium || isLoading) return
+    if (!isLoggedIn || premium) return
+
     Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
       if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-        if (!premium) {
-          Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
-        }
+        setTimeout(() => {
+          if (!premium && route.name === "Dashboard") {
+            Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
+          }
+        }, 400);
         setPremium(true)
       }
     })
-  }, [isLoggedIn, premium, isLoading])
+  }, [isLoggedIn, premium])
 
   if (isLoading) return <></>
 
