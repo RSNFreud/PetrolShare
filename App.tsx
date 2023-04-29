@@ -1,5 +1,4 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   NavigationContainer,
   DefaultTheme,
@@ -22,7 +21,6 @@ import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
 import { Alert, checkForUpdates, deleteItem, getItem, setItem } from "./hooks";
-import petrol from "./screens/petrol";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -34,7 +32,6 @@ import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
-import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from "expo-updates";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -103,10 +100,10 @@ export default function App() {
       },
       isLoading: loading,
       signOut: async () => {
-        deregisterForPushNotifications(userData.emailAddress);
-        setUserData({});
         deleteItem("userData");
         deleteItem("groupData");
+        setUserData({});
+        deregisterForPushNotifications(userData.emailAddress);
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
@@ -145,10 +142,12 @@ export default function App() {
               if (fontsLoaded) setLoading(false);
             })
             .catch(({ response }) => {
-              // console.log(response.message)
-
               setLoading(false);
-              return login.signOut;
+              setTimeout(() => {
+                Alert('Account Deactivated', response.data)
+              }, 500);
+              login.signOut()
+              return;
             });
         } else {
           if (fontsLoaded) setLoading(false);
@@ -236,7 +235,7 @@ export default function App() {
               gestureEnabled: false,
               headerShown: false,
               animation: "fade",
-              animationDuration: 300,
+              animationDuration: 500,
             }}
           >
             {width > 768 && Platform.OS === "web" ? (
