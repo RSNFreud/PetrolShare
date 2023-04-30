@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Platform, useWindowDimensions } from "react-native";
+import { Platform, View, useWindowDimensions } from "react-native";
 
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
@@ -32,6 +32,7 @@ import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
+import Premium from "./components/premium";
 
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
@@ -249,11 +250,6 @@ export default function App() {
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 {!firstSteps && (
                   <>
-                    {/* <Stack.Screen
-                      name="GPS"
-                      component={gps}
-                      options={{ title: 'GPS Tracking' }}
-                    /> */}
                     <Stack.Screen
                       name="AddPreset"
                       component={preset}

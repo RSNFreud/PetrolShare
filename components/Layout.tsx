@@ -48,7 +48,7 @@ export default ({
   homepage?: boolean
 }) => {
   const { isLoggedIn, isLoading, retrieveData } = useContext(AuthContext)
-  const [premium, setPremium] = useState(false)
+  const [premium, setPremium] = useState(true)
   const [popupVisible, setPopupVisible] = useState(false)
   const [showPremiumInfo, setShowPremiumInfo] = useState(false)
 
@@ -56,14 +56,7 @@ export default ({
   const route = useRoute()
 
   useEffect(() => {
-    let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-    if (data && typeof data === "string") data = JSON.parse(data)
-    if ((data as GroupType)?.premium) setPremium(true)
-    else setPremium(false)
-
     Purchases.addCustomerInfoUpdateListener(info => {
-      // console.log(info.entitlements.active["premium"].identifier);
-
       if (info.entitlements.active["premium"]?.isActive) setPremium(true)
     });
   }, [])
