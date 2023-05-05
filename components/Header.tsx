@@ -5,31 +5,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthContext } from "../hooks/context";
 import { useContext, useState } from "react";
 import Settings from "./profile";
-import { Alert } from "../hooks";
 import Colors from "../constants/Colors";
 
-type PropsType = {
-  isLoggedIn: boolean;
-};
-
-export default ({ isLoggedIn }: PropsType) => {
+export default () => {
   const navigation = useNavigation<any>();
   const route = useRoute();
-  const { signOut } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
   const [settingsVisible, setSettingsVisible] = useState(false);
-
-  const handleLogout = () => {
-    Alert("Are you sure you want to sign out?", undefined, [
-      {
-        text: "Yes",
-        onPress: async () => {
-          signOut();
-        },
-      },
-      { text: "No", style: "cancel" },
-    ]);
-  };
-
 
   return (
     <View

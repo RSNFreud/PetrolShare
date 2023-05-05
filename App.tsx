@@ -9,8 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Platform, View, useWindowDimensions } from "react-native";
-
+import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -20,7 +19,7 @@ import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext } from "./hooks/context";
-import { Alert, checkForUpdates, deleteItem, getItem, setItem } from "./hooks";
+import { Alert, checkForUpdates, deleteItem, getItem, sendCustomEvent, setItem } from "./hooks";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -33,7 +32,7 @@ import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
 import Premium from "./components/premium";
-
+import SplashScreenComponent from "./components/splashScreen";
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +79,7 @@ export default function App() {
               try {
                 setItem("userData", JSON.stringify(data));
               } catch { }
+              sendCustomEvent('openSplash')
               res(data);
             })
             .catch(({ response }) => {
@@ -169,6 +169,7 @@ export default function App() {
       SplashScreen.hideAsync()
       checkForUpdates()
     }, 500);
+    sendCustomEvent('closeSplash')
     Notifications.addNotificationResponseReceivedListener((e) => {
       console.log("Notification Title:", e.notification.request.content.title);
       const routeName = e.notification.request.content.data["route"] as any;
@@ -214,23 +215,26 @@ export default function App() {
     }
   }, [userData]);
 
-  return (
-    <>
-      <NavigationContainer
-        onReady={() => checkFirstTime()}
-        onStateChange={() => updateScreen()}
-        ref={navRef}
-        linking={LinkingConfiguration}
-        theme={{
-          dark: true,
-          colors: {
-            ...DefaultTheme.colors,
-            background: Colors.background,
-            text: "white",
-          },
-        }}
-      >
-        <AuthContext.Provider value={login}>
+
+  return (<>
+    <SplashScreenComponent />
+    <View style={{ width: Dimensions.get('screen').width }}>
+      <AuthContext.Provider value={login}>
+        <Premium />
+        <NavigationContainer
+          onReady={() => checkFirstTime()}
+          onStateChange={() => updateScreen()}
+          ref={navRef}
+          linking={LinkingConfiguration}
+          theme={{
+            dark: true,
+            colors: {
+              ...DefaultTheme.colors,
+              background: Colors.background,
+              text: "white",
+            },
+          }}
+        >
           <Stack.Navigator
             screenOptions={{
               gestureEnabled: false,
@@ -272,14 +276,15 @@ export default function App() {
               options={{ title: "Oops!" }}
             />
           </Stack.Navigator>
-        </AuthContext.Provider>
-      </NavigationContainer>
-      <StatusBar
-        style="light"
-        backgroundColor={
-          screen != "Dashboard" ? Colors.background : Colors.secondary
-        }
-      />
-    </>
+        </NavigationContainer>
+        <StatusBar
+          style="light"
+          backgroundColor={
+            screen != "Dashboard" ? Colors.background : Colors.secondary
+          }
+        />
+      </AuthContext.Provider>
+    </View>
+  </>
   );
 }

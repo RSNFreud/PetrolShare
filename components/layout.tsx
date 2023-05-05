@@ -1,19 +1,14 @@
-import { Alert, deleteItem, getItem, setItem } from '../hooks'
 import { EventRegister } from 'react-native-event-listeners'
 import React, { useContext, useEffect, useState } from 'react'
-import { ViewProps, View, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native'
+import { ViewProps, View, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import Toast from 'react-native-toast-message'
-import { Button, Text } from './Themed'
+import { Text } from './Themed'
 import { AuthContext } from '../hooks/context'
 import Header from './Header'
 import Colors from '../constants/Colors'
 import Constants from 'expo-constants';
 import Svg, { Path } from 'react-native-svg'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import Purchases from 'react-native-purchases'
-import axios from 'axios'
-import config from '../config'
-import Popup from './Popup'
 import AlertBox from './alertBox'
 
 type BottonNavPropTypes = {
@@ -32,7 +27,7 @@ const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) 
   </TouchableWithoutFeedback>
 )
 
-type GroupType = { currency: string, distance: string, groupID: string, petrol: string, premium: boolean }
+export type GroupType = { currency: string, distance: string, groupID: string, petrol: string, premium: boolean }
 
 export default ({
   children,
@@ -47,41 +42,11 @@ export default ({
   noBottomPadding?: boolean
   homepage?: boolean
 }) => {
-  const { isLoggedIn, isLoading, retrieveData } = useContext(AuthContext)
-  const [premium, setPremium] = useState(true)
+  const { isLoggedIn, isLoading } = useContext(AuthContext)
   const [popupVisible, setPopupVisible] = useState(false)
-  const [showPremiumInfo, setShowPremiumInfo] = useState(false)
 
   const { navigate } = useNavigation()
   const route = useRoute()
-
-  useEffect(() => {
-    Purchases.addCustomerInfoUpdateListener(info => {
-      if (info.entitlements.active["premium"]?.isActive) setPremium(true)
-    });
-  }, [])
-
-  useEffect(() => {
-    let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-    if (data && typeof data === "string") data = JSON.parse(data)
-    if ((data as GroupType)?.premium) setPremium(true)
-    else setPremium(false)
-  }, [getItem('groupData')])
-
-  useEffect(() => {
-    let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
-    if (data && typeof data === "string") data = JSON.parse(data)
-    if (!(data as GroupType)?.premium && premium) {
-      axios
-        .post(
-          config.REACT_APP_API_ADDRESS +
-          '/group/subscribe', {
-          authenticationKey: retrieveData().authenticationKey
-        }).catch(err => {
-          console.log(err.message);
-        })
-    }
-  }, [premium])
 
   const ToastConfig = {
     default: ({ text1 }: { text1?: string }) => (
@@ -112,41 +77,6 @@ export default ({
     ),
   }
 
-  const openPayment = () => {
-    Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
-      setShowPremiumInfo(false)
-
-      axios
-        .post(
-          config.REACT_APP_API_ADDRESS +
-          '/group/subscribe', {
-          authenticationKey: retrieveData().authenticationKey,
-        }
-        )
-        .then(async () => {
-          axios
-            .get(
-              config.REACT_APP_API_ADDRESS +
-              '/group/get?authenticationKey=' +
-              retrieveData().authenticationKey,
-            )
-            .then(async ({ data }) => {
-              setItem('groupData', JSON.stringify(data))
-            })
-            .catch(() => { })
-        })
-        .catch(() => { })
-      setPremium(true)
-    }).catch(err => {
-      if (err.message === 'The payment is pending.') {
-        setShowPremiumInfo(false)
-        setTimeout(() => {
-          Alert("Your payment is being processed", "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!")
-        }, 700);
-      }
-    })
-  }
-
   useEffect(() => {
     EventRegister.addEventListener('sendAlert', (e) => {
       Toast.show({
@@ -163,37 +93,15 @@ export default ({
     }
   }, [])
 
-  useEffect(() => {
-    if (!isLoggedIn || premium) return
-
-    Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
-      if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-        setTimeout(() => {
-          if (!premium && route.name === "Dashboard") {
-            Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
-          }
-        }, 400);
-        setPremium(true)
-      }
-    })
-  }, [isLoggedIn, premium])
-
   if (isLoading) return <></>
 
   return (
     <>
       <View
-        style={[style, { minHeight: Dimensions.get('window').height, position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1, overflow: 'hidden' }]}
+        style={[style, { width: '100%', position: 'relative', paddingTop: Constants.statusBarHeight, display: 'flex', flex: 1, overflow: 'hidden' }]}
         {...rest}
       >
-        {!!isLoggedIn && !premium && <TouchableWithoutFeedback onPress={() => setShowPremiumInfo(true)}>
-          <View style={{ alignItems: 'center', backgroundColor: Colors.tertiary }}>
-            <Text style={{ maxWidth: 300, textAlign: 'center', fontSize: 14, lineHeight: 24, padding: 10 }}>You are currently using the trial version of PetrolShare!
-              <Text style={{ fontWeight: 'bold', fontSize: 14 }}> Click here to learn more...</Text>
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>}
-        <Header isLoggedIn={isLoggedIn} />
+        <Header />
         {homepage || noScrollView ? <View
           style={{
             paddingBottom: homepage
@@ -236,13 +144,7 @@ export default ({
           </View>}
         <Toast config={ToastConfig} />
         {!popupVisible && <AlertBox />}
-        <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)}>
-          <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
-            {'\n\n'}
-            By upgrading to our premium version, you gain access to have an unlimited amount of users in your group, plus other cool features to come!</Text>
-          <Button styles={{ marginBottom: 20 }} handleClick={openPayment}>Purchase Premium</Button>
-          <Button style='ghost' handleClick={() => setShowPremiumInfo(false)}>Dismiss</Button>
-        </Popup>
+
       </View >
     </>
   )
