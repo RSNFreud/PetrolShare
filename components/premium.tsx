@@ -52,7 +52,7 @@ export default () => {
 
     useEffect(() => {
         if (!isLoggedIn) return
-        console.log('triggered');
+        // console.log('triggered');
 
         if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
