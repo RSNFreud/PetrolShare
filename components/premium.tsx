@@ -14,18 +14,19 @@ import { GroupType } from "./Layout"
 export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
-    const { isLoggedIn, retrieveData, isLoading } = useContext(AuthContext)
+    const { isLoggedIn, retrieveData } = useContext(AuthContext)
 
     useEffect(() => {
-        if (!isLoggedIn || premium) return
         if (premium !== null) sendCustomEvent('closeSplash')
+        if (!isLoggedIn || premium) return
         Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                setTimeout(() => {
-                    if (!premium) {
-                        Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
-                    }
-                }, 400);
+                // setTimeout(() => {
+                //     if (premium === false) {
+                //         Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
+                //     }
+                // }, 400);
+                sendCustomEvent('closeSplash')
                 setPremium(true)
             }
         })
@@ -51,6 +52,9 @@ export default () => {
 
     useEffect(() => {
         if (!isLoggedIn) return
+        console.log('triggered');
+
+        if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType)?.premium) setPremium(true)

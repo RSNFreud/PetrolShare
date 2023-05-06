@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
+import { Dimensions, Platform, View, useWindowDimensions, } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -33,8 +33,12 @@ import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
 import Premium from "./components/premium";
 import SplashScreenComponent from "./components/splashScreen";
-SplashScreen.preventAutoHideAsync();
+import Header from "./components/Header";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Constants from "expo-constants";
+import bottomNavigation from "./components/bottomNavigation";
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 Notifications.addNotificationResponseReceivedListener((e) => {
   console.log("Notification Title:", e.notification.request);
@@ -123,7 +127,6 @@ export default function App() {
     const async = async () => {
       try {
         const data = getItem("userData");
-
         if (data) {
           const parsed = JSON.parse(data);
 
@@ -166,10 +169,10 @@ export default function App() {
 
   useEffect(() => {
     if (!loading) setTimeout(() => {
-      SplashScreen.hideAsync()
+      sendCustomEvent('closeSplash')
+      SplashScreen.hideAsync();
       checkForUpdates()
-    }, 500);
-    sendCustomEvent('closeSplash')
+    }, 1000);
     Notifications.addNotificationResponseReceivedListener((e) => {
       console.log("Notification Title:", e.notification.request.content.title);
       const routeName = e.notification.request.content.data["route"] as any;
@@ -218,73 +221,80 @@ export default function App() {
 
   return (<>
     <SplashScreenComponent />
-    <View style={{ width: Dimensions.get('screen').width }}>
-      <AuthContext.Provider value={login}>
-        <Premium />
-        <NavigationContainer
-          onReady={() => checkFirstTime()}
-          onStateChange={() => updateScreen()}
-          ref={navRef}
-          linking={LinkingConfiguration}
-          theme={{
-            dark: true,
-            colors: {
-              ...DefaultTheme.colors,
-              background: Colors.background,
-              text: "white",
-            },
-          }}
-        >
-          <Stack.Navigator
-            screenOptions={{
-              gestureEnabled: false,
-              headerShown: false,
-              animation: "fade",
-              animationDuration: 500,
+    {login.isLoading ? <></> :
+      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, }}>
+        <AuthContext.Provider value={login}>
+          <Premium />
+          <NavigationContainer
+            onReady={() => checkFirstTime()}
+            onStateChange={() => updateScreen()}
+            ref={navRef}
+            linking={LinkingConfiguration}
+            theme={{
+              dark: true,
+              colors: {
+                ...DefaultTheme.colors,
+                background: Colors.background,
+                text: "white",
+              },
             }}
           >
-            {width > 768 && Platform.OS === "web" ? (
+            <Stack.Navigator
+              screenOptions={{
+                gestureEnabled: false,
+                headerShown: true,
+                header: () => <Header />,
+                animation: "slide_from_right",
+                animationDuration: 600,
+              }}
+            >
+              {width > 768 && Platform.OS === "web" ? (
+                <Stack.Screen
+                  name="DesktopScreen"
+                  component={DesktopScreen}
+                  options={{ title: "PetrolShare", headerShown: false }}
+                />
+              ) : loading || login.isLoggedIn ? (
+                <>
+                  <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
+                  {!firstSteps && <Stack.Screen
+                    name="AddPreset"
+                    component={preset}
+                    options={{ title: "Add Preset" }}
+                  />}
+                </>
+              ) : (
+                <>
+                  <Stack.Screen name="Login" component={Login} />
+                  <Stack.Screen name="Register" component={Register} />
+                </>
+              )}
               <Stack.Screen
-                name="DesktopScreen"
-                component={DesktopScreen}
-                options={{ title: "PetrolShare" }}
+                name="NotFound"
+                component={NotFoundScreen}
+                options={{ title: "Oops!" }}
               />
-            ) : loading || login.isLoggedIn ? (
-              <>
-                <Stack.Screen name="Dashboard" component={Dashboard} />
-                {!firstSteps && (
-                  <>
-                    <Stack.Screen
-                      name="AddPreset"
-                      component={preset}
-                      options={{ title: "Add Preset" }}
-                    />
-                    <Stack.Screen name="History" component={logs} />
-                    <Stack.Screen name="Payments" component={invoices} />
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Register" component={Register} />
-              </>
-            )}
-            <Stack.Screen
-              name="NotFound"
-              component={NotFoundScreen}
-              options={{ title: "Oops!" }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <StatusBar
-          style="light"
-          backgroundColor={
-            screen != "Dashboard" ? Colors.background : Colors.secondary
-          }
-        />
-      </AuthContext.Provider>
-    </View>
+            </Stack.Navigator>
+          </NavigationContainer>
+          <StatusBar
+            style="light"
+            backgroundColor={
+              screen != "Dashboard" ? Colors.background : Colors.secondary
+            }
+          />
+        </AuthContext.Provider>
+      </View>
+    }
   </>
   );
 }
+
+const BottomNavigator = () => (
+  <Tab.Navigator screenOptions={{ headerShown: true, header: () => <Header /> }} tabBar={bottomNavigation}>
+    <Tab.Screen name="Dashboard" component={Dashboard} options={{
+      tabBarLabel: 'Home'
+    }} />
+    <Tab.Screen name="Payments" component={invoices} />
+    <Tab.Screen name="History" component={logs} />
+  </Tab.Navigator>
+)

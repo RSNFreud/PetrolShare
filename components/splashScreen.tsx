@@ -6,17 +6,14 @@ import { EventRegister } from "react-native-event-listeners"
 
 export default () => {
     const [visible, setVisible] = useState(true)
-    const [fading, setFading] = useState(false)
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         EventRegister.addEventListener('closeSplash', () => {
-
-            setFading(true)
+            fadeOut()
         })
         EventRegister.addEventListener('openSplash', () => {
             setVisible(true)
-            setFading(false)
             fadeAnim.setValue(1)
         })
 
@@ -26,8 +23,7 @@ export default () => {
         }
     }, [])
 
-    useEffect(() => {
-        if (!fading) return
+    const fadeOut = () => {
         Animated.timing(fadeAnim, {
             toValue: 0,
             delay: 500,
@@ -36,11 +32,11 @@ export default () => {
         }).start(() => {
             setVisible(false)
         });
-    }, [fading])
+    }
 
     if (!visible) return <></>
 
-    return <Animated.View style={{ width: '100%', opacity: fadeAnim, height: Dimensions.get('screen').height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background }}>
+    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: Dimensions.get('window').height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background }}>
         <ImageBackground source={SplashImage} style={{ width: '100%', height: '100%' }} />
     </Animated.View>
 }
