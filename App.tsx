@@ -37,8 +37,13 @@ import Header from "./components/Header";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Constants from "expo-constants";
 import bottomNavigation from "./components/bottomNavigation";
+import { EventRegister } from "react-native-event-listeners";
+import Toast from "react-native-toast-message";
+import { Text } from "./components/Themed";
+import AlertBox from "./components/alertBox";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+SplashScreen.hideAsync()
 
 Notifications.addNotificationResponseReceivedListener((e) => {
   console.log("Notification Title:", e.notification.request);
@@ -60,6 +65,7 @@ export default function App() {
   const [screen, setScreen] = useState("");
   const navRef = useNavigationContainerRef();
   const { width } = useWindowDimensions();
+  const [popupVisible, setPopupVisible] = useState(false)
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
@@ -168,9 +174,24 @@ export default function App() {
   }, [fontsLoaded]);
 
   useEffect(() => {
+    EventRegister.addEventListener('sendAlert', (e) => {
+      Toast.show({
+        type: 'default',
+        text1: e,
+      })
+    })
+    EventRegister.addEventListener('popupVisible', e => {
+      setPopupVisible(e)
+    })
+
+    return () => {
+      EventRegister.removeEventListener('sendAlert')
+    }
+  }, [])
+
+  useEffect(() => {
     if (!loading) setTimeout(() => {
       sendCustomEvent('closeSplash')
-      SplashScreen.hideAsync();
       checkForUpdates()
     }, 1000);
     Notifications.addNotificationResponseReceivedListener((e) => {
@@ -218,6 +239,34 @@ export default function App() {
     }
   }, [userData]);
 
+  const ToastConfig = {
+    default: ({ text1 }: { text1?: string }) => (
+      <View
+        style={{
+          backgroundColor: Colors.background,
+          borderColor: Colors.border,
+          borderStyle: 'solid',
+          borderWidth: 1,
+          borderRadius: 4,
+          paddingVertical: 15,
+          paddingHorizontal: 25,
+          marginHorizontal: 20
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            color: 'white',
+            fontWeight: '700',
+            textAlign: 'center',
+            lineHeight: 24,
+          }}
+        >
+          {text1}
+        </Text>
+      </View >
+    ),
+  }
 
   return (<>
     <SplashScreenComponent />
@@ -282,6 +331,9 @@ export default function App() {
               screen != "Dashboard" ? Colors.background : Colors.secondary
             }
           />
+          {!popupVisible && <AlertBox />}
+          <Toast config={ToastConfig} />
+
         </AuthContext.Provider>
       </View>
     }

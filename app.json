@@ -12,7 +12,6 @@
       "./withAndroidVerifiedLinksWorkaround"
     ],
     "splash": {
-      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#292B36"
     },
