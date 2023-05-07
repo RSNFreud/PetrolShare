@@ -222,9 +222,9 @@ export default function App() {
   return (<>
     <SplashScreenComponent />
     {login.isLoading ? <></> :
-      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, }}>
+      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
         <AuthContext.Provider value={login}>
-          <Premium />
+          {login.isLoggedIn && <Premium />}
           <NavigationContainer
             onReady={() => checkFirstTime()}
             onStateChange={() => updateScreen()}
