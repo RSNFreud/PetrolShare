@@ -1,6 +1,6 @@
-import { TouchableWithoutFeedback, View } from "react-native"
+import { Animated, TouchableWithoutFeedback, View } from "react-native"
 import { Text, Button } from "./Themed"
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import Colors from "../constants/Colors"
 import Popup from "./Popup"
 import { useState } from "react"
@@ -15,21 +15,21 @@ export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
     const { isLoggedIn, retrieveData } = useContext(AuthContext)
+    const heightAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if (premium !== null) sendCustomEvent('closeSplash')
         if (!isLoggedIn || premium) return
         Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                // setTimeout(() => {
-                //     if (premium === false) {
-                //         Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
-                //     }
-                // }, 400);
                 sendCustomEvent('closeSplash')
                 setPremium(true)
             }
         })
+    }, [isLoggedIn, premium])
+    useEffect(() => {
+        if (!premium) expand()
+        else minimise()
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if (!(data as GroupType)?.premium && premium) {
@@ -38,12 +38,17 @@ export default () => {
                     config.REACT_APP_API_ADDRESS +
                     '/group/subscribe', {
                     authenticationKey: retrieveData().authenticationKey
+                }).then(({ data }) => {
+                    if (data) {
+                        setTimeout(() => {
+                            Alert('Premium Applied', 'Your group has succesfully activated premium membership! Thank you for joining PetrolShare')
+                        }, 400);
+                    }
                 }).catch(err => {
                     console.log(err.message);
                 })
         }
-    }, [isLoggedIn, premium])
-
+    }, [premium])
     useEffect(() => {
         Purchases.addCustomerInfoUpdateListener(info => {
             if (info.entitlements.active["premium"]?.isActive) setPremium(true)
@@ -52,8 +57,6 @@ export default () => {
 
     useEffect(() => {
         if (!isLoggedIn) return
-        // console.log('triggered');
-
         if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
@@ -95,15 +98,33 @@ export default () => {
         })
     }
 
+    const expand = () => {
+        Animated.timing(heightAnim, {
+            toValue: 68,
+            delay: 400,
+            duration: 500,
+            useNativeDriver: false,
+        }).start();
+    }
+
+    const minimise = () => {
+        Animated.timing(heightAnim, {
+            toValue: 0,
+            delay: 200,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    }
+
     return <>
-        {!!isLoggedIn && !premium && <TouchableWithoutFeedback onPress={() => setShowPremiumInfo(true)}>
-            <View style={{ alignItems: 'center', backgroundColor: Colors.tertiary }}>
+        <Animated.View style={{ alignItems: 'center', backgroundColor: Colors.tertiary, maxHeight: heightAnim }}>
+            <TouchableWithoutFeedback onPress={() => setShowPremiumInfo(true)}>
                 <Text style={{ maxWidth: 300, textAlign: 'center', fontSize: 14, lineHeight: 24, padding: 10 }}>You are currently using the trial version of PetrolShare!
                     <Text style={{ fontWeight: 'bold', fontSize: 14 }}> Click here to learn more...</Text>
                 </Text>
-            </View>
-        </TouchableWithoutFeedback>
-        }
+            </TouchableWithoutFeedback>
+        </Animated.View>
+
         <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)}>
             <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
                 {'\n\n'}
