@@ -14,19 +14,19 @@ import { GroupType } from "./Layout"
 export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
-    const { isLoggedIn, retrieveData } = useContext(AuthContext)
+    const { retrieveData } = useContext(AuthContext)
     const heightAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if (premium !== null) sendCustomEvent('closeSplash')
-        if (!isLoggedIn || premium) return
+        if (premium) return
         Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
                 sendCustomEvent('closeSplash')
                 setPremium(true)
             }
         })
-    }, [isLoggedIn, premium])
+    }, [premium])
     useEffect(() => {
         if (!premium) expand()
         else minimise()
@@ -56,13 +56,12 @@ export default () => {
     }, [])
 
     useEffect(() => {
-        if (!isLoggedIn) return
         if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType)?.premium) setPremium(true)
         else setPremium(false)
-    }, [getItem('groupData'), isLoggedIn])
+    }, [getItem('groupData')])
 
     const openPayment = () => {
         Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {

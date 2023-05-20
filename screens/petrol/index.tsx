@@ -73,6 +73,7 @@ export default React.memo(({ onClose }: PropsType) => {
       })
       .then(({ data }) => {
         setLoading(false);
+        setOpen(false)
         navigate("Payments", { id: (data as string) });
       })
       .catch(({ response }) => {

@@ -26,8 +26,8 @@ export default () => {
     const fadeOut = () => {
         Animated.timing(fadeAnim, {
             toValue: 0,
-            delay: 500,
-            duration: 300,
+            delay: 600,
+            duration: 400,
             useNativeDriver: true,
         }).start(() => {
             setVisible(false)

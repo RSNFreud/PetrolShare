@@ -135,23 +135,26 @@ export default function App() {
         const data = getItem("userData");
         if (data) {
           const parsed = JSON.parse(data);
-
           if (!("authenticationKey" in parsed)) {
             setLoading(false);
             return login.signOut;
           }
+
           axios
             .get(
               config.REACT_APP_API_ADDRESS +
               "/user/verify?authenticationKey=" +
-              parsed.authenticationKey
+              parsed.authenticationKey, { timeout: 1000 }
             )
             .then(async ({ data }) => {
               setItem("userData", JSON.stringify({ ...parsed, ...data }));
               setUserData({ ...parsed, ...data });
+
               if (fontsLoaded) setLoading(false);
             })
             .catch(({ response }) => {
+              console.log(response);
+
               setLoading(false);
               setTimeout(() => {
                 Alert('Account Deactivated', response.data)
@@ -193,7 +196,7 @@ export default function App() {
     if (!loading) setTimeout(() => {
       sendCustomEvent('closeSplash')
       checkForUpdates()
-    }, 1000);
+    }, 500);
     Notifications.addNotificationResponseReceivedListener((e) => {
       console.log("Notification Title:", e.notification.request.content.title);
       const routeName = e.notification.request.content.data["route"] as any;
@@ -208,10 +211,10 @@ export default function App() {
   useEffect(() => {
     if (loading) return;
     if (notifData.invoiceID || notifData.routeName) {
-      setNotifData({ routeName: "", invoiceID: "" });
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
+      setNotifData({ routeName: "", invoiceID: "" });
     }
-  }, [notifData, loading]);
+  }, [notifData, loading, login.isLoggedIn]);
 
   useEffect(() => {
     setItem("firstLoad", "true");
