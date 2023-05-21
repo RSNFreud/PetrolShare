@@ -209,7 +209,7 @@ export default function App() {
   }, [loading]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !login.isLoggedIn) return;
     if (notifData.invoiceID || notifData.routeName) {
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
       setNotifData({ routeName: "", invoiceID: "" });
