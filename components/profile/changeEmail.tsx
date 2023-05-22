@@ -9,7 +9,7 @@ import { PropsType } from "./default";
 
 export default ({
   handleClose,
-  handleChange,
+  handleChange, handleUpdate
 }: PropsType) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,6 +31,7 @@ export default ({
       })
       .then(() => {
         setLoading(false);
+        handleUpdate && handleUpdate()
         handleClose();
         Toast.show({
           type: "default",

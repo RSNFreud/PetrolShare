@@ -9,9 +9,10 @@ import config from "../../config"
 export type PropsType = {
     handleChange: (screen: string) => void
     handleClose: () => void
+    handleUpdate?: () => void
 }
 
-export default ({ handleChange, handleClose }: PropsType) => {
+export default ({ handleChange }: PropsType) => {
     const { retrieveData, signOut } = useContext(AuthContext)
 
     const logout = () => {

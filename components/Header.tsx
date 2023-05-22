@@ -6,12 +6,40 @@ import { AuthContext } from "../hooks/context";
 import { useContext, useState } from "react";
 import Settings from "./profile";
 import Colors from "../constants/Colors";
+import axios from "axios";
+import config from "../config";
+import { getItem, setItem } from "../hooks";
 
 export default () => {
   const navigation = useNavigation<any>();
   const route = useRoute();
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, retrieveData, setData } = useContext(AuthContext);
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  const handleUpdate = () => {
+    axios
+      .get(
+        config.REACT_APP_API_ADDRESS +
+        `/user/get?authenticationKey=${retrieveData().authenticationKey}`,
+      )
+      .then(async ({ data }) => {
+        let sessionStorage
+        try {
+          sessionStorage = getItem('userData')
+          if (!sessionStorage) return
+          sessionStorage = JSON.parse(sessionStorage)
+          sessionStorage = { ...sessionStorage, ...data[0] }
+          console.log(JSON.stringify(sessionStorage));
+          setData(sessionStorage)
+          setItem('userData', JSON.stringify(sessionStorage))
+        } catch (err) {
+          console.log(err)
+        }
+      })
+      .catch(({ response }) => {
+        console.log(response)
+      })
+  }
 
   return (
     <View
@@ -83,6 +111,7 @@ export default () => {
             </>
           </Button>
           <Settings
+            onUpdate={handleUpdate}
             visible={settingsVisible}
             handleClose={() => setSettingsVisible(false)}
           />

@@ -12,6 +12,7 @@ import { PropsType } from './default'
 export default ({
   handleClose,
   handleChange,
+  handleUpdate
 }: PropsType) => {
   const [name, setName] = useState<string>()
   const [loading, setLoading] = useState(false)
@@ -28,6 +29,7 @@ export default ({
       })
       .then(async () => {
         setLoading(false)
+        handleUpdate && handleUpdate()
         handleClose()
         sendCustomEvent('sendAlert', 'Your name has been\nsuccessfully updated!')
       })
