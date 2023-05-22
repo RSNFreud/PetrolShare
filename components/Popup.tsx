@@ -1,6 +1,7 @@
 import {
   Animated,
   Dimensions,
+  Keyboard,
   LayoutChangeEvent,
   Modal,
   Pressable,
@@ -34,7 +35,6 @@ export default ({
   const [opened, setOpened] = useState(false);
   const [modalHeight, setModalHeight] = useState(0)
   const [isVisible, setIsVisible] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
   let position = useRef(new Animated.Value(modalHeight)).current;
 
   const getHeight = (event: LayoutChangeEvent) => {
@@ -68,8 +68,10 @@ export default ({
       setOpened(false);
       setTimeout(() => {
         handleClose()
+        sendCustomEvent('popupVisible', visible)
       }, 300);
     });
+
   };
 
   useEffect(() => {
@@ -82,7 +84,15 @@ export default ({
 
 
   useEffect(() => {
-    if (!visible && isVisible) return close();
+    if (!visible && isVisible) {
+      try {
+        Keyboard.dismiss()
+      } catch { }
+      setTimeout(() => {
+        close();
+      }, 400); // Hide keyboard
+      return
+    }
     sendCustomEvent('popupVisible', visible)
     setIsVisible(visible);
   }, [visible]);
