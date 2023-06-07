@@ -2,12 +2,11 @@ import Input from '../../components/Input'
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
-import { useNavigation } from '@react-navigation/native'
 import SubmitButton from './submitButton'
-import { deleteItem, sendCustomEvent } from '../../hooks'
+import { deleteItem } from '../../hooks'
 import config from '../../config'
 
-export default ({ handleClose }: { handleClose: () => void }) => {
+export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
   const [data, setData] = useState({
     distance: '',
   })
@@ -15,7 +14,6 @@ export default ({ handleClose }: { handleClose: () => void }) => {
   const [distance, setDistance] = useState('')
   const [loading, setLoading] = useState(false)
   const { retrieveData } = useContext(AuthContext)
-  const { navigate } = useNavigation() as any
 
   useEffect(() => {
     if (data.distance && !isNaN(parseFloat(data.distance))) {
@@ -49,9 +47,8 @@ export default ({ handleClose }: { handleClose: () => void }) => {
       })
       .then(async () => {
         setLoading(false)
-        handleClose()
+        handleClose('Distance successfully updated!')
         deleteItem('draft')
-        sendCustomEvent('sendAlert', 'Distance successfully updated!')
       })
       .catch(({ response }) => {
         console.log(response.message)

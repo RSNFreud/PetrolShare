@@ -4,7 +4,7 @@ import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import SubmitButton from './submitButton'
 import { useNavigation } from '@react-navigation/native'
-import { deleteItem, sendCustomEvent, setItem } from '../../hooks'
+import { deleteItem, setItem } from '../../hooks'
 import config from '../../config'
 import { Box, Text } from '../../components/Themed'
 
@@ -16,7 +16,7 @@ export default ({
     startValue: string
     endValue: string
   }
-  handleClose: () => void
+  handleClose: (alert?: string) => void
 }) => {
   const [data, setData] = useState({
     ...previousData,
@@ -58,9 +58,8 @@ export default ({
     }
 
     if (data.startValue && !data.endValue) {
-      handleClose()
+      handleClose('Saved your distance as a draft! Access it by clicking on Manage Distance again!')
       setItem('draft', JSON.stringify(data))
-      sendCustomEvent('sendAlert', 'Saved your distance as a draft! Access it by clicking on Manage Distance again!')
       navigate('Dashboard')
       return
     }
@@ -76,9 +75,8 @@ export default ({
       })
       .then(async () => {
         setLoading(false)
-        handleClose()
+        handleClose('Distance successfully updated!')
         deleteItem('draft')
-        sendCustomEvent('sendAlert', 'Distance successfully updated!')
       })
       .catch(({ response }) => {
         console.log(response.message)

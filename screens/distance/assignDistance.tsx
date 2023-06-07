@@ -6,7 +6,7 @@ import Dropdown, { item } from "../../components/Dropdown";
 import Input from "../../components/Input";
 import SubmitButton from "./submitButton";
 
-export default ({ handleClose }: { handleClose: () => void }) => {
+export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
     const [usernames, setUsernames] = useState<Array<item>>([])
     const { retrieveData } = useContext(AuthContext);
     const [loading, setLoading] = useState(false)
@@ -48,7 +48,7 @@ export default ({ handleClose }: { handleClose: () => void }) => {
             })
             .then(async () => {
                 setLoading(false)
-                handleClose()
+                handleClose('Successfully requested distance\nfrom ' + usernames.filter(e => e.value === values.name)[0].name)
             })
             .catch(({ response }) => {
                 console.log(response.message)

@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import Svg, { Path } from 'react-native-svg'
-import { deleteItem, getItem, Alert, sendCustomEvent } from '../../hooks'
+import { deleteItem, getItem, Alert, sendCustomEvent, setItem } from '../../hooks'
 import config from '../../config'
 import { useNavigation } from '@react-navigation/native'
 import AssignDistance from './assignDistance'
@@ -71,7 +71,14 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
     ])
   }
 
-  const handleClose = () => {
+
+  const handleClose = (alert?: string) => {
+    if (alert) {
+      setItem('delayedAlert', alert)
+    } else if (getItem('delayedAlert')) {
+      sendCustomEvent('sendAlert', getItem('delayedAlert'))
+      deleteItem('delayedAlert')
+    }
     if (isDraft === false) {
       onUpdate()
       return setVisible(false)
@@ -100,7 +107,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
     <>
       <LongButton
         handleClick={() =>
-          openPopup(<Manual handleClose={() => handleClose()} />)
+          openPopup(<Manual handleClose={handleClose} />)
         }
         text={'Add Specific Distance'}
         icon={
@@ -115,7 +122,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
       <LongButton
         handleClick={() =>
           openPopup(
-            <Odometer previousData={data} handleClose={() => handleClose()} />,
+            <Odometer previousData={data} handleClose={handleClose} />,
           )
         }
         text={'Record Odometer'}
@@ -160,12 +167,12 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
           </Svg>
         }
         handleClick={() =>
-          openPopup(<AssignDistance handleClose={() => handleClose()} />)
+          openPopup(<AssignDistance handleClose={handleClose} />)
         }
       />
       <LongButton
         last
-        handleClick={() => resetDistance()}
+        handleClick={resetDistance}
         text="Reset Distance"
         icon={
           <Svg width="20" height="20" fill="none" viewBox="0 0 23 18">
