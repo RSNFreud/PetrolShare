@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
-import Toast from "react-native-toast-message";
 import Input from "../Input";
 import { Button, Seperator } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 import { PropsType } from "./default";
+import { setItem } from "../../hooks";
 
 export default ({
   handleClose,
@@ -54,11 +54,8 @@ export default ({
         .then(() => {
           setLoading(false);
           handleClose();
-          Toast.show({
-            type: "default",
-            text1:
-              "Your password has successfully been changed! Please relogin to the application.",
-          });
+          setItem('delayedAlert', "Your password has successfully been changed! Please relogin to the application.")
+
           setTimeout(() => {
             signOut();
           }, 1200);

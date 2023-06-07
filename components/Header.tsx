@@ -8,7 +8,7 @@ import Settings from "./profile";
 import Colors from "../constants/Colors";
 import axios from "axios";
 import config from "../config";
-import { getItem, setItem } from "../hooks";
+import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
 
 export default () => {
   const navigation = useNavigation<any>();
@@ -39,6 +39,15 @@ export default () => {
       .catch(({ response }) => {
         console.log(response)
       })
+  }
+  const handleClose = () => {
+    const delayedAlert = getItem('delayedAlert')
+
+    if (delayedAlert) {
+      sendCustomEvent('sendAlert', delayedAlert)
+      deleteItem('delayedAlert')
+    }
+    setSettingsVisible(false)
   }
 
   return (
@@ -113,7 +122,7 @@ export default () => {
           <Settings
             onUpdate={handleUpdate}
             visible={settingsVisible}
-            handleClose={() => setSettingsVisible(false)}
+            handleClose={handleClose}
           />
         </>
       )}

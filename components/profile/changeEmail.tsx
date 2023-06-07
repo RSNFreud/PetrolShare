@@ -1,11 +1,11 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
-import Toast from "react-native-toast-message";
 import Input from "../Input";
 import { Button } from "../Themed";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 import { PropsType } from "./default";
+import { setItem } from "../../hooks";
 
 export default ({
   handleClose,
@@ -33,11 +33,8 @@ export default ({
         setLoading(false);
         handleUpdate && handleUpdate()
         handleClose();
-        Toast.show({
-          type: "default",
-          text1:
-            "A confirmation email has been sent to your inbox to change your address",
-        });
+        setItem('delayedAlert', "A confirmation email has been sent to your inbox to change your address",
+        )
       })
       .catch((err) => { });
   };

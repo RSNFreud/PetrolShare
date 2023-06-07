@@ -31,7 +31,7 @@ export default ({
         setLoading(false)
         handleUpdate && handleUpdate()
         handleClose()
-        sendCustomEvent('sendAlert', 'Your name has been\nsuccessfully updated!')
+        setItem('delayedAlert', 'Your name has been\nsuccessfully updated!')
       })
       .catch((err) => { })
   }
