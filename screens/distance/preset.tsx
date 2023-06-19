@@ -231,7 +231,7 @@ export default ({ navigation }: any) => {
             <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 25 }}>
               Presets:
             </Text>
-            <Button icon={<Svg
+            <Button styles={{ backgroundColor: Colors.secondary }} icon={<Svg
               width="11"
               height="11"
               fill="none"
@@ -392,7 +392,6 @@ export default ({ navigation }: any) => {
             )}
           </View>
           <SubmitButton
-            style='ghost'
             loading={loading}
             handleClick={handleSubmit}
             errors={errors}
