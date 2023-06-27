@@ -41,6 +41,16 @@ import { EventRegister } from "react-native-event-listeners";
 import Toast from "react-native-toast-message";
 import { Text } from "./components/Themed";
 import AlertBox from "./components/alertBox";
+import * as Sentry from 'sentry-expo';
+
+Sentry.init({
+  dsn: "http://6bf6ac38ab5b406e8e9309b45ec37ede@freud-online.co.uk:9000/4",
+  enableInExpoDevelopment: true,
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+});
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 SplashScreen.hideAsync()

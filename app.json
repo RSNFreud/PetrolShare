@@ -9,7 +9,8 @@
     "description": "The web version of the PetrolShare App",
     "userInterfaceStyle": "automatic",
     "plugins": [
-      "./withAndroidVerifiedLinksWorkaround"
+      "./withAndroidVerifiedLinksWorkaround",
+      "sentry-expo"
     ],
     "splash": {
       "resizeMode": "contain",
@@ -34,18 +35,22 @@
         "backgroundColor": "#292B36"
       },
       "package": "com.rsnfreud.PetrolShare",
-      "intentFilters": [{
-        "action": "VIEW",
-        "autoVerify": true,
-        "data": [{
-          "scheme": "petrolshare",
-          "host": "*.freud-online.co.uk"
-        }],
-        "category": [
-          "BROWSABLE",
-          "DEFAULT"
-        ]
-      }],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "petrolshare",
+              "host": "*.freud-online.co.uk"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -62,6 +67,18 @@
       "eas": {
         "projectId": "5a6b67c6-532d-402b-ab54-ceeb04084203"
       }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "sentry",
+            "project": "petrolshare",
+            "url": "http://freud-online.co.uk:9000/"
+          }
+        }
+      ]
     }
   }
 }
