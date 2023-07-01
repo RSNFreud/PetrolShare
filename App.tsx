@@ -4,6 +4,7 @@ import {
   DefaultTheme,
   useNavigationContainerRef,
 } from "@react-navigation/native";
+import analytics from '@react-native-firebase/analytics';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
@@ -254,8 +255,12 @@ export default function App() {
     else setFirstSteps(false);
   };
 
-  const updateScreen = () => {
+  const updateScreen = async () => {
     if (!navRef || !navRef.getCurrentRoute()) return
+    await analytics().logScreenView({
+      screen_name: navRef.getCurrentRoute()?.name,
+      screen_class: navRef.getCurrentRoute()?.name,
+    });
     routingInstrumentation?.onRouteWillChange({
       name: navRef.getCurrentRoute()?.name || "",
       op: 'navigation'

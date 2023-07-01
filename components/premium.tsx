@@ -1,4 +1,4 @@
-import { Animated, Platform, TouchableWithoutFeedback, View } from "react-native"
+import { Animated, Platform, TouchableWithoutFeedback, useWindowDimensions } from "react-native"
 import { Text, Button } from "./Themed"
 import { useContext, useEffect, useRef } from 'react'
 import Colors from "../constants/Colors"
@@ -16,6 +16,7 @@ export default () => {
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
     const { retrieveData } = useContext(AuthContext)
     const heightAnim = useRef(new Animated.Value(0)).current;
+    const { width } = useWindowDimensions();
 
     useEffect(() => {
         if (premium !== null) sendCustomEvent('closeSplash')
@@ -117,6 +118,8 @@ export default () => {
             useNativeDriver: false,
         }).start();
     }
+
+    if (width > 768) return <></>
 
     return <>
         <Animated.View style={{ alignItems: 'center', backgroundColor: Colors.tertiary, maxHeight: heightAnim }}>

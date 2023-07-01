@@ -10,7 +10,8 @@
     "userInterfaceStyle": "automatic",
     "plugins": [
       "./withAndroidVerifiedLinksWorkaround",
-      "sentry-expo"
+      "sentry-expo",
+      "@react-native-firebase/app"
     ],
     "splash": {
       "resizeMode": "contain",
