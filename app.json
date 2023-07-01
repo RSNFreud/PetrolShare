@@ -30,7 +30,7 @@
       "bundleIdentifier": "com.rsnfreud.PetrolShare"
     },
     "android": {
-      "googleServicesFile": "./assets/google-services.json",
+      "googleServicesFile": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#292B36"
