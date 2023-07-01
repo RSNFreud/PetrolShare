@@ -12,4 +12,3 @@ web-build/
 *-api-*.json
 # macOS
 .DS_Store
-google-services.json
