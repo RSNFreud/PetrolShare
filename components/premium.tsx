@@ -1,4 +1,4 @@
-import { Animated, TouchableWithoutFeedback, View } from "react-native"
+import { Animated, Platform, TouchableWithoutFeedback, View } from "react-native"
 import { Text, Button } from "./Themed"
 import { useContext, useEffect, useRef } from 'react'
 import Colors from "../constants/Colors"
@@ -20,6 +20,7 @@ export default () => {
     useEffect(() => {
         if (premium !== null) sendCustomEvent('closeSplash')
         if (premium) return
+        if (Platform.OS === "web") return
         Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
                 sendCustomEvent('closeSplash')
@@ -50,6 +51,7 @@ export default () => {
         }
     }, [premium])
     useEffect(() => {
+        if (Platform.OS === "web") return
         Purchases.addCustomerInfoUpdateListener(info => {
             if (info.entitlements.active["premium"]?.isActive) setPremium(true)
         });
@@ -64,6 +66,7 @@ export default () => {
     }, [getItem('groupData')])
 
     const openPayment = () => {
+        if (Platform.OS === "web") return
         Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
             setShowPremiumInfo(false)
             axios

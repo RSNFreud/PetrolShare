@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Dimensions, Platform, View, useWindowDimensions, } from "react-native";
+import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -43,16 +43,27 @@ import { Text } from "./components/Themed";
 import AlertBox from "./components/alertBox";
 import * as Sentry from 'sentry-expo';
 
-Sentry.init({
-  dsn: "http://6bf6ac38ab5b406e8e9309b45ec37ede@freud-online.co.uk:9000/4",
-  enableInExpoDevelopment: true,
-  // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-  // We recommend adjusting this value in production.
-  tracesSampleRate: 1.0,
-});
+let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
+try {
+  routingInstrumentation = new Sentry.Native.RoutingInstrumentation();
+
+  Sentry.init({
+    dsn: "http://6bf6ac38ab5b406e8e9309b45ec37ede@freud-online.co.uk:9000/4",
+    enableInExpoDevelopment: true,
+    // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+    // We recommend adjusting this value in production.
+    tracesSampleRate: 1.0,
+    integrations: [
+      new Sentry.Native.ReactNativeTracing({
+        routingInstrumentation
+      })
+    ]
+  });
+} catch { }
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
 SplashScreen.hideAsync()
 
 Notifications.addNotificationResponseReceivedListener((e) => {
@@ -122,6 +133,7 @@ export default function App() {
       isLoading: loading,
       signOut: async () => {
         deleteItem("userData");
+        deleteItem("presets");
         deleteItem("groupData");
         setUserData({});
         deregisterForPushNotifications(userData.emailAddress);
@@ -179,6 +191,7 @@ export default function App() {
         setLoading(false);
         setUserData({});
         deleteItem("userData");
+        deleteItem("presets");
         deleteItem("groupData");
         // Alert(`An error has occured!`, (data as string).toString());
       }
@@ -243,6 +256,10 @@ export default function App() {
 
   const updateScreen = () => {
     if (!navRef || !navRef.getCurrentRoute()) return
+    routingInstrumentation?.onRouteWillChange({
+      name: navRef.getCurrentRoute()?.name || "",
+      op: 'navigation'
+    })
     setScreen(navRef.getCurrentRoute()?.name || "")
   }
 
