@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 import Colors from '../constants/Colors'
+import analytics from '@react-native-firebase/analytics'
 
 export type TextProps = DefaultText['props']
 export type ViewProps = DefaultView['props']
@@ -125,9 +126,18 @@ export const Button = ({
       break
   }
 
+  const onClick = () => {
+    if (typeof children === "string")
+      analytics().logSelectContent({
+        content_type: 'button',
+        item_id: children
+      })
+    if (handleClick) handleClick()
+  }
+
   return (
     <TouchableOpacity
-      onPress={handleClick}
+      onPress={onClick}
       activeOpacity={0.8}
       disabled={disabled}
       style={[
@@ -326,6 +336,15 @@ export const LongButton = ({
   last?: boolean
   style?: TouchableOpacity["props"]["style"]
 }) => {
+
+
+  const onClick = () => {
+    analytics().logSelectContent({
+      content_type: 'button',
+      item_id: text
+    })
+    handleClick()
+  }
   return (
     <TouchableOpacity
       activeOpacity={0.9}
@@ -342,7 +361,7 @@ export const LongButton = ({
         alignItems: 'center',
         paddingHorizontal: 20,
       }, style]}
-      onPress={handleClick}
+      onPress={onClick}
     >
       {icon}
       <Text style={{ fontWeight: '700', fontSize: 16, marginLeft: 15 }}>
