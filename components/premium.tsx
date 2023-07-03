@@ -19,12 +19,10 @@ export default () => {
     const { width } = useWindowDimensions();
 
     useEffect(() => {
-        if (premium !== null) sendCustomEvent('closeSplash')
         if (premium) return
         if (Platform.OS === "web") return
         Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
             if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                sendCustomEvent('closeSplash')
                 setPremium(true)
             }
         })

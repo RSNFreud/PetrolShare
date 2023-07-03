@@ -67,10 +67,6 @@ const Tab = createBottomTabNavigator();
 
 SplashScreen.hideAsync()
 
-Notifications.addNotificationResponseReceivedListener((e) => {
-  console.log("Notification Title:", e.notification.request);
-});
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -217,12 +213,12 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (!loading) setTimeout(() => {
+    let i: string | number | NodeJS.Timeout | undefined;
+    if (!loading && !notifData.invoiceID && !notifData.routeName) i = setTimeout(() => {
       sendCustomEvent('closeSplash')
       checkForUpdates()
     }, 500);
     Notifications.addNotificationResponseReceivedListener((e) => {
-      console.log("Notification Title:", e.notification.request.content.title);
       const routeName = e.notification.request.content.data["route"] as any;
       const invoiceID = e.notification.request.content.data[
         "invoiceID"
@@ -230,15 +226,17 @@ export default function App() {
       if (!routeName) return;
       setNotifData({ routeName: routeName, invoiceID: invoiceID });
     });
-  }, [loading]);
+    return () => clearTimeout(i)
+  }, [loading, notifData]);
 
   useEffect(() => {
-    if (loading || !login.isLoggedIn) return;
+    if (loading || !login.isLoggedIn || !navRef.isReady()) return;
     if (notifData.invoiceID || notifData.routeName) {
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
       setNotifData({ routeName: "", invoiceID: "" });
+      sendCustomEvent('closeSplash')
     }
-  }, [notifData, loading, login.isLoggedIn]);
+  }, [notifData, loading, login, navRef]);
 
   useEffect(() => {
     setItem("firstLoad", "true");
@@ -305,7 +303,7 @@ export default function App() {
 
   return (<>
     <SplashScreenComponent />
-    {login.isLoading ? <></> :
+    {loading ? <></> :
       <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
         <AuthContext.Provider value={login}>
           {login.isLoggedIn && <Premium />}

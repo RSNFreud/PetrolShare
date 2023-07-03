@@ -36,7 +36,7 @@ export default () => {
 
     if (!visible) return <></>
 
-    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: Dimensions.get('window').height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background }}>
+    return <Animated.View style={{ width: Dimensions.get('screen').width, opacity: fadeAnim, height: Dimensions.get('screen').height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background }}>
         <ImageBackground source={SplashImage} style={{ width: '100%', height: '100%' }} />
     </Animated.View>
 }
