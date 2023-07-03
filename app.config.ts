@@ -9,6 +9,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     name: "PetrolShare",
     slug: "PetrolShare",
     android: {
-        googleServicesFile: process.env.GOOGLE_SERVICES
+        ...config.android,
+        googleServicesFile: process.env.GOOGLE_SERVICES,
     },
 });
