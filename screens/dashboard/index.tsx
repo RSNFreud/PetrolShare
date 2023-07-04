@@ -347,10 +347,12 @@ export default ({ navigation }: any) => {
 
   const changeTab = async (name: string) => {
     setCurrentTab(name)
-    await analytics().logScreenView({
-      screen_name: name,
-      screen_class: name,
-    });
+    try {
+      await analytics().logScreenView({
+        screen_name: name,
+        screen_class: name,
+      });
+    } catch { }
   }
 
   return (

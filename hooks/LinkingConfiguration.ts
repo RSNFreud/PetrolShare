@@ -6,25 +6,32 @@ const linking: any = {
   prefixes: [Linking.createURL('/')],
   config: {
     screens: {
+      Home: {
+        screens: {
+          Payments: 'payments',
+          ManageGroup: 'manage-group',
+          Dashboard: 'dashboard/:groupID?',
+          History: 'history',
+        }
+      },
       Login: 'login/:groupID?',
       Register: 'register',
       ManageDistance: 'manage-distance',
       AddPetrol: 'add-petrol',
       AddPreset: 'manage-distance/select-preset',
-      Logs: 'logs',
       AddManual: 'manage-distance/manual',
-      Invoices: 'payments',
-      ManageGroup: 'manage-group',
-      Dashboard: 'dashboard/:groupID?',
       NotFound: '*/:groupID?',
       GPS: 'gps-tracking',
       DesktopScreen: '/',
+      PublicInvoice: '/payments/public/:paymentID'
     },
   },
   async getInitialURL() {
     // First, you may want to do the default deep link handling
     // Check if app was opened from a deep link
     let url = await Linking.getInitialURL()
+    console.log(url);
+
     if (url != null) {
       return url
     }

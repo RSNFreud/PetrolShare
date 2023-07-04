@@ -1,10 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
-import { Box, Text, Button } from '../../components/Themed'
-import { ActivityIndicator, ScrollView, View } from 'react-native'
+import { Box, Text } from '../../components/Themed'
+import * as Sharing from 'expo-sharing';
+import { ActivityIndicator, LayoutChangeEvent, Platform, ScrollView, Share, TouchableOpacity, View } from 'react-native'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import {
+  Alert,
   convertToDate,
+  convertToSentenceCase,
   currencyPosition,
   getGroupData,
   getItem,
@@ -14,18 +17,33 @@ import { convertCurrency } from '../../hooks/getCurrencies'
 import config from '../../config'
 import AssignDistance from '../../components/assignDistance'
 import Colors from '../../constants/Colors'
+import Svg, { Path } from 'react-native-svg'
+import InvoiceItem from './invoiceItem'
+import { useNavigation } from '@react-navigation/native'
 
 type PropsType = {
-  invoiceID: number
+  invoiceID: number | string
+  isPublic?: boolean
 }
 
-export default ({ invoiceID }: PropsType) => {
+const SummaryItem = ({ title, value, width }: { title: string, value: string, width: number }) => (<View>
+  <Text style={{ color: 'white', fontSize: 14, fontWeight: '300', lineHeight: 21, width }}>{title}</Text>
+  <Text style={{ color: 'white', fontSize: 16, fontWeight: '700', lineHeight: 24, width }}>{value}</Text>
+</View>)
+
+const calculateWidth = (containerWidth: number, gap: number, items: number) => {
+  return containerWidth / items - (gap / items)
+}
+
+export default ({ invoiceID, isPublic }: PropsType) => {
   const [data, setData] = useState<any>({})
+  const [itemWidth, setItemWidth] = useState(0)
   const { retrieveData } = useContext(AuthContext)
   useEffect(() => {
     getInvoice()
   }, [])
   const [manageDistanceOpen, setManageDistanceOpen] = useState(false)
+  const navigate = useNavigation()
 
   const [groupData, setGroupData] = useState({
     distance: '',
@@ -78,6 +96,9 @@ export default ({ invoiceID }: PropsType) => {
       })
       .catch(({ response }) => {
         console.log(response.message)
+
+        Alert('Invalid Payment', 'This payment log does not exist!')
+        navigate.navigate('Payments')
       })
   }
 
@@ -88,130 +109,67 @@ export default ({ invoiceID }: PropsType) => {
       </>
     )
 
+  const setWidth = (e: LayoutChangeEvent) => {
+    setItemWidth(calculateWidth(e.nativeEvent.layout.width, 0, 2))
+  }
+
+  const sendLink = async () => {
+    if (!invoiceID) return
+    if (Platform.OS === "web")
+      navigate.navigate('PublicInvoice', { paymentID: invoiceID })
+    else
+      Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}/payments/public/${invoiceID}`, title: 'Share Petrol Invoice' })
+  }
+
   return (
     <>
-      <Box style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+      <Box style={{ paddingHorizontal: 15, marginBottom: 15 }} onLayout={setWidth}>
         <View
-          style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}
+          style={{ display: 'flex', flexDirection: 'row', marginBottom: 10, justifyContent: 'space-between' }}
         >
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            Invoice Date:{' '}
-          </Text>
-          <Text style={{ fontSize: 16 }}>{convertToDate(data.sessionEnd)}</Text>
+          <SummaryItem width={itemWidth} title='Invoiced By:' value={data.fullName} />
+          <SummaryItem width={itemWidth} title='Invoice Date:' value={convertToDate(data.sessionEnd)} />
         </View>
         <View
-          style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}
+          style={{ display: 'flex', flexDirection: 'row', marginBottom: Boolean(data.pricePerLiter) ? 10 : 0, justifyContent: 'space-between' }}
         >
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            Invoiced By:{' '}
-          </Text>
-          <Text style={{ fontSize: 16 }}>{data.fullName}</Text>
+          <SummaryItem width={itemWidth} title='Amount Paid:' value={currencyPosition(data.totalPrice, groupData.currency)} />
+          <SummaryItem width={itemWidth} title='Total Distance:' value={`${data.totalDistance} ${groupData?.distance}`} />
         </View>
-        <View
-          style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}
-        >
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            Total Distance:{' '}
-          </Text>
-          <Text style={{ fontSize: 16 }}>
-            {data.totalDistance} {groupData?.distance || ''}
-          </Text>
-        </View>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-            Amount Paid:{' '}
-          </Text>
-          <Text style={{ fontSize: 16 }}>
-            {currencyPosition(data.totalPrice, groupData.currency)}
-          </Text>
-        </View>
-        {Boolean(data.pricePerLiter) ? (
+        {Boolean(data.pricePerLiter) ?
           <View
-            style={{ display: 'flex', flexDirection: 'row', marginTop: 10 }}
+            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
           >
-            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-              Price Per Liter:{' '}
-            </Text>
-            <Text style={{ fontSize: 16 }}>
-              {currencyPosition(data.pricePerLiter, groupData.currency)}
-            </Text>
-          </View>
-        ) : (
-          <></>
-        )}
+            <SummaryItem width={itemWidth} title={`Price Per ${convertToSentenceCase(groupData.petrol)}`} value={currencyPosition(data.pricePerLiter, groupData.currency)} />
+          </View> : <></>}
       </Box>
       <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
-        {Object.entries(data.invoiceData).map(
-          ([key, value]: any, count: number) => {
-            return (
-              <Box
-                key={key}
-                style={{
-                  paddingHorizontal: 15,
-                  paddingVertical: 15,
-                  backgroundColor: Colors.primary,
-                  borderColor: Colors.border,
-                  marginBottom:
-                    Object.keys(data.invoiceData).length === count ? 0 : 10,
-                }}
-              >
-                <View
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                    {currencyPosition(value.paymentDue, groupData.currency)}
-                  </Text>
-                  {value.liters ? (
-                    <Text style={{ fontSize: 16 }}>
-                      {value?.liters} {groupData.petrol}
-                    </Text>
-                  ) : (
-                    <></>
-                  )}
-                </View>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      marginBottom: 5,
-                    }}
-                  >
-                    {value.fullName} (
-                    <Text style={{ fontSize: 17 }}>
-                      {value.distance} {groupData.distance}
-                    </Text>
-                    )
-                  </Text>
-                </View>
-                {value.fullName === 'Unaccounted Distance' ? (
-                  <Button
-                    size="medium"
-                    styles={{
-                      marginTop: 10,
-                      justifyContent: 'center',
-                    }}
-                    noText
-                    handleClick={() => setManageDistanceOpen(true)}
-                  >
-                    <Text style={{ fontWeight: 'bold', fontSize: 14 }}>
-                      Assign Distance
-                    </Text>
-                  </Button>
-                ) : (
-                  <></>
-                )}
-              </Box>
-            )
-          },
+        {Object.entries(data.invoiceData as { fullName: string }[]).sort((_, [, b]) => {
+          if (isPublic) return 0
+          if (b.fullName === retrieveData().fullName) return 1
+          else return -1
+        }).map(
+          ([_, value]: any, count: number) => (
+            <InvoiceItem isPublic={isPublic} key={count} invoiceData={value} fullName={retrieveData().fullName} groupData={groupData} lastItem={Boolean(Object.keys(data.invoiceData).length === count)} openManageDistance={() => setManageDistanceOpen(true)} authenticationKey={retrieveData().authenticationKey} invoiceID={invoiceID} />)
         )}
       </ScrollView>
+      {!isPublic &&
+        <TouchableOpacity onPress={sendLink} activeOpacity={0.8} >
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, position: 'absolute', bottom: 15, right: -10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Svg
+              width={'18'}
+              height="16"
+              fill="none"
+              viewBox="0 0 22 19"
+            >
+              <Path
+                fill="#fff"
+                d="M22 8.9L13.444.5v4.8C4.89 6.5 1.222 12.5 0 18.5c3.056-4.2 7.333-6.12 13.444-6.12v4.92L22 8.9z"
+              ></Path>
+            </Svg>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Share</Text>
+          </View>
+        </TouchableOpacity>}
       <AssignDistance
         active={manageDistanceOpen}
         handleClose={() => setManageDistanceOpen(false)}

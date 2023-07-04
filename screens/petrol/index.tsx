@@ -77,7 +77,6 @@ export default React.memo(({ onClose }: PropsType) => {
         navigate("Payments", { id: (data as string) });
       })
       .catch(({ response }) => {
-        console.log(response);
         setErrors({
           ...errors,
           submit:

@@ -43,6 +43,7 @@ import Toast from "react-native-toast-message";
 import { Text } from "./components/Themed";
 import AlertBox from "./components/alertBox";
 import * as Sentry from 'sentry-expo';
+import PublicInvoice from "./screens/publicInvoice";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -255,14 +256,16 @@ export default function App() {
 
   const updateScreen = async () => {
     if (!navRef || !navRef.getCurrentRoute()) return
-    await analytics().logScreenView({
-      screen_name: navRef.getCurrentRoute()?.name,
-      screen_class: navRef.getCurrentRoute()?.name,
-    });
-    routingInstrumentation?.onRouteWillChange({
-      name: navRef.getCurrentRoute()?.name || "",
-      op: 'navigation'
-    })
+    try {
+      await analytics().logScreenView({
+        screen_name: navRef.getCurrentRoute()?.name,
+        screen_class: navRef.getCurrentRoute()?.name,
+      });
+      routingInstrumentation?.onRouteWillChange({
+        name: navRef.getCurrentRoute()?.name || "",
+        op: 'navigation'
+      })
+    } catch { }
     setScreen(navRef.getCurrentRoute()?.name || "")
   }
 
@@ -301,12 +304,13 @@ export default function App() {
     ),
   }
 
+
   return (<>
     <SplashScreenComponent />
     {loading ? <></> :
       <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
         <AuthContext.Provider value={login}>
-          {login.isLoggedIn && <Premium />}
+          {login.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
           <NavigationContainer
             onReady={() => checkFirstTime()}
             onStateChange={() => updateScreen()}
@@ -351,6 +355,7 @@ export default function App() {
                   <Stack.Screen name="Register" component={Register} />
                 </>
               )}
+              <Stack.Screen options={{ header: () => <Header isGuestMode /> }} name="PublicInvoice" component={PublicInvoice} />
               <Stack.Screen
                 name="NotFound"
                 component={NotFoundScreen}

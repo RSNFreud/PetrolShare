@@ -12,7 +12,7 @@ type PropsType = {
     handleClose: () => void
     handleUpdate: () => void
     data: { [key: number]: { fullName: string, distance: number, userID: number } }
-    invoiceID: number
+    invoiceID: number | string
 }
 
 export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsType) => {

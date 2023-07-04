@@ -29,6 +29,7 @@ export type RootStackParamList = {
   Payments: NavigatorScreenParams<RootTabParamList> | undefined
   Login: NavigatorScreenParams<RootTabParamList> | undefined
   Dashboard: NavigatorScreenParams<RootTabParamList> | undefined
+  PublicInvoice: any
   NotFound: undefined
 }
 
@@ -38,6 +39,7 @@ export type RootStackScreenProps<
 
 export type RootTabParamList = {
   Dashboard: { groupID?: string }
+  PublicInvoice: { paymentID?: string }
   Payments: { id?: string }
   TabTwo: undefined
 }

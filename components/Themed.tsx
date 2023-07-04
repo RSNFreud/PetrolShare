@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   View as DefaultView,
   Dimensions,
+  LayoutChangeEvent,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 import Colors from '../constants/Colors'
@@ -51,7 +52,7 @@ export function Text(props: TextProps) {
 }
 
 type ButtonType = {
-  children: JSX.Element | Array<JSX.Element> | string
+  children?: JSX.Element | Array<JSX.Element> | string
   icon?: JSX.Element
   color?: 'blue' | 'red'
   style?: 'regular' | 'ghost'
@@ -128,10 +129,12 @@ export const Button = ({
 
   const onClick = () => {
     if (typeof children === "string")
-      analytics().logSelectContent({
-        content_type: 'button',
-        item_id: children
-      })
+      try {
+        analytics().logSelectContent({
+          content_type: 'button',
+          item_id: children
+        })
+      } catch { }
     if (handleClick) handleClick()
   }
 
@@ -202,9 +205,12 @@ export const Seperator = ({ style }: ViewProps) => {
 export const Box = ({
   children,
   style,
+  ...rest
 }: {
   children: JSX.Element | JSX.Element[]
   style?: ViewProps['style']
+  onLayout?: ((event: LayoutChangeEvent) => void)
+
 }) => {
   return (
     <DefaultView
@@ -219,6 +225,7 @@ export const Box = ({
         },
         style,
       ]}
+      {...rest}
     >
       {children}
     </DefaultView>
@@ -339,10 +346,13 @@ export const LongButton = ({
 
 
   const onClick = () => {
-    analytics().logSelectContent({
-      content_type: 'button',
-      item_id: text
-    })
+    try {
+      analytics().logSelectContent({
+        content_type: 'button',
+        item_id: text
+      })
+    } catch { }
+
     handleClick()
   }
   return (

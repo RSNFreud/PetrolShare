@@ -10,7 +10,7 @@ import axios from "axios";
 import config from "../config";
 import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
 
-export default () => {
+export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const navigation = useNavigation<any>();
   const route = useRoute();
   const { isLoggedIn, retrieveData, setData } = useContext(AuthContext);
@@ -29,7 +29,6 @@ export default () => {
           if (!sessionStorage) return
           sessionStorage = JSON.parse(sessionStorage)
           sessionStorage = { ...sessionStorage, ...data[0] }
-          console.log(JSON.stringify(sessionStorage));
           setData(sessionStorage)
           setItem('userData', JSON.stringify(sessionStorage))
         } catch (err) {
@@ -61,11 +60,11 @@ export default () => {
         alignItems: "center",
         alignContent: "center",
         backgroundColor: isLoggedIn && route.name === "Dashboard" ? Colors.secondary : '',
-        justifyContent: isLoggedIn ? "space-between" : "center",
+        justifyContent: isLoggedIn && !isGuestMode ? "space-between" : "center",
         paddingBottom: 25,
       }}
     >
-      <TouchableWithoutFeedback onPress={() => navigation.popToTop()}>
+      <TouchableWithoutFeedback onPress={() => isGuestMode ? null : navigation.popToTop()}>
         <Text
           style={{
             fontWeight: "700",
@@ -76,13 +75,13 @@ export default () => {
             verticalAlign: 'middle',
             lineHeight: 31,
             color: "white",
-            textAlign: isLoggedIn ? "left" : "center",
+            textAlign: isLoggedIn && !isGuestMode ? "left" : "center",
           }}
         >
           PetrolShare
         </Text>
       </TouchableWithoutFeedback>
-      {!!isLoggedIn && (
+      {(isLoggedIn && !isGuestMode) && (
         <>
           <Button
             noText

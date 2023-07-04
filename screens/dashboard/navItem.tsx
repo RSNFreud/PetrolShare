@@ -12,10 +12,12 @@ type PropsType = {
 export default ({ icon, text, active, handleClick }: PropsType) => {
 
     const onClick = () => {
-        analytics().logSelectContent({
-            content_type: 'button',
-            item_id: text
-        })
+        try {
+            analytics().logSelectContent({
+                content_type: 'button',
+                item_id: text
+            })
+        } catch { }
         handleClick(text)
     }
     return <TouchableWithoutFeedback onPress={onClick}>
