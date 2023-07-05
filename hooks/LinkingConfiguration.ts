@@ -71,6 +71,8 @@ const linking: any = {
       return undefined
     }
 
+    if (path === '/') return undefined
+
     return getStateFromPath(path, config)
   },
 }
