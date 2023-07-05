@@ -124,7 +124,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     if (Platform.OS === "web")
       navigate.navigate('PublicInvoice', { uniqueURL: data.uniqueURL })
     else
-      Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${invoiceID}`, title: 'Share Petrol Invoice' })
+      Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`, title: 'Share Petrol Invoice' })
   }
 
   const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData().fullName && value.fullName !== "Unaccounted Distance")
