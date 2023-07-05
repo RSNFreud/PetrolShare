@@ -217,10 +217,10 @@ export default function App() {
 
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
-    if (!loading && !notifData.invoiceID && !notifData.routeName) i = setTimeout(() => {
+    if (!loading && !notifData.invoiceID && !notifData.routeName) {
       sendCustomEvent('closeSplash')
       checkForUpdates()
-    }, 500);
+    };
     Notifications.addNotificationResponseReceivedListener((e) => {
       const routeName = e.notification.request.content.data["route"] as any;
       const invoiceID = e.notification.request.content.data[
@@ -326,75 +326,73 @@ export default function App() {
 
   return (<>
     <SplashScreenComponent />
-    {loading ? <></> :
-      <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
-        <AuthContext.Provider value={login}>
-          {login.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
-          <NavigationContainer
-            initialState={initialState}
-            onReady={() => checkFirstTime()}
-            onStateChange={(state) => updateScreen(state)}
-            ref={navRef}
-            linking={LinkingConfiguration}
-            theme={{
-              dark: true,
-              colors: {
-                ...DefaultTheme.colors,
-                background: Colors.background,
-                text: "white",
-              },
+    <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
+      <AuthContext.Provider value={login}>
+        {login.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
+        <NavigationContainer
+          initialState={initialState}
+          onReady={() => checkFirstTime()}
+          onStateChange={(state) => updateScreen(state)}
+          ref={navRef}
+          linking={LinkingConfiguration}
+          theme={{
+            dark: true,
+            colors: {
+              ...DefaultTheme.colors,
+              background: Colors.background,
+              text: "white",
+            },
+          }}
+        >
+          <Stack.Navigator
+            screenOptions={{
+              gestureEnabled: false,
+              headerShown: true,
+              header: () => <Header />,
+              animation: "slide_from_right",
+              animationDuration: 600,
             }}
           >
-            <Stack.Navigator
-              screenOptions={{
-                gestureEnabled: false,
-                headerShown: true,
-                header: () => <Header />,
-                animation: "slide_from_right",
-                animationDuration: 600,
-              }}
-            >
-              {width > 768 && Platform.OS === "web" ? (
-                <Stack.Screen
-                  name="DesktopScreen"
-                  component={DesktopScreen}
-                  options={{ title: "PetrolShare", headerShown: false }}
-                />
-              ) : loading || login.isLoggedIn ? (
-                <>
-                  <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
-                  {!firstSteps && <Stack.Screen
-                    name="AddPreset"
-                    component={preset}
-                    options={{ title: "Add Preset" }}
-                  />}
-                </>
-              ) : (
-                <>
-                  <Stack.Screen name="Login" component={Login} />
-                  <Stack.Screen name="Register" component={Register} />
-                </>
-              )}
-              <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />
+            {width > 768 && Platform.OS === "web" ? (
               <Stack.Screen
-                name="NotFound"
-                component={NotFoundScreen}
-                options={{ title: "Oops!" }}
+                name="DesktopScreen"
+                component={DesktopScreen}
+                options={{ title: "PetrolShare", headerShown: false }}
               />
-            </Stack.Navigator>
-          </NavigationContainer>
-          <StatusBar
-            style="light"
-            backgroundColor={
-              screen != "Dashboard" ? Colors.background : Colors.secondary
-            }
-          />
-          {!popupVisible && <AlertBox />}
-          <Toast config={ToastConfig} />
+            ) : loading || login.isLoggedIn ? (
+              <>
+                <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
+                {!firstSteps && <Stack.Screen
+                  name="AddPreset"
+                  component={preset}
+                  options={{ title: "Add Preset" }}
+                />}
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Register" component={Register} />
+              </>
+            )}
+            <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />
+            <Stack.Screen
+              name="NotFound"
+              component={NotFoundScreen}
+              options={{ title: "Oops!" }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <StatusBar
+          style="light"
+          backgroundColor={
+            screen != "Dashboard" ? Colors.background : Colors.secondary
+          }
+        />
+        {!popupVisible && <AlertBox />}
+        <Toast config={ToastConfig} />
 
-        </AuthContext.Provider>
-      </View>
-    }
+      </AuthContext.Provider>
+    </View>
   </>
   );
 }

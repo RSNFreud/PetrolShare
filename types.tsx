@@ -30,7 +30,7 @@ export type RootStackParamList = {
   Login: NavigatorScreenParams<RootTabParamList> | undefined
   Dashboard: NavigatorScreenParams<RootTabParamList> | undefined
   PublicInvoice: any
-  NotFound: undefined
+  NotFound: any
 }
 
 export type RootStackScreenProps<
