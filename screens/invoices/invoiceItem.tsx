@@ -16,9 +16,10 @@ type PropsType = {
     lastItem: boolean,
     authenticationKey: string
     isPublic?: boolean
+    invoicedBy?: string
 }
 
-export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance, authenticationKey, invoiceID, isPublic }: PropsType) => {
+export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
     const [alertSent, setAlertSent] = useState(false)
 
     const sendAlert = () => {
@@ -88,7 +89,7 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
                 </Text>
                 )
             </Text>
-            {invoiceData.fullName === fullName || isPublic || invoiceData.fullName === "Unaccounted Distance" ? <></> :
+            {invoiceData.fullName === fullName || invoiceData.fullName === invoicedBy || isPublic || invoiceData.fullName === "Unaccounted Distance" ? <></> :
                 <TouchableOpacity activeOpacity={0.8} onPress={sendAlert}>
                     <View style={{ width: 30, height: 30, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: Colors.tertiary, borderRadius: 4, justifyContent: 'center', alignItems: 'center', display: 'flex', borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border }}>
                         {alertSent ? <Svg

@@ -137,6 +137,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     isPublic: isPublic,
     groupData: groupData,
     invoiceID: invoiceID,
+    invoicedBy: data?.fullName,
     authenticationKey: retrieveData().authenticationKey,
     fullName: retrieveData().fullName,
     openManageDistance: () => setManageDistanceOpen(true)
