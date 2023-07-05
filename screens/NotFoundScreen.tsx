@@ -13,7 +13,7 @@ export default function NotFoundScreen({
     <View style={styles.container}>
       <Text style={styles.title}>The url {route.path} doesn't exist.</Text>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Dashboard')}
+        onPress={() => navigation.navigate('Home')}
         style={styles.link}
       >
         <Text style={styles.linkText}>Go to home screen!</Text>

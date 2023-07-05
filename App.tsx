@@ -3,6 +3,7 @@ import {
   NavigationContainer,
   DefaultTheme,
   useNavigationContainerRef,
+  PartialState,
 } from "@react-navigation/native";
 import analytics from '@react-native-firebase/analytics';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -10,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
+import { Dimensions, Linking, Platform, View, useWindowDimensions } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -79,6 +80,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [initialState, setInitialState] = useState()
   const [userData, setUserData] = useState<any>({});
   const [firstSteps, setFirstSteps] = useState(false);
   const [screen, setScreen] = useState("");
@@ -232,6 +234,8 @@ export default function App() {
 
   useEffect(() => {
     if (loading || !login.isLoggedIn || !navRef.isReady()) return;
+    restoreState()
+
     if (notifData.invoiceID || notifData.routeName) {
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
       setNotifData({ routeName: "", invoiceID: "" });
@@ -239,11 +243,23 @@ export default function App() {
     }
   }, [notifData, loading, login, navRef]);
 
+  const restoreState = async () => {
+    const initialURL = await Linking.getInitialURL()
+    if (Platform.OS === 'web' && initialURL !== 'null') {
+      const savedState = getItem('PERSISTANT_STATE')
+      const state = savedState ? JSON.parse(savedState) : undefined
+      if (state)
+        setInitialState(state)
+    }
+
+  }
+
   useEffect(() => {
     setItem("firstLoad", "true");
   }, []);
 
   const checkFirstTime = () => {
+    updateScreen()
     if (
       navRef &&
       navRef.getCurrentRoute()?.name != "Dashboard" &&
@@ -254,7 +270,9 @@ export default function App() {
     else setFirstSteps(false);
   };
 
-  const updateScreen = async () => {
+  const updateScreen = async (state?: Readonly<{ key: string; index: number; routeNames: string[]; history?: unknown[] | undefined; routes: (Readonly<{ key: string; name: string; path?: string | undefined; }> & Readonly<{ params?: Readonly<object | undefined>; }> & { state?: Readonly<any> | PartialState<Readonly<any>> | undefined; })[]; type: string; stale: false; }> | undefined) => {
+    if (state)
+      setItem('PERSISTANT_STATE', JSON.stringify(state))
     if (!navRef || !navRef.getCurrentRoute()) return
     try {
       await analytics().logScreenView({
@@ -266,6 +284,7 @@ export default function App() {
         op: 'navigation'
       })
     } catch { }
+
     setScreen(navRef.getCurrentRoute()?.name || "")
   }
 
@@ -312,8 +331,9 @@ export default function App() {
         <AuthContext.Provider value={login}>
           {login.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
           <NavigationContainer
+            initialState={initialState}
             onReady={() => checkFirstTime()}
-            onStateChange={() => updateScreen()}
+            onStateChange={(state) => updateScreen(state)}
             ref={navRef}
             linking={LinkingConfiguration}
             theme={{
@@ -355,7 +375,7 @@ export default function App() {
                   <Stack.Screen name="Register" component={Register} />
                 </>
               )}
-              <Stack.Screen options={{ header: () => <Header isGuestMode /> }} name="PublicInvoice" component={PublicInvoice} />
+              <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />
               <Stack.Screen
                 name="NotFound"
                 component={NotFoundScreen}
