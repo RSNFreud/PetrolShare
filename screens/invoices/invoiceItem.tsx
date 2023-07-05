@@ -1,5 +1,5 @@
 import { View, TouchableOpacity } from "react-native"
-import { Box, Text, Button } from '../../components/Themed'
+import { Box, Text, Button, Seperator } from '../../components/Themed'
 import Svg, { Path } from "react-native-svg"
 import { Alert, currencyPosition } from "../../hooks"
 import Colors from "../../constants/Colors"
@@ -45,14 +45,14 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
 
     if (!invoiceData) return <></>
 
-    return <Box
+    return <><Box
         style={{
             paddingHorizontal: 15,
             paddingVertical: 15,
-            backgroundColor: invoiceData.fullName === fullName && !isPublic ? Colors.tertiary : Colors.primary,
+            backgroundColor: Colors.primary,
             borderColor: Colors.border,
             marginBottom:
-                lastItem ? 0 : 10,
+                lastItem || invoiceData.fullName === fullName ? 0 : 10,
         }}
     >
         <View
@@ -137,4 +137,6 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
             <></>
         )}
     </Box>
+        {invoiceData.fullName === fullName && !lastItem ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
+    </>
 }

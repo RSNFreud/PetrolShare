@@ -1,12 +1,13 @@
 import * as Linking from 'expo-linking'
 import * as Notifications from 'expo-notifications'
 import { setItem } from '.'
-import { getStateFromPath } from '@react-navigation/native'
+import { Link, getStateFromPath } from '@react-navigation/native'
 
 const linking: any = {
   prefixes: [Linking.createURL('/')],
   config: {
     screens: {
+      initialRouteName: 'Home',
       Home: {
         screens: {
           Payments: 'payments',
@@ -24,7 +25,7 @@ const linking: any = {
       NotFound: '*/:groupID?',
       GPS: 'gps-tracking',
       DesktopScreen: '/',
-      PublicInvoice: '/payments/public/:paymentID'
+      PublicInvoice: '/payments/public/:uniqueURL'
     },
   },
   async getInitialURL() {
@@ -63,12 +64,15 @@ const linking: any = {
       subscription.remove()
     }
   },
-  // getStateFromPath(path: string, config: {}) {
-  //   if (path.includes('groupID=')) {
-  //     let id = path.split('groupID=')[1].match(/\b\w*\b/)
-  //     if (id) setItem('referalCode', id[0])
-  //   }
-  // },
+  getStateFromPath(path: string, config: { screens: {} }) {
+    if (path.includes('groupID=')) {
+      let id = path.split('groupID=')[1].match(/\b\w*\b/)
+      if (id) setItem('referalCode', id[0])
+      return undefined
+    }
+
+    return getStateFromPath(path, config)
+  },
 }
 
 export default linking

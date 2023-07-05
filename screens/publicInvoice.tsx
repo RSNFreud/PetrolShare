@@ -8,8 +8,8 @@ export default () => {
     const [invoiceID, setInvoiceID] = useState("")
 
     useEffect(() => {
-        if (route && route.params && 'paymentID' in route.params) {
-            const key = route.params['paymentID'] as string
+        if (route && route.params && 'uniqueURL' in route.params) {
+            const key = route.params['uniqueURL'] as string
             if (key) setInvoiceID(key)
         }
     }, [route])

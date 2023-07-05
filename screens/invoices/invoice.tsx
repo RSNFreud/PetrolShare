@@ -69,6 +69,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   }
 
   const init = async () => {
+    if (isPublic) return
     const getSymbol = getItem('currencySymbol')
     if (getSymbol)
       setGroupData({
@@ -85,18 +86,23 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   }
 
   const getInvoice = () => {
+
+    const url = isPublic ? config.REACT_APP_API_ADDRESS +
+      `/invoices/public/get?uniqueURL=${invoiceID}` : config.REACT_APP_API_ADDRESS +
+    `/invoices/get?authenticationKey=${retrieveData().authenticationKey
+    }&invoiceID=${invoiceID}`
+
     axios
       .get(
-        config.REACT_APP_API_ADDRESS +
-        `/invoices/get?authenticationKey=${retrieveData().authenticationKey
-        }&invoiceID=${invoiceID}`,
+        url,
       )
       .then(async ({ data }) => {
         setData({ ...data, invoiceData: JSON.parse(data.invoiceData) })
+        if (isPublic) setGroupData({ ...groupData, distance: data?.distance, currency: await convertCurrency(data?.currency), petrol: data?.petrol })
       })
       .catch(({ response }) => {
         console.log(response.message)
-
+        if (isPublic) return
         Alert('Invalid Payment', 'This payment log does not exist!')
         navigate.navigate('Payments')
       })
@@ -116,14 +122,29 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const sendLink = async () => {
     if (!invoiceID) return
     if (Platform.OS === "web")
-      navigate.navigate('PublicInvoice', { paymentID: invoiceID })
+      navigate.navigate('PublicInvoice', { uniqueURL: data.uniqueURL })
     else
       Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}/payments/public/${invoiceID}`, title: 'Share Petrol Invoice' })
   }
 
+  const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData().fullName && value.fullName !== "Unaccounted Distance")
+
+  const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData().fullName)
+
+  const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
+
+  const globalProps = {
+    isPublic: isPublic,
+    groupData: groupData,
+    invoiceID: invoiceID,
+    authenticationKey: retrieveData().authenticationKey,
+    fullName: retrieveData().fullName,
+    openManageDistance: () => setManageDistanceOpen(true)
+  }
+
   return (
     <>
-      <Box style={{ paddingHorizontal: 15, marginBottom: 15 }} onLayout={setWidth}>
+      <Box style={{ paddingHorizontal: 15, marginBottom: 25 }} onLayout={setWidth}>
         <View
           style={{ display: 'flex', flexDirection: 'row', marginBottom: 10, justifyContent: 'space-between' }}
         >
@@ -143,14 +164,21 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             <SummaryItem width={itemWidth} title={`Price Per ${convertToSentenceCase(groupData.petrol)}`} value={currencyPosition(data.pricePerLiter, groupData.currency)} />
           </View> : <></>}
       </Box>
-      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
-        {Object.entries(data.invoiceData as { fullName: string }[]).sort((_, [, b]) => {
-          if (isPublic) return 0
-          if (b.fullName === retrieveData().fullName) return 1
-          else return -1
-        }).map(
-          ([_, value]: any, count: number) => (
-            <InvoiceItem isPublic={isPublic} key={count} invoiceData={value} fullName={retrieveData().fullName} groupData={groupData} lastItem={Boolean(Object.keys(data.invoiceData).length === count)} openManageDistance={() => setManageDistanceOpen(true)} authenticationKey={retrieveData().authenticationKey} invoiceID={invoiceID} />)
+      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 70 }}>
+        {userInvoice.map(
+          ([_, value]: any) =>
+          (
+            <InvoiceItem key={value.fullName} invoiceData={value} lastItem={Boolean(!dataObj.length)} {...globalProps} />)
+        )}
+        {untrackedDistance.map(
+          ([_, value]: any) =>
+          (
+            <InvoiceItem key={value.fullName} invoiceData={value} lastItem={Boolean(dataObj.length > 2)} {...globalProps} />)
+        )}
+        {dataObj.map(
+          ([_, value]: any, count: number) =>
+          (
+            <InvoiceItem key={count} invoiceData={value} lastItem={dataObj.length === count + 1}  {...globalProps} />)
         )}
       </ScrollView>
       {!isPublic &&
@@ -170,13 +198,14 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Share</Text>
           </View>
         </TouchableOpacity>}
-      <AssignDistance
-        active={manageDistanceOpen}
-        handleClose={() => setManageDistanceOpen(false)}
-        handleUpdate={handleUpdate}
-        data={data.invoiceData}
-        invoiceID={invoiceID}
-      />
+      {isPublic ? <></> :
+        <AssignDistance
+          active={manageDistanceOpen}
+          handleClose={() => setManageDistanceOpen(false)}
+          handleUpdate={handleUpdate}
+          data={data.invoiceData}
+          invoiceID={invoiceID}
+        />}
     </>
   )
 }
