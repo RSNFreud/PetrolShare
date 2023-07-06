@@ -8,9 +8,9 @@ import axios from "axios"
 import config from "../../config"
 
 type PropsType = {
-    invoiceData: { fullName?: string, paymentDue: number, distance: number, liters?: number }
+    invoiceData: { fullName?: string, paymentDue: number, distance: number, liters?: number, emailAddress?: string }
     invoiceID: number | string
-    fullName: string
+    emailAddress: string
     groupData: { currency: string, petrol: string, distance: string }
     openManageDistance: () => void | void
     lastItem: boolean,
@@ -19,7 +19,7 @@ type PropsType = {
     invoicedBy?: string
 }
 
-export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
+export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
     const [alertSent, setAlertSent] = useState(false)
 
     const sendAlert = () => {
@@ -53,7 +53,7 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
             backgroundColor: Colors.primary,
             borderColor: Colors.border,
             marginBottom:
-                lastItem || invoiceData.fullName === fullName ? 0 : 10,
+                lastItem || invoiceData.emailAddress === emailAddress ? 0 : 10,
         }}
     >
         <View
@@ -83,13 +83,13 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
                     fontWeight: 'bold',
                 }}
             >
-                {invoiceData.fullName === fullName && !isPublic ? 'You' : invoiceData.fullName} (
+                {invoiceData.emailAddress === emailAddress && !isPublic ? 'You' : invoiceData.fullName} (
                 <Text style={{ fontSize: 17 }}>
                     {invoiceData.distance} {groupData.distance}
                 </Text>
                 )
             </Text>
-            {invoiceData.fullName === fullName || invoiceData.fullName === invoicedBy || isPublic || invoiceData.fullName === "Unaccounted Distance" ? <></> :
+            {invoiceData.emailAddress === emailAddress || invoiceData.emailAddress === invoicedBy || isPublic || invoiceData.fullName === "Unaccounted Distance" ? <></> :
                 <TouchableOpacity activeOpacity={0.8} onPress={sendAlert}>
                     <View style={{ width: 30, height: 30, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: Colors.tertiary, borderRadius: 4, justifyContent: 'center', alignItems: 'center', display: 'flex', borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border }}>
                         {alertSent ? <Svg
@@ -138,6 +138,6 @@ export default ({ invoiceData, fullName, lastItem, groupData, openManageDistance
             <></>
         )}
     </Box>
-        {invoiceData.fullName === fullName && !lastItem ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
+        {invoiceData.emailAddress === emailAddress && !lastItem ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
     </>
 }
