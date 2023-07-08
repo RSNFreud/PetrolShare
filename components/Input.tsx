@@ -5,7 +5,7 @@ import Svg, { Path } from 'react-native-svg'
 import Colors from '../constants/Colors'
 
 type PropsType = {
-  label: string
+  label?: string
   password?: boolean
   value?: string
   placeholder: string
@@ -41,17 +41,18 @@ export default ({
   return (
     <View style={style}>
       <>
-        <Text
-          style={{
-            fontWeight: '700',
-            fontSize: 16,
-            lineHeight: 16,
-            marginBottom: 10,
-            color: 'white',
-          }}
-        >
-          {label}
-        </Text>
+        {!!label &&
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: 16,
+              lineHeight: 16,
+              marginBottom: 10,
+              color: 'white',
+            }}
+          >
+            {label}
+          </Text>}
         <View style={{ position: 'relative' }}>
           <TextInput
             testID={testID}
@@ -72,7 +73,7 @@ export default ({
               color: 'white',
               fontWeight: '400',
               height: 53,
-              fontSize: 18,
+              fontSize: 16,
               paddingHorizontal: 16,
               paddingVertical: 13,
               paddingRight: 50,

@@ -3,6 +3,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Pressable,
+  ViewProps,
 } from "react-native";
 import { Text } from "./Themed";
 import Svg, { Path } from "react-native-svg";
@@ -18,12 +19,16 @@ type PropsType = {
   handleSelected: (e: string) => void;
   errorMessage?: string;
   placeholder: string
+  inputStyle?: ViewProps["style"]
+  style?: ViewProps["style"]
   height?: number
   hiddenValue?: boolean
+  hasBottomMargin?: boolean
   label?: string
+  sort?: boolean
 };
 
-export default ({ data, value, handleSelected, errorMessage, placeholder, hiddenValue, label }: PropsType) => {
+export default ({ data, value, handleSelected, errorMessage, placeholder, hiddenValue, label, sort = true, style, hasBottomMargin = true, inputStyle }: PropsType) => {
   const [selected, setSelected] = useState("");
   const [displayText, setDisplayText] = useState(selected)
   const dropdownRef = useRef<any>("")
@@ -44,9 +49,9 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
   }, [data, value, selected]);
 
   return (<TouchableWithoutFeedback onPress={() => dropdownRef.current.focus()} >
-    <View style={{
-      marginBottom: 25,
-    }}>
+    <View style={[{
+      marginBottom: hasBottomMargin ? 25 : 0
+    }, style]}>
       {!!label &&
         <Text
           style={{
@@ -60,7 +65,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
           {label}
         </Text>}
       <View
-        style={{
+        style={[{
           position: "relative",
           zIndex: 1,
           borderRadius: 4,
@@ -77,7 +82,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
           flexDirection: 'row',
           alignContent: 'center',
           alignItems: 'center'
-        }}
+        }, inputStyle]}
       >
         <Picker
           ref={dropdownRef}
@@ -89,6 +94,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
             top: 0,
             left: 0,
             opacity: 0,
+            height: '100%',
             width: "100%",
           }}
           itemStyle={{
@@ -101,7 +107,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
               value={""}
               label={placeholder}
             />}
-          {data
+          {sort ? data
             .sort((a, b) => a["name"].localeCompare(b["name"]))
             .map((e) => {
               return (
@@ -111,9 +117,18 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
                   label={`${e.name} ${!hiddenValue && e.value ? `(${e.value})` : ''}`}
                 />
               );
-            })}
+            }) : data
+              .map((e) => {
+                return (
+                  <Picker.Item
+                    color="black" key={e.name}
+                    value={e.value}
+                    label={`${e.name} ${!hiddenValue && e.value ? `(${e.value})` : ''}`}
+                  />
+                );
+              })}
         </Picker>
-        <Text style={{ zIndex: 3 }}>{displayText || placeholder}</Text>
+        <Text style={{ zIndex: 3, fontSize: 16 }}>{displayText || placeholder}</Text>
         <Svg
           width="11"
           height="13"

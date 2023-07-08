@@ -30,6 +30,7 @@ import React from 'react'
 import FadeWrapper from './fadeWrapper'
 import Tooltip from '../../components/tooltip'
 import analytics from '@react-native-firebase/analytics'
+import Schedules from '../schedules'
 
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)

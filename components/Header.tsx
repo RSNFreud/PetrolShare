@@ -59,7 +59,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
         position: "relative",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: isLoggedIn && route.name === "Dashboard" ? Colors.secondary : '',
+        backgroundColor: isLoggedIn && route.name === "Dashboard" || route.name.includes("Schedule") ? Colors.secondary : '',
         justifyContent: isLoggedIn && !isGuestMode ? "space-between" : "center",
         paddingBottom: 25,
       }}

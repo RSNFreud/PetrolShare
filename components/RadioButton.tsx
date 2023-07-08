@@ -4,7 +4,7 @@ import { Text } from './Themed'
 import Colors from '../constants/Colors'
 
 type PropsType = {
-  buttons: Array<{ name: string; value: string }>
+  buttons: Array<{ name: string; value: string, rightSideElement?: React.ReactNode }>
   value: string
   handleChange: (value: string) => void
   errorMessage?: string
@@ -49,8 +49,8 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
 
   return (
     <View>
-      {buttons.map((e, c) => (
-        <TouchableWithoutFeedback
+      {buttons.map((e, c) => {
+        const RadioButton = () => <TouchableWithoutFeedback
           key={e.value}
           onPress={() => setActiveRadio(e.value)}
         >
@@ -75,7 +75,12 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
             </Text>
           </View>
         </TouchableWithoutFeedback>
-      ))}
+
+        return e.rightSideElement ? <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
+          <RadioButton />
+          {e.rightSideElement}
+        </View> : <RadioButton />
+      })}
       {!!errorMessage && (
         <Text
           style={{

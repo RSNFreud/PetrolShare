@@ -233,20 +233,21 @@ export const Box = ({
 }
 
 export const Breadcrumbs = ({
-  links,
+  links, style
 }: {
   links: Array<{ name: string; screenName?: string }>
+  style?: ViewProps["style"]
 }) => {
   const navigation = useNavigation() as any
 
   return (
     <DefaultView
-      style={{
+      style={[{
         display: 'flex',
         marginBottom: 30,
         flexDirection: 'row',
         alignItems: 'center',
-      }}
+      }, style]}
     >
       {links.map((e, c) => {
         return (

@@ -14,6 +14,7 @@ const linking: any = {
           ManageGroup: 'manage-group',
           Dashboard: 'dashboard/:groupID?',
           History: 'history',
+          Schedules: 'schedules',
         }
       },
       Login: 'login/:groupID?',

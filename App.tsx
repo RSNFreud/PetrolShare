@@ -45,6 +45,7 @@ import { Text } from "./components/Themed";
 import AlertBox from "./components/alertBox";
 import * as Sentry from 'sentry-expo';
 import PublicInvoice from "./screens/publicInvoice";
+import schedules from "./screens/schedules";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -52,7 +53,6 @@ try {
 
   Sentry.init({
     dsn: "http://6bf6ac38ab5b406e8e9309b45ec37ede@freud-online.co.uk:9000/4",
-    enableInExpoDevelopment: true,
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     tracesSampleRate: 1.0,
@@ -404,5 +404,6 @@ const BottomNavigator = () => (
     }} />
     <Tab.Screen name="Payments" component={invoices} />
     <Tab.Screen name="History" component={logs} />
+    <Tab.Screen name="Schedules" component={schedules} />
   </Tab.Navigator>
 )

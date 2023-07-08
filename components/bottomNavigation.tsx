@@ -1,5 +1,5 @@
 import React from "react"
-import { TouchableWithoutFeedback, View } from "react-native"
+import { ScrollView, TouchableWithoutFeedback, View } from "react-native"
 import Svg, { Path } from "react-native-svg"
 import { Text } from "./Themed"
 import Colors from "../constants/Colors"
@@ -40,6 +40,18 @@ const icon = (route: string) => {
                     d="M10 20c-2.556 0-4.783-.847-6.681-2.542C1.42 15.763.333 13.648.056 11.11h2.277c.26 1.926 1.116 3.519 2.57 4.778 1.454 1.26 3.153 1.889 5.097 1.889 2.167 0 4.005-.755 5.514-2.265 1.51-1.51 2.265-3.347 2.264-5.513 0-2.167-.755-4.005-2.265-5.514-1.51-1.51-3.347-2.265-5.513-2.264a7.5 7.5 0 00-3.583.89A8.257 8.257 0 003.61 5.555h3.056v2.222H0V1.11h2.222v2.611a9.7 9.7 0 013.46-2.75A9.924 9.924 0 0110 0c1.389 0 2.69.264 3.903.792A10.178 10.178 0 0117.07 2.93a10.2 10.2 0 012.139 3.167A9.656 9.656 0 0120 10c0 1.389-.264 2.69-.792 3.903a10.18 10.18 0 01-2.138 3.167 10.186 10.186 0 01-3.167 2.139A9.656 9.656 0 0110 20zm3.111-5.333L8.89 10.444v-6h2.222v5.112l3.556 3.555-1.556 1.556z"
                 ></Path>
             </Svg>
+        case 'Schedules':
+            return <Svg
+                width="22"
+                height="20"
+                fill="none"
+                viewBox="0 0 18 20"
+            >
+                <Path
+                    fill="#fff"
+                    d="M16 18H2V7h14m-3-7v2H5V0H3v2H2C.89 2 0 2.89 0 4v14a2 2 0 002 2h14a2 2 0 002-2V4a2 2 0 00-2-2h-1V0m-1 11H9v5h5v-5z"
+                ></Path>
+            </Svg>
         default:
             return <></>
     }
@@ -47,7 +59,7 @@ const icon = (route: string) => {
 
 const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) => (
     <TouchableWithoutFeedback onPress={handleClick}>
-        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: active ? 1 : 0.5, paddingVertical: 15, paddingHorizontal: 5, flex: 1 }}>
+        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: active ? 1 : 0.5, paddingVertical: 15, paddingHorizontal: 25 }}>
             {icon}
             <Text style={{ marginTop: 10, fontSize: 14, fontWeight: 'bold' }}>{text}</Text>
         </View>
@@ -56,7 +68,7 @@ const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) 
 
 export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
-    return <View style={{ backgroundColor: Colors.secondary, width: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 25 }}>
+    return <ScrollView style={{ backgroundColor: Colors.secondary, width: '100%', flexGrow: 0 }} horizontal contentContainerStyle={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 20 }}>
         {state?.routes.map((route, index) => {
             const { options } = descriptors[route.key];
             const label = typeof options.tabBarLabel !== 'string'
@@ -81,5 +93,5 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 />
             );
         })}
-    </View>
+    </ScrollView>
 }

@@ -31,7 +31,7 @@ const SummaryItem = ({ title, value, width }: { title: string, value: string, wi
   <Text style={{ color: 'white', fontSize: 16, fontWeight: '700', lineHeight: 24, width }}>{value}</Text>
 </View>)
 
-const calculateWidth = (containerWidth: number, gap: number, items: number) => {
+export const calculateWidth = (containerWidth: number, gap: number, items: number) => {
   return containerWidth / items - (gap / items)
 }
 
@@ -127,9 +127,9 @@ export default ({ invoiceID, isPublic }: PropsType) => {
       Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`, title: 'Share Petrol Invoice' })
   }
 
-  const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData().fullName && value.fullName !== "Unaccounted Distance")
+  const dataObj = Object.entries(data.invoiceData as { emailAddress: string, fullName: string }[]).filter(([_, value]) => value.emailAddress !== retrieveData().emailAddress && value.fullName !== "Unaccounted Distance")
 
-  const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData().fullName)
+  const userInvoice = Object.entries(data.invoiceData as { emailAddress: string }[]).filter(([_, value]) => value.emailAddress === retrieveData().emailAddress)
 
   const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
 

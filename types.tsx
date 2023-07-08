@@ -22,6 +22,7 @@ declare global {
 export type RootStackParamList = {
   Settings: NavigatorScreenParams<RootTabParamList> | undefined
   AddDistance: NavigatorScreenParams<RootTabParamList> | undefined
+  AddSchedule: NavigatorScreenParams<RootTabParamList> | undefined
   AddPetrol: NavigatorScreenParams<RootTabParamList> | undefined
   AddPreset: NavigatorScreenParams<RootTabParamList> | undefined
   History: NavigatorScreenParams<RootTabParamList> | undefined
