@@ -1,6 +1,5 @@
 import React, { useState } from "react"
-import { LayoutChangeEvent, Switch, SwitchChangeEvent, TouchableWithoutFeedback, View } from "react-native"
-import { calculateWidth } from "../invoices/invoice"
+import { Switch, TouchableWithoutFeedback, View } from "react-native"
 import DatePicker from "../../components/dateTimePicker"
 import { Button, Text } from "../../components/Themed"
 import Colors from "../../constants/Colors"
