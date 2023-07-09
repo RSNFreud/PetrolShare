@@ -1,12 +1,13 @@
 import React, { useState } from "react"
 import { Switch, TouchableWithoutFeedback, View } from "react-native"
 import DatePicker from "../../components/dateTimePicker"
-import { Button, Text } from "../../components/Themed"
+import { Text } from "../../components/Themed"
 import Colors from "../../constants/Colors"
 import Input from "../../components/Input"
 import Dropdown from "../../components/Dropdown"
 import AnimateHeight from "../../components/animateHeight"
 import RadioButton from "../../components/RadioButton"
+import Button from "../../components/button"
 
 type DayProps = {
     label: string,
@@ -179,7 +180,7 @@ export default () => {
                     </Text>
                 </View>
             )}
-            <Button handleClick={handleSubmit}>Create Schedule</Button>
+            <Button handleClick={handleSubmit} text="Create Schedule" />
         </View>
     </>
 }
