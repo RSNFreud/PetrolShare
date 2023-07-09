@@ -66,9 +66,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
             const isFocused = state.index === index;
 
             const onPress = () => {
-                if (!isFocused) {
-                    navigation.navigate(route.name);
-                }
+                navigation.navigate(route.name);
             };
 
             return (
