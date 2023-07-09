@@ -104,6 +104,7 @@ export default ({
       visible={isVisible}
       transparent={true}
       accessibilityLabel={"popup"}
+      onRequestClose={close}
     >
       <AlertBox />
       <Pressable
