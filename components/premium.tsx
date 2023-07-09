@@ -1,6 +1,7 @@
 import { Animated, Platform, TouchableWithoutFeedback, useWindowDimensions } from "react-native"
-import { Text, Button } from "./Themed"
+import { Text } from "./Themed"
 import { useContext, useEffect, useRef } from 'react'
+import Button from "./button"
 import Colors from "../constants/Colors"
 import Popup from "./Popup"
 import { useState } from "react"
@@ -9,7 +10,7 @@ import axios from "axios"
 import Purchases from "react-native-purchases"
 import config from "../config"
 import { AuthContext } from "../hooks/context"
-import { GroupType } from "./Layout"
+import { GroupType } from "./layout"
 
 export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
@@ -21,11 +22,12 @@ export default () => {
     useEffect(() => {
         if (premium) return
         if (Platform.OS === "web") return
-        Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
-            if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                setPremium(true)
-            }
-        })
+        if (retrieveData?.groupID)
+            Purchases.logIn(retrieveData?.groupID).then(({ customerInfo }) => {
+                if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
+                    setPremium(true)
+                }
+            })
     }, [premium])
     useEffect(() => {
         if (!premium) expand()
@@ -37,7 +39,7 @@ export default () => {
                 .post(
                     config.REACT_APP_API_ADDRESS +
                     '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey
+                    authenticationKey: retrieveData?.authenticationKey
                 }).then(({ data }) => {
                     if (data) {
                         setTimeout(() => {
@@ -72,7 +74,7 @@ export default () => {
                 .post(
                     config.REACT_APP_API_ADDRESS +
                     '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey,
+                    authenticationKey: retrieveData?.authenticationKey,
                 }
                 )
                 .then(async () => {
@@ -80,7 +82,7 @@ export default () => {
                         .get(
                             config.REACT_APP_API_ADDRESS +
                             '/group/get?authenticationKey=' +
-                            retrieveData().authenticationKey,
+                            retrieveData?.authenticationKey,
                         )
                         .then(async ({ data }) => {
                             setItem('groupData', JSON.stringify(data))
@@ -132,8 +134,8 @@ export default () => {
             <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
                 {'\n\n'}
                 By upgrading to our premium version, you gain access to have an unlimited amount of users in your group, plus other cool features to come!</Text>
-            <Button styles={{ marginBottom: 20 }} handleClick={openPayment}>Purchase Premium</Button>
-            <Button style='ghost' handleClick={() => setShowPremiumInfo(false)}>Dismiss</Button>
+            <Button style={{ marginBottom: 20 }} handleClick={openPayment} text="Purchase Premium" />
+            <Button variant='ghost' handleClick={() => setShowPremiumInfo(false)} text="Dismiss" />
         </Popup>
     </>
 }

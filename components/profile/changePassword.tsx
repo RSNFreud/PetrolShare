@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
 import Input from "../Input";
-import { Button, Seperator } from "../Themed";
+import { Seperator } from "../Themed";
+import Button from "../button";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 import { PropsType } from "./default";
@@ -48,7 +49,7 @@ export default ({
       setLoading(true);
       axios
         .post(config.REACT_APP_API_ADDRESS + `/user/change-password`, {
-          authenticationKey: retrieveData().authenticationKey,
+          authenticationKey: retrieveData?.authenticationKey,
           newPassword: data.password,
         })
         .then(() => {
@@ -57,7 +58,7 @@ export default ({
           setItem('delayedAlert', "Your password has successfully been changed! Please relogin to the application.")
 
           setTimeout(() => {
-            signOut();
+            if (signOut) signOut();
           }, 1200);
         })
         .catch((err) => { });
@@ -96,13 +97,9 @@ export default ({
       <Button
         handleClick={validateForm}
         loading={loading}
-        styles={{ marginBottom: 15 }}
-      >
-        Change password
-      </Button>
-      <Button handleClick={() => handleChange('Settings')} style={"ghost"}>
-        Back
-      </Button>
+        style={{ marginBottom: 15 }}
+        text="Change password" />
+      <Button handleClick={() => handleChange('Settings')} variant={"ghost"} text="Back" />
     </>
   );
 };

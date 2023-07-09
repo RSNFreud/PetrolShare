@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { View } from "react-native";
 import Input from "../../components/Input";
 import Popup from "../../components/Popup";
-import { Text, Button } from "../../components/Themed";
+import { Text } from "../../components/Themed";
 import config from "../../config";
+import Button from "../../components/button";
 
 type PropTypes = {
   visible: boolean
@@ -85,9 +86,7 @@ export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
             handleClick={() =>
               handleSubmit(formData, setFormErrors, () => sendEmail())
             }
-          >
-            Send Recovery Email
-          </Button>
+            text="Send Recovery Email" />
         </>
       )}
     </Popup>

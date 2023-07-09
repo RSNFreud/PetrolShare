@@ -1,9 +1,10 @@
 import { useState, useContext } from 'react'
 import { AuthContext } from '../hooks/context'
 import { View, TouchableWithoutFeedback } from 'react-native'
-import { Button, Text, Box } from './Themed'
+import { Text } from './Themed'
 import Svg, { Path } from 'react-native-svg'
 import * as Clipboard from 'expo-clipboard'
+import Button from './button'
 
 type PropsType = {
   newGroup?: boolean
@@ -32,7 +33,7 @@ export default ({ groupID, newGroup, handleClose }: PropsType) => {
         {newGroup && <>
           Thank you for creating a group with PetrolShare{' '}
           <Text style={{ fontWeight: 'bold' }}>
-            {retrieveData && retrieveData().fullName}
+            {retrieveData && retrieveData?.fullName}
           </Text>
           .{'\n'}
           {'\n'}</>}
@@ -83,9 +84,7 @@ export default ({ groupID, newGroup, handleClose }: PropsType) => {
         dashboard.
       </Text>
 
-      <Button styles={{ marginTop: 25 }} handleClick={handleClose}>
-        Start Driving
-      </Button>
+      <Button style={{ marginTop: 25 }} handleClick={handleClose} text='Start Driving' />
     </View>
   )
 }

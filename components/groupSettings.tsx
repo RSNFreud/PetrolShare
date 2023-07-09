@@ -7,7 +7,8 @@ import { AuthContext } from '../hooks/context'
 import { getAllCurrencies } from '../hooks/getCurrencies'
 import Dropdown from './Dropdown'
 import RadioButton from './RadioButton'
-import { Button, Box, Text } from './Themed'
+import { Box, Text } from './Themed'
+import Button from './button'
 import generateGroupID from '../hooks/generateGroupID'
 
 type PropsType = {
@@ -95,7 +96,7 @@ export default ({
             setLoading(true)
             axios
               .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
               })
               .then(async () => {
                 updateGroup()
@@ -112,7 +113,7 @@ export default ({
     const groupID = generateGroupID()
     setLoading(true)
     await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
-      authenticationKey: retrieveData().authenticationKey,
+      authenticationKey: retrieveData?.authenticationKey,
       groupID: groupID,
     }).then(({ data: { groupID, message } }) => {
       updateGroup(groupID, message)
@@ -124,7 +125,7 @@ export default ({
 
     await axios
       .post(config.REACT_APP_API_ADDRESS + '/group/update', {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         distance: data.distance,
         petrol: data.petrol,
         currency: data.currency,
@@ -234,12 +235,9 @@ export default ({
           handleSelected={(e) => setData({ ...data, currency: e })}
           errorMessage={errors.currency}
         />
-        <Button loading={isLoading} handleClick={handleSubmit}>
-          {newGroup ? 'Create Group' : 'Save Settings'}
-        </Button>
-        {!hideCancel && newGroup && <Button handleClick={handleCancel} style='ghost' styles={{ marginTop: 20 }}>
-          Return to Menu
-        </Button>}
+        <Button loading={isLoading} handleClick={handleSubmit} text={newGroup ? 'Create Group' : 'Save Settings'} />
+
+        {!hideCancel && newGroup && <Button handleClick={handleCancel} variant='ghost' style={{ marginTop: 20 }} text='Return to Menu' />}
       </>
     </Pressable>
   )

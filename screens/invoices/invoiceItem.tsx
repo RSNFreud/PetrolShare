@@ -1,5 +1,6 @@
 import { View, TouchableOpacity } from "react-native"
-import { Box, Text, Button, Seperator } from '../../components/Themed'
+import { Box, Text, Seperator } from '../../components/Themed'
+import Button, { TouchableBase } from "../../components/button"
 import Svg, { Path } from "react-native-svg"
 import { Alert, currencyPosition } from "../../hooks"
 import Colors from "../../constants/Colors"
@@ -10,11 +11,11 @@ import config from "../../config"
 type PropsType = {
     invoiceData: { fullName?: string, paymentDue: number, distance: number, liters?: number, emailAddress?: string }
     invoiceID: number | string
-    emailAddress: string
+    emailAddress?: string
     groupData: { currency: string, petrol: string, distance: string }
     openManageDistance: () => void | void
     lastItem: boolean,
-    authenticationKey: string
+    authenticationKey?: string
     isPublic?: boolean
     invoicedBy?: string
 }
@@ -90,7 +91,7 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
                 )
             </Text>
             {invoiceData.emailAddress === emailAddress || invoiceData.emailAddress === invoicedBy || isPublic || invoiceData.fullName === "Unaccounted Distance" ? <></> :
-                <TouchableOpacity activeOpacity={0.8} onPress={sendAlert}>
+                <TouchableBase handleClick={sendAlert}>
                     <View style={{ width: 30, height: 30, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: Colors.tertiary, borderRadius: 4, justifyContent: 'center', alignItems: 'center', display: 'flex', borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border }}>
                         {alertSent ? <Svg
                             width="14"
@@ -118,17 +119,18 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
                                 ></Path>
                             </Svg>}
                     </View>
-                </TouchableOpacity>}
+                </TouchableBase>}
         </View>
         {!isPublic && invoiceData.fullName === 'Unaccounted Distance' ? (
             <Button
                 size="medium"
-                styles={{
+                style={{
                     marginTop: 10,
                     justifyContent: 'center',
                 }}
                 noText
                 handleClick={openManageDistance}
+                analyticsLabel="Assign Distance"
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 14 }}>
                     Assign Distance

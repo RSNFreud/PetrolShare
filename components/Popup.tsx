@@ -104,10 +104,11 @@ export default ({
       visible={isVisible}
       transparent={true}
       accessibilityLabel={"popup"}
+      onRequestClose={() => showClose && close()}
     >
       <AlertBox />
       <Pressable
-        onPress={close}
+        onPress={() => showClose && close()}
         android_disableSound={true}
         style={{
           backgroundColor: "rgba(35, 35, 35, 0.8)",

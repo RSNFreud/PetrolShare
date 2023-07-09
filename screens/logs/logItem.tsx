@@ -9,7 +9,8 @@ import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Split from "./split";
 import Colors from "../../constants/Colors";
-import { Text, Button } from "../../components/Themed";
+import { Text } from "../../components/Themed";
+import Button from "../../components/button";
 
 type PropsType = {
     fullName: string;
@@ -41,7 +42,7 @@ export default ({
                 onPress: async () => {
                     axios
                         .post(config.REACT_APP_API_ADDRESS + `/logs/delete`, {
-                            authenticationKey: retrieveData().authenticationKey,
+                            authenticationKey: retrieveData?.authenticationKey,
                             logID: id,
                         })
                         .then(async (e) => {
@@ -63,7 +64,7 @@ export default ({
     const handleEdit = () => {
         axios
             .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id,
                 distance: formData,
             })
@@ -99,7 +100,7 @@ export default ({
             >
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                     {fullName}
-                    {fullName === retrieveData().fullName && <> (You)</>}
+                    {fullName === retrieveData?.fullName && <> (You)</>}
                 </Text>
                 <Text style={{ fontSize: 16 }}>{distance}km</Text>
             </View>
@@ -107,45 +108,19 @@ export default ({
             {activeSession && (
                 <Split>
                     <Button
-                        disabled={fullName !== retrieveData().fullName}
-                        styles={{
-                            paddingVertical: 0,
-                            paddingHorizontal: 0,
-                            width: "auto",
-                            backgroundColor: Colors.tertiary,
-                            borderColor: Colors.border,
-                            minHeight: 0,
-                            justifyContent: "center",
-                            height: 32,
-                            alignItems: "center",
-                        }}
+                        disabled={fullName !== retrieveData?.fullName}
                         handleClick={() => setVisible(true)}
-                    >
-                        <Text style={{ fontSize: 14, fontWeight: "bold" }}>Edit</Text>
-                    </Button>
+                        size="small"
+                        text="Edit"
+                    />
                     <Button
-                        disabled={fullName !== retrieveData().fullName}
+                        disabled={fullName !== retrieveData?.fullName}
                         color="red"
-                        styles={{
-                            paddingVertical: 0,
-                            backgroundColor: "transparent",
-                            borderColor: "#FA4F4F",
-                            paddingHorizontal: 0,
-                            width: "auto",
-                            minHeight: 0,
-                            justifyContent: "center",
-                            height: 32,
-                            alignItems: "center",
-                        }}
+                        variant="ghost"
+                        size="small"
                         handleClick={handleDelete}
-                        noText
-                    >
-                        <Text
-                            style={{ fontSize: 14, fontWeight: "bold", color: "#FA4F4F" }}
-                        >
-                            Remove
-                        </Text>
-                    </Button>
+                        text="Remove"
+                    />
                 </Split>
             )}
             <Popup visible={visible} handleClose={() => setVisible(false)}>
@@ -156,9 +131,7 @@ export default ({
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}
                 />
-                <Button handleClick={handleEdit}>
-                    <>Update Distance {formData && <>({formData}km)</>}</>
-                </Button>
+                <Button handleClick={handleEdit} text={`Update Distance ${formData ? `(${formData} km)` : ''}`} />
             </Popup>
         </View>
     );

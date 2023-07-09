@@ -1,7 +1,8 @@
 import React from "react"
 import Svg, { Path } from "react-native-svg"
 import { PropsType } from "./default"
-import { Button, LongButton } from "../Themed"
+import { LongButton } from "../Themed"
+import Button from "../button"
 
 
 export default ({ handleChange, handleClose }: PropsType) => {
@@ -44,10 +45,10 @@ export default ({ handleChange, handleClose }: PropsType) => {
                 handleClick={() => handleChange('Name')}
             />
             <Button
-                style="ghost"
-                children={'Back'}
+                variant="ghost"
+                text={'Back'}
                 handleClick={() => handleChange('')}
-                styles={{ paddingHorizontal: 20 }}
+                style={{ paddingHorizontal: 20 }}
             />
         </>
     )

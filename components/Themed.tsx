@@ -13,10 +13,12 @@ import {
   View as DefaultView,
   Dimensions,
   LayoutChangeEvent,
+  View,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 import Colors from '../constants/Colors'
 import analytics from '@react-native-firebase/analytics'
+import Button, { ButtonType, ColorType, SizeType, VariantType } from './button'
 
 export type TextProps = DefaultText['props']
 export type ViewProps = DefaultView['props']
@@ -48,142 +50,6 @@ export function Text(props: TextProps) {
       style={[{ fontFamily: fontFamily, color: 'white', fontSize: 16 }, style]}
       {...otherProps}
     />
-  )
-}
-
-type ButtonType = {
-  children?: JSX.Element | Array<JSX.Element> | string
-  icon?: JSX.Element
-  color?: 'blue' | 'red'
-  style?: 'regular' | 'ghost'
-  size?: 'regular' | 'small' | 'medium'
-  handleClick?: () => void
-  styles?: TouchableOpacity['props']['style']
-  noText?: boolean
-  textStyle?: TextProps['style']
-  disabled?: boolean
-  loading?: boolean
-}
-
-export const Button = ({
-  children,
-  handleClick,
-  noText,
-  size,
-  disabled,
-  style,
-  color,
-  icon,
-  loading,
-  styles, textStyle
-}: ButtonType) => {
-  let variableProperties = {
-    height: 51,
-    fontSize: 18,
-    backgroundColor: Colors.tertiary,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    textColor: 'white',
-  }
-
-  switch (size) {
-    case 'small':
-      variableProperties.height = 26
-      variableProperties.paddingVertical = 6
-      variableProperties.paddingHorizontal = 12
-      variableProperties.fontSize = 12
-      break
-    case 'medium':
-      variableProperties.height = 40
-      variableProperties.paddingVertical = 0
-      variableProperties.paddingHorizontal = 0
-      variableProperties.fontSize = 14
-      break
-
-    default:
-      break
-  }
-
-  switch (color) {
-    case 'red':
-      variableProperties.borderColor = '#BA3737'
-      variableProperties.backgroundColor = '#FA4F4F'
-      style === 'ghost' && (variableProperties.textColor = '#FA4F4F')
-      break
-    default:
-      style === 'ghost' && (variableProperties.textColor = '#15CEF3')
-      break
-  }
-
-  switch (style) {
-    case 'ghost':
-      if (color !== "red")
-        variableProperties.borderColor = Colors.tertiary
-      variableProperties.backgroundColor = 'transparent'
-      variableProperties.textColor = Colors.tertiary
-      break
-    default:
-      break
-  }
-
-  const onClick = () => {
-    if (typeof children === "string")
-      try {
-        analytics().logSelectContent({
-          content_type: 'button',
-          item_id: children
-        })
-      } catch { }
-    if (handleClick) handleClick()
-  }
-
-  return (
-    <TouchableOpacity
-      onPress={onClick}
-      activeOpacity={0.8}
-      disabled={disabled}
-      style={[
-        {
-          borderStyle: 'solid',
-          borderRadius: 4,
-          flexDirection: 'row',
-          gap: 10,
-          display: 'flex',
-          justifyContent: 'center',
-          borderWidth: 1,
-          borderColor: variableProperties.borderColor,
-          paddingHorizontal: variableProperties.paddingHorizontal,
-          paddingVertical: variableProperties.paddingVertical,
-          width: '100%',
-          alignContent: 'center',
-          alignItems: 'center',
-          opacity: disabled ? 0.6 : 1,
-          minHeight: variableProperties.height,
-          backgroundColor: variableProperties.backgroundColor,
-        },
-        styles,
-      ]}
-    >
-      {loading ? (
-        <ActivityIndicator size="small" color="#fff" />
-      ) : noText ? (
-        children
-      ) : (
-        <>
-          {icon}
-          <Text
-            style={[{
-              color: variableProperties.textColor,
-              fontSize: variableProperties.fontSize,
-              fontWeight: '700',
-              textAlign: 'center',
-            }, textStyle]}
-          >
-            {children}
-          </Text></>
-      )}
-    </TouchableOpacity>
   )
 }
 
@@ -332,52 +198,27 @@ export const FlexFull = ({
 
 
 export const LongButton = ({
-  handleClick,
-  text,
-  last,
-  icon, style
-}: {
+  last, text, marginBottom,
+  style, ...rest
+}: ButtonType & {
   marginBottom?: number
-  handleClick: () => void
   text: string
-  icon: JSX.Element
   last?: boolean
-  style?: TouchableOpacity["props"]["style"]
 }) => {
 
-
-  const onClick = () => {
-    try {
-      analytics().logSelectContent({
-        content_type: 'button',
-        item_id: text
-      })
-    } catch { }
-
-    handleClick()
-  }
   return (
-    <TouchableOpacity
-      activeOpacity={0.9}
+    <Button
       style={[{
-        marginBottom: last ? 0 : 20,
-        backgroundColor: Colors.tertiary,
-        borderColor: Colors.border,
-        borderRadius: 4,
-        padding: 15,
-        borderStyle: 'solid',
-        borderWidth: 1,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
+        marginBottom: last ? 0 : marginBottom || 20,
+        justifyContent: 'flex-start',
+        gap: 15,
         paddingHorizontal: 20,
+        paddingVertical: 15,
+        minHeight: 0
       }, style]}
-      onPress={onClick}
-    >
-      {icon}
-      <Text style={{ fontWeight: '700', fontSize: 16, marginLeft: 15 }}>
-        {text}
-      </Text>
-    </TouchableOpacity>
+      textStyle={{ fontSize: 16 }}
+      children={text}
+      {...rest}
+    />
   )
 }

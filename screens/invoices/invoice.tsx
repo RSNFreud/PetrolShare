@@ -20,6 +20,7 @@ import Colors from '../../constants/Colors'
 import Svg, { Path } from 'react-native-svg'
 import InvoiceItem from './invoiceItem'
 import { useNavigation } from '@react-navigation/native'
+import { TouchableBase } from '../../components/button';
 
 type PropsType = {
   invoiceID: number | string
@@ -89,7 +90,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
 
     const url = isPublic ? config.REACT_APP_API_ADDRESS +
       `/invoices/public/get?uniqueURL=${invoiceID}` : config.REACT_APP_API_ADDRESS +
-    `/invoices/get?authenticationKey=${retrieveData().authenticationKey
+    `/invoices/get?authenticationKey=${retrieveData?.authenticationKey
     }&invoiceID=${invoiceID}`
 
     axios
@@ -127,9 +128,9 @@ export default ({ invoiceID, isPublic }: PropsType) => {
       Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`, title: 'Share Petrol Invoice' })
   }
 
-  const dataObj = Object.entries(data.invoiceData as { emailAddress: string, fullName: string }[]).filter(([_, value]) => value.emailAddress !== retrieveData().emailAddress && value.fullName !== "Unaccounted Distance")
+  const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData?.fullName && value.fullName !== "Unaccounted Distance")
 
-  const userInvoice = Object.entries(data.invoiceData as { emailAddress: string }[]).filter(([_, value]) => value.emailAddress === retrieveData().emailAddress)
+  const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData?.fullName)
 
   const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
 
@@ -138,8 +139,8 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     groupData: groupData,
     invoiceID: invoiceID,
     invoicedBy: data?.emailAddress,
-    authenticationKey: retrieveData().authenticationKey,
-    emailAddress: retrieveData().emailAddress,
+    authenticationKey: retrieveData?.authenticationKey,
+    emailAddress: retrieveData?.emailAddress,
     openManageDistance: () => setManageDistanceOpen(true)
   }
 
@@ -183,7 +184,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
         )}
       </ScrollView>
       {!isPublic &&
-        <TouchableOpacity onPress={sendLink} activeOpacity={0.8} >
+        <TouchableBase handleClick={sendLink} >
           <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, position: 'absolute', bottom: 15, right: -10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Svg
               width={'18'}
@@ -198,7 +199,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             </Svg>
             <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Share</Text>
           </View>
-        </TouchableOpacity>}
+        </TouchableBase>}
       {isPublic ? <></> :
         <AssignDistance
           active={manageDistanceOpen}

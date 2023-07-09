@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { Text, Button } from '../../components/Themed'
+import { Text } from '../../components/Themed'
 import { getGroupData } from '../../hooks'
+import Button from '../../components/button'
 
 type PropsType = {
   loading: boolean
@@ -27,16 +28,7 @@ export default ({ loading, handleClick, errors, distance, text, style }: PropsTy
 
   return (
     <>
-      <Button loading={loading} handleClick={handleClick} style={style}>
-        <>
-          {text || <>Add Distance</>}{' '}
-          {distance && (
-            <>
-              ({distance} {distanceFormat || ''})
-            </>
-          )}
-        </>
-      </Button>
+      <Button loading={loading} handleClick={handleClick} variant={style} text={`${text || "Add Distance"} ${distance ? `(${distance} ${distanceFormat || ''})` : ''}`} />
       {!!errors && (
         <View
           style={{

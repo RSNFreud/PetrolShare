@@ -1,11 +1,11 @@
 import Input from "../../components/Input";
 import { View } from "react-native";
 import {
-  Button,
   Text,
   Box,
 } from "../../components/Themed";
 import { useContext, useEffect, useState } from "react";
+import Button from "../../components/button";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
@@ -66,7 +66,7 @@ export default React.memo(({ onClose }: PropsType) => {
     setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/petrol/add`, {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,
         odometer: data.odometer,
@@ -133,9 +133,8 @@ export default React.memo(({ onClose }: PropsType) => {
         />
       </View>
       <View style={{ marginTop: 30 }}>
-        <Button loading={loading} handleClick={() => handleSubmit()}>
-          Add Petrol
-        </Button>
+        <Button loading={loading} handleClick={() => handleSubmit()} text="Add Petrol" />
+
         {!!errors.submit && (
           <View
             style={{

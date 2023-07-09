@@ -1,14 +1,14 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Input from "../../components/Input";
-import { Button, Seperator, Text } from "../../components/Themed";
-import Popup from "../../components/Popup";
+import { Seperator, Text } from "../../components/Themed";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../../hooks/context";
 import axios from "axios";
-import Layout from "../../components/Layout";
+import Layout from "../../components/layout";
 import config from "../../config";
 import testID from "../../hooks/testID";
+import Button from "../../components/button";
 import ForgotPassword from "./forgotPassword";
 
 export default ({ navigation }: any) => {
@@ -181,14 +181,10 @@ export default ({ navigation }: any) => {
         loading={loading}
         handleClick={() =>
           handleSubmit(formData, setFormErrors, () => handleLogin())
-        }
-      >
-        Submit
-      </Button>
+        } text="Submit" />
+
       <Seperator style={{ marginVertical: 30 }} />
-      <Button handleClick={() => navigation.navigate("Register")} style="ghost">
-        Register
-      </Button>
+      <Button handleClick={() => navigation.navigate("Register")} variant="ghost" text="Register" />
       <ForgotPassword visible={visible} setVisible={e => setVisible(e)} handleSubmit={handleSubmit} />
     </Layout>
   );

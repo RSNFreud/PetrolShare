@@ -13,7 +13,7 @@ import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import * as Clipboard from 'expo-clipboard'
 import { Alert, checkForUpdates, getItem, setItem } from '../../hooks'
-import Layout from '../../components/Layout'
+import Layout from '../../components/layout'
 import config from '../../config'
 import * as Location from 'expo-location'
 import { useIsFocused, useRoute } from '@react-navigation/native'
@@ -35,7 +35,7 @@ import Schedules from '../schedules'
 export default ({ navigation }: any) => {
   const { setData, retrieveData } = useContext(AuthContext)
   const [currentMileage, setCurrentMileage] = useState(
-    retrieveData ? retrieveData()?.currentMileage : 0,
+    retrieveData ? retrieveData?.currentMileage : 0,
   )
   const route = useRoute()
   const dataRetrieved = useRef(false)
@@ -60,22 +60,22 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     if (dataRetrieved.current) return
-    if (retrieveData && retrieveData().authenticationKey) {
+    if (retrieveData && retrieveData?.authenticationKey) {
       pageLoaded()
       dataRetrieved.current = true
-      setCurrentMileage(retrieveData().currentMileage)
+      setCurrentMileage(retrieveData?.currentMileage)
       updateData()
       if (
-        retrieveData() &&
-        Object.values(retrieveData()).length &&
-        retrieveData().groupID === null
+        retrieveData &&
+        Object.values(retrieveData).length &&
+        retrieveData?.groupID === null
       ) {
         setVisible(true)
       } else {
         setVisible(false)
       }
 
-      if (retrieveData() && retrieveData().groupID !== null) getGroupData()
+      if (retrieveData && retrieveData?.groupID !== null) getGroupData()
 
       navigation.addListener('focus', async () => {
         updateData()
@@ -109,10 +109,10 @@ export default ({ navigation }: any) => {
   }, [dataRetrieved])
 
   useEffect(() => {
-    if (retrieveData().groupID && groupData.distance) {
+    if (retrieveData?.groupID && groupData.distance) {
       setVisible(false)
     }
-  }, [retrieveData().groupID])
+  }, [retrieveData?.groupID])
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -172,7 +172,7 @@ export default ({ navigation }: any) => {
       }
     }
 
-    if (retrieveData().authenticationKey) {
+    if (retrieveData?.authenticationKey) {
       updateData()
     }
   }
@@ -189,7 +189,7 @@ export default ({ navigation }: any) => {
               if (route.name === "Login") return
               axios
                 .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
-                  authenticationKey: retrieveData().authenticationKey,
+                  authenticationKey: retrieveData?.authenticationKey,
                   groupID: groupID,
                 })
                 .then(async (e) => {
@@ -228,7 +228,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/distance/get?authenticationKey=${retrieveData().authenticationKey}`,
+        `/distance/get?authenticationKey=${retrieveData?.authenticationKey}`,
       )
       .then(async ({ data }) => {
         setCurrentMileage(data)
@@ -253,7 +253,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/distance/check-distance?authenticationKey=${retrieveData().authenticationKey}`,
+        `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`,
       )
       .then(async ({ data }) => {
         if (data) {
@@ -276,7 +276,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/user/get?authenticationKey=${retrieveData().authenticationKey}`,
+        `/user/get?authenticationKey=${retrieveData?.authenticationKey}`,
       )
       .then(async ({ data }) => {
         let sessionStorage
@@ -285,7 +285,7 @@ export default ({ navigation }: any) => {
           if (!sessionStorage) return
           sessionStorage = JSON.parse(sessionStorage)
           sessionStorage = { ...sessionStorage, ...data[0] }
-          setData(sessionStorage)
+          if (setData) setData(sessionStorage)
           getDistance()
           setItem('userData', JSON.stringify(sessionStorage))
         } catch (err) {
@@ -302,13 +302,13 @@ export default ({ navigation }: any) => {
 
     if (sessionStorage) setGroupData(JSON.parse(sessionStorage))
 
-    if (!retrieveData()?.groupID) return
+    if (!retrieveData?.groupID) return
 
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
         '/group/get?authenticationKey=' +
-        retrieveData().authenticationKey,
+        retrieveData?.authenticationKey,
       )
       .then(async ({ data }) => {
         if (!data.distance) {
@@ -326,7 +326,7 @@ export default ({ navigation }: any) => {
 
     Clipboard.setStringAsync(
       retrieveData
-        ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${retrieveData()?.groupID
+        ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${retrieveData?.groupID
         }`
         : '',
     )
@@ -371,7 +371,7 @@ export default ({ navigation }: any) => {
               <TouchableWithoutFeedback onPress={() => Alert("Group ID", 'This unique ID is used to identify your group. Share it with others to invite them to your group.')}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={{ fontSize: 18, fontWeight: "500" }}>
-                    {retrieveData ? retrieveData()?.groupID || 'Loading...' : null}
+                    {retrieveData ? retrieveData?.groupID || 'Loading...' : null}
                   </Text>
                   <Tooltip style={{ marginLeft: 6 }} title='Group ID' message='This unique ID is used to identify your group. Share it with others to invite them to your group.' />
                 </View>
@@ -397,7 +397,7 @@ export default ({ navigation }: any) => {
                 alignItems: 'center',
               }}
             >
-              {!!(retrieveData && retrieveData()?.groupID) &&
+              {!!(retrieveData && retrieveData?.groupID) &&
                 <Svg
                   width="25"
                   height="25"

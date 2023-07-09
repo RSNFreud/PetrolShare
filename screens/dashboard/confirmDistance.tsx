@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import { Button, Text } from "../../components/Themed"
+import { Text } from "../../components/Themed"
+import Button from "../../components/button"
 import { getGroupData } from "../../hooks"
 import axios from "axios"
 import config from "../../config"
@@ -31,7 +32,7 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
             .post(
                 config.REACT_APP_API_ADDRESS +
                 `/distance/dismiss`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id
             }
             )
@@ -51,7 +52,7 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
             .post(
                 config.REACT_APP_API_ADDRESS +
                 `/distance/approve`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id
             }
             )
@@ -73,8 +74,8 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
         <Text style={{ lineHeight: 24, marginTop: 10 }}>
             Click the <Text style={{ fontWeight: 'bold' }}>Approve</Text> button to add it to your account or the <Text style={{ fontWeight: 'bold' }}>Dismiss</Text> button to ignore the request and add it to the Untracked Distance at the end.
         </Text>
-        <Button styles={{ marginBottom: 20, marginTop: 30 }} handleClick={approve}>Approve</Button>
-        <Button style="ghost" handleClick={dismiss}>Dismiss</Button>
+        <Button style={{ marginBottom: 20, marginTop: 30 }} handleClick={approve} text="Approve" />
+        <Button variant="ghost" handleClick={dismiss} text="Dismiss" />
 
     </>
 }
