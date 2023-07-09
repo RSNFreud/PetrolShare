@@ -11,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Dimensions, Linking, Platform, View, useWindowDimensions } from "react-native";
+import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -233,7 +233,6 @@ export default function App() {
 
   useEffect(() => {
     if (loading || !store.isLoggedIn || !navRef.isReady()) return;
-    restoreState()
 
     if (notifData.invoiceID || notifData.routeName) {
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
@@ -241,17 +240,6 @@ export default function App() {
       sendCustomEvent('closeSplash')
     }
   }, [notifData, loading, store, navRef]);
-
-  const restoreState = async () => {
-    const initialURL = await Linking.getInitialURL()
-    if (Platform.OS === 'web' && initialURL !== 'null') {
-      const savedState = getItem('PERSISTANT_STATE')
-      const state = savedState ? JSON.parse(savedState) : undefined
-      if (state)
-        setInitialState(state)
-    }
-
-  }
 
   useEffect(() => {
     setItem("firstLoad", "true");
@@ -373,7 +361,7 @@ export default function App() {
                 <Stack.Screen name="Register" component={Register} />
               </>
             )}
-            <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />
+            {width < 768 && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
             <Stack.Screen
               name="NotFound"
               component={NotFoundScreen}

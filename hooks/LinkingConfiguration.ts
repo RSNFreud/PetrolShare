@@ -32,7 +32,6 @@ const linking: any = {
     // First, you may want to do the default deep link handling
     // Check if app was opened from a deep link
     let url = await Linking.getInitialURL()
-    console.log(url);
 
     if (url != null) {
       return url
