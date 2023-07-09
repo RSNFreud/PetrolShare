@@ -20,7 +20,7 @@ import LinkingConfiguration from "./hooks/LinkingConfiguration";
 import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
-import { AuthContext } from "./hooks/context";
+import { AuthContext, AuthContextType, StoreData } from "./hooks/context";
 import { Alert, checkForUpdates, deleteItem, getItem, sendCustomEvent, setItem } from "./hooks";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
@@ -81,7 +81,7 @@ Notifications.setNotificationHandler({
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [initialState, setInitialState] = useState()
-  const [userData, setUserData] = useState<any>({});
+  const [userData, setUserData] = useState<Partial<StoreData>>({});
   const [firstSteps, setFirstSteps] = useState(false);
   const [screen, setScreen] = useState("");
   const navRef = useNavigationContainerRef();
@@ -96,7 +96,7 @@ export default function App() {
 
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
 
-  const login = React.useMemo(
+  const store = React.useMemo(
     () => ({
       signIn: async (e: any) => {
         return new Promise((res, rej) => {
@@ -124,9 +124,7 @@ export default function App() {
           setItem("userData", JSON.stringify(e));
         } catch { }
       },
-      retrieveData: () => {
-        return userData;
-      },
+      retrieveData: userData,
       setData: (e: any) => {
         setUserData(e);
       },
@@ -135,13 +133,14 @@ export default function App() {
         deleteItem("userData");
         deleteItem("presets");
         deleteItem("groupData");
+        if (userData?.emailAddress)
+          deregisterForPushNotifications(userData.emailAddress);
         setUserData({});
-        deregisterForPushNotifications(userData.emailAddress);
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
     [userData, loading]
-  );
+  ) as AuthContextType;
 
   useEffect(() => {
     // Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
@@ -159,7 +158,7 @@ export default function App() {
           const parsed = JSON.parse(data);
           if (!("authenticationKey" in parsed)) {
             setLoading(false);
-            return login.signOut;
+            return store.signOut;
           }
 
           axios
@@ -181,7 +180,7 @@ export default function App() {
               setTimeout(() => {
                 Alert('Account Deactivated', response.data)
               }, 500);
-              login.signOut()
+              store.signOut()
               return;
             });
         } else {
@@ -233,7 +232,7 @@ export default function App() {
   }, [loading, notifData]);
 
   useEffect(() => {
-    if (loading || !login.isLoggedIn || !navRef.isReady()) return;
+    if (loading || !store.isLoggedIn || !navRef.isReady()) return;
     restoreState()
 
     if (notifData.invoiceID || notifData.routeName) {
@@ -241,7 +240,7 @@ export default function App() {
       setNotifData({ routeName: "", invoiceID: "" });
       sendCustomEvent('closeSplash')
     }
-  }, [notifData, loading, login, navRef]);
+  }, [notifData, loading, store, navRef]);
 
   const restoreState = async () => {
     const initialURL = await Linking.getInitialURL()
@@ -327,8 +326,8 @@ export default function App() {
   return (<>
     <SplashScreenComponent />
     <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
-      <AuthContext.Provider value={login}>
-        {login.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
+      <AuthContext.Provider value={store}>
+        {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
         <NavigationContainer
           initialState={initialState}
           onReady={() => checkFirstTime()}
@@ -359,7 +358,7 @@ export default function App() {
                 component={DesktopScreen}
                 options={{ title: "PetrolShare", headerShown: false }}
               />
-            ) : loading || login.isLoggedIn ? (
+            ) : loading || store.isLoggedIn ? (
               <>
                 <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
                 {!firstSteps && <Stack.Screen

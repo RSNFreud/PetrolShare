@@ -44,7 +44,7 @@ export default ({ navigation }: any) => {
       axios
         .get(
           config.REACT_APP_API_ADDRESS +
-          `/preset/get?authenticationKey=${retrieveData().authenticationKey}`,
+          `/preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
         )
         .then(async ({ data }) => {
           setPresets(data)
@@ -68,7 +68,7 @@ export default ({ navigation }: any) => {
   }, [data, presets])
 
   useEffect(() => {
-    if (retrieveData && retrieveData().authenticationKey) getPresets()
+    if (retrieveData && retrieveData?.authenticationKey) getPresets()
     const getDraft = async () => {
       const draft = getItem('draft')
       if (draft) {
@@ -100,7 +100,7 @@ export default ({ navigation }: any) => {
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
       })
       .then(async () => {
         setLoading(false)
@@ -122,7 +122,7 @@ export default ({ navigation }: any) => {
     axios
       .post(config.REACT_APP_API_ADDRESS + '/preset/delete', {
         presetID: selectedToDelete.current,
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
       })
       .then(() => {
         setVisible(false)
@@ -167,7 +167,7 @@ export default ({ navigation }: any) => {
             presetID: presetFormData.presetID,
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
-            authenticationKey: retrieveData().authenticationKey,
+            authenticationKey: retrieveData?.authenticationKey,
           })
           .then(() => {
             setVisible(false)
@@ -185,7 +185,7 @@ export default ({ navigation }: any) => {
           .post(config.REACT_APP_API_ADDRESS + '/preset/add', {
             presetName: presetFormData.presetName,
             distance: presetFormData.distance,
-            authenticationKey: retrieveData().authenticationKey,
+            authenticationKey: retrieveData?.authenticationKey,
           })
           .then(() => {
             setVisible(false)

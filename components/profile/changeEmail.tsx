@@ -26,7 +26,7 @@ export default ({
     setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/user/change-email`, {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         newEmail: emailAddress,
       })
       .then(() => {

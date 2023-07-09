@@ -20,7 +20,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/user/get?authenticationKey=${retrieveData().authenticationKey}`,
+        `/user/get?authenticationKey=${retrieveData?.authenticationKey}`,
       )
       .then(async ({ data }) => {
         let sessionStorage
@@ -29,7 +29,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
           if (!sessionStorage) return
           sessionStorage = JSON.parse(sessionStorage)
           sessionStorage = { ...sessionStorage, ...data[0] }
-          setData(sessionStorage)
+          if (setData) setData(sessionStorage)
           setItem('userData', JSON.stringify(sessionStorage))
         } catch (err) {
           console.log(err)

@@ -20,7 +20,7 @@ export default ({ handleChange }: PropsType) => {
             {
                 text: "Yes",
                 onPress: async () => {
-                    signOut();
+                    if (signOut) signOut()
                 },
             },
             { text: "No", style: "cancel" },
@@ -34,10 +34,10 @@ export default ({ handleChange }: PropsType) => {
                 onPress: async () => {
                     axios
                         .post(config.REACT_APP_API_ADDRESS + `/user/deactivate`, {
-                            authenticationKey: retrieveData().authenticationKey,
+                            authenticationKey: retrieveData?.authenticationKey,
                         })
                         .then(async () => {
-                            signOut()
+                            if (signOut) signOut()
                             setTimeout(() => {
                                 sendCustomEvent('sendAlert', 'Your account has been\nsuccessfully deactivated!')
                             }, 500);
@@ -51,7 +51,7 @@ export default ({ handleChange }: PropsType) => {
 
     return <>
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 15 }}>
-            Hello {retrieveData()?.fullName}!
+            Hello {retrieveData?.fullName}!
         </Text>
         <LongButton icon={<Svg width="16" height="16" fill="none" viewBox="0 0 16 17">
             <Path

@@ -24,7 +24,7 @@ export default ({
     setLoading(true)
     axios
       .post(config.REACT_APP_API_ADDRESS + `/user/change-name`, {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         newName: name,
       })
       .then(async () => {

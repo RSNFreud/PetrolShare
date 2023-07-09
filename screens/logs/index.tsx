@@ -77,11 +77,11 @@ export default () => {
   };
 
   const getLogs = async () => {
-    if (!retrieveData || !retrieveData().authenticationKey) return;
+    if (!retrieveData || !retrieveData?.authenticationKey) return;
     await axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/logs/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(({ data }) => {
         logData.current = data;

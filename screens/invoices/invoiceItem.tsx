@@ -10,11 +10,11 @@ import config from "../../config"
 type PropsType = {
     invoiceData: { fullName?: string, paymentDue: number, distance: number, liters?: number, emailAddress?: string }
     invoiceID: number | string
-    emailAddress: string
+    emailAddress?: string
     groupData: { currency: string, petrol: string, distance: string }
     openManageDistance: () => void | void
     lastItem: boolean,
-    authenticationKey: string
+    authenticationKey?: string
     isPublic?: boolean
     invoicedBy?: string
 }

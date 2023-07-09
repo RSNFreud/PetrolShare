@@ -48,7 +48,7 @@ export default ({
       setLoading(true);
       axios
         .post(config.REACT_APP_API_ADDRESS + `/user/change-password`, {
-          authenticationKey: retrieveData().authenticationKey,
+          authenticationKey: retrieveData?.authenticationKey,
           newPassword: data.password,
         })
         .then(() => {
@@ -57,7 +57,7 @@ export default ({
           setItem('delayedAlert', "Your password has successfully been changed! Please relogin to the application.")
 
           setTimeout(() => {
-            signOut();
+            if (signOut) signOut();
           }, 1200);
         })
         .catch((err) => { });

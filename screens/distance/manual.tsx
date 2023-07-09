@@ -43,7 +43,7 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
       })
       .then(async () => {
         setLoading(false)

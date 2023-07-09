@@ -219,7 +219,7 @@ export default () => {
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
       })
       .then(async () => {
         setItem('showToast', 'distanceUpdated')

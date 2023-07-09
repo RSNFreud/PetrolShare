@@ -66,7 +66,7 @@ export default React.memo(({ onClose }: PropsType) => {
     setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/petrol/add`, {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         litersFilled: data.litersFilled,
         totalPrice: data.totalPrice,
         odometer: data.odometer,

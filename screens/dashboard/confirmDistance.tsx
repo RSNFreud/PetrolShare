@@ -31,7 +31,7 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
             .post(
                 config.REACT_APP_API_ADDRESS +
                 `/distance/dismiss`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id
             }
             )
@@ -51,7 +51,7 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
             .post(
                 config.REACT_APP_API_ADDRESS +
                 `/distance/approve`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id
             }
             )

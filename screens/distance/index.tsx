@@ -56,7 +56,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         onPress: async () => {
           axios
             .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
-              authenticationKey: retrieveData().authenticationKey,
+              authenticationKey: retrieveData?.authenticationKey,
             })
             .then(async (e) => {
               sendCustomEvent('sendAlert', 'Reset your distance back to 0!')

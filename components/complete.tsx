@@ -32,7 +32,7 @@ export default ({ groupID, newGroup, handleClose }: PropsType) => {
         {newGroup && <>
           Thank you for creating a group with PetrolShare{' '}
           <Text style={{ fontWeight: 'bold' }}>
-            {retrieveData && retrieveData().fullName}
+            {retrieveData && retrieveData?.fullName}
           </Text>
           .{'\n'}
           {'\n'}</>}

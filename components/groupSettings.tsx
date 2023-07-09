@@ -95,7 +95,7 @@ export default ({
             setLoading(true)
             axios
               .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
               })
               .then(async () => {
                 updateGroup()
@@ -112,7 +112,7 @@ export default ({
     const groupID = generateGroupID()
     setLoading(true)
     await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
-      authenticationKey: retrieveData().authenticationKey,
+      authenticationKey: retrieveData?.authenticationKey,
       groupID: groupID,
     }).then(({ data: { groupID, message } }) => {
       updateGroup(groupID, message)
@@ -124,7 +124,7 @@ export default ({
 
     await axios
       .post(config.REACT_APP_API_ADDRESS + '/group/update', {
-        authenticationKey: retrieveData().authenticationKey,
+        authenticationKey: retrieveData?.authenticationKey,
         distance: data.distance,
         petrol: data.petrol,
         currency: data.currency,

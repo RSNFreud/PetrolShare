@@ -89,7 +89,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
 
     const url = isPublic ? config.REACT_APP_API_ADDRESS +
       `/invoices/public/get?uniqueURL=${invoiceID}` : config.REACT_APP_API_ADDRESS +
-    `/invoices/get?authenticationKey=${retrieveData().authenticationKey
+    `/invoices/get?authenticationKey=${retrieveData?.authenticationKey
     }&invoiceID=${invoiceID}`
 
     axios
@@ -127,9 +127,9 @@ export default ({ invoiceID, isPublic }: PropsType) => {
       Share.share({ message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`, title: 'Share Petrol Invoice' })
   }
 
-  const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData().fullName && value.fullName !== "Unaccounted Distance")
+  const dataObj = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName !== retrieveData?.fullName && value.fullName !== "Unaccounted Distance")
 
-  const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData().fullName)
+  const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData?.fullName)
 
   const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
 
@@ -138,8 +138,8 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     groupData: groupData,
     invoiceID: invoiceID,
     invoicedBy: data?.emailAddress,
-    authenticationKey: retrieveData().authenticationKey,
-    emailAddress: retrieveData().emailAddress,
+    authenticationKey: retrieveData?.authenticationKey,
+    emailAddress: retrieveData?.emailAddress,
     openManageDistance: () => setManageDistanceOpen(true)
   }
 

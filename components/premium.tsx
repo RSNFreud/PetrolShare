@@ -21,11 +21,12 @@ export default () => {
     useEffect(() => {
         if (premium) return
         if (Platform.OS === "web") return
-        Purchases.logIn(retrieveData()?.groupID).then(({ customerInfo }) => {
-            if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
-                setPremium(true)
-            }
-        })
+        if (retrieveData?.groupID)
+            Purchases.logIn(retrieveData?.groupID).then(({ customerInfo }) => {
+                if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
+                    setPremium(true)
+                }
+            })
     }, [premium])
     useEffect(() => {
         if (!premium) expand()
@@ -37,7 +38,7 @@ export default () => {
                 .post(
                     config.REACT_APP_API_ADDRESS +
                     '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey
+                    authenticationKey: retrieveData?.authenticationKey
                 }).then(({ data }) => {
                     if (data) {
                         setTimeout(() => {
@@ -72,7 +73,7 @@ export default () => {
                 .post(
                     config.REACT_APP_API_ADDRESS +
                     '/group/subscribe', {
-                    authenticationKey: retrieveData().authenticationKey,
+                    authenticationKey: retrieveData?.authenticationKey,
                 }
                 )
                 .then(async () => {
@@ -80,7 +81,7 @@ export default () => {
                         .get(
                             config.REACT_APP_API_ADDRESS +
                             '/group/get?authenticationKey=' +
-                            retrieveData().authenticationKey,
+                            retrieveData?.authenticationKey,
                         )
                         .then(async ({ data }) => {
                             setItem('groupData', JSON.stringify(data))

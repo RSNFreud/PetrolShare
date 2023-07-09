@@ -20,7 +20,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     if (loaded.current) return;
-    if (retrieveData && retrieveData().authenticationKey) loaded.current = true;
+    if (retrieveData && retrieveData?.authenticationKey) loaded.current = true;
     else return;
     getData();
     navigation.addListener("focus", async () => {
@@ -32,7 +32,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/invoices/get?authenticationKey=${retrieveData().authenticationKey}`
+        `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(async ({ data }) => {
         setData(data);

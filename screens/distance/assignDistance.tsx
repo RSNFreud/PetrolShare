@@ -15,7 +15,7 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
 
     useEffect(() => {
         axios
-            .get(config.REACT_APP_API_ADDRESS + `/group/get-members?authenticationKey=` + retrieveData().authenticationKey)
+            .get(config.REACT_APP_API_ADDRESS + `/group/get-members?authenticationKey=` + retrieveData?.authenticationKey)
             .then(async ({ data }) => {
                 setUsernames(data.map((e: { fullName: string, userID: string }) => ({ name: e.fullName, value: e.userID })))
             })
@@ -44,7 +44,7 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
             .post(config.REACT_APP_API_ADDRESS + `/distance/assign`, {
                 userID: values.name,
                 distance: values.distance,
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
             })
             .then(async () => {
                 setLoading(false)

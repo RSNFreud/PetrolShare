@@ -41,7 +41,7 @@ export default ({
                 onPress: async () => {
                     axios
                         .post(config.REACT_APP_API_ADDRESS + `/logs/delete`, {
-                            authenticationKey: retrieveData().authenticationKey,
+                            authenticationKey: retrieveData?.authenticationKey,
                             logID: id,
                         })
                         .then(async (e) => {
@@ -63,7 +63,7 @@ export default ({
     const handleEdit = () => {
         axios
             .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
-                authenticationKey: retrieveData().authenticationKey,
+                authenticationKey: retrieveData?.authenticationKey,
                 logID: id,
                 distance: formData,
             })
@@ -99,7 +99,7 @@ export default ({
             >
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                     {fullName}
-                    {fullName === retrieveData().fullName && <> (You)</>}
+                    {fullName === retrieveData?.fullName && <> (You)</>}
                 </Text>
                 <Text style={{ fontSize: 16 }}>{distance}km</Text>
             </View>
@@ -107,7 +107,7 @@ export default ({
             {activeSession && (
                 <Split>
                     <Button
-                        disabled={fullName !== retrieveData().fullName}
+                        disabled={fullName !== retrieveData?.fullName}
                         styles={{
                             paddingVertical: 0,
                             paddingHorizontal: 0,
@@ -124,7 +124,7 @@ export default ({
                         <Text style={{ fontSize: 14, fontWeight: "bold" }}>Edit</Text>
                     </Button>
                     <Button
-                        disabled={fullName !== retrieveData().fullName}
+                        disabled={fullName !== retrieveData?.fullName}
                         color="red"
                         styles={{
                             paddingVertical: 0,
