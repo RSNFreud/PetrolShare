@@ -5,6 +5,8 @@ import { AuthContext } from "../../hooks/context";
 import Dropdown, { item } from "../../components/Dropdown";
 import Input from "../../components/Input";
 import SubmitButton from "./submitButton";
+import { Box } from "../../components/Themed";
+import { Text } from "../../components/Themed";
 
 export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
     const [usernames, setUsernames] = useState<Array<item>>([])
@@ -56,7 +58,9 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
     }
 
     return <>
-
+        <Box style={{ paddingHorizontal: 15, paddingVertical: 15, marginBottom: 25 }}>
+            <Text>If you have distance that should be applied to another user then enter the distance. This will prompt the user to accept the distance applied.</Text>
+        </Box>
         <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue />
         <Input handleInput={e => setValues({ ...values, distance: e })} label={`Distance to apply`} errorMessage={errors.distance} placeholder={'Enter amount'} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20 }} />
         <SubmitButton
