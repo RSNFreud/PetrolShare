@@ -9,7 +9,8 @@ import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Split from "./split";
 import Colors from "../../constants/Colors";
-import { Text, Button } from "../../components/Themed";
+import { Text } from "../../components/Themed";
+import Button from "../../components/button";
 
 type PropsType = {
     fullName: string;
@@ -108,44 +109,18 @@ export default ({
                 <Split>
                     <Button
                         disabled={fullName !== retrieveData?.fullName}
-                        styles={{
-                            paddingVertical: 0,
-                            paddingHorizontal: 0,
-                            width: "auto",
-                            backgroundColor: Colors.tertiary,
-                            borderColor: Colors.border,
-                            minHeight: 0,
-                            justifyContent: "center",
-                            height: 32,
-                            alignItems: "center",
-                        }}
                         handleClick={() => setVisible(true)}
-                    >
-                        <Text style={{ fontSize: 14, fontWeight: "bold" }}>Edit</Text>
-                    </Button>
+                        size="small"
+                        text="Edit"
+                    />
                     <Button
                         disabled={fullName !== retrieveData?.fullName}
                         color="red"
-                        styles={{
-                            paddingVertical: 0,
-                            backgroundColor: "transparent",
-                            borderColor: "#FA4F4F",
-                            paddingHorizontal: 0,
-                            width: "auto",
-                            minHeight: 0,
-                            justifyContent: "center",
-                            height: 32,
-                            alignItems: "center",
-                        }}
+                        variant="ghost"
+                        size="small"
                         handleClick={handleDelete}
-                        noText
-                    >
-                        <Text
-                            style={{ fontSize: 14, fontWeight: "bold", color: "#FA4F4F" }}
-                        >
-                            Remove
-                        </Text>
-                    </Button>
+                        text="Remove"
+                    />
                 </Split>
             )}
             <Popup visible={visible} handleClose={() => setVisible(false)}>
@@ -156,9 +131,7 @@ export default ({
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}
                 />
-                <Button handleClick={handleEdit}>
-                    <>Update Distance {formData && <>({formData}km)</>}</>
-                </Button>
+                <Button handleClick={handleEdit} text={`Update Distance ${formData ? `(${formData} km)` : ''}`} />
             </Popup>
         </View>
     );

@@ -3,13 +3,14 @@ import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, TouchableOpacity, ScrollView, View } from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
-import Layout from "../../components/Layout";
+import Layout from "../../components/layout";
 import { Text } from "../../components/Themed";
 import { convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 import config from "../../config";
 import Colors from "../../constants/Colors";
+import { TouchableBase } from "../../components/button";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();
@@ -91,9 +92,8 @@ export default ({ navigation }: any) => {
                 </Text>
                 <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
                   {data.map((e, c) => (
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() =>
+                    <TouchableBase
+                      handleClick={() =>
                         navigation.navigate("Payments", { id: e["invoiceID"] })
                       }
                       style={{
@@ -116,7 +116,7 @@ export default ({ navigation }: any) => {
                       <Text style={{ fontSize: 16 }}>
                         {convertToDate(e["sessionEnd"], true)}
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableBase>
                   ))}
                 </ScrollView>
               </>

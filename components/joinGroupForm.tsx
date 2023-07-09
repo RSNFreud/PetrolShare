@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { View } from "react-native";
-import { Button } from "./Themed";
+import Button from "./button";
 import Input from "./Input";
 import { Alert } from "../hooks";
 import { AuthContext } from "../hooks/context";
@@ -90,12 +90,8 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
         errorMessage={form.errors}
         style={{ marginBottom: 20 }}
       />
-      <Button loading={loading} handleClick={updateGroup}>
-        Join Group
-      </Button>
-      <Button style="ghost" styles={{ marginTop: 20 }} handleClick={handleCancel}>
-        Back
-      </Button>
+      <Button loading={loading} handleClick={updateGroup} text="Join Group" />
+      <Button variant="ghost" style={{ marginTop: 20 }} handleClick={handleCancel} text="Back" />
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
 import Input from "../Input";
-import { Button } from "../Themed";
+import Button from "../button";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 import { PropsType } from "./default";
@@ -52,13 +52,10 @@ export default ({
       <Button
         handleClick={validateForm}
         loading={loading}
-        styles={{ marginBottom: 15 }}
-      >
-        Change email
-      </Button>
-      <Button handleClick={() => handleChange('Settings')} style={"ghost"}>
-        Back
-      </Button>
+        style={{ marginBottom: 15 }}
+        text="Change email" />
+
+      <Button handleClick={() => handleChange('Settings')} variant={"ghost"} text="Back" />
     </>
   );
 };

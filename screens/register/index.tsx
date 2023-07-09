@@ -1,14 +1,15 @@
 import React, { useContext } from 'react'
 import { useState } from 'react'
-import { View, Dimensions } from 'react-native'
+import { View } from 'react-native'
 import Input from '../../components/Input'
-import { Box, Button, FlexFull, Text } from '../../components/Themed'
-import Layout from '../../components/Layout'
+import { Box, FlexFull, Text } from '../../components/Themed'
+import Layout from '../../components/layout'
 import Stage from './stage'
 import StepBar from './stepBar'
 import { AuthContext } from '../../hooks/context'
 import axios from 'axios'
 import config from '../../config'
+import Button from '../../components/button'
 
 export default React.memo(({ navigation }: any) => {
   const { register } = useContext(AuthContext)
@@ -140,16 +141,12 @@ export default React.memo(({ navigation }: any) => {
       </View>
       <View>
         <Button
-          styles={{ marginBottom: 20 }}
+          style={{ marginBottom: 20 }}
           handleClick={() => {
             validateStage(['fullName', 'emailAddress'], () => nextPage())
           }}
-        >
-          Continue
-        </Button>
-        <Button style="ghost" handleClick={() => navigation.navigate('Login')}>
-          Cancel
-        </Button>
+          text='Continue' />
+        <Button variant="ghost" handleClick={() => navigation.navigate('Login')} text='Cancel' />
       </View>
     </>,
     <>
@@ -175,18 +172,14 @@ export default React.memo(({ navigation }: any) => {
       </View>
       <View>
         <Button
-          styles={{ marginBottom: 20 }}
+          style={{ marginBottom: 20 }}
           handleClick={() =>
             validateStage(['password', 'confirmPassword'], () =>
               handleRegister(),
             )
           }
-        >
-          Submit
-        </Button>
-        <Button style="ghost" handleClick={() => previousPage()}>
-          Back
-        </Button>
+          text='Submit' />
+        <Button variant="ghost" handleClick={() => previousPage()} text='Back' />
       </View>
     </>,
     <>
@@ -204,10 +197,9 @@ export default React.memo(({ navigation }: any) => {
       </Box>
       <Button
         handleClick={() => navigation.navigate('Login')}
-        styles={{ marginTop: 25 }}
-      >
-        Back to Login
-      </Button>
+        style={{ marginTop: 25 }}
+        text='Back to Login'
+      />
     </>,
   ]
 

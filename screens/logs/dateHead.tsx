@@ -1,7 +1,8 @@
 import { View, StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { convertToDate } from "../../hooks";
-import { Button, Text } from "../../components/Themed";
+import { Text } from "../../components/Themed";
+import Button from "../../components/button";
 
 type PropsType = {
     data: any;
@@ -46,9 +47,10 @@ export default ({
         <View style={styles.container}>
             <Button
                 noText
-                styles={styles.button}
+                style={styles.button}
                 handleClick={handlePrevious}
                 disabled={!hasPrevious}
+                analyticsLabel="Previous Log"
             >
                 <Svg width="12" height="10" fill="none" viewBox="0 0 12 10">
                     <Path
@@ -66,7 +68,8 @@ export default ({
             <Button
                 disabled={!hasNext}
                 noText
-                styles={styles.button}
+                style={styles.button}
+                analyticsLabel="Next Log"
                 handleClick={handleNext}
             >
                 <Svg width="12" height="10" viewBox="0 0 12 10" fill="none">

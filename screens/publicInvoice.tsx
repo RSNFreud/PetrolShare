@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native"
-import Layout from "../components/Layout"
+import Layout from "../components/layout"
 import Invoice from "./invoices/invoice"
 import { useEffect, useState } from "react"
 

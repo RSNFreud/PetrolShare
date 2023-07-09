@@ -1,4 +1,4 @@
-import { Button, Text } from "../components/Themed";
+import { Text } from "../components/Themed";
 import { TouchableWithoutFeedback, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import Colors from "../constants/Colors";
 import axios from "axios";
 import config from "../config";
 import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
+import { TouchableBase } from "./button";
 
 export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const navigation = useNavigation<any>();
@@ -83,11 +84,10 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
       </TouchableWithoutFeedback>
       {(isLoggedIn && !isGuestMode) && (
         <>
-          <Button
-            noText
-            size="small"
+          <TouchableBase
+            analyticsLabel="Settings"
             handleClick={() => setSettingsVisible(true)}
-            styles={{
+            style={{
               paddingHorizontal: 0,
               position: "absolute",
               right: 25,
@@ -96,6 +96,9 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
               backgroundColor: Colors.primary,
               width: 40,
               height: 40,
+              borderRadius: 4,
+              borderWidth: 1,
+              borderStyle: 'solid',
               borderColor: Colors.border,
               alignItems: "center",
               alignContent: "center",
@@ -104,20 +107,18 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
               flexDirection: "row",
             }}
           >
-            <>
-              <Svg
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 18 20"
-              >
-                <Path
-                  fill="#fff"
-                  d="M4.685 5.23a4.318 4.318 0 004.312 4.312 4.318 4.318 0 004.313-4.313A4.318 4.318 0 008.997.917a4.318 4.318 0 00-4.312 4.312zm11.979 13.895h.958v-.958a6.717 6.717 0 00-6.708-6.709H7.081c-3.7 0-6.709 3.01-6.709 6.709v.958h16.292z"
-                ></Path>
-              </Svg>
-            </>
-          </Button>
+            <Svg
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 18 20"
+            >
+              <Path
+                fill="#fff"
+                d="M4.685 5.23a4.318 4.318 0 004.312 4.312 4.318 4.318 0 004.313-4.313A4.318 4.318 0 008.997.917a4.318 4.318 0 00-4.312 4.312zm11.979 13.895h.958v-.958a6.717 6.717 0 00-6.708-6.709H7.081c-3.7 0-6.709 3.01-6.709 6.709v.958h16.292z"
+              ></Path>
+            </Svg>
+          </TouchableBase>
           <Settings
             onUpdate={handleUpdate}
             visible={settingsVisible}

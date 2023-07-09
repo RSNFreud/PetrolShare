@@ -1,11 +1,12 @@
 import { TouchableWithoutFeedback, View, ActivityIndicator, Dimensions, ScrollView } from 'react-native'
 import Input from '../../components/Input'
-import { Breadcrumbs, Text, Button, FlexFull, Seperator } from '../../components/Themed'
-import Layout from '../../components/Layout'
+import { Breadcrumbs, Text, Seperator } from '../../components/Themed'
+import Layout from '../../components/layout'
 import Svg, { Path } from 'react-native-svg'
 import { useContext, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
+import Button from '../../components/button'
 import Popup from '../../components/Popup'
 import SubmitButton from './submitButton'
 import Toast from 'react-native-toast-message'
@@ -231,7 +232,7 @@ export default ({ navigation }: any) => {
             <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 25 }}>
               Presets:
             </Text>
-            <Button styles={{ backgroundColor: Colors.secondary }} icon={<Svg
+            <Button style={{ backgroundColor: Colors.secondary }} icon={<Svg
               width="11"
               height="11"
               fill="none"
@@ -253,7 +254,7 @@ export default ({ navigation }: any) => {
                 }),
                   openPopup('new')
               }}
-              children={'Add Preset'} />
+              text={'Add Preset'} />
 
           </View>
           <View style={{ flex: 1 }}>
@@ -310,7 +311,7 @@ export default ({ navigation }: any) => {
                         >
                           <Button
                             noText
-                            styles={{
+                            style={{
                               borderColor: 'transparent',
                               paddingVertical: 0,
                               width: 32,
@@ -325,7 +326,7 @@ export default ({ navigation }: any) => {
                               backgroundColor: Colors.tertiary,
                             }}
                             handleClick={() => handleEdit(e.presetID)}
-                          >
+                            analyticsLabel='Edit'                          >
                             <Svg
                               width="12"
                               height="12"
@@ -342,7 +343,7 @@ export default ({ navigation }: any) => {
                             </Svg>
                           </Button>
                           <Button
-                            styles={{
+                            style={{
                               paddingVertical: 0,
                               paddingHorizontal: 0,
                               minHeight: 0,
@@ -353,9 +354,10 @@ export default ({ navigation }: any) => {
                               justifyContent: 'center',
                               alignContent: 'center',
                             }}
-                            style="ghost"
+                            variant="ghost"
                             color="red"
                             handleClick={() => openPopup('delete', e.presetID)}
+                            analyticsLabel='Delete'
                           >
                             <Svg
                               width="12"
@@ -415,13 +417,8 @@ export default ({ navigation }: any) => {
             </Text>
             <Button
               handleClick={() => deletePreset()}
-              styles={{ marginBottom: 15 }}
-            >
-              Yes
-            </Button>
-            <Button style="ghost" handleClick={() => setVisible(false)}>
-              No
-            </Button>
+              style={{ marginBottom: 15 }} text='Yes' />
+            <Button variant="ghost" handleClick={() => setVisible(false)} text='No' />
           </>
         ) : (
           <>
@@ -445,7 +442,7 @@ export default ({ navigation }: any) => {
               errorMessage={presetFormErrors.distance}
               style={{ marginBottom: 30 }}
             />
-            <Button handleClick={handlePresetSubmit}>Save Preset</Button>
+            <Button handleClick={handlePresetSubmit} text='Save Preset' />
           </>
         )}
       </Popup>

@@ -1,10 +1,8 @@
-import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import React, { useState, useContext } from 'react'
-import Toast from 'react-native-toast-message'
 import Input from '../Input'
-import { Button } from '../Themed'
-import { sendCustomEvent, setItem } from '../../hooks'
+import Button from '../button'
+import { setItem } from '../../hooks'
 import { AuthContext } from '../../hooks/context'
 import config from '../../config'
 import { PropsType } from './default'
@@ -49,13 +47,9 @@ export default ({
       <Button
         handleClick={validateForm}
         loading={loading}
-        styles={{ marginBottom: 15 }}
-      >
-        Change name
-      </Button>
-      <Button handleClick={() => handleChange('Settings')} style={'ghost'}>
-        Back
-      </Button>
+        style={{ marginBottom: 15 }}
+        text='Change name' />
+      <Button handleClick={() => handleChange('Settings')} variant={'ghost'} text='Back' />
     </>
   )
 }

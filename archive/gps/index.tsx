@@ -11,7 +11,7 @@ import {
 import Constants from 'expo-constants'
 import { Alert, deleteItem, getGroupData, getItem, setItem } from '../../hooks'
 import { Platform, ToastAndroid, View } from 'react-native'
-import Layout from '../../components/Layout'
+import Layout from '../../components/layout'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
 import { useNavigation } from '@react-navigation/native'
@@ -259,12 +259,12 @@ export default () => {
           <Text style={{ fontSize: 32, marginTop: 10, fontWeight: 'bold' }}>
             {distance.toFixed(1)} {distanceFormat}
           </Text>
-          <Button handleClick={testFunc} styles={{ marginTop: 20 }}>
+          <Button handleClick={testFunc} style={{ marginTop: 20 }}>
             Test!
           </Button>
         </View>
         <View>
-          <Button handleClick={toggleTracking} styles={{ marginBottom: 20 }}>
+          <Button handleClick={toggleTracking} style={{ marginBottom: 20 }}>
             {isTracking ? 'Stop Tracking' : 'Start Tracking'}
           </Button>
           <Button

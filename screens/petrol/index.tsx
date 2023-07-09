@@ -1,11 +1,11 @@
 import Input from "../../components/Input";
 import { View } from "react-native";
 import {
-  Button,
   Text,
   Box,
 } from "../../components/Themed";
 import { useContext, useEffect, useState } from "react";
+import Button from "../../components/button";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
@@ -133,9 +133,8 @@ export default React.memo(({ onClose }: PropsType) => {
         />
       </View>
       <View style={{ marginTop: 30 }}>
-        <Button loading={loading} handleClick={() => handleSubmit()}>
-          Add Petrol
-        </Button>
+        <Button loading={loading} handleClick={() => handleSubmit()} text="Add Petrol" />
+
         {!!errors.submit && (
           <View
             style={{

@@ -2,10 +2,10 @@ import Popup from "./Popup"
 import { useState, useEffect, useContext } from 'react'
 import Input from "./Input"
 import Dropdown, { item } from "./Dropdown"
-import { Button } from "./Themed"
 import axios from "axios"
 import config from "../config"
 import { AuthContext } from "../hooks/context"
+import Button from "./button"
 
 type PropsType = {
     active: boolean
@@ -76,6 +76,6 @@ export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsTyp
         <Input handleInput={e => setValues({ ...values, distance: e })} label={`Distance to apply`} errorMessage={errors.distance} placeholder={`Enter amount (Max: ${maxDistance})`} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20, marginTop: 20 }} />
         {Boolean(usernames.length) ?
             <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue /> : <></>}
-        <Button loading={loading} handleClick={submit}>Assign Distance</Button>
+        <Button loading={loading} handleClick={submit} text="Assign Distance" />
     </Popup>
 }

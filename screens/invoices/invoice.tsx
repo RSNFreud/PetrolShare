@@ -20,6 +20,7 @@ import Colors from '../../constants/Colors'
 import Svg, { Path } from 'react-native-svg'
 import InvoiceItem from './invoiceItem'
 import { useNavigation } from '@react-navigation/native'
+import { TouchableBase } from '../../components/button';
 
 type PropsType = {
   invoiceID: number | string
@@ -183,7 +184,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
         )}
       </ScrollView>
       {!isPublic &&
-        <TouchableOpacity onPress={sendLink} activeOpacity={0.8} >
+        <TouchableBase handleClick={sendLink} >
           <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, position: 'absolute', bottom: 15, right: -10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Svg
               width={'18'}
@@ -198,7 +199,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             </Svg>
             <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Share</Text>
           </View>
-        </TouchableOpacity>}
+        </TouchableBase>}
       {isPublic ? <></> :
         <AssignDistance
           active={manageDistanceOpen}
