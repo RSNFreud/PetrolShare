@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { Switch, TouchableWithoutFeedback, View } from "react-native"
 import DatePicker from "../../components/dateTimePicker"
 import { Text } from "../../components/Themed"
@@ -8,6 +8,10 @@ import Dropdown from "../../components/Dropdown"
 import AnimateHeight from "../../components/animateHeight"
 import RadioButton from "../../components/RadioButton"
 import Button from "../../components/button"
+import axios from "axios"
+import config from "../../config"
+import { AuthContext } from "../../hooks/context"
+import { sendCustomEvent } from "../../hooks"
 
 type DayProps = {
     label: string,
@@ -17,26 +21,25 @@ type DayProps = {
 }
 
 const Day = ({ label, value, active, handleClick }: DayProps) => {
-
-
     return <TouchableWithoutFeedback onPress={() => handleClick(value)}><View style={{ borderRadius: 100, width: 40, height: 40, backgroundColor: active ? Colors.tertiary : Colors.primary, justifyContent: 'center', alignContent: 'center', display: 'flex', borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border }}><Text style={{ textAlign: 'center' }}>{label}</Text></View></TouchableWithoutFeedback>
 }
 
-export default () => {
+export default ({ onClose }: { onClose: () => void }) => {
     const date = new Date()
     const [data, setData] = useState({
         allDay: false,
-        startDate: new Date(),
+        startDate: date,
         startTime: new Date(),
-        endDate: new Date(),
-        endTime: new Date(date.setHours(date.getHours() + 1)),
+        endDate: date,
+        endTime: new Date(),
         summary: "",
         repeating: "notRepeating",
         custom: {
-            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: new Date() }
+            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: date }
         }
     })
-
+    const [loading, setLoading] = useState(false)
+    const { retrieveData } = useContext(AuthContext)
     const [errors, setErrors] = useState("")
 
     const updateData = (e: Date | boolean | string, value: string) => {
@@ -65,9 +68,24 @@ export default () => {
     }
 
     const handleSubmit = () => {
-        if (!data.allDay && (data.endTime.getTime() < data.startTime.getTime())) {
-            setErrors("Please choose a valid date time combination!")
+        setErrors("")
+        if (data.allDay && (data.endDate.getDate() < data.startDate.getDate())) {
+            return setErrors("Please choose a valid date time combination!")
         }
+        setLoading(true)
+        axios.post(config.REACT_APP_API_ADDRESS + '/schedules/add', {
+            authenticationKey: retrieveData?.authenticationKey,
+            ...data
+        })
+            .then(() => {
+                onClose()
+                sendCustomEvent('sendAlert', 'Added new schedule successfully!')
+                setLoading(false)
+            })
+            .catch(({ response }) => {
+                setLoading(false)
+                setErrors(response.data)
+            })
     }
 
     return <>
@@ -162,9 +180,8 @@ export default () => {
                 </View>
             }]} value={data.custom.ends.option} handleChange={(e) => updateCustomEndDate('option', e)} />
         </AnimateHeight>
-
         <View style={{ marginTop: 25 }} >
-            {!!errors && (
+            <AnimateHeight open={Boolean(errors)}>
                 <View
                     style={{
                         marginBottom: 15,
@@ -179,8 +196,8 @@ export default () => {
                         {errors}
                     </Text>
                 </View>
-            )}
-            <Button handleClick={handleSubmit} text="Create Schedule" />
+            </AnimateHeight>
+            <Button loading={loading} handleClick={handleSubmit} text="Create Schedule" />
         </View>
     </>
 }

@@ -100,6 +100,8 @@ export default function App() {
     () => ({
       signIn: async (e: any) => {
         return new Promise((res, rej) => {
+          console.log(config.REACT_APP_API_ADDRESS + "/user/login");
+
           axios
             .post(config.REACT_APP_API_ADDRESS + "/user/login", {
               ...e,

@@ -38,7 +38,7 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled }: 
                 <Text style={{
                     fontWeight: '400',
                     fontSize: 16,
-                }}>{mode === 'date' ? new Date(value).toLocaleDateString('en-gb') : new Date(value).toLocaleTimeString(undefined, {
+                }}>{mode === 'date' ? value.toLocaleDateString('en-gb') : value.toLocaleTimeString(undefined, {
                     hour: '2-digit', minute: '2-digit'
                 })}</Text>
             </View>
