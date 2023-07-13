@@ -11,11 +11,10 @@ import Button, { TouchableBase } from "../../components/button"
 import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
-import { convertHexToRGBA } from "../../hooks"
 import { useNavigation } from "@react-navigation/native"
 
 type ScheduleType = {
-    allDay: string, startDate: string, endDate: string, summary?: string, fullName: string, emailAddress: string
+    allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
 }
 
 
@@ -43,7 +42,7 @@ export default () => {
     const getSchedules = () => {
         if (!retrieveData?.authenticationKey) return
         axios.get(config.REACT_APP_API_ADDRESS + `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
-        ).then(({ data }) => {
+        ).then(({ data }: { data: ScheduleType[] }) => {
             setDataLoaded(true)
             const splitSchedules: Map<number, ScheduleType[]> = new Map;
             for (const schedule of data) {
@@ -80,10 +79,6 @@ export default () => {
         return new Date(temp.setHours(0, 0, 0, 0))
     }
 
-    const randomBlue = () => {
-        return "rgb(0, 0, " + (Math.floor(Math.random() * 255)) + ")";
-    }
-
     return <Layout homepage>
         <View style={{ paddingBottom: 15, backgroundColor: Colors.secondary, paddingHorizontal: 25 }}>
             <Breadcrumbs style={{ marginBottom: 0 }} links={[{
@@ -108,7 +103,7 @@ export default () => {
                         {schedules.map(([day, schedule]) => {
                             const dayObj = new Date(day)
                             return <>
-                                <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={''}>
+                                <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
                                     <View style={{ width: 35 }}>
                                         <Text style={{ fontWeight: '300', textAlign: 'center' }}>{dayObj.toLocaleString(undefined, { weekday: 'short' })}</Text>
                                         <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.getDate()}</Text>
@@ -123,7 +118,7 @@ export default () => {
                                             const hasMultipleDays = amountOfDays > 1
 
                                             return (
-                                                <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: retrieveData?.emailAddress === data.emailAddress ? Colors.tertiary : Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? convertHexToRGBA(Colors.tertiary, 0.5) : Colors.secondary }}>
+                                                <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : Colors.secondary, opacity: retrieveData?.emailAddress === data.emailAddress ? 1 : 0.8 }}>
                                                     <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
                                                     <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
                                                     }
