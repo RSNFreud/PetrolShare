@@ -201,8 +201,6 @@ export default ({ navigation }: any) => {
                   setItem('referalCode', '')
                 })
                 .catch((e) => {
-                  console.log(e);
-
                   Toast.show({
                     text1: 'There is no group with that ID!',
                     type: 'default',

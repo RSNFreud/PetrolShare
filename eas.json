@@ -16,12 +16,16 @@
         "buildType": "apk"
       }
     },
+    "testing": {
+      "channel": "development"
+    },
     "production": {
       "channel": "production",
       "autoIncrement": true
     }
   },
   "submit": {
-    "production": {}
+    "production": {},
+    "testing": {}
   }
 }

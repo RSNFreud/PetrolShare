@@ -16,5 +16,5 @@ export default () => {
 
     if (!invoiceID) return <></>
 
-    return <Layout><Invoice invoiceID={invoiceID} isPublic /></Layout>
+    return <Layout noScrollView noBottomPadding><Invoice invoiceID={invoiceID} isPublic /></Layout>
 }

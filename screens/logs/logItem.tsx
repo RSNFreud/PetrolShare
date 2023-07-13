@@ -33,6 +33,7 @@ export default ({
 }: PropsType) => {
     const { retrieveData } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState(distance);
 
     const handleDelete = () => {
@@ -62,6 +63,7 @@ export default ({
     };
 
     const handleEdit = () => {
+        setLoading(true)
         axios
             .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
                 authenticationKey: retrieveData?.authenticationKey,
@@ -74,9 +76,11 @@ export default ({
                     type: "default",
                 });
                 setVisible(false);
+                setLoading(false)
                 handleComplete();
             })
             .catch(({ response }) => {
+                setLoading(false)
                 console.log(response.message);
             });
     };
@@ -131,7 +135,7 @@ export default ({
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}
                 />
-                <Button handleClick={handleEdit} text={`Update Distance ${formData ? `(${formData} km)` : ''}`} />
+                <Button handleClick={handleEdit} loading={loading} text={`Update Distance ${formData ? `(${formData} km)` : ''}`} />
             </Popup>
         </View>
     );

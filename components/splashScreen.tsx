@@ -1,4 +1,4 @@
-import { Dimensions, View, ImageBackground, Animated } from "react-native"
+import { Dimensions, ImageBackground, Animated, Platform } from "react-native"
 import { useEffect, useRef, useState } from 'react'
 import Colors from "../constants/Colors"
 import SplashImage from '../assets/images/splash.png'
@@ -36,7 +36,9 @@ export default () => {
 
     if (!visible) return <></>
 
-    return <Animated.View style={{ width: Dimensions.get('screen').width, opacity: fadeAnim, height: Dimensions.get('screen').height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background }}>
-        <ImageBackground source={SplashImage} style={{ width: '100%', height: '100%' }} />
+    const screen = Platform.OS === "web" ? Dimensions.get('window') : Dimensions.get('screen')
+
+    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: screen.height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background, justifyContent: 'center', alignContent: 'center', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <ImageBackground source={SplashImage} style={{ width: 400, height: 400 }} />
     </Animated.View>
 }

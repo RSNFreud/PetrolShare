@@ -153,7 +153,6 @@ export default ({ navigation }: any) => {
     Object.entries(presetFormData).map(([key, value]) => {
       if (key === 'presetID') return
       if (!value) errors[key] = 'Please complete this field!'
-      console.log(key, parseInt(value))
 
       if (key === 'distance' && !/^[0-9.]*$/.test(value)) {
         errors[key] = 'Please enter a valid numerical value!'

@@ -13,6 +13,9 @@
       "sentry-expo",
       "@react-native-firebase/app"
     ],
+    "splash": {
+      "backgroundColor": "292B36"
+    },
     "backgroundColor": "#292B36",
     "updates": {
       "fallbackToCacheTimeout": 0,
