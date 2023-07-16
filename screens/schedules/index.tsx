@@ -20,7 +20,7 @@ type ScheduleType = {
 
 export default () => {
     const [visible, setVisible] = useState(false)
-    const [schedules, setSchedules] = useState<[number, ScheduleType[]][] | []>([])
+    const [schedules, setSchedules] = useState<Record<number, Map<number, ScheduleType[]>[]> | []>([])
     const { retrieveData } = useContext(AuthContext)
     const [dataLoaded, setDataLoaded] = useState(false);
     const navigation = useNavigation()
@@ -66,9 +66,18 @@ export default () => {
                 }
             }
 
+            const monthSorted: Record<string, Map<number, ScheduleType[]>[]> = {}
             const sorted = [...splitSchedules.entries()].sort(([a], [b]) => a - b);
+            sorted.map(([key, value]) => {
+                const month = new Date(key).toLocaleDateString(undefined, { month: 'long' })
+                const map = new Map().set(key, value)
 
-            setSchedules(sorted)
+                if (!Object.keys(monthSorted).filter(e => e === month.toString()).length) monthSorted[month] = []
+                monthSorted[month].push(map)
+            })
+            // console.log(monthSorted);
+
+            setSchedules(monthSorted)
         }).catch((err) => {
             console.log(err);
         })
@@ -99,38 +108,49 @@ export default () => {
                     </Svg>} text="Add" />
                 </View> :
                 <View style={{ paddingHorizontal: 25, paddingVertical: 30, flex: 1, display: 'flex' }}>
-                    <ScrollView contentContainerStyle={{ gap: 25 }}>
-                        {schedules.map(([day, schedule]) => {
-                            const dayObj = new Date(day)
-                            return <>
-                                <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
-                                    <View style={{ width: 35 }}>
-                                        <Text style={{ fontWeight: '300', textAlign: 'center' }}>{dayObj.toLocaleString(undefined, { weekday: 'short' })}</Text>
-                                        <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.getDate()}</Text>
-                                    </View>
-                                    <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
-                                        {schedule.map((data, count) => {
-                                            const startDate = new Date(data.startDate)
-                                            const endDate = new Date(data.endDate)
-                                            const amountOfDays = Math.round((resetTime(endDate).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24))
-                                            const currentDayCount = resetTime(dayObj).getTime() === resetTime(startDate).getTime() ? '1' : (resetTime(dayObj).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24) + 1
+                    <ScrollView contentContainerStyle={{ width: '100%' }}>
+                        {Object.entries(schedules).map(([month, schedule]) =>
+                            <View>
+                                <View style={{ marginBottom: 10, backgroundColor: Colors.tertiary, borderRadius: 4, padding: 10, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, }}>
+                                    <Text style={{ fontSize: 18, textAlign: 'center', fontWeight: 'bold' }}>{month}</Text>
+                                </View>
+                                <View style={{ gap: 25, marginBottom: 25 }}>
+                                    {schedule.map(e => [...e].map(([day, schedule]) => {
 
-                                            const hasMultipleDays = amountOfDays > 1
+                                        const dayObj = new Date(day)
 
-                                            return (
-                                                <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : Colors.secondary, opacity: retrieveData?.emailAddress === data.emailAddress ? 1 : 0.8 }}>
-                                                    <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
-                                                    <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
-                                                    }
-                                                        {!hasMultipleDays && <> - </>}
-                                                        {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
+                                        return <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
+                                            <View style={{ display: 'flex', flexDirection: 'row', gap: 24, width: '100%' }} key={day}>
+                                                <View style={{ width: 35 }}>
+                                                    <Text style={{ fontWeight: '300', textAlign: 'center' }}>{dayObj.toLocaleString(undefined, { weekday: 'short' })}</Text>
+                                                    <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.getDate()}</Text>
                                                 </View>
-                                            )
-                                        })}
-                                    </View>
-                                </View >
-                            </>
-                        })}
+                                                <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
+                                                    {schedule.map((data, count) => {
+                                                        const startDate = new Date(data.startDate)
+                                                        const endDate = new Date(data.endDate)
+                                                        const amountOfDays = Math.round((resetTime(endDate).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24))
+                                                        const currentDayCount = resetTime(dayObj).getTime() === resetTime(startDate).getTime() ? '1' : (resetTime(dayObj).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24) + 1
+
+                                                        const hasMultipleDays = amountOfDays > 1
+
+                                                        return (
+                                                            <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : Colors.secondary, opacity: retrieveData?.emailAddress === data.emailAddress ? 1 : 0.8 }}>
+                                                                <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
+                                                                <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
+                                                                }
+                                                                    {!hasMultipleDays && <> - </>}
+                                                                    {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
+                                                            </View>
+                                                        )
+                                                    })}
+                                                </View>
+                                            </View >
+                                        </View>
+                                    }))}
+                                </View>
+                            </View>
+                        )}
                     </ScrollView>
                     <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
                         <TouchableBase handleClick={() => setVisible(true)} >
