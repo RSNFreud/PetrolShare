@@ -111,7 +111,7 @@ export default () => {
                     <ScrollView contentContainerStyle={{ width: '100%' }}>
                         {Object.entries(schedules).map(([month, schedule]) =>
                             <View>
-                                <View style={{ marginBottom: 10, backgroundColor: Colors.tertiary, borderRadius: 4, padding: 10, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, }}>
+                                <View style={{ marginBottom: 15 }}>
                                     <Text style={{ fontSize: 18, textAlign: 'center', fontWeight: 'bold' }}>{month}</Text>
                                 </View>
                                 <View style={{ gap: 25, marginBottom: 25 }}>
