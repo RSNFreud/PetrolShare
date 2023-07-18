@@ -179,9 +179,10 @@ export default function App() {
               console.log(response);
 
               setLoading(false);
-              setTimeout(() => {
-                Alert('Account Deactivated', response.data)
-              }, 500);
+              if (response.data.includes('This account has been deactivated'))
+                setTimeout(() => {
+                  Alert('Account Deactivated', response.data)
+                }, 500);
               store.signOut()
               return;
             });

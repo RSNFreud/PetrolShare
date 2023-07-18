@@ -49,6 +49,8 @@ export default () => {
                 const startDate = resetTime(schedule.startDate);
                 const endDate = resetTime(schedule.endDate);
 
+                if (new Date().getTime() > new Date(schedule.endDate).getTime()) continue
+
                 if (!splitSchedules.has(startDate.getTime())) splitSchedules.set(startDate.getTime(), []);
                 splitSchedules.get(startDate.getTime())!.push({ ...schedule });
 
@@ -75,7 +77,6 @@ export default () => {
                 if (!Object.keys(monthSorted).filter(e => e === month.toString()).length) monthSorted[month] = []
                 monthSorted[month].push(map)
             })
-            // console.log(monthSorted);
 
             setSchedules(monthSorted)
         }).catch((err) => {
@@ -126,7 +127,7 @@ export default () => {
                                                     <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.getDate()}</Text>
                                                 </View>
                                                 <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
-                                                    {schedule.map((data, count) => {
+                                                    {schedule.sort((a, b) => a.startDate > b.startDate ? 1 : -1).map((data, count) => {
                                                         const startDate = new Date(data.startDate)
                                                         const endDate = new Date(data.endDate)
                                                         const amountOfDays = Math.round((resetTime(endDate).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24))
@@ -135,7 +136,7 @@ export default () => {
                                                         const hasMultipleDays = amountOfDays > 1
 
                                                         return (
-                                                            <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : Colors.secondary, opacity: retrieveData?.emailAddress === data.emailAddress ? 1 : 0.8 }}>
+                                                            <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
                                                                 <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
                                                                 <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
                                                                 }
