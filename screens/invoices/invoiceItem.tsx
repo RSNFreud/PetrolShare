@@ -54,7 +54,7 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
             backgroundColor: Colors.primary,
             borderColor: Colors.border,
             marginBottom:
-                lastItem || invoiceData.emailAddress === emailAddress ? 0 : 10,
+                lastItem || invoiceData.emailAddress === emailAddress && !isPublic ? 0 : 10,
         }}
     >
         <View
@@ -140,6 +140,6 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
             <></>
         )}
     </Box>
-        {invoiceData.emailAddress === emailAddress && !lastItem ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
+        {invoiceData.emailAddress === emailAddress && !lastItem && !isPublic ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
     </>
 }
