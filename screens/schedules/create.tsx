@@ -160,7 +160,7 @@ export default ({ onClose }: { onClose: () => void }) => {
             <AnimateHeight open={data.custom.repeatingFormat === 'weekly'}>
                 <Text style={{ marginTop: 25, fontWeight: 'bold' }}>Repeat on</Text>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 15, marginTop: 15 }}>
-                    {[{ value: 'sunday', label: 'S' }, { value: 'monday', label: 'M' }, { value: 'tuesday', label: 'T' }].map(({ label, value }) => <Day handleClick={updateCustomDays} value={value} label={label} active={data.custom.repeatingDays.includes(value)} />)
+                    {[{ value: 'sunday', label: 'S' }, { value: 'monday', label: 'M' }, { value: 'tuesday', label: 'T' }].map(({ label, value }) => <Day key={label} handleClick={updateCustomDays} value={value} label={label} active={data.custom.repeatingDays.includes(value)} />)
                     }
                 </View>
             </AnimateHeight>

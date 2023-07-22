@@ -136,8 +136,6 @@ export default () => {
     }
 
     const changeDate = (e: HandlerStateChangeEvent) => {
-        console.log('test');
-
         const date = new Date(currentDate)
         if ((e.nativeEvent.translationX as number) > 0) date.setDate(date.getDate() - 1);
         else date.setDate(date.getDate() + 1);
