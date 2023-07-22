@@ -12,7 +12,7 @@ import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { useNavigation } from "@react-navigation/native"
-import { Gesture, GestureDetector, GestureStateChangeEvent, HandlerStateChangeEvent, PanGestureHandler, PanGestureHandlerEventPayload } from "react-native-gesture-handler"
+import { HandlerStateChangeEvent, PanGestureHandler } from "react-native-gesture-handler"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
