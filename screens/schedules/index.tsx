@@ -1,5 +1,5 @@
 
-import { ActivityIndicator, ScrollView, TouchableWithoutFeedback, View } from "react-native"
+import { ActivityIndicator, TouchableWithoutFeedback, View } from "react-native"
 import Layout from "../../components/layout"
 import { Breadcrumbs, Text } from "../../components/Themed"
 import Colors from "../../constants/Colors"
@@ -12,7 +12,7 @@ import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { useNavigation } from "@react-navigation/native"
-import { HandlerStateChangeEvent, PanGestureHandler } from "react-native-gesture-handler"
+import { HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
@@ -43,7 +43,7 @@ export default () => {
     const date = new Date()
     const [currentDate, setCurrentDate] = useState(getInitialDate(date).getTime())
     const dateRef = useRef<ScrollView | null>(null)
-    const scrollRef = useRef<ScrollView | null>(null)
+    const gestureRef = useRef<PanGestureHandler | null>(null)
     const [schedules, setSchedules] = useState<Record<number, Map<number, ScheduleType[]>[]> | []>([])
     const { retrieveData } = useContext(AuthContext)
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -155,12 +155,12 @@ export default () => {
             }, { name: 'Schedules' }]} />
         </View>
         {dataLoaded ? <>
-            <PanGestureHandler onEnded={changeDate} >
+            <PanGestureHandler ref={gestureRef} onEnded={changeDate} >
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
-                        <ScrollView ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
-                            {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback onPress={() => setCurrentDate(dayObj.date.getTime())}>
+                        <ScrollView enabled={false} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
+                            {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
                                 <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.active || dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
                                     <Text style={{ fontWeight: '300', textAlign: 'center' }}>{dayObj.date.toLocaleString(undefined, { weekday: 'short' })}</Text>
                                     <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
@@ -175,7 +175,7 @@ export default () => {
                         {getCurrentData && getCurrentDayData.map(e => [...e].map(([day, schedule]) => {
                             const dayObj = new Date(day)
                             return < >
-                                <ScrollView ref={scrollRef} contentContainerStyle={{ width: '100%' }}>
+                                <ScrollView simultaneousHandlers={[gestureRef]} contentContainerStyle={{ width: '100%' }}>
                                     <View style={{ gap: 25, marginBottom: 25 }}>
                                         <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
                                             <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
