@@ -12,7 +12,7 @@ import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { useNavigation } from "@react-navigation/native"
-import { HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
+import { GestureHandlerRootView, HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
@@ -136,33 +136,54 @@ export default () => {
     }
 
     const changeDate = (e: HandlerStateChangeEvent) => {
+        console.log('test');
+
         const date = new Date(currentDate)
         if ((e.nativeEvent.translationX as number) > 0) date.setDate(date.getDate() - 1);
         else date.setDate(date.getDate() + 1);
         setCurrentDate(date.getTime())
     }
 
-
     useEffect(() => {
         setInitialScroll(true)
     }, [currentDate])
 
+    const getDayString = (date: Date) => {
+        const day = date.getDay()
+        switch (day) {
+            case 0:
+                return 'Sun'
+            case 1:
+                return 'Mon'
+            case 2:
+                return 'Tue'
+            case 3:
+                return 'Wed'
+            case 4:
+                return 'Thu'
+            case 5:
+                return 'Fri'
+            case 6:
+                return 'Sat'
+        }
+    }
 
-    return <Layout homepage>
+
+    return <Layout homepage noScrollView>
         <View style={{ paddingBottom: 15, backgroundColor: Colors.secondary, paddingHorizontal: 25 }}>
             <Breadcrumbs style={{ marginBottom: 0 }} links={[{
                 name: 'Dashboard'
             }, { name: 'Schedules' }]} />
         </View>
-        {dataLoaded ? <>
+        {dataLoaded ? <GestureHandlerRootView style={{ flex: 1 }}>
             <PanGestureHandler ref={gestureRef} onEnded={changeDate} >
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
                         <ScrollView enabled={false} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
-                            {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
+                            {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
                                 <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.active || dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
-                                    <Text style={{ fontWeight: '300', textAlign: 'center' }}>{dayObj.date.toLocaleString(undefined, { weekday: 'short' })}</Text>
+                                    <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
                                     <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
                                         <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.date.getDate()}</Text>
                                     </View>
@@ -238,7 +259,7 @@ export default () => {
             </PanGestureHandler>
 
             <Popup children={<Create onClose={updateData} />} visible={visible} handleClose={() => setVisible(false)} />
-        </> :
+        </GestureHandlerRootView> :
             <View style={{ flex: 1, display: 'flex', alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
                 <ActivityIndicator size={"large"} color={Colors.tertiary} />
             </View>

@@ -47,6 +47,7 @@ export const TouchableBase = ({ children, style, disabled, handleClick, analytic
         <TouchableOpacity
             onPress={onClick}
             activeOpacity={0.8}
+            touchSoundDisabled
             disabled={disabled}
             style={style}
         >
