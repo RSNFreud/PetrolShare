@@ -107,6 +107,7 @@ export default () => {
             setSchedules(monthSorted)
         }).catch((err) => {
             console.log(err);
+            setDataLoaded(true)
         })
     }
 
@@ -180,11 +181,15 @@ export default () => {
                         <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
                         <ScrollView enabled={false} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
                             {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
-                                <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.active || dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
-                                    <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
-                                    <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
-                                        <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.date.getDate()}</Text>
+                                <View>
+
+                                    <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
+                                        <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
+                                        <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
+                                            <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.date.getDate()}</Text>
+                                        </View>
                                     </View>
+                                    {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) ? <View style={{ width: 5, height: 5, borderRadius: 100, backgroundColor: Colors.tertiary, position: 'absolute', bottom: -2, left: 14 }} /> : <></>}
                                 </View>
                             </TouchableWithoutFeedback>
                             )}
