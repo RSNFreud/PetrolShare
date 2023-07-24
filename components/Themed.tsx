@@ -5,20 +5,15 @@
 
 import { useNavigation } from '@react-navigation/native'
 import {
-  ScrollView,
   Text as DefaultText,
-  ActivityIndicator,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View as DefaultView,
   Dimensions,
   LayoutChangeEvent,
-  View,
 } from 'react-native'
 import Svg, { Path } from 'react-native-svg'
 import Colors from '../constants/Colors'
-import analytics from '@react-native-firebase/analytics'
-import Button, { ButtonType, ColorType, SizeType, VariantType } from './button'
+import Button, { ButtonType } from './button'
 
 export type TextProps = DefaultText['props']
 export type ViewProps = DefaultView['props']
