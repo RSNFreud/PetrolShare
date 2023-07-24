@@ -51,7 +51,7 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
     <View>
       {buttons.map((e, c) => {
         const RadioButton = () => <TouchableWithoutFeedback
-          key={e.value}
+          key={e.name}
           onPress={() => setActiveRadio(e.value)}
         >
           <View

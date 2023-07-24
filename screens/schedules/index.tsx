@@ -179,10 +179,9 @@ export default () => {
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
-                        <ScrollView enabled={false} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
+                        <ScrollView ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
                             {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
                                 <View>
-
                                     <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
                                         <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
                                         <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
@@ -198,7 +197,7 @@ export default () => {
                     <View style={{ paddingVertical: 25, paddingHorizontal: 25, flex: 1 }}>
                         {getCurrentData && getCurrentDayData.map(e => [...e].map(([day, schedule]) => {
                             const dayObj = new Date(day)
-                            return < >
+                            return <View key={day} style={{ flex: 1 }}>
                                 <ScrollView simultaneousHandlers={[gestureRef]} contentContainerStyle={{ width: '100%' }}>
                                     <View style={{ gap: 25, marginBottom: 25 }}>
                                         <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
@@ -242,7 +241,7 @@ export default () => {
                                         </View>
                                     </TouchableBase>
                                 </View>
-                            </>
+                            </View>
                         }))}
                         {!getCurrentDayData?.length &&
                             <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
