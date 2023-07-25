@@ -13,6 +13,8 @@ import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { useNavigation } from "@react-navigation/native"
 import { GestureHandlerRootView, HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
+import SplitRow from "../../components/splitRow"
+import AnimateHeight from "../../components/animateHeight"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
@@ -46,6 +48,7 @@ export default () => {
     const gestureRef = useRef<PanGestureHandler | null>(null)
     const [schedules, setSchedules] = useState<Record<number, Map<number, ScheduleType[]>[]> | []>([])
     const { retrieveData } = useContext(AuthContext)
+    const [isOpened, setIsOpened] = useState(0)
     const [dataLoaded, setDataLoaded] = useState(false);
     const navigation = useNavigation()
 
@@ -147,6 +150,7 @@ export default () => {
 
     useEffect(() => {
         setInitialScroll(true)
+        setIsOpened(0)
     }, [currentDate])
 
     const getDayString = (date: Date) => {
@@ -181,7 +185,7 @@ export default () => {
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
-                        <ScrollView ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
+                        <ScrollView snapToInterval={32 + 15} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
                             {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
                                 <View>
                                     <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
@@ -199,6 +203,7 @@ export default () => {
                     <View style={{ paddingVertical: 25, paddingHorizontal: 25, flex: 1 }}>
                         {getCurrentData && getCurrentDayData.map(e => [...e].map(([day, schedule]) => {
                             const dayObj = new Date(day)
+
                             return <View key={day} style={{ flex: 1 }}>
                                 <ScrollView simultaneousHandlers={[gestureRef]} contentContainerStyle={{ width: '100%' }}>
                                     <View style={{ gap: 25, marginBottom: 25 }}>
@@ -214,13 +219,18 @@ export default () => {
                                                         const hasMultipleDays = amountOfDays > 1
 
                                                         return (
-                                                            <View key={`${count}-${day}`} style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
-                                                                <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
-                                                                <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
-                                                                }
-                                                                    {!hasMultipleDays && <> - </>}
-                                                                    {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
-                                                            </View>
+                                                            <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === day ? setIsOpened(0) : setIsOpened(day)}>
+                                                                <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
+                                                                    <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
+                                                                    <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
+                                                                    }
+                                                                        {!hasMultipleDays && <> - </>}
+                                                                        {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
+                                                                    <AnimateHeight open={isOpened === day}>
+                                                                        <SplitRow style={{ marginTop: 15 }} gap={10} elements={[<Button size="small">Edit</Button>, <Button size="small" color="red">Delete</Button>]} />
+                                                                    </AnimateHeight>
+                                                                </View>
+                                                            </TouchableWithoutFeedback>
                                                         )
                                                     })}
                                                 </>

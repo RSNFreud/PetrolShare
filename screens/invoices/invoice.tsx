@@ -27,7 +27,7 @@ type PropsType = {
   isPublic?: boolean
 }
 
-const SummaryItem = ({ title, value, width }: { title: string, value: string, width: number }) => (<View>
+const SummaryItem = ({ title, value, width }: { title: string, value: string, width: number }) => (<View style={{ opacity: width === 0 ? 0 : 1 }}>
   <Text style={{ color: 'white', fontSize: 14, fontWeight: '300', lineHeight: 21, width }}>{title}</Text>
   <Text style={{ color: 'white', fontSize: 16, fontWeight: '700', lineHeight: 24, width }}>{value}</Text>
 </View>)
