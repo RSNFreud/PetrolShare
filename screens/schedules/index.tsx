@@ -129,6 +129,8 @@ export default () => {
         return dates
     }
 
+    const expiredDate = currentDate < resetTime(date).getTime()
+
     const setInitialScroll = (animate: boolean = false) => {
         const ref = dateRef.current
         const date = new Date(currentDate)
@@ -226,34 +228,38 @@ export default () => {
                                         </View>
                                     </View>
                                 </ScrollView>
-                                <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
-                                    <TouchableBase handleClick={() => setVisible(true)} >
-                                        <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                                            <Svg
-                                                width="14"
-                                                height="14"
-                                                fill="none"
-                                                viewBox="0 0 14 14"
-                                            >
-                                                <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"></Path>
-                                            </Svg>
-                                            <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Add</Text>
-                                        </View>
-                                    </TouchableBase>
-                                </View>
+                                {!expiredDate &&
+                                    <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
+                                        <TouchableBase handleClick={() => setVisible(true)} >
+                                            <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Svg
+                                                    width="14"
+                                                    height="14"
+                                                    fill="none"
+                                                    viewBox="0 0 14 14"
+                                                >
+                                                    <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"></Path>
+                                                </Svg>
+                                                <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Add</Text>
+                                            </View>
+                                        </TouchableBase>
+                                    </View>
+                                }
                             </View>
                         }))}
                         {!getCurrentDayData?.length &&
                             <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                                <Text style={{ fontWeight: '300', textAlign: 'center', lineHeight: 24, maxWidth: 325 }}>There are no schedules for this date added. Please add a new schedule by clicking the button below.</Text>
-                                <Button size="medium" handleClick={() => setVisible(true)} style={{ width: 153, marginTop: 15, borderRadius: 8, height: 44 }} icon={<Svg
-                                    width="14"
-                                    height="14"
-                                    fill="none"
-                                    viewBox="0 0 14 14"
-                                >
-                                    <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z" />
-                                </Svg>} text="Add" />
+                                <Text style={{ fontWeight: '300', textAlign: 'center', lineHeight: 24, maxWidth: 325 }}>There are no schedules for this date added. {expiredDate ? '' : 'Please add a new schedule by clicking the button below.'}</Text>
+                                {!expiredDate &&
+                                    <Button size="medium" handleClick={() => setVisible(true)} style={{ width: 153, marginTop: 15, borderRadius: 8, height: 44 }} icon={<Svg
+                                        width="14"
+                                        height="14"
+                                        fill="none"
+                                        viewBox="0 0 14 14"
+                                    >
+                                        <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z" />
+                                    </Svg>} text="Add" />
+                                }
                             </View>
                         }
                     </View>
