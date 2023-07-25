@@ -221,7 +221,8 @@ export default () => {
                                                         return (
                                                             <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === day ? setIsOpened(0) : setIsOpened(day)}>
                                                                 <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
-                                                                    <Text style={{ fontWeight: '300', fontSize: 14 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
+                                                                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{data.summary || 'New Schedule'}</Text>
+                                                                    <Text style={{ fontWeight: '300', fontSize: 14, marginTop: 5 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
                                                                     <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
                                                                     }
                                                                         {!hasMultipleDays && <> - </>}

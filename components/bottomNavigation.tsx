@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native"
 import Svg, { Path } from "react-native-svg"
 import { Text } from "./Themed"
@@ -66,9 +66,17 @@ const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) 
     </TouchableWithoutFeedback>
 )
 
-export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
 
-    return <ScrollView style={{ backgroundColor: Colors.secondary, width: '100%', flexGrow: 0 }} horizontal contentContainerStyle={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 20 }}>
+export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
+    const scrollRef = useRef<ScrollView>(null)
+
+    const setInitialScroll = (index: number) => {
+        const ref = scrollRef.current
+        if (!ref) return
+        ref.scrollTo({ y: 0, x: 30 * index, animated: true })
+    }
+
+    return <ScrollView ref={scrollRef} style={{ backgroundColor: Colors.secondary, width: '100%', flexGrow: 0 }} horizontal contentContainerStyle={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 10 }}>
         {state?.routes.map((route, index) => {
             const { options } = descriptors[route.key];
             const label = typeof options.tabBarLabel !== 'string'
@@ -80,6 +88,8 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
             const onPress = () => {
                 navigation.navigate(route.name);
             };
+
+            if (isFocused) setInitialScroll(index)
 
             return (
                 <BottomNavItem

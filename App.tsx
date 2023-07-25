@@ -46,6 +46,7 @@ import AlertBox from "./components/alertBox";
 import * as Sentry from 'sentry-expo';
 import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
+import BottomNavigation from "./components/bottomNavigation";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -388,12 +389,12 @@ export default function App() {
 }
 
 const BottomNavigator = () => (
-  <Tab.Navigator screenOptions={{ headerShown: true, header: () => <Header /> }} tabBar={bottomNavigation}>
+  <Tab.Navigator screenOptions={{ headerShown: true, header: () => <Header /> }} tabBar={props => <BottomNavigation {...props} />}>
     <Tab.Screen name="Dashboard" component={Dashboard} options={{
       tabBarLabel: 'Home'
     }} />
     <Tab.Screen name="Payments" component={invoices} />
     <Tab.Screen name="History" component={logs} />
     <Tab.Screen name="Schedules" component={schedules} />
-  </Tab.Navigator>
+  </Tab.Navigator >
 )
