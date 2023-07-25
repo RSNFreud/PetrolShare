@@ -54,7 +54,9 @@ export default () => {
 
     const updateData = () => {
         setVisible(false)
-        getSchedules()
+        setTimeout(() => {
+            getSchedules()
+        }, 300);
     }
 
     useEffect(() => {
@@ -215,7 +217,7 @@ export default () => {
                                     ></Path>
                                 </Svg>
                             </TouchableBase>
-                            <DateTimePicker mode="date" value={new Date(currentDate)} setValue={(e) => setCurrentDate(e.getTime())} format={{ month: 'long', year: 'numeric' }} textStyle={{ fontWeight: 'bold' }} />
+                            <DateTimePicker mode="date" value={new Date(currentDate)} setValue={(e) => setCurrentDate(new Date(e).getTime())} format={{ month: 'long', year: 'numeric' }} textStyle={{ fontWeight: 'bold' }} />
                             <TouchableBase handleClick={() => changeMonth('forwards')} style={{ width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
                                 <Svg
                                     width="8"

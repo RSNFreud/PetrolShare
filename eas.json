@@ -17,7 +17,8 @@
       }
     },
     "testing": {
-      "channel": "development"
+      "channel": "development",
+      "autoIncrement": true
     },
     "production": {
       "channel": "production",

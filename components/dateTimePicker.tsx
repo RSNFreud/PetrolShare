@@ -5,9 +5,9 @@ import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/d
 type PropsType = {
     label?: string
     style?: ViewProps['style']
-    value?: Date
+    value?: Date | number
     mode: 'date' | 'time'
-    setValue: (e: Date) => void
+    setValue: (e: number) => void
     disabled?: boolean
     format?: Intl.DateTimeFormatOptions
     textStyle?: TextProps["style"]
@@ -15,11 +15,12 @@ type PropsType = {
 
 export default ({ label, style, value = new Date(), setValue, mode, disabled, format, textStyle }: PropsType) => {
     const [modalOpen, setModalOpen] = useState(false)
+    const dateValue = typeof value === "number" ? new Date(value) : value
 
     const handleChange = (e: DateTimePickerEvent) => {
         setModalOpen(false)
         if (e.nativeEvent.timestamp)
-            setValue(new Date(e.nativeEvent.timestamp))
+            setValue(e.nativeEvent.timestamp)
     }
 
     return <View style={style}>
@@ -40,12 +41,12 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled, fo
                 <Text style={[{
                     fontWeight: '400',
                     fontSize: 16,
-                }, textStyle]}>{mode === 'date' ? value.toLocaleDateString('en-gb', format) : value.toLocaleTimeString(undefined, format || {
+                }, textStyle]}>{mode === 'date' ? dateValue.toLocaleDateString('en-gb', format) : dateValue.toLocaleTimeString(undefined, format || {
                     hour: '2-digit', minute: '2-digit'
                 })}</Text>
             </View>
         </TouchableWithoutFeedback>
         {modalOpen &&
-            <RNDateTimePicker mode={mode} value={value} minimumDate={new Date()} onChange={handleChange} />}
+            <RNDateTimePicker mode={mode} value={dateValue} minimumDate={new Date()} onChange={handleChange} />}
     </View>
 }

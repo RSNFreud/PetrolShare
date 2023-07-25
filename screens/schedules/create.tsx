@@ -30,10 +30,10 @@ export default ({ onClose, currentDate }: {
     const date = new Date(currentDate)
     const [data, setData] = useState({
         allDay: false,
-        startDate: date,
-        startTime: new Date(),
-        endDate: date,
-        endTime: new Date(),
+        startDate: date.getTime(),
+        startTime: new Date().getTime(),
+        endDate: date.getTime(),
+        endTime: new Date().getTime(),
         summary: "",
         repeating: "notRepeating",
         custom: {
@@ -44,7 +44,7 @@ export default ({ onClose, currentDate }: {
     const { retrieveData } = useContext(AuthContext)
     const [errors, setErrors] = useState("")
 
-    const updateData = (e: Date | boolean | string, value: string) => {
+    const updateData = (e: Date | boolean | string | number, value: string) => {
         setErrors("")
         setData({ ...data, [value]: e })
     }
@@ -71,9 +71,10 @@ export default ({ onClose, currentDate }: {
 
     const handleSubmit = () => {
         setErrors("")
-        if (data.allDay && (data.endDate.getDate() < data.startDate.getDate())) {
+        if (data.allDay && (data.endDate < data.startDate)) {
             return setErrors("Please choose a valid date time combination!")
         }
+
         setLoading(true)
         axios.post(config.REACT_APP_API_ADDRESS + '/schedules/add', {
             authenticationKey: retrieveData?.authenticationKey,
