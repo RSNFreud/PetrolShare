@@ -24,8 +24,10 @@ const Day = ({ label, value, active, handleClick }: DayProps) => {
     return <TouchableWithoutFeedback onPress={() => handleClick(value)}><View style={{ borderRadius: 100, width: 40, height: 40, backgroundColor: active ? Colors.tertiary : Colors.primary, justifyContent: 'center', alignContent: 'center', display: 'flex', borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border }}><Text style={{ textAlign: 'center' }}>{label}</Text></View></TouchableWithoutFeedback>
 }
 
-export default ({ onClose }: { onClose: () => void }) => {
-    const date = new Date()
+export default ({ onClose, currentDate }: {
+    onClose: () => void, currentDate: number,
+}) => {
+    const date = new Date(currentDate)
     const [data, setData] = useState({
         allDay: false,
         startDate: date,

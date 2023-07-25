@@ -266,7 +266,7 @@ export default () => {
                 </View>
             </PanGestureHandler>
 
-            <Popup children={<Create onClose={updateData} />} visible={visible} handleClose={() => setVisible(false)} />
+            <Popup children={<Create currentDate={currentDate} onClose={updateData} />} visible={visible} handleClose={() => setVisible(false)} />
         </GestureHandlerRootView> :
             <View style={{ flex: 1, display: 'flex', alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
                 <ActivityIndicator size={"large"} color={Colors.tertiary} />
