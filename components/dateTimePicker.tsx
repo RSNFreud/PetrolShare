@@ -1,4 +1,4 @@
-import { Text, ViewProps } from "./Themed"
+import { Text, TextProps, ViewProps } from "./Themed"
 import { TouchableWithoutFeedback, View } from 'react-native'
 import { useState } from "react"
 import RNDateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker"
@@ -9,9 +9,11 @@ type PropsType = {
     mode: 'date' | 'time'
     setValue: (e: Date) => void
     disabled?: boolean
+    format?: Intl.DateTimeFormatOptions
+    textStyle?: TextProps["style"]
 }
 
-export default ({ label, style, value = new Date(), setValue, mode, disabled }: PropsType) => {
+export default ({ label, style, value = new Date(), setValue, mode, disabled, format, textStyle }: PropsType) => {
     const [modalOpen, setModalOpen] = useState(false)
 
     const handleChange = (e: DateTimePickerEvent) => {
@@ -35,10 +37,10 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled }: 
             </Text>}
         <TouchableWithoutFeedback onPress={() => disabled ? null : setModalOpen(true)}>
             <View style={{ display: 'flex', alignItems: 'center' }}>
-                <Text style={{
+                <Text style={[{
                     fontWeight: '400',
                     fontSize: 16,
-                }}>{mode === 'date' ? value.toLocaleDateString('en-gb') : value.toLocaleTimeString(undefined, {
+                }, textStyle]}>{mode === 'date' ? value.toLocaleDateString('en-gb', format) : value.toLocaleTimeString(undefined, format || {
                     hour: '2-digit', minute: '2-digit'
                 })}</Text>
             </View>

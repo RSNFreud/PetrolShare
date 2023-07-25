@@ -15,11 +15,11 @@ import { useNavigation } from "@react-navigation/native"
 import { GestureHandlerRootView, HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
 import SplitRow from "../../components/splitRow"
 import AnimateHeight from "../../components/animateHeight"
+import DateTimePicker from "../../components/dateTimePicker"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
 }
-
 
 const resetTime = (date: Date) => {
     let temp = new Date(date)
@@ -141,10 +141,26 @@ export default () => {
         ref.scrollTo({ y: 0, x: (date.getDate() - 4) * 32 + ((date.getDate() - 4) * 25), animated: animate })
     }
 
-    const changeDate = (e: HandlerStateChangeEvent) => {
+    const calculateDirection = (e: HandlerStateChangeEvent) => {
+        if ((e.nativeEvent.translationX as number) > 0) changeDate('forwards')
+        else changeDate('back')
+    }
+
+    const changeDate = (e: 'forwards' | 'back') => {
         const date = new Date(currentDate)
-        if ((e.nativeEvent.translationX as number) > 0) date.setDate(date.getDate() - 1);
+        if (e === 'forwards') date.setDate(date.getDate() - 1);
         else date.setDate(date.getDate() + 1);
+        if (date.getMonth() < new Date(currentDate).getMonth()) return
+
+        setCurrentDate(date.getTime())
+    }
+
+    const changeMonth = (e: 'forwards' | 'back') => {
+        const date = new Date(currentDate)
+        if (e === 'forwards') date.setMonth(date.getMonth() + 1);
+        else date.setMonth(date.getMonth() - 1);
+        if (date.getMonth() < new Date().getMonth()) return
+
         setCurrentDate(date.getTime())
     }
 
@@ -173,6 +189,7 @@ export default () => {
         }
     }
 
+    const backDisabled = new Date(currentDate).getMonth() === new Date().getMonth()
 
     return <Layout homepage noScrollView>
         <View style={{ paddingBottom: 15, backgroundColor: Colors.secondary, paddingHorizontal: 25 }}>
@@ -181,10 +198,39 @@ export default () => {
             }, { name: 'Schedules' }]} />
         </View>
         {dataLoaded ? <GestureHandlerRootView style={{ flex: 1 }}>
-            <PanGestureHandler ref={gestureRef} onEnded={changeDate} >
+            <PanGestureHandler ref={gestureRef} onEnded={calculateDirection} >
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
-                        <View><Text style={{ fontWeight: 'bold' }}>{new Date(currentDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20 }}>
+                            <TouchableBase handleClick={() => changeMonth('back')} style={{ opacity: backDisabled ? 0.5 : 1, width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }} disabled={Boolean(backDisabled)}>
+                                <Svg
+                                    width="8"
+                                    height="12"
+                                    fill="none"
+                                    viewBox="0 0 8 12"
+                                >
+                                    <Path
+                                        fill="#fff"
+                                        d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
+                                    ></Path>
+                                </Svg>
+                            </TouchableBase>
+                            <DateTimePicker mode="date" value={new Date(currentDate)} setValue={(e) => setCurrentDate(e.getTime())} format={{ month: 'long', year: 'numeric' }} textStyle={{ fontWeight: 'bold' }} />
+                            <TouchableBase handleClick={() => changeMonth('forwards')} style={{ width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                                <Svg
+                                    width="8"
+                                    height="12"
+                                    style={{ transform: [{ rotate: '180deg' }] }}
+                                    fill="none"
+                                    viewBox="0 0 8 12"
+                                >
+                                    <Path
+                                        fill="#fff"
+                                        d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
+                                    ></Path>
+                                </Svg>
+                            </TouchableBase>
+                        </View>
                         <ScrollView snapToInterval={32 + 15} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
                             {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
                                 <View>
