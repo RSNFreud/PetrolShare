@@ -15,7 +15,7 @@ import { GroupType } from "./layout"
 export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
-    const { retrieveData } = useContext(AuthContext)
+    const { retrieveData, isLoading } = useContext(AuthContext)
     const heightAnim = useRef(new Animated.Value(0)).current;
     const { width } = useWindowDimensions();
 
@@ -59,12 +59,13 @@ export default () => {
     }, [])
 
     useEffect(() => {
-        if (premium !== null) sendCustomEvent('closeSplash')
+        if (isLoading) return
+        // if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType)?.premium) setPremium(true)
         else setPremium(false)
-    }, [getItem('groupData')])
+    }, [getItem('groupData'), isLoading])
 
     const openPayment = () => {
         if (Platform.OS === "web") return

@@ -221,9 +221,7 @@ export default function App() {
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
     if (!loading && !notifData.invoiceID && !notifData.routeName) {
-      setTimeout(() => {
-        sendCustomEvent('closeSplash')
-      }, 200);
+      sendCustomEvent('closeSplash')
       checkForUpdates()
     };
     Notifications.addNotificationResponseReceivedListener((e) => {

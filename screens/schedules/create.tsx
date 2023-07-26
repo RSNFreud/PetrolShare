@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Switch, TouchableWithoutFeedback, View } from "react-native"
 import DatePicker from "../../components/dateTimePicker"
 import { Text } from "../../components/Themed"
@@ -27,23 +27,30 @@ const Day = ({ label, value, active, handleClick }: DayProps) => {
 export default ({ onClose, currentDate }: {
     onClose: () => void, currentDate: number,
 }) => {
-    const date = new Date(currentDate)
-    const time = new Date(date.setTime(new Date().getTime()))
     const [data, setData] = useState({
         allDay: false,
-        startDate: date.getTime(),
-        startTime: time.getTime(),
-        endDate: date.getTime(),
-        endTime: time.getTime(),
+        startDate: 0,
+        endDate: 0,
         summary: "",
         repeating: "notRepeating",
         custom: {
-            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: date.getTime() }
+            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: 0 }
         }
     })
     const [loading, setLoading] = useState(false)
     const { retrieveData } = useContext(AuthContext)
     const [errors, setErrors] = useState("")
+
+    useEffect(() => {
+        let time = new Date(currentDate)
+        time = new Date(`${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:00`)
+
+        setData({
+            ...data,
+            startDate: time.getTime(),
+            endDate: time.getTime(),
+        })
+    }, [currentDate])
 
     const updateData = (e: boolean | string | number, value: string) => {
         setErrors("")
@@ -136,7 +143,7 @@ export default ({ onClose, currentDate }: {
                     paddingVertical: 13,
                 }}>
                     <DatePicker mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
-                    <DatePicker mode="time" setValue={e => updateData(e, 'startTime')} value={data.startTime} />
+                    <DatePicker mode="time" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
                 </View>
                 <View style={{
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: Colors.primary, borderColor: Colors.border,
@@ -149,7 +156,7 @@ export default ({ onClose, currentDate }: {
                     paddingVertical: 13,
                 }}>
                     <DatePicker mode="date" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
-                    <DatePicker mode="time" setValue={e => updateData(e, 'endTime')} value={data.endTime} />
+                    <DatePicker mode="time" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
                 </View>
             </>
         }

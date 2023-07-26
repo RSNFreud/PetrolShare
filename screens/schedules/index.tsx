@@ -54,9 +54,7 @@ export default () => {
 
     const updateData = () => {
         setVisible(false)
-        setTimeout(() => {
-            getSchedules()
-        }, 300);
+        getSchedules()
     }
 
     useEffect(() => {
@@ -64,9 +62,7 @@ export default () => {
             getSchedules()
 
         navigation.addListener("focus", async () => {
-            setTimeout(() => {
-                getSchedules();
-            }, 300);
+            getSchedules();
             const date = new Date()
             setCurrentDate(getInitialDate(date).getTime())
         });
@@ -327,7 +323,7 @@ export default () => {
                 </View>
             </PanGestureHandler>
 
-            <Popup children={<Create currentDate={currentDate} onClose={updateData} />} visible={visible} handleClose={() => setVisible(false)} />
+            <Popup visible={visible} handleClose={() => setVisible(false)} ><Create currentDate={currentDate} onClose={updateData} /></Popup>
         </GestureHandlerRootView> :
             <View style={{ flex: 1, display: 'flex', alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
                 <ActivityIndicator size={"large"} color={Colors.tertiary} />
