@@ -60,7 +60,7 @@ export default () => {
 
     useEffect(() => {
         if (isLoading) return
-        // if (premium !== null) sendCustomEvent('closeSplash')
+        if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType)?.premium) setPremium(true)
