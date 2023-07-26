@@ -64,7 +64,9 @@ export default () => {
             getSchedules()
 
         navigation.addListener("focus", async () => {
-            getSchedules();
+            setTimeout(() => {
+                getSchedules();
+            }, 300);
             const date = new Date()
             setCurrentDate(getInitialDate(date).getTime())
         });

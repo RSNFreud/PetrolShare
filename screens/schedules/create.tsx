@@ -28,23 +28,24 @@ export default ({ onClose, currentDate }: {
     onClose: () => void, currentDate: number,
 }) => {
     const date = new Date(currentDate)
+    const time = new Date(date.setTime(new Date().getTime()))
     const [data, setData] = useState({
         allDay: false,
         startDate: date.getTime(),
-        startTime: new Date().getTime(),
+        startTime: time.getTime(),
         endDate: date.getTime(),
-        endTime: new Date().getTime(),
+        endTime: time.getTime(),
         summary: "",
         repeating: "notRepeating",
         custom: {
-            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: date }
+            number: "1", repeatingFormat: "day", repeatingDays: [] as string[], ends: { option: "never", endDate: date.getTime() }
         }
     })
     const [loading, setLoading] = useState(false)
     const { retrieveData } = useContext(AuthContext)
     const [errors, setErrors] = useState("")
 
-    const updateData = (e: Date | boolean | string | number, value: string) => {
+    const updateData = (e: boolean | string | number, value: string) => {
         setErrors("")
         setData({ ...data, [value]: e })
     }
