@@ -109,19 +109,19 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
             />}
           {sort ? data
             .sort((a, b) => a["name"].localeCompare(b["name"]))
-            .map((e) => {
+            .map((e, c) => {
               return (
                 <Picker.Item
-                  color="black" key={e.name}
+                  color="black" key={`sorted${c}`}
                   value={e.value}
                   label={`${e.name} ${!hiddenValue && e.value ? `(${e.value})` : ''}`}
                 />
               );
             }) : data
-              .map((e) => {
+              .map((e, c) => {
                 return (
                   <Picker.Item
-                    color="black" key={e.name}
+                    color="black" key={`unsorted${c}`}
                     value={e.value}
                     label={`${e.name} ${!hiddenValue && e.value ? `(${e.value})` : ''}`}
                   />

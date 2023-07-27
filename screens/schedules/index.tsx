@@ -264,7 +264,7 @@ export default () => {
                                                         const hasMultipleDays = amountOfDays > 1
 
                                                         return (
-                                                            <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === day ? setIsOpened(0) : setIsOpened(day)}>
+                                                            <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === startDate.getTime() ? setIsOpened(0) : setIsOpened(startDate.getTime())}>
                                                                 <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
                                                                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{data.summary || 'New Schedule'}</Text>
                                                                     <Text style={{ fontWeight: '300', fontSize: 14, marginTop: 5 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
@@ -272,7 +272,7 @@ export default () => {
                                                                     }
                                                                         {!hasMultipleDays && <> - </>}
                                                                         {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
-                                                                    <AnimateHeight open={isOpened === day}>
+                                                                    <AnimateHeight open={isOpened === startDate.getTime()}>
                                                                         <SplitRow style={{ marginTop: 15 }} gap={10} elements={[<Button size="small">Edit</Button>, <Button size="small" color="red">Delete</Button>]} />
                                                                     </AnimateHeight>
                                                                 </View>

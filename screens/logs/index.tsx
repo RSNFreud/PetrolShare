@@ -48,7 +48,9 @@ export default () => {
         sum[e.fullName] = sum[e.fullName] + e.distance;
       });
       setSummary(sum);
-      setLoaded(true)
+      setTimeout(() => {
+        setLoaded(true)
+      }, 300);
     }
   };
 
