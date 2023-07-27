@@ -38,7 +38,7 @@ export default () => {
 
     const screen = Platform.OS === "web" ? Dimensions.get('window') : Dimensions.get('screen')
 
-    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: screen.height, position: 'absolute', top: 0, left: 0, zIndex: 1000, backgroundColor: Colors.background, justifyContent: 'center', alignContent: 'center', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: screen.height, position: 'absolute', top: 0, left: 0, zIndex: 10000, backgroundColor: Colors.background, justifyContent: 'center', alignContent: 'center', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <ImageBackground source={SplashImage} style={{ width: 400, height: 400 }} />
     </Animated.View>
 }

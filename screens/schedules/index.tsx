@@ -192,7 +192,7 @@ export default () => {
     const backDisabled = new Date(currentDate).getMonth() === new Date().getMonth()
 
     return <Layout homepage noScrollView>
-        <View style={{ paddingBottom: 15, backgroundColor: Colors.secondary, paddingHorizontal: 25 }}>
+        <View style={{ paddingBottom: 15, backgroundColor: Colors.primary, paddingHorizontal: 25 }}>
             <Breadcrumbs style={{ marginBottom: 0 }} links={[{
                 name: 'Dashboard'
             }, { name: 'Schedules' }]} />
@@ -200,7 +200,7 @@ export default () => {
         {dataLoaded ? <GestureHandlerRootView style={{ flex: 1 }}>
             <PanGestureHandler ref={gestureRef} onEnded={calculateDirection} >
                 <View style={{ flex: 1, display: 'flex' }}>
-                    <View style={{ backgroundColor: Colors.primary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
+                    <View style={{ backgroundColor: Colors.secondary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20 }}>
                             <TouchableBase handleClick={() => changeMonth('back')} style={{ opacity: backDisabled ? 0.5 : 1, width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }} disabled={Boolean(backDisabled)}>
                                 <Svg

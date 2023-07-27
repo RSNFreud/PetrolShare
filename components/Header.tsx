@@ -50,6 +50,12 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
     setSettingsVisible(false)
   }
 
+  const getHeaderColour = () => {
+    if (isLoggedIn && route.name === "Dashboard") return Colors.secondary
+    if (route.name.includes("Schedule")) return Colors.primary
+    return ''
+  }
+
   return (
     <View
       style={{
@@ -60,7 +66,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
         position: "relative",
         alignItems: "center",
         alignContent: "center",
-        backgroundColor: isLoggedIn && route.name === "Dashboard" || route.name.includes("Schedule") ? Colors.secondary : '',
+        backgroundColor: getHeaderColour(),
         justifyContent: isLoggedIn && !isGuestMode ? "space-between" : "center",
         paddingBottom: 25,
       }}

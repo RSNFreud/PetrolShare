@@ -11,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
+import { Animated, Dimensions, Platform, View, useWindowDimensions } from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -37,8 +37,6 @@ import Premium from "./components/premium";
 import SplashScreenComponent from "./components/splashScreen";
 import Header from "./components/Header";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Constants from "expo-constants";
-import bottomNavigation from "./components/bottomNavigation";
 import { EventRegister } from "react-native-event-listeners";
 import Toast from "react-native-toast-message";
 import { Text } from "./components/Themed";
@@ -47,6 +45,8 @@ import * as Sentry from 'sentry-expo';
 import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
 import BottomNavigation from "./components/bottomNavigation";
+import { RefreshControl } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -82,6 +82,7 @@ Notifications.setNotificationHandler({
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [initialState, setInitialState] = useState()
+  const [refreshing, setRefreshing] = useState(false)
   const [userData, setUserData] = useState<Partial<StoreData>>({});
   const [firstSteps, setFirstSteps] = useState(false);
   const [screen, setScreen] = useState("");
@@ -221,9 +222,7 @@ export default function App() {
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
     if (!loading && !notifData.invoiceID && !notifData.routeName) {
-      setTimeout(() => {
-        sendCustomEvent('closeSplash')
-      }, 200);
+      sendCustomEvent('closeSplash')
       checkForUpdates()
     };
     Notifications.addNotificationResponseReceivedListener((e) => {
@@ -316,77 +315,88 @@ export default function App() {
     ),
   }
 
+  const handleRefresh = () => {
+    setRefreshing(true)
+    checkForUpdates().then(() =>
+      setRefreshing(false)
+    ).catch(() => setRefreshing(false))
+  }
 
-  return (<>
+
+  return (<SafeAreaView style={{ position: 'relative', flex: 1 }}>
     <SplashScreenComponent />
-    <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, paddingTop: Constants.statusBarHeight, flex: 1 }}>
-      <AuthContext.Provider value={store}>
-        {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
-        <NavigationContainer
-          initialState={initialState}
-          onReady={() => checkFirstTime()}
-          onStateChange={(state) => updateScreen(state)}
-          ref={navRef}
-          linking={LinkingConfiguration}
-          theme={{
-            dark: true,
-            colors: {
-              ...DefaultTheme.colors,
-              background: Colors.background,
-              text: "white",
-            },
-          }}
-        >
-          <Stack.Navigator
-            screenOptions={{
-              gestureEnabled: false,
-              headerShown: true,
-              header: () => <Header />,
-              animation: "slide_from_right",
-              animationDuration: 600,
-            }}
-          >
-            {width > 768 && Platform.OS === "web" ? (
-              <Stack.Screen
-                name="DesktopScreen"
-                component={DesktopScreen}
-                options={{ title: "PetrolShare", headerShown: false }}
-              />
-            ) : loading || store.isLoggedIn ? (
-              <>
-                <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
-                {!firstSteps && <Stack.Screen
-                  name="AddPreset"
-                  component={preset}
-                  options={{ title: "Add Preset" }}
-                />}
-              </>
-            ) : (
-              <>
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Register" component={Register} />
-              </>
-            )}
-            {width < 768 && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
-            <Stack.Screen
-              name="NotFound"
-              component={NotFoundScreen}
-              options={{ title: "Oops!" }}
+    <Animated.View style={{ flex: 1, opacity: loading ? 0 : 1 }}>
+      <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} style={{ flex: 1 }}>
+        <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, flex: 1 }}>
+          <AuthContext.Provider value={store}>
+            {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
+            <NavigationContainer
+              initialState={initialState}
+              onReady={() => checkFirstTime()}
+              onStateChange={(state) => updateScreen(state)}
+              ref={navRef}
+              linking={LinkingConfiguration}
+              theme={{
+                dark: true,
+                colors: {
+                  ...DefaultTheme.colors,
+                  background: Colors.background,
+                  text: "white",
+                },
+              }}
+            >
+              <Stack.Navigator
+                screenOptions={{
+                  gestureEnabled: false,
+                  headerShown: true,
+                  header: () => <Header />,
+                  animation: "slide_from_right",
+                  animationDuration: 600,
+                }}
+              >
+                {width > 768 && Platform.OS === "web" ? (
+                  <Stack.Screen
+                    name="DesktopScreen"
+                    component={DesktopScreen}
+                    options={{ title: "PetrolShare", headerShown: false }}
+                  />
+                ) : loading || store.isLoggedIn ? (
+                  <>
+                    <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
+                    {!firstSteps && <Stack.Screen
+                      name="AddPreset"
+                      component={preset}
+                      options={{ title: "Add Preset" }}
+                    />}
+                  </>
+                ) : (
+                  <>
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Register" component={Register} />
+                  </>
+                )}
+                {width < 768 && loading && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
+                <Stack.Screen
+                  name="NotFound"
+                  component={NotFoundScreen}
+                  options={{ title: "Oops!" }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+            <StatusBar
+              style="light"
+              backgroundColor={
+                screen != "Dashboard" ? Colors.background : Colors.secondary
+              }
             />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <StatusBar
-          style="light"
-          backgroundColor={
-            screen != "Dashboard" ? Colors.background : Colors.secondary
-          }
-        />
-        {!popupVisible && <AlertBox />}
-        <Toast config={ToastConfig} />
+            {!popupVisible && <AlertBox />}
+            <Toast config={ToastConfig} />
 
-      </AuthContext.Provider>
-    </View>
-  </>
+          </AuthContext.Provider>
+        </View>
+      </RefreshControl>
+    </Animated.View>
+  </SafeAreaView>
   );
 }
 
