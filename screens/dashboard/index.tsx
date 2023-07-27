@@ -354,6 +354,7 @@ export default ({ navigation }: any) => {
     } catch { }
   }
 
+
   return (
     <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>

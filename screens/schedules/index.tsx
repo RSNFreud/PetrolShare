@@ -39,7 +39,6 @@ const getInitialDate = (date: Date) => {
     return temp
 }
 
-
 export default () => {
     const [visible, setVisible] = useState(false)
     const date = new Date()

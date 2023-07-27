@@ -15,7 +15,7 @@ import Button from "../../components/button";
 type PropsType = {
     fullName: string;
     id: number;
-    distance: string;
+    distance: number;
     date: string;
     style: View["props"]["style"];
     activeSession: boolean;
@@ -130,7 +130,7 @@ export default ({
             <Popup visible={visible} handleClose={() => setVisible(false)}>
                 <Input
                     label="Distance"
-                    handleInput={(e) => setFormData(e)}
+                    handleInput={(e) => setFormData(parseInt(e))}
                     value={formData.toString()}
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}

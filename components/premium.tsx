@@ -5,7 +5,7 @@ import Button from "./button"
 import Colors from "../constants/Colors"
 import Popup from "./Popup"
 import { useState } from "react"
-import { Alert, getItem, setItem } from "../hooks"
+import { Alert, getItem, sendCustomEvent, setItem } from "../hooks"
 import axios from "axios"
 import Purchases from "react-native-purchases"
 import config from "../config"
@@ -60,6 +60,7 @@ export default () => {
 
     useEffect(() => {
         if (isLoading) return
+        if (premium !== null) sendCustomEvent('closeSplash')
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if ((data as GroupType)?.premium) setPremium(true)

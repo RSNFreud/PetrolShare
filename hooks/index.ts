@@ -74,7 +74,7 @@ export const checkForUpdates = async (force?: boolean) => {
         if (force) {
           await fetchUpdateAsync()
           await reloadAsync()
-          res(true)
+          res(false)
         }
         else {
           res(true)
@@ -83,7 +83,7 @@ export const checkForUpdates = async (force?: boolean) => {
           )
         }
       } else
-        res(true)
+        res(false)
     } catch {
       rej(false)
     }

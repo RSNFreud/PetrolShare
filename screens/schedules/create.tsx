@@ -12,6 +12,7 @@ import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { sendCustomEvent } from "../../hooks"
+import { ScrollView } from "react-native-gesture-handler"
 
 type DayProps = {
     label: string,
@@ -113,10 +114,8 @@ export default ({ onClose, currentDate }: {
                 borderStyle: 'solid',
                 borderRadius: 4,
                 height: 53,
-                paddingHorizontal: 16,
-                paddingVertical: 13,
             }}>
-                <DatePicker mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
+                <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, }} mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
             </View>
             <View style={{
                 display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: Colors.primary, borderColor: Colors.border,
@@ -125,10 +124,8 @@ export default ({ onClose, currentDate }: {
                 borderStyle: 'solid',
                 borderRadius: 4,
                 height: 53,
-                paddingHorizontal: 16,
-                paddingVertical: 13,
             }}>
-                <DatePicker mode="date" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
+                <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, }} mode="date" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
             </View>
         </>
             : <>
@@ -139,11 +136,9 @@ export default ({ onClose, currentDate }: {
                     borderStyle: 'solid',
                     borderRadius: 4,
                     height: 53,
-                    paddingHorizontal: 16,
-                    paddingVertical: 13,
                 }}>
-                    <DatePicker mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
-                    <DatePicker mode="time" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
+                    <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, }} mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
+                    <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, }} mode="time" setValue={e => updateData(e, 'startDate')} value={data.startDate} />
                 </View>
                 <View style={{
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', backgroundColor: Colors.primary, borderColor: Colors.border,
@@ -152,11 +147,9 @@ export default ({ onClose, currentDate }: {
                     borderStyle: 'solid',
                     borderRadius: 4,
                     height: 53,
-                    paddingHorizontal: 16,
-                    paddingVertical: 13,
                 }}>
-                    <DatePicker mode="date" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
-                    <DatePicker mode="time" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
+                    <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16 }} mode="date" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
+                    <DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, }} mode="time" setValue={e => updateData(e, 'endDate')} value={data.endDate} />
                 </View>
             </>
         }
@@ -170,10 +163,10 @@ export default ({ onClose, currentDate }: {
             </View>
             <AnimateHeight open={data.custom.repeatingFormat === 'weekly'}>
                 <Text style={{ marginTop: 25, fontWeight: 'bold' }}>Repeat on</Text>
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 15, marginTop: 15 }}>
-                    {[{ value: 'sunday', label: 'S' }, { value: 'monday', label: 'M' }, { value: 'tuesday', label: 'T' }].map(({ label, value }) => <Day key={label} handleClick={updateCustomDays} value={value} label={label} active={data.custom.repeatingDays.includes(value)} />)
+                <ScrollView horizontal contentContainerStyle={{ gap: 15, marginTop: 15, marginBottom: 10 }} >
+                    {[{ value: 'sunday', label: 'Su' }, { value: 'monday', label: 'Mo' }, { value: 'tuesday', label: 'Tu' }, { value: 'wednesday', label: 'We' }, { value: 'thursday', label: 'Th' }, { value: 'Friday', label: 'F' }, { value: 'saturday', label: 'Sa' }].map(({ label, value }) => <Day key={label} handleClick={updateCustomDays} value={value} label={label} active={data.custom.repeatingDays.includes(value)} />)
                     }
-                </View>
+                </ScrollView>
             </AnimateHeight>
             <Text style={{ marginTop: 25, marginBottom: 15, fontWeight: 'bold' }}>Ends</Text>
             <RadioButton buttons={[{ value: 'never', name: "Never" }, {

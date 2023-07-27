@@ -23,7 +23,7 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled, fo
             setValue(e.nativeEvent.timestamp)
     }
 
-    return <View style={style}>
+    return <View>
         {!!label &&
             <Text
                 style={{
@@ -37,7 +37,7 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled, fo
                 {label}
             </Text>}
         <TouchableWithoutFeedback onPress={() => disabled ? null : setModalOpen(true)}>
-            <View style={{ display: 'flex', alignItems: 'center' }}>
+            <View style={[{ display: 'flex', alignItems: 'center' }, style]}>
                 <Text style={[{
                     fontWeight: '400',
                     fontSize: 16,

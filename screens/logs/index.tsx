@@ -3,19 +3,27 @@ import { Box, Breadcrumbs, Text } from "../../components/Themed";
 import Layout from "../../components/layout";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import config from "../../config";
 import DateHead from "./dateHead";
 import LogItem from "./logItem";
 import Summary from "./summary";
 import Colors from "../../constants/Colors";
 
+type LogsType = {
+  sessionID: string,
+  sessionActive: string;
+  sessionStart: string;
+  sessionEnd: string;
+  logs: { date: string, distance: number, fullName: string, logID: number }[];
+}
+
 export default () => {
   const { retrieveData } = useContext(AuthContext);
-  const logData = useRef<any>(null);
-  const [activeSession, setActiveSession] = useState("0");
+  const [data, setData] = useState<{ [key: string]: LogsType } | {}>({});
+  const [activeSession, setActiveSession] = useState(0);
   const [loaded, setLoaded] = useState(false);
-  const [currentData, setCurrentData] = useState<any>(null);
+  const [currentData, setCurrentData] = useState<LogsType | null>(null);
   const [summary, setSummary] = useState({});
   const [pageData, setPageData] = useState({
     currentPage: 0,
@@ -33,47 +41,46 @@ export default () => {
 
   const getSummary = async () => {
     if (currentData && currentData["logs"]) {
-      let sum: any = {};
+      let sum: { [key: string]: number } = {};
 
-      currentData["logs"].map((e: any) => {
+      currentData["logs"].map((e) => {
         if (!(e.fullName in sum)) sum[e.fullName] = 0;
         sum[e.fullName] = sum[e.fullName] + e.distance;
       });
       setSummary(sum);
+      setLoaded(true)
     }
   };
 
+  const sortedData = (data: { [key: string]: LogsType }) => Object.entries(data).sort(([, a], [, b]) => {
+    return parseInt(a.sessionStart) - parseInt(b.sessionStart)
+  })
+
   const nextPage = () => {
-    if (currentData === null) return;
-    if (!logData.current) return;
-    const data = logData.current;
-    for (let i = 0; i < Object.entries(data).length; i++) {
-      const key: any = Object.entries(data)[i];
-      if (key[1]["sessionStart"] > (currentData?.sessionStart || Date.now())) {
-        setPageData({
-          ...pageData,
-          currentPage: pageData.currentPage + 1,
-        });
-        setCurrentData(key[1]);
-        return;
-      }
-    }
+    if (!data || !currentData?.sessionStart) return;
+    setLoaded(false)
+    const newPage = pageData.currentPage + 1
+    setPageData({
+      ...pageData,
+      currentPage: newPage,
+    });
+    const x = (sortedData(data))
+    const y = x[pageData.currentPage + 1]
+    if (y[1]) setCurrentData(y[1])
   };
 
   const previousPage = () => {
-    if (!logData.current) return;
-    const data = logData.current;
-    for (let i = 0; i < Object.entries(data).length; i++) {
-      const key: any = Object.entries(data)[i];
-      if (key[1]["sessionEnd"] > currentData?.sessionStart - 100) {
-        setPageData({
-          ...pageData,
-          currentPage: pageData.currentPage - 1,
-        });
-        setCurrentData(key[1]);
-        return;
-      }
-    }
+    if (!data || !currentData?.sessionStart) return;
+    setLoaded(false)
+    const page = pageData.currentPage - 1
+    setPageData({
+      ...pageData,
+      currentPage: page,
+    });
+    const x = (sortedData(data))
+    const y = x[page]
+
+    if (y[1]) setCurrentData(y[1])
   };
 
   const getLogs = async () => {
@@ -84,19 +91,19 @@ export default () => {
         `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(({ data }) => {
-        logData.current = data;
+        setData(data)
         setLoaded(true);
+        const length = Object.keys(data).length
+        if (length === 0) return
 
         setPageData({
-          currentPage: Object.keys(data).length,
-          maxPages: Object.keys(data).length,
+          currentPage: length - 1,
+          maxPages: length - 1,
         });
-        Object.entries(data).map(([key, value]: any) => {
-          if (value.sessionActive) {
-            setActiveSession(key);
-            setCurrentData(data[key]);
-          }
-        });
+
+        const x = sortedData(data)[length - 1][1]
+        setActiveSession(length - 1);
+        if (x) setCurrentData(x)
       })
       .catch(({ response }) => {
         console.log(response);
@@ -115,8 +122,8 @@ export default () => {
           },
         ]}
       />
-      {pageData.currentPage >= 1 && (
-        <View style={{ flex: 1, display: 'flex' }}>
+      <View style={{ flex: 1, display: 'flex' }}>
+        {pageData.currentPage >= 1 && (<>
           <DateHead
             data={currentData}
             handlePrevious={previousPage}
@@ -124,28 +131,23 @@ export default () => {
             hasNext={pageData.currentPage != pageData.maxPages}
             hasPrevious={pageData.currentPage > 1 && pageData.maxPages > 1}
           />
-          {Boolean(Object.keys(summary).length) && (
+          {loaded && Boolean(Object.keys(summary).length) && (
             <>
               <Summary summary={summary} />
               <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }} >
                 {currentData &&
-                  currentData["logs"].map((e: any, c: number) => {
+                  currentData["logs"]?.map((e, c: number) => {
                     return (
                       <LogItem
                         handleComplete={() => getLogs()}
-                        activeSession={
-                          currentData["sessionID"].toString() ===
-                          activeSession.toString()
-                        }
-                        fullName={e.fullName}
+                        activeSession={pageData.currentPage === activeSession}
                         id={e.logID}
                         key={e.logID}
                         style={{
                           marginBottom:
                             currentData["logs"].length - 1 === c ? 0 : 15,
                         }}
-                        distance={e.distance}
-                        date={e.date}
+                        {...e}
                       />
                     );
                   })}
@@ -157,24 +159,24 @@ export default () => {
               There are no logs available to display
             </Text>
           )}
-        </View>
-      )}
-      {loaded && pageData.currentPage === 0 && (
-        <Box style={{ paddingHorizontal: 25 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              textAlign: "center",
-              lineHeight: 24,
-            }}
-          >
-            There are is no history available to display. Add distance for it to be shown
-          </Text>
-        </Box>
-      )}
-
-      {!loaded && <ActivityIndicator size={"large"} color={Colors.tertiary} />}
+        </>
+        )}
+        {loaded && pageData.currentPage === 0 && (
+          <Box style={{ paddingHorizontal: 25 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                textAlign: "center",
+                lineHeight: 24,
+              }}
+            >
+              There are is no history available to display. Add distance for it to be shown
+            </Text>
+          </Box>
+        )}
+        {!loaded && <ActivityIndicator size={"large"} color={Colors.tertiary} />}
+      </View>
     </Layout>
   );
 };
