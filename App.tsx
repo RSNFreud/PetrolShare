@@ -222,7 +222,10 @@ export default function App() {
   }, [fontsLoaded])
 
   useEffect(() => {
+    let i: NodeJS.Timeout;
     if (loadingStatus.auth && loadingStatus.fonts && loadingStatus.update) setLoading(false)
+    if (loadingStatus.auth && loadingStatus.fonts && !loadingStatus.update) i = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(i)
   }, [loadingStatus])
 
   useEffect(() => {
