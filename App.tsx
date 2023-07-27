@@ -95,7 +95,7 @@ export default function App() {
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Light": require("./assets/fonts/Roboto-Light.ttf"),
   });
-
+  const [loadingStatus, setLoadingStatus] = useState({ fonts: fontsLoaded, auth: false, update: false })
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
 
   const store = React.useMemo(
@@ -154,7 +154,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!fontsLoaded) return;
     const async = async () => {
       try {
         const data = getItem("userData");
@@ -174,13 +173,12 @@ export default function App() {
             .then(async ({ data }) => {
               setItem("userData", JSON.stringify({ ...parsed, ...data }));
               setUserData({ ...parsed, ...data });
-
+              setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
               if (fontsLoaded) setLoading(false);
             })
             .catch(({ response }) => {
               console.log(response);
-
-              setLoading(false);
+              setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
               if (response.data.includes('This account has been deactivated'))
                 setTimeout(() => {
                   Alert('Account Deactivated', response.data)
@@ -188,11 +186,9 @@ export default function App() {
               store.signOut()
               return;
             });
-        } else {
-          if (fontsLoaded) setLoading(false);
         }
       } catch (data) {
-        setLoading(false);
+        setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
         setUserData({});
         deleteItem("userData");
         deleteItem("presets");
@@ -201,7 +197,8 @@ export default function App() {
       }
     };
     async();
-  }, [fontsLoaded]);
+    checkForUpdates(true).then(() => setLoadingStatus(loadingStatus => ({ ...loadingStatus, update: true }))).catch(() => setLoadingStatus(loadingStatus => ({ ...loadingStatus, update: true })))
+  }, []);
 
   useEffect(() => {
     EventRegister.addEventListener('sendAlert', (e) => {
@@ -220,10 +217,19 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    if (fontsLoaded)
+      setLoadingStatus(loadingStatus => ({ ...loadingStatus, fonts: true }))
+  }, [fontsLoaded])
+
+  useEffect(() => {
+    if (loadingStatus.auth && loadingStatus.fonts && loadingStatus.update) setLoading(false)
+  }, [loadingStatus])
+
+  useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
+
     if (!loading && !notifData.invoiceID && !notifData.routeName) {
       sendCustomEvent('closeSplash')
-      checkForUpdates()
     };
     Notifications.addNotificationResponseReceivedListener((e) => {
       const routeName = e.notification.request.content.data["route"] as any;
