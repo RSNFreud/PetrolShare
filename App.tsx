@@ -114,7 +114,7 @@ export default function App() {
               res(data);
             })
             .catch(({ response }) => {
-              rej(response.data);
+              rej(response?.data);
             });
         });
       },
@@ -152,6 +152,7 @@ export default function App() {
     const async = async () => {
       try {
         const data = getItem("userData");
+
         if (data) {
           const parsed = JSON.parse(data);
           if (!("authenticationKey" in parsed)) {
@@ -174,13 +175,15 @@ export default function App() {
             .catch(({ response }) => {
               console.log(response);
               setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
-              if (response.data.includes('This account has been deactivated'))
+              if (response?.data.includes('This account has been deactivated'))
                 setTimeout(() => {
                   Alert('Account Deactivated', response.data)
                 }, 500);
               store.signOut()
               return;
             });
+        } else {
+          setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
         }
       } catch (data) {
         setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))

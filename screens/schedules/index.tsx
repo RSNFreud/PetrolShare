@@ -61,7 +61,9 @@ export default () => {
             getSchedules()
 
         navigation.addListener("focus", async () => {
-            getSchedules();
+            setTimeout(() => {
+                getSchedules();
+            }, 300);
             const date = new Date()
             setCurrentDate(getInitialDate(date).getTime())
         });
@@ -76,8 +78,6 @@ export default () => {
             for (const schedule of data) {
                 const startDate = resetTime(schedule.startDate);
                 const endDate = resetTime(schedule.endDate);
-
-                // if (new Date().getTime() > new Date(schedule.endDate).getTime()) continue
 
                 if (!splitSchedules.has(startDate.getTime())) splitSchedules.set(startDate.getTime(), []);
                 splitSchedules.get(startDate.getTime())!.push({ ...schedule });
@@ -268,7 +268,7 @@ export default () => {
                                                                 <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
                                                                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{data.summary || 'New Schedule'}</Text>
                                                                     <Text style={{ fontWeight: '300', fontSize: 14, marginTop: 5 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
-                                                                    <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>
+                                                                    <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>
                                                                     }
                                                                         {!hasMultipleDays && <> - </>}
                                                                         {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
