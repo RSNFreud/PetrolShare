@@ -141,6 +141,7 @@ export default () => {
     }
 
     const calculateDirection = (e: HandlerStateChangeEvent) => {
+        if ((e.nativeEvent.velocityY as number) < -1 || (e.nativeEvent.velocityY as number) > 1) return
         if ((e.nativeEvent.translationX as number) > 0) changeDate('forwards')
         else changeDate('back')
     }
@@ -197,7 +198,7 @@ export default () => {
             }, { name: 'Schedules' }]} />
         </View>
         {dataLoaded ? <GestureHandlerRootView style={{ flex: 1 }}>
-            <PanGestureHandler ref={gestureRef} onEnded={calculateDirection} >
+            <PanGestureHandler ref={gestureRef} onEnded={calculateDirection} minDist={10} >
                 <View style={{ flex: 1, display: 'flex' }}>
                     <View style={{ backgroundColor: Colors.secondary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20 }}>
@@ -271,7 +272,7 @@ export default () => {
                                                                     <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>
                                                                     }
                                                                         {!hasMultipleDays && <> - </>}
-                                                                        {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit' })}</>}</Text>
+                                                                        {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>}</Text>
                                                                     <AnimateHeight open={isOpened === startDate.getTime()}>
                                                                         <SplitRow style={{ marginTop: 15 }} gap={10} elements={[<Button size="small">Edit</Button>, <Button size="small" color="red">Delete</Button>]} />
                                                                     </AnimateHeight>
