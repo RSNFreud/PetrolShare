@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { ColorValue, Switch, TouchableWithoutFeedback, View } from "react-native"
+import { ColorValue, Switch, TouchableWithoutFeedback, View, ScrollView } from "react-native"
 import DatePicker from "../../components/dateTimePicker"
 import { Text } from "../../components/Themed"
 import Colors from "../../constants/Colors"
@@ -12,7 +12,6 @@ import axios from "axios"
 import config from "../../config"
 import { AuthContext } from "../../hooks/context"
 import { convertHexToRGBA, sendCustomEvent } from "../../hooks"
-import { ScrollView } from "react-native-gesture-handler"
 import SplitRow from "../../components/splitRow"
 
 type DayProps = {
