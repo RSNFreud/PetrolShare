@@ -2073,10 +2073,10 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
-"@react-native-community/datetimepicker@6.7.3":
-  version "6.7.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-6.7.3.tgz#e6d75a42729265d8404d1d668c86926564abca2f"
-  integrity sha512-fXWbEdHMLW/e8cts3snEsbOTbnFXfUHeO2pkiDFX3fWpFoDtUrRWvn50xbY13IJUUKHDhoJ+mj24nMRVIXfX1A==
+"@react-native-community/datetimepicker@7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-7.2.0.tgz#db8c03dbf49bf3c24b06b617a8467d8b05511f62"
+  integrity sha512-dO1sQy83M/EvnHE2egto05iwXZX7EYn5f/VDMp6afZFRFXRiRo7CzB3VFg4B55gJRJMNBv06NYMLPM3SlpnEGQ==
   dependencies:
     invariant "^2.2.4"
 
@@ -5071,10 +5071,10 @@ expo-sharing@~11.5.0:
   resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-11.5.0.tgz#a8cad65874d882b7f75b12856b4ef55ea9b60a2d"
   integrity sha512-uerM5YH1FKDZXfkP9ORebvlMVOPP/AfoYgYBez6a8G9fztNYHnRCA6mgK+3aQmpnb3ltmjnAZC39kH18bTNcVw==
 
-expo-splash-screen@~0.20.4:
-  version "0.20.4"
-  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.4.tgz#abe77d7a9612627f7048d885cfc5a696e3d3ee3d"
-  integrity sha512-JMfVqkb3Fbt9mdrWfSkTxaIkjd2RMJmQ19/JN+4Gk2MVEP4L1yzTQLomneH5+z/N5x48Tk3ZN+bFhtUXIlfjzg==
+expo-splash-screen@~0.20.5:
+  version "0.20.5"
+  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.5.tgz#ebeba3e3977606830f74f506ab2cc25042bb7efd"
+  integrity sha512-nTALYdjHpeEA30rdOWSguxn72ctv8WM8ptuUgpfRgsWyn4i6rwYds/rBXisX69XO5fg+XjHAQqijGx/b28+3tg==
   dependencies:
     "@expo/prebuild-config" "6.2.6"
 
@@ -5108,10 +5108,10 @@ expo-updates-interface@~0.10.0:
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-0.10.1.tgz#cab075641cd381718ccd9264bf133dc393430a44"
   integrity sha512-I6JMR7EgjXwckrydDmrkBEX/iw750dcqpzQVsjznYWfi0HTEOxajLHB90fBFqQkUV5i5s4Fd3hYQ1Cn0oMzUbA==
 
-expo-updates@~0.18.10:
-  version "0.18.10"
-  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.18.10.tgz#0e0118318815f7b8822211e731854b390b884668"
-  integrity sha512-gmzeaMmmkQqb4BQvLD8gKZ9Xd3EaVGyLjffhBe1AVGIFyQoZ4aWz2NY8bmC89cB4u2VGNxTKAGeS82kGSyMljQ==
+expo-updates@~0.18.11:
+  version "0.18.11"
+  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.18.11.tgz#25bb70fc2b6f6abaf509c842a4092c5f24bad05b"
+  integrity sha512-X7huYVAq7RhBUcoGQKk2P9K0LJdDr5EDBPQbHRM/zrQNXuW7DhCkQBVbhT6/L7pIqdVAsAxx0FqxcZcx44pDWA==
   dependencies:
     "@expo/code-signing-certificates" "0.0.5"
     "@expo/config" "~8.1.0"
