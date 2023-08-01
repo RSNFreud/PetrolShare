@@ -1,5 +1,5 @@
 
-import { ActivityIndicator, GestureResponderEvent, TouchableWithoutFeedback, View, ScrollView, NativeScrollEvent, NativeSyntheticEvent } from "react-native"
+import { ActivityIndicator, GestureResponderEvent, TouchableWithoutFeedback, View } from "react-native"
 import Layout from "../../components/layout"
 import { Breadcrumbs, Text } from "../../components/Themed"
 import Colors from "../../constants/Colors"
@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native"
 import SplitRow from "../../components/splitRow"
 import AnimateHeight from "../../components/animateHeight"
 import DateTimePicker from "../../components/dateTimePicker"
-import { HandlerStateChangeEvent, PanGestureHandler } from "react-native-gesture-handler"
+import { GestureHandlerRootView, HandlerStateChangeEvent, PanGestureHandler, ScrollView } from "react-native-gesture-handler"
 
 type ScheduleType = {
     allDay: string, startDate: Date, endDate: Date, summary?: string, fullName: string, emailAddress: string
@@ -39,11 +39,8 @@ const getInitialDate = (date: Date) => {
     return temp
 }
 
-let initialCoords = { x: 0, y: 0 }
-
 export default () => {
     const [visible, setVisible] = useState(false)
-    const [scrolling, setScrolling] = useState(false)
     const date = new Date()
     const [currentDate, setCurrentDate] = useState(getInitialDate(date).getTime())
     const dateRef = useRef<ScrollView | null>(null)
@@ -205,130 +202,132 @@ export default () => {
             }, { name: 'Schedules' }]} />
         </View>
         {dataLoaded ? <>
-            <PanGestureHandler onEnded={calculateDirection} minDist={10}>
-                <View style={{ flex: 1, display: 'flex' }}>
-                    <View style={{ backgroundColor: Colors.secondary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20 }}>
-                            <TouchableBase handleClick={() => changeMonth('back')} style={{ opacity: backDisabled ? 0.5 : 1, width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }} disabled={Boolean(backDisabled)}>
-                                <Svg
-                                    width="8"
-                                    height="12"
-                                    fill="none"
-                                    viewBox="0 0 8 12"
-                                >
-                                    <Path
-                                        fill="#fff"
-                                        d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
-                                    ></Path>
-                                </Svg>
-                            </TouchableBase>
-                            <DateTimePicker mode="date" value={new Date(currentDate)} setValue={(e) => setCurrentDate(new Date(e).getTime())} format={{ month: 'long', year: 'numeric' }} textStyle={{ fontWeight: 'bold' }} />
-                            <TouchableBase handleClick={() => changeMonth('forwards')} style={{ width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
-                                <Svg
-                                    width="8"
-                                    height="12"
-                                    style={{ transform: [{ rotate: '180deg' }] }}
-                                    fill="none"
-                                    viewBox="0 0 8 12"
-                                >
-                                    <Path
-                                        fill="#fff"
-                                        d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
-                                    ></Path>
-                                </Svg>
-                            </TouchableBase>
-                        </View>
-                        <ScrollView snapToInterval={32 + 15} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
-                            {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
-                                <View>
-                                    <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
-                                        <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
-                                        <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
-                                            <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.date.getDate()}</Text>
-                                        </View>
-                                    </View>
-                                    {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) ? <View style={{ width: 5, height: 5, borderRadius: 100, backgroundColor: Colors.tertiary, position: 'absolute', bottom: -2, left: 14 }} /> : <></>}
-                                </View>
-                            </TouchableWithoutFeedback>
-                            )}
-                        </ScrollView>
-                    </View>
-                    <View style={{ paddingVertical: 25, paddingHorizontal: 25, flex: 1 }}>
-                        {getCurrentData && getCurrentDayData.map(e => [...e].map(([day, schedule]) => {
-                            const dayObj = new Date(day)
-
-                            return <View key={day} style={{ flex: 1 }}>
-                                <ScrollView contentContainerStyle={{ width: '100%' }} >
-                                    <View style={{ gap: 25, marginBottom: 25 }}>
-                                        <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
-                                            <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
-                                                <>
-                                                    {schedule.sort((a, b) => a.startDate > b.startDate ? 1 : -1).map((data, count) => {
-                                                        const startDate = new Date(data.startDate)
-                                                        const endDate = new Date(data.endDate)
-                                                        const amountOfDays = Math.round((resetTime(endDate).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24))
-                                                        const currentDayCount = resetTime(dayObj).getTime() === resetTime(startDate).getTime() ? '1' : (resetTime(dayObj).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24) + 1
-
-                                                        const hasMultipleDays = amountOfDays > 1
-
-                                                        return (
-                                                            <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === startDate.getTime() ? setIsOpened(0) : setIsOpened(startDate.getTime())}>
-                                                                <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
-                                                                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{data.summary || 'New Schedule'}</Text>
-                                                                    <Text style={{ fontWeight: '300', fontSize: 14, marginTop: 5 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
-                                                                    <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>
-                                                                    }
-                                                                        {!hasMultipleDays && <> - </>}
-                                                                        {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>}</Text>
-                                                                    <AnimateHeight open={isOpened === startDate.getTime()}>
-                                                                        <SplitRow style={{ marginTop: 15 }} gap={10} elements={[<Button size="small">Edit</Button>, <Button size="small" color="red">Delete</Button>]} />
-                                                                    </AnimateHeight>
-                                                                </View>
-                                                            </TouchableWithoutFeedback>
-                                                        )
-                                                    })}
-                                                </>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </ScrollView>
-                                {!expiredDate &&
-                                    <View style={{ position: 'absolute', bottom: 15, right: -10 }}>
-                                        <TouchableBase handleClick={() => setVisible(true)} >
-                                            <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                                                <Svg
-                                                    width="14"
-                                                    height="14"
-                                                    fill="none"
-                                                    viewBox="0 0 14 14"
-                                                >
-                                                    <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"></Path>
-                                                </Svg>
-                                                <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Add</Text>
-                                            </View>
-                                        </TouchableBase>
-                                    </View>
-                                }
-                            </View>
-                        }))}
-                        {!getCurrentDayData?.length &&
-                            <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                                <Text style={{ fontWeight: '300', textAlign: 'center', lineHeight: 24, maxWidth: 325 }}>There are no schedules for this date added. {expiredDate ? '' : 'Please add a new schedule by clicking the button below.'}</Text>
-                                {!expiredDate &&
-                                    <Button size="medium" handleClick={() => setVisible(true)} style={{ width: 153, marginTop: 15, borderRadius: 8, height: 44 }} icon={<Svg
-                                        width="14"
-                                        height="14"
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <PanGestureHandler onEnded={calculateDirection} minDist={10}>
+                    <View style={{ flex: 1, display: 'flex' }}>
+                        <View style={{ backgroundColor: Colors.secondary, paddingVertical: 20, paddingBottom: 0, justifyContent: 'center', alignItems: 'center', gap: 15 }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20 }}>
+                                <TouchableBase handleClick={() => changeMonth('back')} style={{ opacity: backDisabled ? 0.5 : 1, width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }} disabled={Boolean(backDisabled)}>
+                                    <Svg
+                                        width="8"
+                                        height="12"
                                         fill="none"
-                                        viewBox="0 0 14 14"
+                                        viewBox="0 0 8 12"
                                     >
-                                        <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z" />
-                                    </Svg>} text="Add" />
-                                }
+                                        <Path
+                                            fill="#fff"
+                                            d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
+                                        ></Path>
+                                    </Svg>
+                                </TouchableBase>
+                                <DateTimePicker mode="date" value={new Date(currentDate)} setValue={(e) => setCurrentDate(new Date(e).getTime())} format={{ month: 'long', year: 'numeric' }} textStyle={{ fontWeight: 'bold' }} />
+                                <TouchableBase handleClick={() => changeMonth('forwards')} style={{ width: 25, height: 25, display: 'flex', alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Svg
+                                        width="8"
+                                        height="12"
+                                        style={{ transform: [{ rotate: '180deg' }] }}
+                                        fill="none"
+                                        viewBox="0 0 8 12"
+                                    >
+                                        <Path
+                                            fill="#fff"
+                                            d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
+                                        ></Path>
+                                    </Svg>
+                                </TouchableBase>
                             </View>
-                        }
+                            <ScrollView snapToInterval={32 + 15} ref={dateRef} onLayout={() => setInitialScroll()} style={{ width: '100%' }} horizontal contentContainerStyle={{ paddingHorizontal: 25, paddingBottom: 20, gap: 25 }}>
+                                {getDaysInMonth().map(dayObj => <TouchableWithoutFeedback touchSoundDisabled key={dayObj.date.toString()} onPress={() => setCurrentDate(dayObj.date.getTime())}>
+                                    <View>
+                                        <View style={{ gap: 2, justifyContent: 'center', opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5, width: 32 }}>
+                                            <Text style={{ fontWeight: '300', textAlign: 'center' }}>{getDayString(dayObj.date)}</Text>
+                                            <View style={{ width: 32, height: 32, borderRadius: 100, backgroundColor: currentDate === dayObj.date.getTime() ? Colors.tertiary : 'transparent', justifyContent: 'center', alignContent: 'center' }}>
+                                                <Text style={{ fontWeight: "bold", fontSize: 18, textAlign: 'center' }}>{dayObj.date.getDate()}</Text>
+                                            </View>
+                                        </View>
+                                        {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) ? <View style={{ width: 5, height: 5, borderRadius: 100, backgroundColor: Colors.tertiary, position: 'absolute', bottom: -2, left: 14 }} /> : <></>}
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                )}
+                            </ScrollView>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            {getCurrentData && getCurrentDayData.map(e => [...e].map(([day, schedule]) => {
+                                const dayObj = new Date(day)
+
+                                return <View key={day} style={{ flex: 1 }}>
+                                    <ScrollView contentContainerStyle={{ width: '100%', paddingVertical: 25 }} style={{ marginHorizontal: 25 }} >
+                                        <View style={{ gap: 25 }}>
+                                            <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }} key={day}>
+                                                <View style={{ flex: 1, display: 'flex', gap: 10, flexDirection: 'column' }}>
+                                                    <>
+                                                        {schedule.sort((a, b) => a.startDate > b.startDate ? 1 : -1).map((data, count) => {
+                                                            const startDate = new Date(data.startDate)
+                                                            const endDate = new Date(data.endDate)
+                                                            const amountOfDays = Math.round((resetTime(endDate).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24))
+                                                            const currentDayCount = resetTime(dayObj).getTime() === resetTime(startDate).getTime() ? '1' : (resetTime(dayObj).getTime() - resetTime(startDate).getTime()) / (1000 * 3600 * 24) + 1
+
+                                                            const hasMultipleDays = amountOfDays > 1
+
+                                                            return (
+                                                                <TouchableWithoutFeedback key={`${count}-${day}`} onPress={() => isOpened === startDate.getTime() ? setIsOpened(0) : setIsOpened(startDate.getTime())}>
+                                                                    <View style={{ paddingVertical: 10, paddingHorizontal: 15, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, borderRadius: 4, backgroundColor: retrieveData?.emailAddress === data.emailAddress ? Colors.primary : "" }}>
+                                                                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{data.summary || 'New Schedule'}</Text>
+                                                                        <Text style={{ fontWeight: '300', fontSize: 14, marginTop: 5 }}>{data.fullName} {hasMultipleDays && <>(Day {currentDayCount}/{amountOfDays})</>}</Text>
+                                                                        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>{(currentDayCount !== amountOfDays || !hasMultipleDays) && <>{startDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>
+                                                                        }
+                                                                            {!hasMultipleDays && <> - </>}
+                                                                            {(currentDayCount === amountOfDays || !hasMultipleDays) && <>{endDate.toLocaleString(undefined, { minute: '2-digit', hour: '2-digit', hour12: true })}</>}</Text>
+                                                                        <AnimateHeight open={isOpened === startDate.getTime()}>
+                                                                            <SplitRow style={{ marginTop: 15 }} gap={10} elements={[<Button size="small">Edit</Button>, <Button size="small" color="red">Delete</Button>]} />
+                                                                        </AnimateHeight>
+                                                                    </View>
+                                                                </TouchableWithoutFeedback>
+                                                            )
+                                                        })}
+                                                    </>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </ScrollView>
+                                    {!expiredDate &&
+                                        <View style={{ position: 'absolute', bottom: 15, right: 15 }}>
+                                            <TouchableBase handleClick={() => setVisible(true)} >
+                                                <View style={{ paddingHorizontal: 20, paddingVertical: 10, backgroundColor: Colors.tertiary, borderRadius: 8, borderStyle: 'solid', borderWidth: 1, borderColor: Colors.border, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Svg
+                                                        width="14"
+                                                        height="14"
+                                                        fill="none"
+                                                        viewBox="0 0 14 14"
+                                                    >
+                                                        <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"></Path>
+                                                    </Svg>
+                                                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10 }}>Add</Text>
+                                                </View>
+                                            </TouchableBase>
+                                        </View>
+                                    }
+                                </View>
+                            }))}
+                            {!getCurrentDayData?.length &&
+                                <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                                    <Text style={{ fontWeight: '300', textAlign: 'center', lineHeight: 24, maxWidth: 325 }}>There are no schedules for this date added. {expiredDate ? '' : 'Please add a new schedule by clicking the button below.'}</Text>
+                                    {!expiredDate &&
+                                        <Button size="medium" handleClick={() => setVisible(true)} style={{ width: 153, marginTop: 15, borderRadius: 8, height: 44 }} icon={<Svg
+                                            width="14"
+                                            height="14"
+                                            fill="none"
+                                            viewBox="0 0 14 14"
+                                        >
+                                            <Path fill="#fff" d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z" />
+                                        </Svg>} text="Add" />
+                                    }
+                                </View>
+                            }
+                        </View>
                     </View>
-                </View>
-            </PanGestureHandler>
+                </PanGestureHandler>
+            </GestureHandlerRootView>
 
             <Popup visible={visible} handleClose={() => setVisible(false)} ><Create currentDate={currentDate} onClose={updateData} /></Popup>
         </> :
