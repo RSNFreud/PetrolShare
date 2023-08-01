@@ -45,6 +45,7 @@ import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
 import BottomNavigation from "./components/bottomNavigation";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import 'react-native-gesture-handler';
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
