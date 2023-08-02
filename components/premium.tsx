@@ -67,9 +67,10 @@ export default () => {
         else setPremium(false)
     }, [getItem('groupData'), isLoading])
 
-    const openPayment = () => {
+    const openPayment = async () => {
         if (Platform.OS === "web") return
-        Purchases.purchaseProduct('premium_subscription', null, Purchases.PURCHASE_TYPE.INAPP).then(e => {
+        const product = await Purchases.getProducts(['premium_subscription'])
+        Purchases.purchaseStoreProduct(product[0], null).then(e => {
             setShowPremiumInfo(false)
             axios
                 .post(

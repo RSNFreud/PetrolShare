@@ -143,7 +143,7 @@ export default ({ onClose, currentDate }: {
         <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 20 }}>Add a new schedule</Text>
         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15, width: '100%' }}>
             <Text style={{ fontWeight: "bold" }}>All day?</Text>
-            <Switch trackColor={{ false: Colors.primary, true: Colors.primary }} value={data.allDay} thumbColor={data.allDay ? Colors.tertiary : 'white'} onChange={e => updateData(e.nativeEvent.value, 'allDay')} ios_backgroundColor={Colors.primary} />
+            <Switch trackColor={{ false: convertHexToRGBA('#fff', 0.6), true: convertHexToRGBA('#fff', 0.6) }} value={data.allDay} thumbColor={data.allDay ? Colors.tertiary : 'white'} onChange={e => updateData(e.nativeEvent.value, 'allDay')} ios_backgroundColor={Colors.primary} />
         </View>
         {data.allDay ? <>
             <DateWrapper invalidDateColour={checkForInvalidDate} start elements={[<DatePicker style={{ paddingVertical: 13, paddingHorizontal: 16, width: '100%', alignItems: 'flex-start' }} mode="date" setValue={e => updateData(e, 'startDate')} value={data.startDate} />]} />
