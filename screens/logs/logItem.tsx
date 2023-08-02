@@ -34,7 +34,7 @@ export default ({
     const { retrieveData } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState(distance);
+    const [formData, setFormData] = useState<number | "">(distance);
 
     const handleDelete = () => {
         Alert("Are you sure you want to delete this log?", undefined, [
@@ -85,6 +85,13 @@ export default ({
             });
     };
 
+    const handleInput = (e: string) => {
+        const value = parseInt(e)
+        if (!value || isNaN(value)) return setFormData("")
+        if (isNaN(value)) return
+        setFormData(value)
+    }
+
     return (
         <View
             style={[
@@ -130,8 +137,8 @@ export default ({
             <Popup visible={visible} handleClose={() => setVisible(false)}>
                 <Input
                     label="Distance"
-                    handleInput={(e) => setFormData(parseInt(e))}
-                    value={formData.toString()}
+                    handleInput={handleInput}
+                    value={formData?.toString()}
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}
                 />
