@@ -89,7 +89,7 @@ export default ({
     if (!visible && isVisible) {
       try {
         Keyboard.dismiss();
-      } catch {}
+      } catch { }
       setTimeout(() => {
         close();
       }, 400); // Hide keyboard
@@ -146,13 +146,14 @@ export default ({
             width: "100%",
             flexDirection: "row",
             paddingHorizontal: 25,
-            height: 53,
+            paddingVertical: 5,
             borderBottomWidth: 1,
             borderBottomColor: Colors.border,
+            backgroundColor: Colors.primary,
           }}
         >
           <View>
-            {!!title && <Text style={{ fontSize: 18 }}>{title} </Text>}
+            {!!title && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{title} </Text>}
           </View>
           {showClose && (
             <Pressable
@@ -160,8 +161,8 @@ export default ({
               onPress={close}
               accessibilityHint={"closes the popup"}
               style={{
-                width: 48,
-                height: 48,
+                width: 40,
+                height: 40,
                 alignContent: "center",
                 display: "flex",
                 alignItems: "center",
@@ -181,7 +182,7 @@ export default ({
           keyboardShouldPersistTaps={"always"}
           style={{
             height: "100%",
-            marginTop: 53,
+            marginTop: 51,
           }}
           contentContainerStyle={{
             paddingVertical: 30,

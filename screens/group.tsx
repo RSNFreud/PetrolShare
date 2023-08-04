@@ -41,6 +41,17 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         onUpdate();
     }
 
+    const getTitle = (currentScreen: string) => {
+        switch (currentScreen) {
+            case 'Settings':
+                return 'Group Settings'
+            case 'CreateGroup':
+                return 'Create Group'
+            case 'JoinGroup':
+                return 'Join Group'
+        }
+    }
+
     return (
         <>
             <LongButton text="Create Group" icon={
@@ -73,8 +84,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
                     ></Path>
                 </Svg>
             } handleClick={() => openModal("Settings")} />
-            <Popup visible={visible} handleClose={() => { setVisible(false), onUpdate() }}
-            >
+            <Popup visible={visible} handleClose={() => { setVisible(false), onUpdate() }} title={getTitle(currentScreen)}>
                 {currentScreen === "JoinGroup" ? <JoinGroup handleClose={handleClose} handleUpdate={onUpdate} /> : <></>}
                 {currentScreen === "CreateGroup" ? <CreateGroup handleClose={handleClose} handleUpdate={onUpdate} /> : <></>}
                 {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} /> : <></>}

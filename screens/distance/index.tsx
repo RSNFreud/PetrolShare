@@ -14,15 +14,17 @@ import AssignDistance from './assignDistance'
 
 export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [popupData, setPopupData] = useState(<></>)
+  const [title, setTitle] = useState("")
   const [visible, setVisible] = useState(false)
   const [data, setData] = useState({ startValue: '', endValue: '' })
   const { retrieveData } = useContext(AuthContext)
   const { navigate } = useNavigation()
   const [isDraft, setIsDraft] = useState(false)
 
-  const openPopup = (element: JSX.Element) => {
+  const openPopup = (element: JSX.Element, title: string) => {
     setPopupData(element)
     setVisible(true)
+    setTitle(title)
   }
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
           <Odometer
             previousData={{ ...JSON.parse(draft) }}
             handleClose={() => handleClose()}
-          />,
+          />, 'Record Odometer'
         )
       } else {
         setVisible(false)
@@ -107,7 +109,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
     <>
       <LongButton
         handleClick={() =>
-          openPopup(<Manual handleClose={handleClose} />)
+          openPopup(<Manual handleClose={handleClose} />, 'Add Specfic Distance')
         }
         text={'Add Specific Distance'}
         icon={
@@ -122,7 +124,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
       <LongButton
         handleClick={() =>
           openPopup(
-            <Odometer previousData={data} handleClose={handleClose} />,
+            <Odometer previousData={data} handleClose={handleClose} />, 'Record Odometer'
           )
         }
         text={'Record Odometer'}
@@ -167,7 +169,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
           </Svg>
         }
         handleClick={() =>
-          openPopup(<AssignDistance handleClose={handleClose} />)
+          openPopup(<AssignDistance handleClose={handleClose} />, 'Assign Distance')
         }
       />
       <LongButton
@@ -188,6 +190,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         handleClose={() => handleClose()}
         children={popupData}
         animate={isDraft ? false : true}
+        title={title}
       />
     </>
   )

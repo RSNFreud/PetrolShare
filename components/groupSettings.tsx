@@ -158,7 +158,6 @@ export default ({
         {!newGroup && (
           <Box
             style={{
-              marginTop: 20,
               marginBottom: 20,
               paddingHorizontal: 15,
               paddingVertical: 15,
