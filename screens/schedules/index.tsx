@@ -91,7 +91,7 @@ export default () => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-          `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
+        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(({ data }: { data: ScheduleType[] }) => {
         setDataLoaded(true);
@@ -106,7 +106,7 @@ export default () => {
 
           const amountOfDays = Math.round(
             (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
-              (1000 * 3600 * 24)
+            (1000 * 3600 * 24)
           );
           if (amountOfDays <= 1) continue;
 
@@ -403,7 +403,7 @@ export default () => {
                             </View>
                           </View>
                           {dayObj.active &&
-                          Boolean(dayObj.date.getTime() !== currentDate) ? (
+                            Boolean(dayObj.date.getTime() !== currentDate) ? (
                             <View
                               style={{
                                 width: 5,
@@ -470,18 +470,18 @@ export default () => {
                                           const amountOfDays = Math.round(
                                             (resetTime(endDate).getTime() -
                                               resetTime(startDate).getTime()) /
-                                              (1000 * 3600 * 24)
+                                            (1000 * 3600 * 24)
                                           );
                                           const currentDayCount =
                                             resetTime(dayObj).getTime() ===
-                                            resetTime(startDate).getTime()
+                                              resetTime(startDate).getTime()
                                               ? "1"
                                               : (resetTime(dayObj).getTime() -
-                                                  resetTime(
-                                                    startDate
-                                                  ).getTime()) /
-                                                  (1000 * 3600 * 24) +
-                                                1;
+                                                resetTime(
+                                                  startDate
+                                                ).getTime()) /
+                                              (1000 * 3600 * 24) +
+                                              1;
 
                                           const hasMultipleDays =
                                             amountOfDays > 1;
@@ -493,8 +493,8 @@ export default () => {
                                                 isOpened === startDate.getTime()
                                                   ? setIsOpened(0)
                                                   : setIsOpened(
-                                                      startDate.getTime()
-                                                    )
+                                                    startDate.getTime()
+                                                  )
                                               }
                                             >
                                               <View
@@ -507,7 +507,7 @@ export default () => {
                                                   borderRadius: 4,
                                                   backgroundColor:
                                                     retrieveData?.emailAddress ===
-                                                    data.emailAddress
+                                                      data.emailAddress
                                                       ? Colors.primary
                                                       : "",
                                                 }}
@@ -545,32 +545,32 @@ export default () => {
                                                   {(currentDayCount !==
                                                     amountOfDays ||
                                                     !hasMultipleDays) && (
-                                                    <>
-                                                      {startDate.toLocaleString(
-                                                        undefined,
-                                                        {
-                                                          minute: "2-digit",
-                                                          hour: "2-digit",
-                                                          hour12: true,
-                                                        }
-                                                      )}
-                                                    </>
-                                                  )}
+                                                      <>
+                                                        {startDate.toLocaleString(
+                                                          undefined,
+                                                          {
+                                                            minute: "2-digit",
+                                                            hour: "2-digit",
+                                                            hour12: true,
+                                                          }
+                                                        )}
+                                                      </>
+                                                    )}
                                                   {!hasMultipleDays && <> - </>}
                                                   {(currentDayCount ===
                                                     amountOfDays ||
                                                     !hasMultipleDays) && (
-                                                    <>
-                                                      {endDate.toLocaleString(
-                                                        undefined,
-                                                        {
-                                                          minute: "2-digit",
-                                                          hour: "2-digit",
-                                                          hour12: true,
-                                                        }
-                                                      )}
-                                                    </>
-                                                  )}
+                                                      <>
+                                                        {endDate.toLocaleString(
+                                                          undefined,
+                                                          {
+                                                            minute: "2-digit",
+                                                            hour: "2-digit",
+                                                            hour12: true,
+                                                          }
+                                                        )}
+                                                      </>
+                                                    )}
                                                 </Text>
                                                 <AnimateHeight
                                                   open={
