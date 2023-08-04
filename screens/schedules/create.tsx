@@ -5,9 +5,10 @@ import {
     TouchableWithoutFeedback,
     View,
     ScrollView,
+    FlexAlignType,
 } from "react-native";
 import DatePicker from "../../components/dateTimePicker";
-import { Text } from "../../components/Themed";
+import { Text, ViewProps } from "../../components/Themed";
 import Colors from "../../constants/Colors";
 import Input from "../../components/Input";
 import Dropdown from "../../components/Dropdown";
@@ -50,30 +51,6 @@ const Day = ({ label, value, active, handleClick }: DayProps) => {
     );
 };
 
-const DateWrapper = ({
-    elements,
-    start,
-    invalidDateColour,
-}: {
-    start?: boolean;
-    elements: React.ReactNode[];
-    invalidDateColour: ColorValue;
-}) => (
-    <SplitRow
-        withoutFade
-        style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "100%",
-            alignItems: "center",
-            height: 53,
-        }}
-        elements={elements}
-        gap={0}
-    />
-);
-
 export default ({
     onClose,
     currentDate,
@@ -111,6 +88,10 @@ export default ({
             ...data,
             startDate: time.getTime(),
             endDate: time.setHours(time.getHours() + 1),
+            custom: {
+                ...data.custom,
+                ends: { option: "never", endDate: time.getTime() },
+            },
         });
     }, [currentDate]);
 
@@ -121,9 +102,22 @@ export default ({
         }, 500);
     };
 
-    const updateData = (e: boolean | string | number, value: string) => {
+    const updateData = (e: boolean | string | number, value: string | number, position?: 'custom' | 'customDays' | 'endDate', key?: string) => {
         dismissError();
-        setData({ ...data, [value]: e });
+        let newData = data
+
+        if (!position) newData = { ...data, [value]: e }
+        else if (position === 'custom') newData = { ...data, custom: { ...data.custom, [value]: e } }
+        else if (position === 'endDate' && key) newData = { ...data, custom: { ...data.custom, ends: { ...data.custom.ends, [key]: value } } }
+        else if (position === 'customDays' && typeof value === 'string') {
+            let repeatingDays = data.custom.repeatingDays;
+            if (data.custom.repeatingDays.includes(value))
+                repeatingDays = repeatingDays.filter((e) => e !== value);
+            else repeatingDays.push(value);
+            newData = { ...data, custom: { ...data.custom, repeatingDays: repeatingDays } }
+        }
+
+        setData(newData);
     };
 
     useEffect(() => {
@@ -131,34 +125,6 @@ export default ({
             setData((data) => ({ ...data, endDate: data.startDate }));
         }
     }, [data]);
-
-    const updateCustomData = (e: any, value: string) => {
-        dismissError();
-        setData({ ...data, custom: { ...data.custom, [value]: e } });
-    };
-
-    const updateCustomDays = (value: string) => {
-        let repeatingDays = data.custom.repeatingDays;
-        dismissError();
-        if (data.custom.repeatingDays.includes(value))
-            repeatingDays = repeatingDays.filter((e) => e !== value);
-        else repeatingDays.push(value);
-        setData({
-            ...data,
-            custom: { ...data.custom, repeatingDays: repeatingDays },
-        });
-    };
-    const updateCustomEndDate = (key: any, value: any) => {
-        let repeatingDays = data.custom.repeatingDays;
-        dismissError();
-        if (data.custom.repeatingDays.includes(value))
-            repeatingDays = repeatingDays.filter((e) => e !== value);
-        else repeatingDays.push(value);
-        setData({
-            ...data,
-            custom: { ...data.custom, ends: { ...data.custom.ends, [key]: value } },
-        });
-    };
 
     const handleSubmit = () => {
         setHasError(false);
@@ -202,9 +168,7 @@ export default ({
 
     const checkForInvalidDate =
         (data.startDate >= data.endDate || data.startDate < new Date().getTime()) &&
-            !data.allDay
-            ? convertHexToRGBA("#FA4F4F", 0.5)
-            : Colors.primary;
+        !data.allDay
 
     return (
         <>
@@ -239,110 +203,74 @@ export default ({
                     backgroundColor: Colors.primary,
                 }}
             >
-                {data.allDay ? (
-                    <>
-                        <DateWrapper
-                            invalidDateColour={checkForInvalidDate}
-                            start
-                            elements={[
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        width: "100%",
-                                        alignItems: "flex-start",
-                                    }}
-                                    mode="date"
-                                    setValue={(e) => updateData(e, "startDate")}
-                                    value={data.startDate}
-                                />,
-                            ]}
-                        />
-                        <DateWrapper
-                            invalidDateColour={checkForInvalidDate}
-                            elements={[
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        width: "100%",
-                                        alignItems: "flex-start",
-                                    }}
-                                    mode="date"
-                                    setValue={(e) => updateData(e, "startDate")}
-                                    value={data.endDate}
-                                />,
-                            ]}
-                        />
-                    </>
-                ) : (
-                    <>
-                        <DateWrapper
-                            invalidDateColour={checkForInvalidDate}
-                            start
-                            elements={[
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        alignSelf: "flex-start",
-                                    }}
-                                    mode="date"
-                                    setValue={(e) => updateData(e, "startDate")}
-                                    value={data.startDate}
-                                    format={{
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                        weekday: "short",
-                                    }}
-                                />,
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        alignSelf: "flex-end",
-                                    }}
-                                    mode="time"
-                                    setValue={(e) => updateData(e, "startDate")}
-                                    value={data.startDate}
-                                />,
-                            ]}
-                        />
-                        <DateWrapper
-                            invalidDateColour={checkForInvalidDate}
-                            elements={[
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        alignSelf: "flex-start",
-                                    }}
-                                    mode="date"
-                                    format={{
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                        weekday: "short",
-                                    }}
-                                    setValue={(e) => updateData(e, "endDate")}
-                                    value={data.endDate}
-                                />,
-                                <DatePicker
-                                    style={{
-                                        paddingVertical: 13,
-                                        paddingHorizontal: 16,
-                                        alignSelf: "flex-end",
-                                    }}
-                                    mode="time"
-                                    setValue={(e) => updateData(e, "endDate")}
-                                    value={data.endDate}
-                                />,
-                            ]}
-                        />
-                    </>
-                )}
+                {['startDate', 'endDate'].map(dateType => {
+                    const isStart = dateType === 'startDate'
+
+                    const dateProps = {
+                        style: {
+                            paddingVertical: 13,
+                            paddingHorizontal: 16,
+                            width: "100%",
+                            alignItems: "flex-start",
+                        },
+                        textStyle: {
+                            color: checkForInvalidDate && isStart ? "#FA4F4F" : '#fff'
+                        },
+                        format: {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            weekday: "short",
+                        },
+                        value: isStart ? data.startDate : data.endDate
+                    } as {
+                        style: ViewProps["style"], value: number
+                    }
+
+                    const onUpdate = (e: number) => updateData(e, dateType)
+
+                    return <SplitRow
+                        withoutFade
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            alignItems: "center",
+                            height: 53,
+                        }}
+                        gap={0}
+                        elements={[
+                            <DatePicker
+                                {...dateProps}
+                                mode="date"
+                                setValue={onUpdate}
+                            />, !data.allDay && <DatePicker
+                                {...dateProps}
+                                mode="time"
+                                format={{ minute: '2-digit', hour: '2-digit', hourCycle: 'h12' }}
+                                style={[dateProps.style, { alignItems: 'flex-end' }]}
+                                setValue={onUpdate}
+                            />
+                        ]}
+                    />
+                })}
             </View>
+            <AnimateHeight open={checkForInvalidDate}>
+                <View
+                    style={{
+                        marginTop: 15,
+                        backgroundColor: "#EECFCF",
+                        borderRadius: 4,
+                        paddingHorizontal: 20,
+                        paddingVertical: 15,
+                    }}
+                >
+                    <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+                        Please enter a start date after the end time!
+                    </Text>
+                </View>
+            </AnimateHeight>
             <Input
                 placeholder="Enter a summary of the schedule"
                 label="Enter an optional summary"
@@ -378,7 +306,7 @@ export default ({
                     <Text>Repeat every</Text>
                     <Input
                         value={data.custom.number}
-                        handleInput={(e) => updateCustomData(e, "number")}
+                        handleInput={(e) => updateData(e, "number", 'custom')}
                         placeholder="1"
                         inputStyle={{
                             width: 45,
@@ -400,7 +328,7 @@ export default ({
                             { name: "Month", value: "monthly" },
                         ]}
                         placeholder="Day"
-                        handleSelected={(e) => updateCustomData(e, "repeatingFormat")}
+                        handleSelected={(e) => updateData(e, "repeatingFormat", 'custom')}
                         inputStyle={{ height: 40 }}
                         style={{ flex: 1 }}
                         hasBottomMargin={false}
@@ -423,7 +351,7 @@ export default ({
                         ].map(({ label, value }) => (
                             <Day
                                 key={label}
-                                handleClick={updateCustomDays}
+                                handleClick={() => updateData('', value, 'customDays')}
                                 value={value}
                                 label={label}
                                 active={data.custom.repeatingDays.includes(value)}
@@ -438,7 +366,7 @@ export default ({
                     buttons={[
                         { value: "never", name: "Never" },
                         {
-                            value: "On",
+                            value: "on",
                             name: "On",
                             rightSideElement: (
                                 <View
@@ -461,7 +389,7 @@ export default ({
                                     <DatePicker
                                         disabled={data.custom.ends.option === "never"}
                                         mode="date"
-                                        setValue={(e) => updateCustomEndDate("endDate", e)}
+                                        setValue={(e) => updateData("endDate", e, 'endDate', 'endDate')}
                                         value={data.custom.ends.endDate}
                                     />
                                 </View>
@@ -469,7 +397,7 @@ export default ({
                         },
                     ]}
                     value={data.custom.ends.option}
-                    handleChange={(e) => updateCustomEndDate("option", e)}
+                    handleChange={(e) => updateData("option", e, 'endDate', 'option')}
                 />
             </AnimateHeight>
             <View style={{ marginTop: 25 }}>
