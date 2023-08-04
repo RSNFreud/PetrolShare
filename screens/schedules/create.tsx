@@ -66,13 +66,7 @@ const DateWrapper = ({
             flexDirection: "row",
             justifyContent: "space-between",
             width: "100%",
-            //   marginBottom: start ? 15 : 0,
-            //   backgroundColor: start ? invalidDateColour : Colors.primary,
             alignItems: "center",
-            //   borderColor: Colors.border,
-            //   borderWidth: 1,
-            //   borderStyle: "solid",
-            //   borderRadius: 4,
             height: 53,
         }}
         elements={elements}
