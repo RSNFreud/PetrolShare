@@ -134,7 +134,7 @@ export default ({
                     />
                 </Split>
             )}
-            <Popup visible={visible} handleClose={() => setVisible(false)}>
+            <Popup visible={visible} handleClose={() => setVisible(false)} title="Edit Distance">
                 <Input
                     label="Distance"
                     handleInput={handleInput}

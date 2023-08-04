@@ -28,8 +28,25 @@ export default ({
     handleUpdate: () => onUpdate()
   }
 
+
+  const getTitle = (currentScreen: string) => {
+    switch (currentScreen) {
+      case 'Settings':
+        return 'Settings'
+      case 'Name':
+        return 'Change Name'
+      case 'Password':
+        return 'Change Password'
+      case 'Email':
+        return 'Change Email'
+      default:
+        return 'Settings'
+    }
+  }
+
+
   return (
-    <Popup visible={visible}{...defaultProps}>
+    <Popup visible={visible}{...defaultProps} title={getTitle(screen)}>
       {screen === "" ? <Default handleChange={e => setScreen(e)}{...defaultProps} /> : <></>}
       {screen === "Settings" ? <Settings handleChange={e => setScreen(e)} {...defaultProps} /> : <></>}
       {screen === "Name" ? <ChangeName handleChange={e => setScreen(e)}{...defaultProps} /> : <></>}

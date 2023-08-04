@@ -72,7 +72,7 @@ export default ({ active, data, handleClose, invoiceID, handleUpdate }: PropsTyp
             });
     }
 
-    return <Popup visible={active} handleClose={handleClose}>
+    return <Popup visible={active} handleClose={handleClose} title="Assign Distance">
         <Input handleInput={e => setValues({ ...values, distance: e })} label={`Distance to apply`} errorMessage={errors.distance} placeholder={`Enter amount (Max: ${maxDistance})`} keyboardType={'numbers-and-punctuation'} inputStyle={{ paddingVertical: 10 }} style={{ marginBottom: 20, marginTop: 20 }} />
         {Boolean(usernames.length) ?
             <Dropdown label="User" placeholder="Choose a username" data={usernames} handleSelected={e => setValues({ ...values, name: e })} value={values.name} errorMessage={errors.name} hiddenValue /> : <></>}

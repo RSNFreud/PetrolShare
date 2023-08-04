@@ -354,7 +354,16 @@ export default ({ navigation }: any) => {
     } catch { }
   }
 
-
+  const getTitle = (currentScreen: string) => {
+    switch (currentScreen) {
+      case 'Settings':
+        return 'Group Settings'
+      case 'ConfirmDistance':
+        return 'Confirm Distance'
+      default:
+        return 'Welcome'
+    }
+  }
   return (
     <Layout homepage>
       <View style={{ backgroundColor: Colors.secondary, paddingHorizontal: 25, paddingBottom: 35 }}>
@@ -446,7 +455,7 @@ export default ({ navigation }: any) => {
           </>
         </FadeWrapper>
       </ScrollView>
-      <Popup visible={visible} handleClose={() => { }} showClose={false}>
+      <Popup visible={visible} handleClose={() => { }} showClose={false} title={getTitle(currentScreen)}>
         {currentScreen === '' ? <Demo handleClose={handleClose} handleUpdate={updateData} /> : <></>}
         {currentScreen === "Settings" ? <GroupSettings handleComplete={handleClose} newGroup hideCancel /> : <></>}
         {currentScreen === "ConfirmDistance" && confirmDistanceData ? <ConfirmDistance handleComplete={handleClose} {...confirmDistanceData} /> : <></>}

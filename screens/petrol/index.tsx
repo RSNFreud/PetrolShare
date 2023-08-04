@@ -91,7 +91,7 @@ export default React.memo(({ onClose }: PropsType) => {
   }
 
   return (
-    <Popup visible={open} handleClose={handleClose} >
+    <Popup visible={open} handleClose={handleClose} title="Add Petrol" >
       <Box
         style={{
           paddingHorizontal: 15,

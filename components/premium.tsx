@@ -132,7 +132,7 @@ export default () => {
             </TouchableWithoutFeedback>
         </Animated.View>
 
-        <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)}>
+        <Popup visible={showPremiumInfo} handleClose={() => setShowPremiumInfo(false)} title="PetrolShare Premium">
             <Text style={{ lineHeight: 24, marginBottom: 30 }}>You are currently using the free version of the PetrolShare app allowing you to have a maximum amount of 2 users in your group.
                 {'\n\n'}
                 By upgrading to our premium version, you gain access to have an unlimited amount of users in your group, plus other cool features to come!</Text>

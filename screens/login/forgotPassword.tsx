@@ -50,6 +50,7 @@ export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
 
   return (
     <Popup
+      title="Forgot Your Password"
       visible={visible}
       handleClose={() => {
         setVisible(false);

@@ -403,6 +403,7 @@ export default ({ navigation }: any) => {
 
       <Popup
         visible={visible}
+        title='Preset Management'
         handleClose={() => {
           setVisible(false)
         }}
