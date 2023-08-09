@@ -715,6 +715,7 @@ export default () => {
           <Popup
             visible={visible}
             handleClose={() => setVisible(false)}
+
             title="Add a new schedule"
           >
             <Create currentDate={currentDate} onClose={updateData} />

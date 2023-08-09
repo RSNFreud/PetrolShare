@@ -40,7 +40,7 @@ export default ({
       case 'Email':
         return 'Change Email'
       default:
-        return 'Settings'
+        return 'My Account'
     }
   }
 

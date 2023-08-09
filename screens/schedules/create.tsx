@@ -18,7 +18,7 @@ import Button from "../../components/button";
 import axios from "axios";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
-import { convertHexToRGBA, sendCustomEvent } from "../../hooks";
+import { Alert, convertHexToRGBA, sendCustomEvent } from "../../hooks";
 import SplitRow from "../../components/splitRow";
 
 type DayProps = {
@@ -77,6 +77,7 @@ export default ({
     const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
+        if (data.startDate !== 0 && data.endDate !== 0) return
         let time = new Date(currentDate);
         time = new Date(
             `${time.getFullYear()}-${time.getMonth() + 1
@@ -160,9 +161,15 @@ export default ({
             })
             .catch(({ response }) => {
                 setLoading(false);
-                console.log(response.data);
                 setHasError(true);
-                setErrors(response?.data);
+                if (typeof response?.data === "string")
+                    setErrors(response?.data);
+                else {
+                    onClose()
+                    setTimeout(() => {
+                        Alert('Schedule', `The following dates are not available and have been skipped being added:\n\n${response?.data.map((date: string) => new Date(date).toLocaleDateString()).join('\n')}`)
+                    }, 500);
+                }
             });
     };
 
@@ -256,7 +263,7 @@ export default ({
                     />
                 })}
             </View>
-            <AnimateHeight open={checkForInvalidDate}>
+            <AnimateHeight open={!errors && checkForInvalidDate}>
                 <View
                     style={{
                         marginTop: 15,
@@ -341,13 +348,13 @@ export default ({
                         contentContainerStyle={{ gap: 15, marginTop: 15, marginBottom: 10 }}
                     >
                         {[
-                            { value: "sunday", label: "Su" },
-                            { value: "monday", label: "Mo" },
-                            { value: "tuesday", label: "Tu" },
-                            { value: "wednesday", label: "We" },
-                            { value: "thursday", label: "Th" },
-                            { value: "Friday", label: "F" },
-                            { value: "saturday", label: "Sa" },
+                            { value: "0", label: "Su" },
+                            { value: "1", label: "Mo" },
+                            { value: "2", label: "Tu" },
+                            { value: "3", label: "We" },
+                            { value: "4", label: "Th" },
+                            { value: "5", label: "F" },
+                            { value: "6", label: "Sa" },
                         ].map(({ label, value }) => (
                             <Day
                                 key={label}
