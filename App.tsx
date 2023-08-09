@@ -80,6 +80,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(true);
   const [userData, setUserData] = useState<Partial<StoreData>>({});
   const [firstSteps, setFirstSteps] = useState(false);
   const [screen, setScreen] = useState("");
@@ -128,6 +129,8 @@ export default function App() {
         setUserData(e);
       },
       isLoading: loading,
+      isPremium: isPremium,
+      setPremiumStatus: e => setIsPremium(e),
       signOut: async () => {
         deleteItem("userData");
         deleteItem("presets");

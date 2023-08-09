@@ -15,6 +15,8 @@ export type AuthContextType = {
     retrieveData: StoreData
     isLoading: boolean
     isLoggedIn: boolean
+    isPremium: boolean
+    setPremiumStatus: (e: boolean) => void
     signOut: () => void
 }
 

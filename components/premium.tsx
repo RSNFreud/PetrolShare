@@ -15,7 +15,7 @@ import { GroupType } from "./layout"
 export default () => {
     const [premium, setPremium] = useState<null | boolean>(null)
     const [showPremiumInfo, setShowPremiumInfo] = useState(false)
-    const { retrieveData, isLoading } = useContext(AuthContext)
+    const { retrieveData, isLoading, setPremiumStatus } = useContext(AuthContext)
     const heightAnim = useRef(new Animated.Value(0)).current;
     const { width } = useWindowDimensions();
 
@@ -32,6 +32,7 @@ export default () => {
     useEffect(() => {
         if (!premium) expand()
         else minimise()
+        if (setPremiumStatus && typeof premium === "boolean") setPremiumStatus(premium)
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if (!(data as GroupType)?.premium && premium) {

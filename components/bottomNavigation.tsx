@@ -1,9 +1,10 @@
-import React, { useRef } from "react"
+import React, { useContext, useRef } from "react"
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native"
 import Svg, { Path } from "react-native-svg"
 import { Text } from "./Themed"
 import Colors from "../constants/Colors"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
+import { AuthContext } from "../hooks/context"
 
 type BottonNavPropTypes = {
     icon: JSX.Element,
@@ -69,6 +70,7 @@ const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) 
 
 export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
     const scrollRef = useRef<ScrollView>(null)
+    const { isPremium } = useContext(AuthContext)
 
     const setInitialScroll = (index: number) => {
         const ref = scrollRef.current
@@ -76,7 +78,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         ref.scrollTo({ y: 0, x: 30 * index, animated: true })
     }
 
-    return <ScrollView ref={scrollRef} style={{ backgroundColor: Colors.secondary, width: '100%', flexGrow: 0 }} horizontal contentContainerStyle={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 10 }}>
+    return <ScrollView ref={scrollRef} style={{ backgroundColor: Colors.secondary, width: '100%', flexGrow: 0 }} horizontal contentContainerStyle={{ display: 'flex', flexDirection: 'row', paddingHorizontal: 10, justifyContent: 'center', minWidth: '100%' }}>
         {state?.routes.map((route, index) => {
             const { options } = descriptors[route.key];
             const label = typeof options.tabBarLabel !== 'string'
@@ -88,6 +90,8 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
             const onPress = () => {
                 navigation.navigate(route.name);
             };
+
+            if (!isPremium && label === "Schedules") return
 
             if (isFocused) setInitialScroll(index)
 
