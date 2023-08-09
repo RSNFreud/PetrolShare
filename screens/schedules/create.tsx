@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-    ColorValue,
+
     Switch,
     TouchableWithoutFeedback,
     View,
     ScrollView,
-    FlexAlignType,
 } from "react-native";
 import DatePicker from "../../components/dateTimePicker";
 import { Text, ViewProps } from "../../components/Themed";
@@ -65,7 +64,7 @@ export default ({
         repeating: "notRepeating",
         custom: {
             number: "1",
-            repeatingFormat: "day",
+            repeatingFormat: "daily",
             repeatingDays: [] as string[],
             ends: { option: false, endDate: 0 },
         },
@@ -74,7 +73,7 @@ export default ({
     const { retrieveData } = useContext(AuthContext);
     const [errors, setErrors] = useState("");
     const [hasError, setHasError] = useState(false);
-    const maxRepeatingDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+    const [maxRepeatingDate, setMaxRepeatingDate] = useState(new Date(new Date().setFullYear(new Date().getFullYear() + 1)))
 
     useEffect(() => {
         if (data.startDate !== 0 && data.endDate !== 0) return
@@ -117,8 +116,6 @@ export default ({
             else repeatingDays.push(value);
             newData = { ...data, custom: { ...data.custom, repeatingDays: repeatingDays } }
         }
-        console.log(newData);
-
         setData(newData);
     };
 
@@ -127,6 +124,35 @@ export default ({
             setData((data) => ({ ...data, endDate: data.startDate }));
         }
     }, [data]);
+
+    useEffect(() => {
+        let maxDate = maxRepeatingDate
+        switch (data.custom.repeatingFormat) {
+            case 'weekly':
+                maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+
+                break;
+            case 'daily':
+                maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+
+                break;
+
+            case 'monthly':
+                maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+
+                break;
+
+            default:
+                break;
+        }
+    }, [data.custom.repeatingFormat]);
+
 
     const handleSubmit = () => {
         setHasError(false);
