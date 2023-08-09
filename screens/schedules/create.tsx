@@ -66,7 +66,7 @@ export default ({
             number: "1",
             repeatingFormat: "daily",
             repeatingDays: [] as string[],
-            ends: { option: false, endDate: 0 },
+            endDate: 0,
         },
     });
     const [loading, setLoading] = useState(false);
@@ -90,7 +90,7 @@ export default ({
             endDate: time.setHours(time.getHours() + 1),
             custom: {
                 ...data.custom,
-                ends: { option: false, endDate: maxRepeatingDate.getTime() },
+                endDate: maxRepeatingDate.getTime(),
             },
         });
     }, [currentDate]);
@@ -102,13 +102,12 @@ export default ({
         }, 500);
     };
 
-    const updateData = (e: boolean | string | number, value: string | number | boolean, position?: 'custom' | 'customDays' | 'endDate', key?: string) => {
+    const updateData = (e: boolean | string | number, value: string | number | boolean, position?: 'custom' | 'customDays') => {
         dismissError();
         let newData = data
 
         if (!position && typeof value === 'string') newData = { ...data, [value]: e }
         else if (position === 'custom' && typeof value === 'string') newData = { ...data, custom: { ...data.custom, [value]: e } }
-        else if (position === 'endDate' && key) newData = { ...data, custom: { ...data.custom, ends: { ...data.custom.ends, [key]: value } } }
         else if (position === 'customDays' && typeof value === 'string') {
             let repeatingDays = data.custom.repeatingDays;
             if (data.custom.repeatingDays.includes(value))
@@ -131,20 +130,20 @@ export default ({
             case 'weekly':
                 maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
 
                 break;
             case 'daily':
                 maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
 
                 break;
 
             case 'monthly':
                 maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, ends: { ...data.custom.ends, endDate: maxDate.getTime() } } }));
+                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
 
                 break;
 
@@ -430,12 +429,12 @@ export default ({
                                 year: "numeric",
                                 weekday: "short",
                             },
-                            value: data.custom.ends.endDate
+                            value: data.custom.endDate
                         } as {
                             style: ViewProps["style"], value: number
                         }
 
-                        const onUpdate = (e: number) => updateData("option", e, 'endDate', 'option')
+                        const onUpdate = (e: number) => updateData(e, "endDate", 'custom')
 
                         return <SplitRow
                             withoutFade
