@@ -13,7 +13,6 @@ import Colors from "../../constants/Colors";
 import Input from "../../components/Input";
 import Dropdown from "../../components/Dropdown";
 import AnimateHeight from "../../components/animateHeight";
-import RadioButton from "../../components/RadioButton";
 import Button from "../../components/button";
 import axios from "axios";
 import config from "../../config";
@@ -68,13 +67,14 @@ export default ({
             number: "1",
             repeatingFormat: "day",
             repeatingDays: [] as string[],
-            ends: { option: "never", endDate: 0 },
+            ends: { option: false, endDate: 0 },
         },
     });
     const [loading, setLoading] = useState(false);
     const { retrieveData } = useContext(AuthContext);
     const [errors, setErrors] = useState("");
     const [hasError, setHasError] = useState(false);
+    const maxRepeatingDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
 
     useEffect(() => {
         if (data.startDate !== 0 && data.endDate !== 0) return
@@ -91,7 +91,7 @@ export default ({
             endDate: time.setHours(time.getHours() + 1),
             custom: {
                 ...data.custom,
-                ends: { option: "never", endDate: time.getTime() },
+                ends: { option: false, endDate: maxRepeatingDate.getTime() },
             },
         });
     }, [currentDate]);
@@ -103,12 +103,12 @@ export default ({
         }, 500);
     };
 
-    const updateData = (e: boolean | string | number, value: string | number, position?: 'custom' | 'customDays' | 'endDate', key?: string) => {
+    const updateData = (e: boolean | string | number, value: string | number | boolean, position?: 'custom' | 'customDays' | 'endDate', key?: string) => {
         dismissError();
         let newData = data
 
-        if (!position) newData = { ...data, [value]: e }
-        else if (position === 'custom') newData = { ...data, custom: { ...data.custom, [value]: e } }
+        if (!position && typeof value === 'string') newData = { ...data, [value]: e }
+        else if (position === 'custom' && typeof value === 'string') newData = { ...data, custom: { ...data.custom, [value]: e } }
         else if (position === 'endDate' && key) newData = { ...data, custom: { ...data.custom, ends: { ...data.custom.ends, [key]: value } } }
         else if (position === 'customDays' && typeof value === 'string') {
             let repeatingDays = data.custom.repeatingDays;
@@ -117,6 +117,7 @@ export default ({
             else repeatingDays.push(value);
             newData = { ...data, custom: { ...data.custom, repeatingDays: repeatingDays } }
         }
+        console.log(newData);
 
         setData(newData);
     };
@@ -280,7 +281,7 @@ export default ({
             </AnimateHeight>
             <Input
                 placeholder="Enter a summary of the schedule"
-                label="Enter an optional summary"
+                label="Summary (Optional)"
                 handleInput={(e) => updateData(e, "summary")}
                 style={{ marginVertical: 25 }}
             ></Input>
@@ -366,47 +367,72 @@ export default ({
                         ))}
                     </ScrollView>
                 </AnimateHeight>
-                <Text style={{ marginTop: 25, marginBottom: 15, fontWeight: "bold" }}>
-                    Ends
-                </Text>
-                <RadioButton
-                    buttons={[
-                        { value: "never", name: "Never" },
-                        {
-                            value: "on",
-                            name: "On",
-                            rightSideElement: (
-                                <View
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        justifyContent: "center",
-                                        marginBottom: 15,
-                                        backgroundColor: Colors.primary,
-                                        borderColor: Colors.border,
-                                        alignItems: "center",
-                                        borderWidth: 1,
-                                        borderStyle: "solid",
-                                        borderRadius: 4,
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 10,
-                                        opacity: data.custom.ends.option === "never" ? 0.5 : 1,
-                                    }}
-                                >
-                                    <DatePicker
-                                        disabled={data.custom.ends.option === "never"}
-                                        mode="date"
-                                        setValue={(e) => updateData("endDate", e, 'endDate', 'endDate')}
-                                        value={data.custom.ends.endDate}
-                                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
-                                    />
-                                </View>
-                            ),
-                        },
-                    ]}
-                    value={data.custom.ends.option}
-                    handleChange={(e) => updateData("option", e, 'endDate', 'option')}
-                />
+                <View
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginTop: 15,
+                        width: "100%",
+                    }}
+                >
+                    <Text style={{ fontWeight: "bold" }}>Ends on:</Text>
+                </View>
+                <View
+                    style={{
+                        marginTop: 10,
+                        borderColor: Colors.border,
+                        borderWidth: 1,
+                        borderStyle: "solid",
+                        borderRadius: 4,
+                        backgroundColor: Colors.primary,
+                    }}
+                >
+                    {[''].map(() => {
+
+                        const dateProps = {
+                            style: {
+                                paddingVertical: 13,
+                                paddingHorizontal: 16,
+                                width: "100%",
+                                alignItems: "flex-start",
+                            },
+                            format: {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                weekday: "short",
+                            },
+                            value: data.custom.ends.endDate
+                        } as {
+                            style: ViewProps["style"], value: number
+                        }
+
+                        const onUpdate = (e: number) => updateData("option", e, 'endDate', 'option')
+
+                        return <SplitRow
+                            withoutFade
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: "100%",
+                                alignItems: "center",
+                                height: 53,
+                            }}
+                            gap={0}
+                            elements={[
+                                <DatePicker
+                                    {...dateProps}
+                                    maxDate={maxRepeatingDate}
+                                    mode="date"
+                                    setValue={onUpdate}
+                                />
+                            ]}
+                        />
+                    })}
+                </View>
             </AnimateHeight>
             <View style={{ marginTop: 25 }}>
                 <AnimateHeight open={hasError}>
