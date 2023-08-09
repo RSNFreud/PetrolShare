@@ -398,6 +398,7 @@ export default ({
                                         mode="date"
                                         setValue={(e) => updateData("endDate", e, 'endDate', 'endDate')}
                                         value={data.custom.ends.endDate}
+                                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
                                     />
                                 </View>
                             ),

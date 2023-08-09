@@ -11,9 +11,10 @@ type PropsType = {
     disabled?: boolean
     format?: Intl.DateTimeFormatOptions
     textStyle?: TextProps["style"]
+    maxDate?: Date
 }
 
-export default ({ label, style, value = new Date(), setValue, mode, disabled, format, textStyle }: PropsType) => {
+export default ({ label, style, value = new Date(), setValue, mode, disabled, format, textStyle, maxDate }: PropsType) => {
     const [modalOpen, setModalOpen] = useState(false)
     const dateValue = typeof value === "number" ? new Date(value) : value
 
@@ -47,6 +48,6 @@ export default ({ label, style, value = new Date(), setValue, mode, disabled, fo
             </View>
         </TouchableWithoutFeedback>
         {modalOpen &&
-            <RNDateTimePicker mode={mode} value={dateValue} minimumDate={new Date()} onChange={handleChange} />}
+            <RNDateTimePicker mode={mode} value={dateValue} minimumDate={new Date()} onChange={handleChange} maximumDate={maxDate} />}
     </View>
 }
