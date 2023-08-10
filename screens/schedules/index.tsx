@@ -588,6 +588,7 @@ export default () => {
                                                       <Button
                                                         size="small"
                                                         color="red"
+                                                        variant="ghost"
                                                       >
                                                         Delete
                                                       </Button>,

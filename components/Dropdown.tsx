@@ -58,7 +58,7 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
             fontWeight: '700',
             fontSize: 16,
             lineHeight: 16,
-            marginBottom: 6,
+            marginBottom: 10,
             color: 'white',
           }}
         >

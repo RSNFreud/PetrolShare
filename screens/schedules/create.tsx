@@ -7,7 +7,7 @@ import {
     ScrollView,
 } from "react-native";
 import DatePicker from "../../components/dateTimePicker";
-import { Text, ViewProps } from "../../components/Themed";
+import { Seperator, Text, ViewProps } from "../../components/Themed";
 import Colors from "../../constants/Colors";
 import Input from "../../components/Input";
 import Dropdown from "../../components/Dropdown";
@@ -123,22 +123,23 @@ export default ({
 
     useEffect(() => {
         let maxDate = maxRepeatingDate
+        let tempDate = new Date(data.startDate)
         switch (data.custom.repeatingFormat) {
             case 'weekly':
-                maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
                 break;
             case 'daily':
-                maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
                 break;
 
             case 'monthly':
-                maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
@@ -149,37 +150,44 @@ export default ({
         }
         switch (data.repeating) {
             case 'weekly':
-                maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
-
                 break;
             case 'daily':
-                maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
-
                 break;
 
             case 'monthly':
-                maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
+                maxDate = new Date(tempDate.setDate(tempDate.getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
                 setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
-
                 break;
 
             default:
                 break;
         }
-    }, [data.custom.repeatingFormat, data.repeating]);
+    }, [data.custom.repeatingFormat, data.repeating, data.startDate]);
 
 
     const handleSubmit = () => {
         setHasError(false);
+        if (loading) return
         let newData = data;
         if (data.allDay && data.endDate < data.startDate) {
             setHasError(true);
             return setErrors("Please choose a valid date time combination!");
+        }
+        if (data.custom.repeatingFormat === 'weekly' && !data.custom.repeatingDays.length) {
+            setHasError(true);
+            return setErrors("Please select the days for which to repeat the schedule!");
+        }
+
+        if (data.repeating === 'custom' && !data.custom.number) {
+            setHasError(true);
+            return setErrors("Please select how often the schedule repeats!");
         }
         if (data.allDay) {
             const start = new Date(data.startDate);
@@ -329,8 +337,9 @@ export default ({
                 placeholder="Enter a summary of the schedule"
                 label="Summary (Optional)"
                 handleInput={(e) => updateData(e, "summary")}
-                style={{ marginVertical: 25 }}
+                style={{ marginTop: 25 }}
             ></Input>
+            <Seperator style={{ marginVertical: 25 }} />
             <Dropdown
                 sort={false}
                 hiddenValue
@@ -361,7 +370,7 @@ export default ({
                     <Input
                         value={data.custom.number}
                         handleInput={(e) => updateData(e, "number", 'custom')}
-                        placeholder="1"
+                        placeholder=""
                         inputStyle={{
                             width: 45,
                             height: 40,
@@ -425,7 +434,7 @@ export default ({
                         width: "100%",
                     }}
                 >
-                    <Text style={{ fontWeight: "bold" }}>Ends on:</Text>
+                    <Text style={{ fontWeight: "bold" }}>Repeat until:</Text>
                 </View>
                 <View
                     style={{
