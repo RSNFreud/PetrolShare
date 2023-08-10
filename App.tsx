@@ -95,7 +95,6 @@ export default function App() {
   });
   const [loadingStatus, setLoadingStatus] = useState({ fonts: fontsLoaded, auth: false, update: false })
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
-
   const store = React.useMemo(
     () => ({
       signIn: async (e: any) => {
