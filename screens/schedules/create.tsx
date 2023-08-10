@@ -62,11 +62,11 @@ export default ({
         endDate: 0,
         summary: "",
         repeating: "notRepeating",
+        repeatingEndDate: 0,
         custom: {
             number: "1",
             repeatingFormat: "daily",
             repeatingDays: [] as string[],
-            endDate: 0,
         },
     });
     const [loading, setLoading] = useState(false);
@@ -88,10 +88,7 @@ export default ({
             ...data,
             startDate: time.getTime(),
             endDate: time.setHours(time.getHours() + 1),
-            custom: {
-                ...data.custom,
-                endDate: maxRepeatingDate.getTime(),
-            },
+            repeatingEndDate: maxRepeatingDate.getTime(),
         });
     }, [currentDate]);
 
@@ -130,27 +127,51 @@ export default ({
             case 'weekly':
                 maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
                 break;
             case 'daily':
                 maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
                 break;
 
             case 'monthly':
                 maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
                 setMaxRepeatingDate(maxDate)
-                setData((data) => ({ ...data, custom: { ...data.custom, endDate: maxDate.getTime() } }));
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
 
                 break;
 
             default:
                 break;
         }
-    }, [data.custom.repeatingFormat]);
+        switch (data.repeating) {
+            case 'weekly':
+                maxDate = new Date(new Date().setDate(new Date().getDate() + ((52 * 2) * 7)))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
+
+                break;
+            case 'daily':
+                maxDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
+
+                break;
+
+            case 'monthly':
+                maxDate = new Date(new Date().setMonth(new Date().getMonth() + 24))
+                setMaxRepeatingDate(maxDate)
+                setData((data) => ({ ...data, repeatingEndDate: maxDate.getTime() }));
+
+                break;
+
+            default:
+                break;
+        }
+    }, [data.custom.repeatingFormat, data.repeating]);
 
 
     const handleSubmit = () => {
@@ -392,6 +413,8 @@ export default ({
                         ))}
                     </ScrollView>
                 </AnimateHeight>
+            </AnimateHeight>
+            <AnimateHeight open={data.repeating !== 'notRepeating'}>
                 <View
                     style={{
                         display: "flex",
@@ -429,12 +452,12 @@ export default ({
                                 year: "numeric",
                                 weekday: "short",
                             },
-                            value: data.custom.endDate
+                            value: data.repeatingEndDate
                         } as {
                             style: ViewProps["style"], value: number
                         }
 
-                        const onUpdate = (e: number) => updateData(e, "endDate", 'custom')
+                        const onUpdate = (e: number) => updateData(e, "repeatingEndDate")
 
                         return <SplitRow
                             withoutFade
