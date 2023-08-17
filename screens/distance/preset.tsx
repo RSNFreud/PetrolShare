@@ -10,11 +10,17 @@ import Button from '../../components/button'
 import Popup from '../../components/Popup'
 import SubmitButton from './submitButton'
 import Toast from 'react-native-toast-message'
-import { Alert, deleteItem, getItem, sendCustomEvent, setItem } from '../../hooks'
+import { Alert, deleteItem, getGroupData, getItem, sendCustomEvent, setItem } from '../../hooks'
 import config from '../../config'
 import Colors from '../../constants/Colors'
+
+type PresetType = {
+  presetName: string
+  distance: string
+  presetID: number
+}
 export default ({ navigation }: any) => {
-  const [data, setData] = useState({
+  const [data, setData] = useState<{ selectedPreset: null | number }>({
     selectedPreset: null,
   })
   const [errors, setErrors] = useState('')
@@ -22,7 +28,7 @@ export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const { retrieveData } = useContext(AuthContext)
-  const [presets, setPresets] = useState<Array<any> | null>(null)
+  const [presets, setPresets] = useState<PresetType[] | null>(null)
   const [presetFormData, setPresetFormData] = useState({
     presetID: '',
     presetName: '',
@@ -34,6 +40,7 @@ export default ({ navigation }: any) => {
   })
   const [popupType, setPopupType] = useState('new')
   const selectedToDelete = useRef('')
+  const [distanceFormat, setDistanceFormat] = useState()
   const getPresets = async () => {
     const currentPresets = getItem('presets')
 
@@ -59,7 +66,7 @@ export default ({ navigation }: any) => {
 
   useEffect(() => {
     if (data.selectedPreset && presets) {
-      const filtered: Array<any> = presets.filter(
+      const filtered: PresetType[] = presets.filter(
         (e: any) => e.presetID === data.selectedPreset,
       )
       setDistance(filtered[0].distance)
@@ -77,7 +84,14 @@ export default ({ navigation }: any) => {
       }
     }
     getDraft()
+    getDistanceFormat()
   }, [retrieveData])
+
+  const getDistanceFormat = async () => {
+    const data = await getGroupData()
+    if (!data) return
+    setDistanceFormat(data.distance)
+  }
 
   const handleSubmit = async () => {
     setErrors('')
@@ -88,12 +102,12 @@ export default ({ navigation }: any) => {
     let distance
 
     if (data.selectedPreset && presets) {
-      const filtered: Array<any> = presets.filter(
+      const filtered: PresetType[] = presets.filter(
         (e: any) => e.presetID === data.selectedPreset,
       )
       distance = filtered[0].distance
     }
-    if (parseInt(distance) <= 0)
+    if (!distance || parseInt(distance) <= 0)
       return setErrors('Please enter a distance above 0!')
 
     if (!retrieveData) return
@@ -142,7 +156,7 @@ export default ({ navigation }: any) => {
 
   const handleEdit = (id: number) => {
     if (!presets) return
-    const item: any = presets.filter((e: any) => e.presetID === id)
+    const item: any = presets.filter((e: PresetType) => e.presetID === id)
     if (!item) return
     setPresetFormData(item[0])
     openPopup('new')
@@ -264,7 +278,7 @@ export default ({ navigation }: any) => {
             {presets === null && <ActivityIndicator size={'large'} color={Colors.tertiary} />}
             {presets && Boolean(presets.length) && (
               <ScrollView style={{ flex: 1, marginBottom: 25 }} >
-                {presets.map((e: any) => {
+                {presets.map((e: PresetType) => {
                   return (
                     <TouchableWithoutFeedback
                       onPress={() =>
@@ -298,7 +312,7 @@ export default ({ navigation }: any) => {
                         }}
                       >
                         <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                          {e.presetName}
+                          {e.presetName} ({e.distance} {distanceFormat})
                         </Text>
                         <View
                           style={{
@@ -355,7 +369,7 @@ export default ({ navigation }: any) => {
                             }}
                             variant="ghost"
                             color="red"
-                            handleClick={() => openPopup('delete', e.presetID)}
+                            handleClick={() => openPopup('delete', e.presetID.toString())}
                             analyticsLabel='Delete'
                           >
                             <Svg

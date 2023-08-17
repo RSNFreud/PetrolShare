@@ -70,7 +70,7 @@ export default () => {
 
     const openPayment = async () => {
         if (Platform.OS === "web") return
-        const product = await Purchases.getProducts(['premium_subscription'])
+        const product = await Purchases.getProducts(['premium_subscription'], Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION)
         Purchases.purchaseStoreProduct(product[0], null).then(e => {
             setShowPremiumInfo(false)
             axios
