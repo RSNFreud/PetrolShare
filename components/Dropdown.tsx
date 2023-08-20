@@ -130,16 +130,17 @@ export default ({ data, value, handleSelected, errorMessage, placeholder, hidden
         </Picker>
         <Text style={{ zIndex: 3, fontSize: 16 }}>{displayText || placeholder}</Text>
         <Svg
-          width="11"
-          height="13"
+          width="8"
+          height="14"
           fill="none"
-          viewBox="0 0 11 13"
+          viewBox="0 0 8 14"
         >
           <Path
             stroke="#fff"
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M5.333 11.833V1.167m-4.666 6l4.666 4.666L10 7.166"
+            strokeWidth="2"
+            d="M1 1l6 6-6 6"
           ></Path>
         </Svg>
       </View>

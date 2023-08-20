@@ -1,10 +1,10 @@
 import React from "react"
 import { View, ViewProps } from "react-native"
-import { Colors } from "react-native/Libraries/NewAppScreen"
 import SplitRow from "../../../components/splitRow"
 import { Text } from "../../../components/Themed"
 import { DataType } from "."
 import DatePicker from "../../../components/dateTimePicker"
+import Colors from "../../../constants/Colors"
 
 type PropsType = {
     data: DataType

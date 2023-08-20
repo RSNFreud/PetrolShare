@@ -257,7 +257,7 @@ export default ({
                 </View>
             </AnimateHeight>
             <Input
-                placeholder="Enter a summary of the schedule"
+                placeholder="Enter a summary"
                 label="Summary (Optional)"
                 handleInput={(e) => updateData(e, "summary")}
                 style={{ marginTop: 25 }}
