@@ -15,7 +15,7 @@ import Button from "../../components/button";
 type PropsType = {
     fullName: string;
     id: number;
-    distance: string;
+    distance: number;
     date: string;
     style: View["props"]["style"];
     activeSession: boolean;
@@ -34,7 +34,8 @@ export default ({
     const { retrieveData } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState(distance);
+    const [formData, setFormData] = useState<string>(distance.toString());
+    const [errorMessage, setErrorMessage] = useState("")
 
     const handleDelete = () => {
         Alert("Are you sure you want to delete this log?", undefined, [
@@ -63,9 +64,12 @@ export default ({
     };
 
     const handleEdit = () => {
+        setErrorMessage("")
         setLoading(true)
-        if (parseFloat(formData) <= 0 || !/^[0-9.]*$/.test(formData))
+        if (parseFloat(formData) <= 0 || !/^[0-9.]*$/.test(formData.toString())) {
+            setErrorMessage("Please enter a valid value!")
             return setLoading(false)
+        }
         axios
             .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
                 authenticationKey: retrieveData?.authenticationKey,
@@ -138,6 +142,7 @@ export default ({
                     label="Distance"
                     handleInput={handleInput}
                     value={formData?.toString()}
+                    errorMessage={errorMessage}
                     placeholder="Enter new distance"
                     style={{ marginBottom: 20 }}
                 />
