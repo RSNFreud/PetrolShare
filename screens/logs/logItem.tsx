@@ -141,6 +141,7 @@ export default ({
                 <Input
                     label="Distance"
                     handleInput={handleInput}
+                    keyboardType={'decimal-pad'}
                     value={formData?.toString()}
                     errorMessage={errorMessage}
                     placeholder="Enter new distance"
