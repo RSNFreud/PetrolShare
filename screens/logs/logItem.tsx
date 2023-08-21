@@ -15,7 +15,7 @@ import Button from "../../components/button";
 type PropsType = {
     fullName: string;
     id: number;
-    distance: number;
+    distance: string;
     date: string;
     style: View["props"]["style"];
     activeSession: boolean;
@@ -34,7 +34,7 @@ export default ({
     const { retrieveData } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState<number | "">(distance);
+    const [formData, setFormData] = useState(distance);
 
     const handleDelete = () => {
         Alert("Are you sure you want to delete this log?", undefined, [
@@ -64,6 +64,8 @@ export default ({
 
     const handleEdit = () => {
         setLoading(true)
+        if (parseFloat(formData) <= 0 || !/^[0-9.]*$/.test(formData))
+            return setLoading(false)
         axios
             .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
                 authenticationKey: retrieveData?.authenticationKey,
@@ -86,10 +88,7 @@ export default ({
     };
 
     const handleInput = (e: string) => {
-        const value = parseInt(e)
-        if (!value || isNaN(value)) return setFormData("")
-        if (isNaN(value)) return
-        setFormData(value)
+        setFormData(e)
     }
 
     return (
