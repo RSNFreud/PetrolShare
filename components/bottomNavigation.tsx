@@ -10,6 +10,7 @@ type BottonNavPropTypes = {
     icon: JSX.Element,
     text: string,
     active?: boolean
+    hidden?: boolean
     handleClick?: () => void
 }
 
@@ -58,14 +59,17 @@ const icon = (route: string) => {
     }
 }
 
-const BottomNavItem = ({ icon, text, active, handleClick }: BottonNavPropTypes) => (
-    <TouchableWithoutFeedback onPress={handleClick}>
-        <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: active ? 1 : 0.5, paddingVertical: 15, paddingHorizontal: 25 }}>
-            {icon}
-            <Text style={{ marginTop: 10, fontSize: 14, fontWeight: 'bold' }}>{text}</Text>
-        </View>
-    </TouchableWithoutFeedback>
-)
+const BottomNavItem = ({ icon, text, active, handleClick, hidden }: BottonNavPropTypes) => {
+    if (hidden) return <></>
+    return (
+        <TouchableWithoutFeedback onPress={handleClick}>
+            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: active ? 1 : 0.5, paddingVertical: 15, paddingHorizontal: 25 }}>
+                {icon}
+                <Text style={{ marginTop: 10, fontSize: 14, fontWeight: 'bold' }}>{text}</Text>
+            </View>
+        </TouchableWithoutFeedback>
+    )
+}
 
 
 export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
@@ -91,12 +95,11 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 navigation.navigate(route.name);
             };
 
-            if (!isPremium && label === "Schedules") return
-
             if (isFocused) setInitialScroll(index)
 
             return (
                 <BottomNavItem
+                    hidden={label === "Schedules" && !isPremium}
                     key={route.name}
                     active={isFocused}
                     text={label}

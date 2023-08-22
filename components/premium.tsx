@@ -20,19 +20,29 @@ export default () => {
     const { width } = useWindowDimensions();
 
     useEffect(() => {
-        if (premium) return
         if (Platform.OS === "web") return
         if (retrieveData?.groupID)
             Purchases.logIn(retrieveData?.groupID).then(({ customerInfo }) => {
                 if (typeof customerInfo.entitlements.active["premium"] !== "undefined") {
                     setPremium(true)
+                } else if (typeof customerInfo.entitlements.active["premium"] === "undefined" && premium) {
+                    setPremium(false)
+                    if (setPremiumStatus && typeof premium === "boolean") setPremiumStatus(false)
+                    axios
+                        .post(
+                            config.REACT_APP_API_ADDRESS +
+                            '/group/unsubscribe', {
+                            authenticationKey: retrieveData?.authenticationKey
+                        }).catch(err => {
+                            console.log(err.message);
+                        })
                 }
             })
     }, [premium])
     useEffect(() => {
+        if (setPremiumStatus && typeof premium === "boolean") setPremiumStatus(premium)
         if (!premium) expand()
         else minimise()
-        if (setPremiumStatus && typeof premium === "boolean") setPremiumStatus(premium)
         let data: string | { currency: string, distance: string, groupID: string, petrol: string, premium: boolean } | undefined | null = getItem('groupData')
         if (data && typeof data === "string") data = JSON.parse(data)
         if (!(data as GroupType)?.premium && premium) {

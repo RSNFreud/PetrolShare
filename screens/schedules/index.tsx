@@ -60,11 +60,10 @@ export default () => {
     getInitialDate(date).getTime()
   );
   const dateRef = useRef<ScrollView | null>(null);
-  const gestureRef = useRef<TouchableWithoutFeedback | null>(null);
   const [schedules, setSchedules] = useState<
     Record<number, Map<number, ScheduleType[]>[]> | []
   >([]);
-  const { retrieveData } = useContext(AuthContext);
+  const { retrieveData, isPremium } = useContext(AuthContext);
   const [isOpened, setIsOpened] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const navigation = useNavigation();
@@ -73,6 +72,10 @@ export default () => {
     setVisible(false);
     getSchedules();
   };
+
+  useEffect(() => {
+    if (!isPremium) return navigation.navigate('Dashboard')
+  }, [isPremium])
 
   useEffect(() => {
     if (retrieveData?.authenticationKey) getSchedules();
@@ -245,6 +248,8 @@ export default () => {
 
   const backDisabled =
     new Date(currentDate).getMonth() === new Date().getMonth();
+
+  if (!isPremium) return
 
   return (
     <Layout homepage noScrollView>
