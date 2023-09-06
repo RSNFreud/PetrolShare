@@ -374,7 +374,7 @@ export default function App() {
                     <Stack.Screen name="Register" component={Register} />
                   </>
                 )}
-                {width < 768 && loading && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
+                {width < 768 && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
                 <Stack.Screen
                   name="NotFound"
                   component={NotFoundScreen}

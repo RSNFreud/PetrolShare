@@ -121,6 +121,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   }
 
   const sendLink = async () => {
+
     if (!invoiceID) return
     if (Platform.OS === "web")
       navigate.navigate('PublicInvoice', { uniqueURL: data.uniqueURL })
@@ -144,6 +145,8 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     openManageDistance: () => setManageDistanceOpen(true)
   }
 
+  const dataLength = Object.keys(data.invoiceData).length
+
   return (
     <>
       <Box style={{ paddingHorizontal: 15, marginBottom: 25 }} onLayout={setWidth}>
@@ -166,21 +169,21 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             <SummaryItem width={itemWidth} title={`Price Per ${convertToSentenceCase(groupData.petrol)}`} value={currencyPosition(data.pricePerLiter, groupData.currency)} />
           </View> : <></>}
       </Box>
-      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 70 }}>
+      <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 70, gap: 10 }}>
         {userInvoice.map(
           ([_, value]: any) =>
           (
-            <InvoiceItem key={value.fullName} invoiceData={value} lastItem={Boolean(!dataObj.length)} {...globalProps} />)
+            <InvoiceItem key={value.fullName} invoiceData={value} {...globalProps} />)
         )}
         {untrackedDistance.map(
           ([_, value]: any) =>
           (
-            <InvoiceItem key={value.fullName} invoiceData={value} lastItem={Boolean(dataObj.length > 2)} {...globalProps} />)
+            <InvoiceItem key={value.fullName} invoiceData={value}  {...globalProps} />)
         )}
         {dataObj.map(
           ([_, value]: any, count: number) =>
           (
-            <InvoiceItem key={count} invoiceData={value} lastItem={dataObj.length === count + 1}  {...globalProps} />)
+            <InvoiceItem key={count} invoiceData={value} {...globalProps} />)
         )}
       </ScrollView>
       {!isPublic &&

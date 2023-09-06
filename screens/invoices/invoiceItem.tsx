@@ -14,13 +14,12 @@ type PropsType = {
     emailAddress?: string
     groupData: { currency: string, petrol: string, distance: string }
     openManageDistance: () => void | void
-    lastItem: boolean,
     authenticationKey?: string
     isPublic?: boolean
     invoicedBy?: string
 }
 
-export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
+export default ({ invoiceData, emailAddress, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
     const [alertSent, setAlertSent] = useState(false)
 
     const sendAlert = () => {
@@ -53,8 +52,6 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
             paddingVertical: 15,
             backgroundColor: Colors.primary,
             borderColor: Colors.border,
-            marginBottom:
-                lastItem || invoiceData.emailAddress === emailAddress && !isPublic ? 0 : 10,
         }}
     >
         <View
@@ -140,6 +137,6 @@ export default ({ invoiceData, emailAddress, lastItem, groupData, openManageDist
             <></>
         )}
     </Box>
-        {invoiceData.emailAddress === emailAddress && !lastItem && !isPublic ? <Seperator style={{ marginVertical: 25 }} /> : <></>}
+        {invoiceData.emailAddress === emailAddress && !isPublic ? <Seperator style={{ marginVertical: 15 }} /> : <></>}
     </>
 }
