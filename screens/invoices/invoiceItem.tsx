@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from "react-native"
+import { View } from "react-native"
 import { Box, Text, Seperator } from '../../components/Themed'
 import Button, { TouchableBase } from "../../components/button"
 import Svg, { Path } from "react-native-svg"
@@ -8,7 +8,7 @@ import { useState } from "react"
 import axios from "axios"
 import config from "../../config"
 
-type PropsType = {
+export type InvoicePropsType = {
     invoiceData: { fullName?: string, paymentDue: number, distance: number, liters?: number, emailAddress?: string }
     invoiceID: number | string
     emailAddress?: string
@@ -17,9 +17,10 @@ type PropsType = {
     authenticationKey?: string
     isPublic?: boolean
     invoicedBy?: string
+    invoiceLength: number
 }
 
-export default ({ invoiceData, emailAddress, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy }: PropsType) => {
+export default ({ invoiceData, emailAddress, groupData, openManageDistance, authenticationKey, invoiceID, isPublic, invoicedBy, invoiceLength }: InvoicePropsType) => {
     const [alertSent, setAlertSent] = useState(false)
 
     const sendAlert = () => {
@@ -137,6 +138,6 @@ export default ({ invoiceData, emailAddress, groupData, openManageDistance, auth
             <></>
         )}
     </Box>
-        {invoiceData.emailAddress === emailAddress && !isPublic ? <Seperator style={{ marginVertical: 15 }} /> : <></>}
+        {invoiceData.emailAddress === emailAddress && !isPublic && invoiceLength > 1 ? <Seperator style={{ marginVertical: 15 }} /> : <></>}
     </>
 }

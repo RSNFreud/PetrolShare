@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import { Box, Text } from '../../components/Themed'
-import * as Sharing from 'expo-sharing';
 import { ActivityIndicator, LayoutChangeEvent, Platform, ScrollView, Share, TouchableOpacity, View } from 'react-native'
 import axios from 'axios'
 import { AuthContext } from '../../hooks/context'
@@ -18,7 +17,7 @@ import config from '../../config'
 import AssignDistance from '../../components/assignDistance'
 import Colors from '../../constants/Colors'
 import Svg, { Path } from 'react-native-svg'
-import InvoiceItem from './invoiceItem'
+import InvoiceItem, { InvoicePropsType } from './invoiceItem'
 import { useNavigation } from '@react-navigation/native'
 import { TouchableBase } from '../../components/button';
 
@@ -134,18 +133,19 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const userInvoice = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === retrieveData?.fullName)
 
   const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
+  const dataLength = Object.keys(data.invoiceData).length || 1
 
-  const globalProps = {
+  const globalProps: Partial<InvoicePropsType> = {
     isPublic: isPublic,
     groupData: groupData,
-    invoiceID: invoiceID,
+    invoiceID: invoiceID || "",
     invoicedBy: data?.emailAddress,
     authenticationKey: retrieveData?.authenticationKey,
     emailAddress: retrieveData?.emailAddress,
+    invoiceLength: dataLength,
     openManageDistance: () => setManageDistanceOpen(true)
   }
 
-  const dataLength = Object.keys(data.invoiceData).length
 
   return (
     <>
