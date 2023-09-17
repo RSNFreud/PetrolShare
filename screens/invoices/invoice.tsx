@@ -135,7 +135,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const untrackedDistance = Object.entries(data.invoiceData as { fullName: string }[]).filter(([_, value]) => value.fullName === "Unaccounted Distance")
   const dataLength = Object.keys(data.invoiceData).length || 1
 
-  const globalProps: Partial<InvoicePropsType> = {
+  const globalProps = {
     isPublic: isPublic,
     groupData: groupData,
     invoiceID: invoiceID || "",
@@ -144,7 +144,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     emailAddress: retrieveData?.emailAddress,
     invoiceLength: dataLength,
     openManageDistance: () => setManageDistanceOpen(true)
-  }
+  } satisfies Partial<InvoicePropsType>
 
 
   return (
