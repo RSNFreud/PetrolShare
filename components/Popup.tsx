@@ -9,11 +9,11 @@ import {
   View,
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import Svg, { Path } from "react-native-svg";
 import Colors from "../constants/Colors";
 import AlertBox from "./alertBox";
 import { sendCustomEvent } from "../hooks";
 import { Text } from "./Themed";
+import Exit from "../assets/icons/exit";
 
 const TIME_TO_CLOSE = 200;
 
@@ -89,7 +89,7 @@ export default ({
     if (!visible && isVisible) {
       try {
         Keyboard.dismiss();
-      } catch { }
+      } catch {}
       setTimeout(() => {
         close();
       }, 400); // Hide keyboard
@@ -153,7 +153,9 @@ export default ({
           }}
         >
           <View>
-            {!!title && <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{title} </Text>}
+            {!!title && (
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>{title} </Text>
+            )}
           </View>
           {showClose && (
             <Pressable
@@ -169,12 +171,7 @@ export default ({
                 justifyContent: "center",
               }}
             >
-              <Svg width="14" height="14" fill="none" viewBox="0 0 10 10">
-                <Path
-                  fill="#fff"
-                  d="M10 .875L9.125 0 5 4.125.875 0 0 .875 4.125 5 0 9.125.875 10 5 5.875 9.125 10 10 9.125 5.875 5 10 .875z"
-                ></Path>
-              </Svg>
+              <Exit />
             </Pressable>
           )}
         </View>

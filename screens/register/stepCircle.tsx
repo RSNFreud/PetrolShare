@@ -1,11 +1,11 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import { View, StyleSheet, DimensionValue } from "react-native";
 import Colors from "../../constants/Colors";
+import Tick from "../../assets/icons/tick";
 
 type PropTypes = {
   active?: boolean;
-  width: string | number;
+  width: DimensionValue;
   withBar?: boolean;
   barHighlight?: boolean;
 };
@@ -29,7 +29,8 @@ export default ({
     },
     bar: {
       height: 4,
-      backgroundColor: active && barHighlight ? Colors.tertiary : Colors.secondary,
+      backgroundColor:
+        active && barHighlight ? Colors.tertiary : Colors.secondary,
       width: width,
     },
     wrapper: {
@@ -44,16 +45,7 @@ export default ({
     <View style={styles.wrapper}>
       {withBar && <View style={styles.bar} />}
       <View style={styles.circle}>
-        {active && (
-          <Svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-            <Path
-              stroke="#fff"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.75 8.75l3.5 3.5 7-7.5"
-            ></Path>
-          </Svg>
-        )}
+        {active && <Tick width="16" height="16" />}
       </View>
     </View>
   );

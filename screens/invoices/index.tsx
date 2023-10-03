@@ -1,7 +1,12 @@
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, TouchableOpacity, ScrollView, View } from "react-native";
+import {
+  ActivityIndicator,
+  TouchableOpacity,
+  ScrollView,
+  View,
+} from "react-native";
 import { Box, Breadcrumbs } from "../../components/Themed";
 import Layout from "../../components/layout";
 import { Text } from "../../components/Themed";
@@ -33,7 +38,7 @@ export default ({ navigation }: any) => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`
+          `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(async ({ data }) => {
         setData(data);
@@ -51,6 +56,7 @@ export default ({ navigation }: any) => {
           links={[
             {
               name: "Dashboard",
+              screenName: "Home",
             },
             {
               name: "Payments",
@@ -65,6 +71,7 @@ export default ({ navigation }: any) => {
           links={[
             {
               name: "Dashboard",
+              screenName: "Home",
             },
             {
               name: "Payments",
@@ -76,7 +83,7 @@ export default ({ navigation }: any) => {
       {params && params["id"] ? (
         <Invoice invoiceID={params["id"]} />
       ) : (
-        <View style={{ flex: 1, display: 'flex' }}>
+        <View style={{ flex: 1, display: "flex" }}>
           {dataLoaded ? (
             Boolean(data.length > 0) ? (
               <>
@@ -90,7 +97,10 @@ export default ({ navigation }: any) => {
                 >
                   Please select an payment to view
                 </Text>
-                <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{ paddingBottom: 25 }}>
+                <ScrollView
+                  keyboardShouldPersistTaps={"handled"}
+                  contentContainerStyle={{ paddingBottom: 25 }}
+                >
                   {data.map((e, c) => (
                     <TouchableBase
                       handleClick={() =>
@@ -103,7 +113,7 @@ export default ({ navigation }: any) => {
                         padding: 15,
                         backgroundColor: Colors.primary,
                         borderColor: Colors.border,
-                        borderStyle: 'solid',
+                        borderStyle: "solid",
                         borderWidth: 1,
                         borderRadius: 4,
                         marginBottom: data.length === c + 1 ? 0 : 8,

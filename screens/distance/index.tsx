@@ -1,189 +1,167 @@
-import React, { useContext, useEffect, useState } from 'react'
-import Popup from '../../components/Popup'
-import { LongButton } from '../../components/Themed'
-import Manual from './manual'
-import Odometer from './odometer'
-import Toast from 'react-native-toast-message'
-import axios from 'axios'
-import { AuthContext } from '../../hooks/context'
-import Svg, { Path } from 'react-native-svg'
-import { deleteItem, getItem, Alert, sendCustomEvent, setItem } from '../../hooks'
-import config from '../../config'
-import { useNavigation } from '@react-navigation/native'
-import AssignDistance from './assignDistance'
+import React, { useContext, useEffect, useState } from "react";
+import Popup from "../../components/Popup";
+import { LongButton } from "../../components/Themed";
+import Manual from "./manual";
+import Odometer from "./odometer";
+import Toast from "react-native-toast-message";
+import axios from "axios";
+import { AuthContext } from "../../hooks/context";
+import {
+  deleteItem,
+  getItem,
+  Alert,
+  sendCustomEvent,
+  setItem,
+} from "../../hooks";
+import config from "../../config";
+import { useNavigation } from "@react-navigation/native";
+import AssignDistance from "./assignDistance";
+import Keypad from "../../assets/icons/keypad";
+import OdomoterIcon from "../../assets/icons/odometer";
+import List from "../../assets/icons/list";
+import Road from "../../assets/icons/road";
+import Reset from "../../assets/icons/reset";
 
 export default ({ onUpdate }: { onUpdate: () => void }) => {
-  const [popupData, setPopupData] = useState(<></>)
-  const [title, setTitle] = useState("")
-  const [visible, setVisible] = useState(false)
-  const [data, setData] = useState({ startValue: '', endValue: '' })
-  const { retrieveData } = useContext(AuthContext)
-  const { navigate } = useNavigation()
-  const [isDraft, setIsDraft] = useState(false)
+  const [popupData, setPopupData] = useState(<></>);
+  const [title, setTitle] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [data, setData] = useState({ startValue: "", endValue: "" });
+  const { retrieveData } = useContext(AuthContext);
+  const { navigate } = useNavigation();
+  const [isDraft, setIsDraft] = useState(false);
 
   const openPopup = (element: JSX.Element, title: string) => {
-    setPopupData(element)
-    setVisible(true)
-    setTitle(title)
-  }
+    setPopupData(element);
+    setVisible(true);
+    setTitle(title);
+  };
 
   useEffect(() => {
     const getDraft = async () => {
-      const draft = getItem('draft')
+      const draft = getItem("draft");
 
       if (draft != null) {
-        setData({ ...JSON.parse(draft) })
+        setData({ ...JSON.parse(draft) });
         Toast.show({
-          type: 'default',
-          text1: 'Recovered draft data!',
-        })
-        setIsDraft(true)
+          type: "default",
+          text1: "Recovered draft data!",
+        });
+        setIsDraft(true);
         openPopup(
           <Odometer
             previousData={{ ...JSON.parse(draft) }}
             handleClose={() => handleClose()}
-          />, 'Record Odometer'
-        )
+          />,
+          "Record Odometer"
+        );
       } else {
-        setVisible(false)
+        setVisible(false);
       }
-    }
-    getDraft()
-  }, [])
+    };
+    getDraft();
+  }, []);
 
   const resetDistance = () => {
-    Alert('Are you sure you want to reset your distance?', 'This will reset your distance back to 0 without creating a payment log!', [
-      {
-        text: 'Yes',
-        onPress: async () => {
-          axios
-            .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
-              authenticationKey: retrieveData?.authenticationKey,
-            })
-            .then(async (e) => {
-              sendCustomEvent('sendAlert', 'Reset your distance back to 0!')
-              onUpdate()
-            })
-            .catch(({ response }) => {
-              console.log(response.message)
-            })
+    Alert(
+      "Are you sure you want to reset your distance?",
+      "This will reset your distance back to 0 without creating a payment log!",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            axios
+              .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
+                authenticationKey: retrieveData?.authenticationKey,
+              })
+              .then(async (e) => {
+                sendCustomEvent("sendAlert", "Reset your distance back to 0!");
+                onUpdate();
+              })
+              .catch(({ response }) => {
+                console.log(response.message);
+              });
+          },
         },
-      },
-      { text: 'No', style: 'cancel' },
-    ])
-  }
-
+        { text: "No", style: "cancel" },
+      ]
+    );
+  };
 
   const handleClose = (alert?: string) => {
     if (alert) {
-      setItem('delayedAlert', alert)
-    } else if (getItem('delayedAlert')) {
-      sendCustomEvent('sendAlert', getItem('delayedAlert'))
-      deleteItem('delayedAlert')
+      setItem("delayedAlert", alert);
+    } else if (getItem("delayedAlert")) {
+      sendCustomEvent("sendAlert", getItem("delayedAlert"));
+      deleteItem("delayedAlert");
     }
     if (isDraft === false) {
-      onUpdate()
-      return setVisible(false)
+      onUpdate();
+      return setVisible(false);
     }
-    Alert('Do you want to delete this draft?', undefined, [
+    Alert("Do you want to delete this draft?", undefined, [
       {
-        text: 'Yes',
+        text: "Yes",
         onPress: async () => {
-          deleteItem('draft')
-          setVisible(false)
-          setIsDraft(false)
-          setData({ startValue: '', endValue: '' })
+          deleteItem("draft");
+          setVisible(false);
+          setIsDraft(false);
+          setData({ startValue: "", endValue: "" });
         },
       },
       {
-        text: 'Save for later',
+        text: "Save for later",
         onPress: () => {
-          setVisible(false)
+          setVisible(false);
         },
-        style: 'cancel',
+        style: "cancel",
       },
-    ])
-  }
+    ]);
+  };
 
   return (
     <>
       <LongButton
         handleClick={() =>
-          openPopup(<Manual handleClose={handleClose} />, 'Add Specfic Distance')
+          openPopup(
+            <Manual handleClose={handleClose} />,
+            "Add Specfic Distance"
+          )
         }
-        text={'Add Specific Distance'}
-        icon={
-          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <Path
-              fill="#fff"
-              d="M5 2a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zm7 6a3 3 0 100-6 3 3 0 000 6zM5 9a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 6 3 3 0 000-6zM5 16a3 3 0 100 6 3 3 0 000-6zm7 0a3 3 0 100 5.999A3 3 0 0012 16zm7 0a3 3 0 100 5.999A3 3 0 0019 16z"
-            ></Path>
-          </Svg>
-        }
+        text={"Add Specific Distance"}
+        icon={<Keypad width="20" height="20" />}
       />
       <LongButton
         handleClick={() =>
           openPopup(
-            <Odometer previousData={data} handleClose={handleClose} />, 'Record Odometer'
+            <Odometer previousData={data} handleClose={handleClose} />,
+            "Record Odometer"
           )
         }
-        text={'Record Odometer'}
-        icon={
-          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <Path
-              fill="#fff"
-              d="M12 22.286a10.286 10.286 0 100-20.572 10.286 10.286 0 000 20.572zM12 24a12 12 0 110-24 12 12 0 010 24z"
-            ></Path>
-            <Path
-              fill="#fff"
-              d="M3 12.09c0-2.41.948-4.722 2.636-6.427A8.955 8.955 0 0112 3c2.387 0 4.676.958 6.364 2.663A9.138 9.138 0 0121 12.09a.914.914 0 01-.264.643.895.895 0 01-1.272 0 .914.914 0 01-.264-.643 7.31 7.31 0 00-2.109-5.143A7.164 7.164 0 0012 4.818c-1.91 0-3.74.766-5.091 2.13A7.31 7.31 0 004.8 12.091a.914.914 0 01-.264.643.895.895 0 01-1.272 0A.914.914 0 013 12.09z"
-            ></Path>
-            <Path
-              fill="#fff"
-              d="M13.268 15.292c.497.377.842.916.976 1.521a2.602 2.602 0 01-.245 1.786 2.65 2.65 0 01-1.35 1.209 2.678 2.678 0 01-1.818.063 2.648 2.648 0 01-1.432-1.112 2.604 2.604 0 01.494-3.35 2.668 2.668 0 011.694-.66l1.685-5.135a.872.872 0 01.438-.516.891.891 0 011.196.384.868.868 0 01.048.673l-1.686 5.135v.002zm-1.888 2.916a.896.896 0 00.947-.263.874.874 0 00.116-.967.88.88 0 00-.515-.436.893.893 0 00-.675.052.868.868 0 00-.388 1.178.883.883 0 00.515.436z"
-            ></Path>
-          </Svg>
-        }
+        text={"Record Odometer"}
+        icon={<OdomoterIcon width="20" height="20" />}
       />
 
       <LongButton
         text="Presets"
-        icon={
-          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <Path
-              fill="#fff"
-              d="M0 10.5h18v3H0v-3zM0 3h24v3H0V3zm0 18h10.852v-3H0v3z"
-            ></Path>
-          </Svg>
-        }
-        handleClick={() => navigate('AddPreset')}
+        icon={<List width="20" height="20" />}
+        handleClick={() => navigate("AddPreset")}
       />
       <LongButton
         text="Assign Distance"
-        icon={
-          <Svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-            <Path
-              fill="#fff"
-              d="M5.82.052a1.109 1.109 0 01.805 1.345L2.19 19.141a1.109 1.109 0 11-2.151-.537L4.474.86A1.109 1.109 0 015.819.052zm9.677.807l4.436 17.743a1.108 1.108 0 11-2.151.538L13.346 1.396A1.108 1.108 0 1115.497.86zM9.986 15.545a1.109 1.109 0 011.1.98l.009.129v2.218a1.109 1.109 0 01-2.21.13l-.008-.13v-2.218a1.11 1.11 0 011.109-1.109zm0-7.763a1.11 1.11 0 011.109 1.109v2.218a1.109 1.109 0 11-2.218 0V8.891a1.109 1.109 0 011.109-1.109zm0-7.763a1.11 1.11 0 011.1.98l.009.129v2.218a1.109 1.109 0 01-2.21.13l-.008-.13V1.128A1.109 1.109 0 019.986.019z"
-            ></Path>
-          </Svg>
-        }
+        icon={<Road width="20" height="20" />}
         handleClick={() =>
-          openPopup(<AssignDistance handleClose={handleClose} />, 'Assign Distance')
+          openPopup(
+            <AssignDistance handleClose={handleClose} />,
+            "Assign Distance"
+          )
         }
       />
       <LongButton
         last
         handleClick={resetDistance}
         text="Reset Distance"
-        icon={
-          <Svg width="20" height="20" fill="none" viewBox="0 0 23 18">
-            <Path
-              fill="#fff"
-              d="M13.5 18a9 9 0 10-9-9v4.65l-2.7-2.7L.75 12l4.5 4.5 4.5-4.5-1.05-1.05-2.7 2.7V9a7.5 7.5 0 117.5 7.5V18z"
-            ></Path>
-          </Svg>
-        }
+        icon={<Reset width="20" height="20" />}
       />
       <Popup
         visible={visible}
@@ -193,5 +171,5 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
         title={title}
       />
     </>
-  )
-}
+  );
+};

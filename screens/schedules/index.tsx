@@ -1,13 +1,11 @@
 import {
   ActivityIndicator,
-  GestureResponderEvent,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import Layout from "../../components/layout";
 import { Breadcrumbs, Text } from "../../components/Themed";
 import Colors from "../../constants/Colors";
-import Svg, { Path } from "react-native-svg";
 import { useState, useContext, useEffect, useRef } from "react";
 import Popup from "../../components/Popup";
 import Create from "./create";
@@ -25,6 +23,8 @@ import {
   PanGestureHandler,
   ScrollView,
 } from "react-native-gesture-handler";
+import ChevronRight from "../../assets/icons/chevronRight";
+import Plus from "../../assets/icons/plus";
 
 type ScheduleType = {
   allDay: string;
@@ -74,8 +74,8 @@ export default () => {
   };
 
   useEffect(() => {
-    if (!isPremium) return navigation.navigate('Dashboard')
-  }, [isPremium])
+    if (!isPremium) return navigation.navigate("Dashboard");
+  }, [isPremium]);
 
   useEffect(() => {
     if (retrieveData?.authenticationKey) getSchedules();
@@ -94,7 +94,7 @@ export default () => {
     axios
       .get(
         config.REACT_APP_API_ADDRESS +
-        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
+          `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(({ data }: { data: ScheduleType[] }) => {
         setDataLoaded(true);
@@ -109,7 +109,7 @@ export default () => {
 
           const amountOfDays = Math.round(
             (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
-            (1000 * 3600 * 24)
+              (1000 * 3600 * 24)
           );
           if (amountOfDays <= 1) continue;
 
@@ -249,7 +249,7 @@ export default () => {
   const backDisabled =
     new Date(currentDate).getMonth() === new Date().getMonth();
 
-  if (!isPremium) return
+  if (!isPremium) return;
 
   return (
     <Layout homepage noScrollView>
@@ -265,6 +265,7 @@ export default () => {
           links={[
             {
               name: "Dashboard",
+              screenName: "Home",
             },
             { name: "Schedules" },
           ]}
@@ -308,12 +309,11 @@ export default () => {
                       }}
                       disabled={Boolean(backDisabled)}
                     >
-                      <Svg width="8" height="12" fill="none" viewBox="0 0 8 12">
-                        <Path
-                          fill="#fff"
-                          d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
-                        ></Path>
-                      </Svg>
+                      <ChevronRight
+                        width="12"
+                        height="10"
+                        style={{ transform: [{ rotate: "180deg" }] }}
+                      />
                     </TouchableBase>
                     <DateTimePicker
                       mode="date"
@@ -333,18 +333,7 @@ export default () => {
                         alignItems: "center",
                       }}
                     >
-                      <Svg
-                        width="8"
-                        height="12"
-                        style={{ transform: [{ rotate: "180deg" }] }}
-                        fill="none"
-                        viewBox="0 0 8 12"
-                      >
-                        <Path
-                          fill="#fff"
-                          d="M7.41 10.59L2.83 6l4.58-4.59L6 0 0 6l6 6 1.41-1.41z"
-                        ></Path>
-                      </Svg>
+                      <ChevronRight width="12" height="10" />
                     </TouchableBase>
                   </View>
                   <ScrollView
@@ -408,7 +397,7 @@ export default () => {
                             </View>
                           </View>
                           {dayObj.active &&
-                            Boolean(dayObj.date.getTime() !== currentDate) ? (
+                          Boolean(dayObj.date.getTime() !== currentDate) ? (
                             <View
                               style={{
                                 width: 5,
@@ -475,18 +464,18 @@ export default () => {
                                           const amountOfDays = Math.round(
                                             (resetTime(endDate).getTime() -
                                               resetTime(startDate).getTime()) /
-                                            (1000 * 3600 * 24)
+                                              (1000 * 3600 * 24)
                                           );
                                           const currentDayCount =
                                             resetTime(dayObj).getTime() ===
-                                              resetTime(startDate).getTime()
+                                            resetTime(startDate).getTime()
                                               ? "1"
                                               : (resetTime(dayObj).getTime() -
-                                                resetTime(
-                                                  startDate
-                                                ).getTime()) /
-                                              (1000 * 3600 * 24) +
-                                              1;
+                                                  resetTime(
+                                                    startDate
+                                                  ).getTime()) /
+                                                  (1000 * 3600 * 24) +
+                                                1;
 
                                           const hasMultipleDays =
                                             amountOfDays > 1;
@@ -498,8 +487,8 @@ export default () => {
                                                 isOpened === startDate.getTime()
                                                   ? setIsOpened(0)
                                                   : setIsOpened(
-                                                    startDate.getTime()
-                                                  )
+                                                      startDate.getTime()
+                                                    )
                                               }
                                             >
                                               <View
@@ -512,7 +501,7 @@ export default () => {
                                                   borderRadius: 4,
                                                   backgroundColor:
                                                     retrieveData?.emailAddress ===
-                                                      data.emailAddress
+                                                    data.emailAddress
                                                       ? Colors.primary
                                                       : "",
                                                 }}
@@ -550,32 +539,32 @@ export default () => {
                                                   {(currentDayCount !==
                                                     amountOfDays ||
                                                     !hasMultipleDays) && (
-                                                      <>
-                                                        {startDate.toLocaleString(
-                                                          undefined,
-                                                          {
-                                                            minute: "2-digit",
-                                                            hour: "2-digit",
-                                                            hour12: true,
-                                                          }
-                                                        )}
-                                                      </>
-                                                    )}
+                                                    <>
+                                                      {startDate.toLocaleString(
+                                                        undefined,
+                                                        {
+                                                          minute: "2-digit",
+                                                          hour: "2-digit",
+                                                          hour12: true,
+                                                        }
+                                                      )}
+                                                    </>
+                                                  )}
                                                   {!hasMultipleDays && <> - </>}
                                                   {(currentDayCount ===
                                                     amountOfDays ||
                                                     !hasMultipleDays) && (
-                                                      <>
-                                                        {endDate.toLocaleString(
-                                                          undefined,
-                                                          {
-                                                            minute: "2-digit",
-                                                            hour: "2-digit",
-                                                            hour12: true,
-                                                          }
-                                                        )}
-                                                      </>
-                                                    )}
+                                                    <>
+                                                      {endDate.toLocaleString(
+                                                        undefined,
+                                                        {
+                                                          minute: "2-digit",
+                                                          hour: "2-digit",
+                                                          hour12: true,
+                                                        }
+                                                      )}
+                                                    </>
+                                                  )}
                                                 </Text>
                                                 <AnimateHeight
                                                   open={
@@ -634,17 +623,7 @@ export default () => {
                                       alignItems: "center",
                                     }}
                                   >
-                                    <Svg
-                                      width="14"
-                                      height="14"
-                                      fill="none"
-                                      viewBox="0 0 14 14"
-                                    >
-                                      <Path
-                                        fill="#fff"
-                                        d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"
-                                      ></Path>
-                                    </Svg>
+                                    <Plus width="14" height="14" />
                                     <Text
                                       style={{
                                         fontSize: 16,
@@ -695,19 +674,7 @@ export default () => {
                             borderRadius: 8,
                             height: 44,
                           }}
-                          icon={
-                            <Svg
-                              width="14"
-                              height="14"
-                              fill="none"
-                              viewBox="0 0 14 14"
-                            >
-                              <Path
-                                fill="#fff"
-                                d="M14 8H8v6H6V8H0V6h6V0h2v6h6v2z"
-                              />
-                            </Svg>
-                          }
+                          icon={<Plus width="14" height="14" />}
                           text="Add"
                         />
                       )}
@@ -721,7 +688,6 @@ export default () => {
           <Popup
             visible={visible}
             handleClose={() => setVisible(false)}
-
             title="Add a new schedule"
           >
             <Create currentDate={currentDate} onClose={updateData} />
