@@ -25,6 +25,8 @@ import {
 } from "react-native-gesture-handler";
 import ChevronRight from "../../assets/icons/chevronRight";
 import Plus from "../../assets/icons/plus";
+import Bin from "../../assets/icons/bin";
+import Pencil from "../../assets/icons/pencil";
 
 type ScheduleType = {
   allDay: string;
@@ -493,12 +495,11 @@ export default () => {
                                             >
                                               <View
                                                 style={{
-                                                  paddingVertical: 10,
-                                                  paddingHorizontal: 15,
                                                   borderStyle: "solid",
                                                   borderWidth: 1,
                                                   borderColor: Colors.border,
                                                   borderRadius: 4,
+                                                  gap: 5,
                                                   backgroundColor:
                                                     retrieveData?.emailAddress ===
                                                     data.emailAddress
@@ -506,89 +507,128 @@ export default () => {
                                                       : "",
                                                 }}
                                               >
-                                                <Text
+                                                <View
                                                   style={{
-                                                    fontWeight: "bold",
-                                                    fontSize: 16,
+                                                    paddingVertical: 10,
+                                                    paddingHorizontal: 15,
                                                   }}
                                                 >
-                                                  {data.summary ||
-                                                    "New Schedule"}
-                                                </Text>
-                                                <Text
+                                                  <Text
+                                                    style={{
+                                                      fontWeight: "bold",
+                                                      fontSize: 16,
+                                                    }}
+                                                  >
+                                                    {data.summary ||
+                                                      "New Schedule"}
+                                                  </Text>
+                                                  <Text
+                                                    style={{
+                                                      fontWeight: "300",
+                                                      fontSize: 14,
+                                                      marginTop: 5,
+                                                    }}
+                                                  >
+                                                    {data.fullName}{" "}
+                                                    {hasMultipleDays && (
+                                                      <>
+                                                        (Day {currentDayCount}/
+                                                        {amountOfDays})
+                                                      </>
+                                                    )}
+                                                  </Text>
+                                                  <Text
+                                                    style={{
+                                                      fontWeight: "bold",
+                                                      marginTop: 5,
+                                                    }}
+                                                  >
+                                                    {(currentDayCount !==
+                                                      amountOfDays ||
+                                                      !hasMultipleDays) && (
+                                                      <>
+                                                        {startDate.toLocaleString(
+                                                          undefined,
+                                                          {
+                                                            minute: "2-digit",
+                                                            hour: "2-digit",
+                                                            hour12: true,
+                                                          }
+                                                        )}
+                                                      </>
+                                                    )}
+                                                    {!hasMultipleDays && (
+                                                      <> - </>
+                                                    )}
+                                                    {(currentDayCount ===
+                                                      amountOfDays ||
+                                                      !hasMultipleDays) && (
+                                                      <>
+                                                        {endDate.toLocaleString(
+                                                          undefined,
+                                                          {
+                                                            minute: "2-digit",
+                                                            hour: "2-digit",
+                                                            hour12: true,
+                                                          }
+                                                        )}
+                                                      </>
+                                                    )}
+                                                  </Text>
+                                                </View>
+                                                <SplitRow
+                                                  gap={0}
                                                   style={{
-                                                    fontWeight: "300",
-                                                    fontSize: 14,
-                                                    marginTop: 5,
+                                                    marginTop: 0,
+                                                    backgroundColor:
+                                                      Colors.secondary,
+                                                    alignItems: "center",
                                                   }}
-                                                >
-                                                  {data.fullName}{" "}
-                                                  {hasMultipleDays && (
-                                                    <>
-                                                      (Day {currentDayCount}/
-                                                      {amountOfDays})
-                                                    </>
-                                                  )}
-                                                </Text>
-                                                <Text
-                                                  style={{
-                                                    fontWeight: "bold",
-                                                    marginTop: 5,
-                                                  }}
-                                                >
-                                                  {(currentDayCount !==
-                                                    amountOfDays ||
-                                                    !hasMultipleDays) && (
-                                                    <>
-                                                      {startDate.toLocaleString(
-                                                        undefined,
-                                                        {
-                                                          minute: "2-digit",
-                                                          hour: "2-digit",
-                                                          hour12: true,
-                                                        }
-                                                      )}
-                                                    </>
-                                                  )}
-                                                  {!hasMultipleDays && <> - </>}
-                                                  {(currentDayCount ===
-                                                    amountOfDays ||
-                                                    !hasMultipleDays) && (
-                                                    <>
-                                                      {endDate.toLocaleString(
-                                                        undefined,
-                                                        {
-                                                          minute: "2-digit",
-                                                          hour: "2-digit",
-                                                          hour12: true,
-                                                        }
-                                                      )}
-                                                    </>
-                                                  )}
-                                                </Text>
-                                                <AnimateHeight
-                                                  open={
-                                                    isOpened ===
-                                                    startDate.getTime()
+                                                  seperator={
+                                                    <View
+                                                      style={{
+                                                        width: 1,
+                                                        backgroundColor:
+                                                          Colors.border,
+                                                        height: "60%",
+                                                      }}
+                                                    />
                                                   }
-                                                >
-                                                  <SplitRow
-                                                    style={{ marginTop: 15 }}
-                                                    gap={10}
-                                                    elements={[
-                                                      <Button size="small">
-                                                        Edit
-                                                      </Button>,
-                                                      <Button
-                                                        size="small"
-                                                        color="red"
-                                                        variant="ghost"
-                                                      >
-                                                        Delete
-                                                      </Button>,
-                                                    ]}
-                                                  />
-                                                </AnimateHeight>
+                                                  elements={[
+                                                    <Button
+                                                      icon={
+                                                        <Pencil
+                                                          height={14}
+                                                          width={14}
+                                                        />
+                                                      }
+                                                      size="small"
+                                                      text="Edit"
+                                                      style={{
+                                                        backgroundColor:
+                                                          "transparent",
+                                                        borderWidth: 0,
+                                                      }}
+                                                    />,
+                                                    <Button
+                                                      color="red"
+                                                      icon={
+                                                        <Bin
+                                                          height={14}
+                                                          width={14}
+                                                        />
+                                                      }
+                                                      variant="ghost"
+                                                      size="small"
+                                                      text="Remove"
+                                                      style={{
+                                                        backgroundColor:
+                                                          "transparent",
+                                                        borderWidth: 0,
+                                                      }}
+                                                    />,
+                                                  ]}
+                                                />
                                               </View>
                                             </TouchableWithoutFeedback>
                                           );
