@@ -318,7 +318,7 @@ export default () => {
                                           userColors?.filter(
                                             (user) =>
                                               user.userID === data.userID
-                                          )[0]?.colour || `${randomColour()}`
+                                          )[0]?.colour
                                         }
                                         amountOfDays={amountOfDays}
                                         data={data}
