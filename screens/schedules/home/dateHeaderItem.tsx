@@ -1,7 +1,6 @@
 import { TouchableWithoutFeedback, View } from "react-native";
 import Colors from "../../../constants/Colors";
 import { Text } from "../../../components/Themed";
-import { UserColourType } from "./scheduleHeader";
 
 type PropsType = {
   dayObj: {
@@ -39,7 +38,7 @@ export default ({
     }
   };
 
-  const getDots = userColours.filter(
+  const getDots = userColours?.filter(
     (colours) => colours.date === dayObj.date.getTime()
   );
   return (
@@ -104,6 +103,7 @@ export default ({
             {getDots.map(({ dots }) =>
               dots.map((colour) => (
                 <View
+                  key={colour}
                   style={{
                     width: 5,
                     height: 5,

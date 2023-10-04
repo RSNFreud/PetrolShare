@@ -60,6 +60,7 @@ export default ({
   };
 
   const getDots = () => {
+    if (!currentData || !userColours) return [];
     const dotsPerDay: { date: number; dots: string[] }[] = [];
     const [_, data] = currentData;
     data.map((e) =>
@@ -68,14 +69,13 @@ export default ({
           date: date,
           dots: schedule.map(
             (q) =>
-              userColours.filter((user) => user.userID === q.userID)[0].colour
+              userColours?.filter((user) => user.userID === q.userID)[0].colour
           ),
         });
       })
     );
     return dotsPerDay;
   };
-  getDots();
 
   useEffect(() => {
     setInitialScroll(true);
