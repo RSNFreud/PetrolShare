@@ -129,6 +129,7 @@ export default ({
             marginTop: 0,
             backgroundColor: Colors.secondary,
             alignItems: "center",
+            height: 35,
           }}
           seperator={
             <View
