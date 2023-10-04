@@ -288,6 +288,7 @@ export default () => {
                                       <DateEntry
                                         hasMultipleDays={hasMultipleDays}
                                         currentDayCount={currentDayCount}
+                                        isExpired={expiredDate}
                                         startDate={startDate}
                                         endDate={endDate}
                                         amountOfDays={amountOfDays}
