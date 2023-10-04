@@ -1,8 +1,4 @@
-import {
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import Layout from "../../components/layout";
 import { Breadcrumbs, Text } from "../../components/Themed";
 import Colors from "../../constants/Colors";
@@ -14,21 +10,17 @@ import axios from "axios";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
-import SplitRow from "../../components/splitRow";
-import AnimateHeight from "../../components/animateHeight";
-import DateTimePicker from "../../components/dateTimePicker";
 import {
   GestureHandlerRootView,
   HandlerStateChangeEvent,
   PanGestureHandler,
   ScrollView,
 } from "react-native-gesture-handler";
-import ChevronRight from "../../assets/icons/chevronRight";
 import Plus from "../../assets/icons/plus";
-import Bin from "../../assets/icons/bin";
-import Pencil from "../../assets/icons/pencil";
+import ScheduleHeader from "./home/scheduleHeader";
+import DateEntry from "./home/dateEntry";
 
-type ScheduleType = {
+export type ScheduleType = {
   allDay: string;
   startDate: Date;
   endDate: Date;
@@ -37,18 +29,18 @@ type ScheduleType = {
   emailAddress: string;
 };
 
-const resetTime = (date: Date) => {
+export const resetTime = (date: Date) => {
   let temp = new Date(date);
   return new Date(temp.setHours(0, 0, 0, 0));
 };
 
-const resetMonth = (date: Date) => {
+export const resetMonth = (date: Date) => {
   let temp = new Date(date);
   temp = new Date(temp.setHours(0, 0, 0, 0));
   temp = new Date(temp.setDate(1));
   return temp;
 };
-const getInitialDate = (date: Date) => {
+export const getInitialDate = (date: Date) => {
   let temp = new Date(date);
   temp = new Date(temp.setHours(0, 0, 0, 0));
   temp = new Date(temp.setDate(new Date().getDate()));
@@ -165,24 +157,6 @@ export default () => {
     getCurrentData &&
     getCurrentData[1].filter(([day, _]) => day[0] === currentDate);
 
-  const getDaysInMonth = () => {
-    let date = resetMonth(new Date(currentDate));
-    const targetMonth = date.getMonth();
-    let dates = [];
-    let i = 0;
-
-    while (date.getMonth() === targetMonth) {
-      const hasData =
-        getCurrentData &&
-        getCurrentData[1].filter(([day, _]) => day[0] === date.getTime())
-          .length;
-      dates.push({ date: new Date(date), active: hasData });
-      date = new Date(date.setDate(date.getDate() + 1));
-      i++;
-    }
-    return dates;
-  };
-
   const expiredDate = currentDate < resetTime(date).getTime();
 
   const setInitialScroll = (animate: boolean = false) => {
@@ -228,26 +202,6 @@ export default () => {
     setIsOpened(0);
   }, [currentDate]);
 
-  const getDayString = (date: Date) => {
-    const day = date.getDay();
-    switch (day) {
-      case 0:
-        return "Sun";
-      case 1:
-        return "Mon";
-      case 2:
-        return "Tue";
-      case 3:
-        return "Wed";
-      case 4:
-        return "Thu";
-      case 5:
-        return "Fri";
-      case 6:
-        return "Sat";
-    }
-  };
-
   const backDisabled =
     new Date(currentDate).getMonth() === new Date().getMonth();
 
@@ -278,147 +232,13 @@ export default () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <PanGestureHandler onEnded={calculateDirection} minDist={10}>
               <View style={{ flex: 1, display: "flex" }}>
-                <View
-                  style={{
-                    backgroundColor: Colors.secondary,
-                    paddingVertical: 20,
-                    paddingBottom: 0,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 15,
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      paddingHorizontal: 20,
-                    }}
-                  >
-                    <TouchableBase
-                      handleClick={() => changeMonth("back")}
-                      style={{
-                        opacity: backDisabled ? 0.5 : 1,
-                        width: 25,
-                        height: 25,
-                        display: "flex",
-                        alignContent: "center",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                      disabled={Boolean(backDisabled)}
-                    >
-                      <ChevronRight
-                        width="12"
-                        height="10"
-                        style={{ transform: [{ rotate: "180deg" }] }}
-                      />
-                    </TouchableBase>
-                    <DateTimePicker
-                      mode="date"
-                      value={new Date(currentDate)}
-                      setValue={(e) => setCurrentDate(new Date(e).getTime())}
-                      format={{ month: "long", year: "numeric" }}
-                      textStyle={{ fontWeight: "bold" }}
-                    />
-                    <TouchableBase
-                      handleClick={() => changeMonth("forwards")}
-                      style={{
-                        width: 25,
-                        height: 25,
-                        display: "flex",
-                        alignContent: "center",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <ChevronRight width="12" height="10" />
-                    </TouchableBase>
-                  </View>
-                  <ScrollView
-                    snapToInterval={32 + 15}
-                    ref={dateRef}
-                    onLayout={() => setInitialScroll()}
-                    style={{ width: "100%" }}
-                    horizontal
-                    contentContainerStyle={{
-                      paddingHorizontal: 25,
-                      paddingBottom: 20,
-                      gap: 25,
-                    }}
-                  >
-                    {getDaysInMonth().map((dayObj) => (
-                      <TouchableWithoutFeedback
-                        touchSoundDisabled
-                        key={dayObj.date.toString()}
-                        onPress={() => setCurrentDate(dayObj.date.getTime())}
-                      >
-                        <View>
-                          <View
-                            style={{
-                              gap: 2,
-                              justifyContent: "center",
-                              opacity:
-                                dayObj.date.getTime() === currentDate ? 1 : 0.5,
-                              width: 32,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontWeight: "300",
-                                textAlign: "center",
-                              }}
-                            >
-                              {getDayString(dayObj.date)}
-                            </Text>
-                            <View
-                              style={{
-                                width: 32,
-                                height: 32,
-                                borderRadius: 100,
-                                backgroundColor:
-                                  currentDate === dayObj.date.getTime()
-                                    ? Colors.tertiary
-                                    : "transparent",
-                                justifyContent: "center",
-                                alignContent: "center",
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  fontWeight: "bold",
-                                  fontSize: 18,
-                                  textAlign: "center",
-                                }}
-                              >
-                                {dayObj.date.getDate()}
-                              </Text>
-                            </View>
-                          </View>
-                          {dayObj.active &&
-                          Boolean(dayObj.date.getTime() !== currentDate) ? (
-                            <View
-                              style={{
-                                width: 5,
-                                height: 5,
-                                borderRadius: 100,
-                                backgroundColor: Colors.tertiary,
-                                position: "absolute",
-                                bottom: -2,
-                                left: 14,
-                              }}
-                            />
-                          ) : (
-                            <></>
-                          )}
-                        </View>
-                      </TouchableWithoutFeedback>
-                    ))}
-                  </ScrollView>
-                </View>
+                <ScheduleHeader
+                  currentData={getCurrentData}
+                  changeMonth={changeMonth}
+                  backDisabled={backDisabled}
+                  currentDate={currentDate}
+                  setCurrentDate={(e) => setCurrentDate(new Date(e).getTime())}
+                />
                 <View style={{ flex: 1 }}>
                   {getCurrentData &&
                     getCurrentDayData.map((e) =>
@@ -431,212 +251,60 @@ export default () => {
                               contentContainerStyle={{
                                 width: "100%",
                                 paddingVertical: 25,
+                                display: "flex",
+                                gap: 15,
+                                flexDirection: "column",
+                                flex: 1,
                               }}
-                              style={{ marginHorizontal: 25 }}
+                              style={{
+                                marginHorizontal: 25,
+                              }}
                             >
-                              <View style={{ gap: 25 }}>
-                                <View
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: 24,
-                                  }}
-                                  key={day}
-                                >
-                                  <View
-                                    style={{
-                                      flex: 1,
-                                      display: "flex",
-                                      gap: 10,
-                                      flexDirection: "column",
-                                    }}
-                                  >
-                                    <>
-                                      {schedule
-                                        .sort((a, b) =>
-                                          a.startDate > b.startDate ? 1 : -1
-                                        )
-                                        .map((data, count) => {
-                                          const startDate = new Date(
-                                            data.startDate
-                                          );
-                                          const endDate = new Date(
-                                            data.endDate
-                                          );
-                                          const amountOfDays = Math.round(
-                                            (resetTime(endDate).getTime() -
-                                              resetTime(startDate).getTime()) /
-                                              (1000 * 3600 * 24)
-                                          );
-                                          const currentDayCount =
-                                            resetTime(dayObj).getTime() ===
-                                            resetTime(startDate).getTime()
-                                              ? "1"
-                                              : (resetTime(dayObj).getTime() -
-                                                  resetTime(
-                                                    startDate
-                                                  ).getTime()) /
-                                                  (1000 * 3600 * 24) +
-                                                1;
+                              <>
+                                {schedule
+                                  .sort((a, b) =>
+                                    a.startDate > b.startDate ? 1 : -1
+                                  )
+                                  .map((data, count) => {
+                                    const startDate = new Date(data.startDate);
+                                    const endDate = new Date(data.endDate);
+                                    const amountOfDays = Math.round(
+                                      (resetTime(endDate).getTime() -
+                                        resetTime(startDate).getTime()) /
+                                        (1000 * 3600 * 24)
+                                    );
+                                    const currentDayCount =
+                                      resetTime(dayObj).getTime() ===
+                                      resetTime(startDate).getTime()
+                                        ? 1
+                                        : (resetTime(dayObj).getTime() -
+                                            resetTime(startDate).getTime()) /
+                                            (1000 * 3600 * 24) +
+                                          1;
 
-                                          const hasMultipleDays =
-                                            amountOfDays > 1;
+                                    const hasMultipleDays = amountOfDays > 1;
 
-                                          return (
-                                            <TouchableWithoutFeedback
-                                              key={`${count}-${day}`}
-                                              onPress={() =>
-                                                isOpened === startDate.getTime()
-                                                  ? setIsOpened(0)
-                                                  : setIsOpened(
-                                                      startDate.getTime()
-                                                    )
-                                              }
-                                            >
-                                              <View
-                                                style={{
-                                                  borderStyle: "solid",
-                                                  borderWidth: 1,
-                                                  borderColor: Colors.border,
-                                                  borderRadius: 4,
-                                                  gap: 5,
-                                                  backgroundColor:
-                                                    retrieveData?.emailAddress ===
-                                                    data.emailAddress
-                                                      ? Colors.primary
-                                                      : "",
-                                                }}
-                                              >
-                                                <View
-                                                  style={{
-                                                    paddingVertical: 10,
-                                                    paddingHorizontal: 15,
-                                                  }}
-                                                >
-                                                  <Text
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      fontSize: 16,
-                                                    }}
-                                                  >
-                                                    {data.summary ||
-                                                      "New Schedule"}
-                                                  </Text>
-                                                  <Text
-                                                    style={{
-                                                      fontWeight: "300",
-                                                      fontSize: 14,
-                                                      marginTop: 5,
-                                                    }}
-                                                  >
-                                                    {data.fullName}{" "}
-                                                    {hasMultipleDays && (
-                                                      <>
-                                                        (Day {currentDayCount}/
-                                                        {amountOfDays})
-                                                      </>
-                                                    )}
-                                                  </Text>
-                                                  <Text
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      marginTop: 5,
-                                                    }}
-                                                  >
-                                                    {(currentDayCount !==
-                                                      amountOfDays ||
-                                                      !hasMultipleDays) && (
-                                                      <>
-                                                        {startDate.toLocaleString(
-                                                          undefined,
-                                                          {
-                                                            minute: "2-digit",
-                                                            hour: "2-digit",
-                                                            hour12: true,
-                                                          }
-                                                        )}
-                                                      </>
-                                                    )}
-                                                    {!hasMultipleDays && (
-                                                      <> - </>
-                                                    )}
-                                                    {(currentDayCount ===
-                                                      amountOfDays ||
-                                                      !hasMultipleDays) && (
-                                                      <>
-                                                        {endDate.toLocaleString(
-                                                          undefined,
-                                                          {
-                                                            minute: "2-digit",
-                                                            hour: "2-digit",
-                                                            hour12: true,
-                                                          }
-                                                        )}
-                                                      </>
-                                                    )}
-                                                  </Text>
-                                                </View>
-                                                <SplitRow
-                                                  gap={0}
-                                                  style={{
-                                                    marginTop: 0,
-                                                    backgroundColor:
-                                                      Colors.secondary,
-                                                    alignItems: "center",
-                                                  }}
-                                                  seperator={
-                                                    <View
-                                                      style={{
-                                                        width: 1,
-                                                        backgroundColor:
-                                                          Colors.border,
-                                                        height: "60%",
-                                                      }}
-                                                    />
-                                                  }
-                                                  elements={[
-                                                    <Button
-                                                      icon={
-                                                        <Pencil
-                                                          height={14}
-                                                          width={14}
-                                                        />
-                                                      }
-                                                      size="small"
-                                                      text="Edit"
-                                                      style={{
-                                                        backgroundColor:
-                                                          "transparent",
-                                                        borderWidth: 0,
-                                                      }}
-                                                    />,
-                                                    <Button
-                                                      color="red"
-                                                      icon={
-                                                        <Bin
-                                                          height={14}
-                                                          width={14}
-                                                        />
-                                                      }
-                                                      variant="ghost"
-                                                      size="small"
-                                                      text="Remove"
-                                                      style={{
-                                                        backgroundColor:
-                                                          "transparent",
-                                                        borderWidth: 0,
-                                                      }}
-                                                    />,
-                                                  ]}
-                                                />
-                                              </View>
-                                            </TouchableWithoutFeedback>
-                                          );
-                                        })}
-                                    </>
-                                  </View>
-                                </View>
-                              </View>
+                                    return (
+                                      <DateEntry
+                                        hasMultipleDays={hasMultipleDays}
+                                        currentDayCount={currentDayCount}
+                                        startDate={startDate}
+                                        endDate={endDate}
+                                        amountOfDays={amountOfDays}
+                                        data={data}
+                                        emailAddress={
+                                          retrieveData?.emailAddress
+                                        }
+                                        key={`${count}-${day}`}
+                                        onPress={() =>
+                                          isOpened === startDate.getTime()
+                                            ? setIsOpened(0)
+                                            : setIsOpened(startDate.getTime())
+                                        }
+                                      />
+                                    );
+                                  })}
+                              </>
                             </ScrollView>
                             {!expiredDate && (
                               <View
