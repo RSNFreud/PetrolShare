@@ -163,7 +163,7 @@ export default ({
               size="medium"
               text="Edit"
               disabled={
-                endDate.getTime() > Date.now() ||
+                Date.now() > endDate.getTime() ||
                 emailAddress !== data.emailAddress
               }
               style={{
@@ -174,7 +174,7 @@ export default ({
             <Button
               color="red"
               disabled={
-                endDate.getTime() > Date.now() ||
+                Date.now() > endDate.getTime() ||
                 emailAddress !== data.emailAddress
               }
               textStyle={{ color: Colors.red }}
