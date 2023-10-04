@@ -1,6 +1,7 @@
 import { TouchableWithoutFeedback, View } from "react-native";
 import Colors from "../../../constants/Colors";
 import { Text } from "../../../components/Themed";
+import { UserColourType } from "./scheduleHeader";
 
 type PropsType = {
   dayObj: {
@@ -9,9 +10,15 @@ type PropsType = {
   };
   setCurrentDate: (date: number) => void;
   currentDate: number;
+  userColours: { date: number; dots: string[] }[];
 };
 
-export default ({ dayObj, setCurrentDate, currentDate }: PropsType) => {
+export default ({
+  dayObj,
+  setCurrentDate,
+  currentDate,
+  userColours,
+}: PropsType) => {
   const getDayString = (date: Date) => {
     const day = date.getDay();
     switch (day) {
@@ -31,6 +38,10 @@ export default ({ dayObj, setCurrentDate, currentDate }: PropsType) => {
         return "Sat";
     }
   };
+
+  const getDots = userColours.filter(
+    (colours) => colours.date === dayObj.date.getTime()
+  );
   return (
     <TouchableWithoutFeedback
       touchSoundDisabled
@@ -78,20 +89,31 @@ export default ({ dayObj, setCurrentDate, currentDate }: PropsType) => {
             </Text>
           </View>
         </View>
-        {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) ? (
+        {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) && (
           <View
             style={{
-              width: 5,
-              height: 5,
-              borderRadius: 100,
-              backgroundColor: Colors.tertiary,
               position: "absolute",
-              bottom: -2,
-              left: 14,
+              bottom: -3,
+              left: 0,
+              justifyContent: "center",
+              flexDirection: "row",
+              width: "100%",
+              gap: 3,
             }}
-          />
-        ) : (
-          <></>
+          >
+            {getDots.map(({ dots }) =>
+              dots.map((colour) => (
+                <View
+                  style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: 100,
+                    backgroundColor: colour,
+                  }}
+                />
+              ))
+            )}
+          </View>
         )}
       </View>
     </TouchableWithoutFeedback>

@@ -27,6 +27,7 @@ export type ScheduleType = {
   summary?: string;
   fullName: string;
   emailAddress: string;
+  userID: string;
 };
 
 export const resetTime = (date: Date) => {
@@ -58,6 +59,9 @@ export default () => {
     Record<number, Map<number, ScheduleType[]>[]> | []
   >([]);
   const { retrieveData, isPremium } = useContext(AuthContext);
+  const [userColors, setUserColors] = useState<
+    { userID: string; colour: string }[]
+  >([]);
   const [isOpened, setIsOpened] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const navigation = useNavigation();
@@ -83,6 +87,12 @@ export default () => {
     });
   }, [retrieveData]);
 
+  const randomColour = () =>
+    "#" +
+    Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")
+      .toUpperCase();
   const getSchedules = () => {
     if (!retrieveData?.authenticationKey) return;
     axios
@@ -96,6 +106,19 @@ export default () => {
         for (const schedule of data) {
           const startDate = resetTime(schedule.startDate);
           const endDate = resetTime(schedule.endDate);
+          if (
+            !userColors?.length ||
+            !userColors?.filter((user) => user.userID === schedule.userID)
+              .length
+          ) {
+            setUserColors((colours) => [
+              ...colours,
+              {
+                userID: schedule.userID,
+                colour: `${randomColour()}`,
+              },
+            ]);
+          }
 
           if (!splitSchedules.has(startDate.getTime()))
             splitSchedules.set(startDate.getTime(), []);
@@ -235,6 +258,7 @@ export default () => {
                 <ScheduleHeader
                   currentData={getCurrentData}
                   changeMonth={changeMonth}
+                  userColours={userColors}
                   backDisabled={backDisabled}
                   currentDate={currentDate}
                   setCurrentDate={(e) => setCurrentDate(new Date(e).getTime())}
@@ -288,9 +312,14 @@ export default () => {
                                       <DateEntry
                                         hasMultipleDays={hasMultipleDays}
                                         currentDayCount={currentDayCount}
-                                        isExpired={expiredDate}
                                         startDate={startDate}
                                         endDate={endDate}
+                                        colour={
+                                          userColors?.filter(
+                                            (user) =>
+                                              user.userID === data.userID
+                                          )[0]?.colour || `${randomColour()}`
+                                        }
                                         amountOfDays={amountOfDays}
                                         data={data}
                                         emailAddress={

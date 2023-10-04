@@ -147,16 +147,16 @@ export default ({
                 disabled={fullName !== retrieveData?.fullName}
                 handleClick={() => setVisible(true)}
                 icon={<Pencil height={14} width={14} />}
-                size="small"
+                size="medium"
                 text="Edit"
                 style={{ backgroundColor: "transparent", borderWidth: 0 }}
               />,
               <Button
                 disabled={fullName !== retrieveData?.fullName}
                 color="red"
-                icon={<Bin height={14} width={14} />}
+                icon={<Bin height={14} width={14} color={Colors.red} />}
                 variant="ghost"
-                size="small"
+                size="medium"
                 handleClick={handleDelete}
                 text="Remove"
                 style={{ backgroundColor: "transparent", borderWidth: 0 }}

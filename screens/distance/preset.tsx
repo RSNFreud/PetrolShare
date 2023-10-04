@@ -320,15 +320,17 @@ export default ({ navigation }: any) => {
                     >
                       <View
                         style={{
-                          backgroundColor:
-                            data.selectedPreset === e.presetID
-                              ? Colors.primary
-                              : Colors.secondary,
+                          backgroundColor: Colors.primary,
                           borderStyle: "solid",
-                          borderWidth: 2,
-                          borderColor: Colors.border,
+                          borderWidth: 1,
+                          borderColor:
+                            data.selectedPreset === e.presetID
+                              ? Colors.tertiary
+                              : Colors.border,
                           borderRadius: 4,
+                          height: 50,
                           marginBottom: 15,
+                          padding: 2,
                           paddingLeft: 15,
                           display: "flex",
                           flexDirection: "row",
@@ -348,14 +350,11 @@ export default ({ navigation }: any) => {
                             justifyContent: "space-between",
                             alignItems: "center",
                             height: "100%",
-                            backgroundColor: Colors.primary,
+                            backgroundColor: Colors.secondary,
                           }}
                         >
                           <TouchableBase
                             style={{
-                              borderColor: Colors.border,
-                              borderRightWidth: 1,
-                              borderLeftWidth: 1,
                               flexDirection: "row",
                               display: "flex",
                               justifyContent: "center",
@@ -370,6 +369,13 @@ export default ({ navigation }: any) => {
                           >
                             <Pencil width="16" height="16" />
                           </TouchableBase>
+                          <View
+                            style={{
+                              width: 1,
+                              height: 28,
+                              backgroundColor: Colors.border,
+                            }}
+                          />
                           <TouchableBase
                             style={{
                               paddingHorizontal: 15,
@@ -386,7 +392,7 @@ export default ({ navigation }: any) => {
                             }
                             analyticsLabel="Delete"
                           >
-                            <Bin width="16" height="16" />
+                            <Bin width="16" height="16" color={Colors.red} />
                           </TouchableBase>
                         </View>
                       </View>

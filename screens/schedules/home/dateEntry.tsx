@@ -16,7 +16,7 @@ type PropsType = {
   amountOfDays: number;
   startDate: Date;
   endDate: Date;
-  isExpired: boolean;
+  colour: string;
 };
 
 export default ({
@@ -26,8 +26,8 @@ export default ({
   hasMultipleDays,
   currentDayCount,
   amountOfDays,
+  colour,
   startDate,
-  isExpired,
   endDate,
 }: PropsType) => {
   return (
@@ -48,60 +48,51 @@ export default ({
             paddingHorizontal: 15,
           }}
         >
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 16,
-            }}
-          >
-            {data.summary || "New Schedule"}
-          </Text>
           <View
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               flexDirection: "row",
+              marginBottom: 10,
             }}
           >
             <View>
+              <View
+                style={{
+                  gap: 4,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    width: 2,
+                    height: 12,
+                    backgroundColor: colour,
+                  }}
+                />
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 14,
+                  }}
+                >
+                  {data.summary || "New Schedule"}
+                </Text>
+              </View>
               <Text
                 style={{
                   fontWeight: "300",
                   fontSize: 14,
-                  marginTop: 10,
+                  marginTop: 5,
                 }}
               >
                 {data.fullName}{" "}
                 {hasMultipleDays && (
                   <>
                     (Day {currentDayCount}/{amountOfDays})
-                  </>
-                )}
-              </Text>
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  marginTop: 5,
-                }}
-              >
-                {(currentDayCount !== amountOfDays || !hasMultipleDays) && (
-                  <>
-                    {startDate.toLocaleString(undefined, {
-                      minute: "2-digit",
-                      hour: "2-digit",
-                      hour12: true,
-                    })}
-                  </>
-                )}
-                {!hasMultipleDays && <> - </>}
-                {(currentDayCount === amountOfDays || !hasMultipleDays) && (
-                  <>
-                    {endDate.toLocaleString(undefined, {
-                      minute: "2-digit",
-                      hour: "2-digit",
-                      hour12: true,
-                    })}
                   </>
                 )}
               </Text>
@@ -117,11 +108,37 @@ export default ({
                 backgroundColor: Colors.secondary,
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 14, color: colour }}>
                 {data.fullName.slice(0, 1).toUpperCase()}
               </Text>
             </View>
           </View>
+          <Text
+            style={{
+              fontWeight: "bold",
+              marginTop: 5,
+            }}
+          >
+            {(currentDayCount !== amountOfDays || !hasMultipleDays) && (
+              <>
+                {startDate.toLocaleString(undefined, {
+                  minute: "2-digit",
+                  hour: "2-digit",
+                  hour12: true,
+                })}
+              </>
+            )}
+            {!hasMultipleDays && <> - </>}
+            {(currentDayCount === amountOfDays || !hasMultipleDays) && (
+              <>
+                {endDate.toLocaleString(undefined, {
+                  minute: "2-digit",
+                  hour: "2-digit",
+                  hour12: true,
+                })}
+              </>
+            )}
+          </Text>
         </View>
         <SplitRow
           gap={0}
@@ -129,23 +146,26 @@ export default ({
             marginTop: 0,
             backgroundColor: Colors.secondary,
             alignItems: "center",
-            height: 35,
+            height: 44,
           }}
           seperator={
             <View
               style={{
                 width: 1,
                 backgroundColor: Colors.border,
-                height: "60%",
+                height: 34,
               }}
             />
           }
           elements={[
             <Button
               icon={<Pencil height={14} width={14} />}
-              size="small"
+              size="medium"
               text="Edit"
-              disabled={isExpired || emailAddress !== data.emailAddress}
+              disabled={
+                endDate.getTime() > Date.now() ||
+                emailAddress !== data.emailAddress
+              }
               style={{
                 backgroundColor: "transparent",
                 borderWidth: 0,
@@ -153,11 +173,14 @@ export default ({
             />,
             <Button
               color="red"
-              disabled={isExpired || emailAddress !== data.emailAddress}
-              icon={<Bin height={14} width={14} />}
-              variant="ghost"
-              size="small"
-              text="Remove"
+              disabled={
+                endDate.getTime() > Date.now() ||
+                emailAddress !== data.emailAddress
+              }
+              textStyle={{ color: Colors.red }}
+              icon={<Bin height={14} width={14} color={Colors.red} />}
+              size="medium"
+              text="Delete"
               style={{
                 backgroundColor: "transparent",
                 borderWidth: 0,

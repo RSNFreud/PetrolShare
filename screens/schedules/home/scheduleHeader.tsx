@@ -7,12 +7,15 @@ import DateHeaderItem from "./dateHeaderItem";
 import { useEffect, useRef } from "react";
 import { ScheduleType, resetMonth } from "..";
 
+export type UserColourType = { userID: string; colour: string };
+
 type PropsType = {
   changeMonth: (e: "forwards" | "back") => void;
   backDisabled: boolean;
   currentDate: number;
   currentData: [string, Map<number, ScheduleType[]>[]];
   setCurrentDate: (date: number) => void;
+  userColours: UserColourType[];
 };
 
 export default ({
@@ -20,6 +23,7 @@ export default ({
   backDisabled,
   currentDate,
   currentData,
+  userColours,
   setCurrentDate,
 }: PropsType) => {
   const dateRef = useRef<ScrollView | null>(null);
@@ -54,6 +58,24 @@ export default ({
     }
     return dates;
   };
+
+  const getDots = () => {
+    const dotsPerDay: { date: number; dots: string[] }[] = [];
+    const [_, data] = currentData;
+    data.map((e) =>
+      [...e].map(([date, schedule]) => {
+        dotsPerDay.push({
+          date: date,
+          dots: schedule.map(
+            (q) =>
+              userColours.filter((user) => user.userID === q.userID)[0].colour
+          ),
+        });
+      })
+    );
+    return dotsPerDay;
+  };
+  getDots();
 
   useEffect(() => {
     setInitialScroll(true);
@@ -134,6 +156,7 @@ export default ({
       >
         {getDaysInMonth()?.map((dayObj) => (
           <DateHeaderItem
+            userColours={getDots()}
             dayObj={dayObj}
             setCurrentDate={(e) => setCurrentDate(e)}
             currentDate={currentDate}
