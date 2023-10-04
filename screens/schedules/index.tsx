@@ -87,12 +87,29 @@ export default () => {
     });
   }, [retrieveData]);
 
-  const randomColour = () =>
-    "#" +
-    Math.floor(Math.random() * 16777215)
-      .toString(16)
-      .padStart(6, "0")
-      .toUpperCase();
+  const randomColour = () => {
+    const randomColours = [
+      "#2ea90c",
+      "#1dd09e",
+      "#e32023",
+      "#310add",
+      "#62c879",
+      "#e94685",
+      "#16e498",
+      "#58b8d3",
+      "#49dcc8",
+      "#d973ce",
+    ];
+
+    const availableColours = randomColours.map(
+      (colour) =>
+        Boolean(!userColors.filter((user) => user.colour === colour).length) &&
+        colour
+    );
+    return availableColours[
+      Math.floor(Math.random() * availableColours.length)
+    ];
+  };
   const getSchedules = () => {
     if (!retrieveData?.authenticationKey) return;
     axios

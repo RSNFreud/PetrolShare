@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { View } from "react-native";
+import { Animated, View } from "react-native";
 import { calculateWidth } from "../screens/invoices/invoice";
 
 type PropsType = {
@@ -37,13 +37,12 @@ export default ({
         <>
           <View
             style={{
-              width: elWidth,
-              opacity: elWidth === 0 && !withoutFade ? 0 : 1,
+              flex: 1,
             }}
           >
             {e}
           </View>
-          {count !== elements.length && seperator && seperator}
+          {count !== elements.length - 1 && seperator && seperator}
         </>
       ))}
     </View>
