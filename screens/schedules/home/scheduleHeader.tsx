@@ -67,14 +67,26 @@ export default ({
       [...e].map(([date, schedule]) => {
         dotsPerDay.push({
           date: date,
-          dots: schedule.map(
-            (q) =>
-              userColours?.filter((user) => user.userID === q.userID)[0].colour
+          dots: removeDuplicates(
+            schedule.map(
+              (q) =>
+                userColours?.filter((user) => user.userID === q.userID)[0]
+                  .colour
+            )
           ),
         });
       })
     );
     return dotsPerDay;
+  };
+
+  const removeDuplicates = (array: string[]) => {
+    const arr: string[] = [];
+    array.map((e) => {
+      if (arr.includes(e)) return;
+      arr.push(e);
+    });
+    return arr;
   };
 
   useEffect(() => {
