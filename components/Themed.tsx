@@ -116,7 +116,7 @@ export const Breadcrumbs = ({
       {links.map((e, c) => {
         return (
           <DefaultView
-            key={e.name}
+            key={`${e.name}-c`}
             style={{
               display: "flex",
               flexDirection: "row",

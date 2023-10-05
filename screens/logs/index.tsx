@@ -144,13 +144,13 @@ export default () => {
                   contentContainerStyle={{ paddingBottom: 25, gap: 15 }}
                 >
                   {currentData &&
-                    currentData["logs"]?.map((e, c: number) => {
+                    currentData["logs"]?.map((e, count) => {
                       return (
                         <LogItem
                           handleComplete={() => getLogs()}
                           activeSession={pageData.currentPage === activeSession}
                           id={e.logID}
-                          key={e.logID}
+                          key={`${e.logID}-${count}`}
                           {...e}
                         />
                       );

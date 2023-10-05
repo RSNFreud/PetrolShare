@@ -166,10 +166,11 @@ export default ({
           gap: 25,
         }}
       >
-        {getDaysInMonth()?.map((dayObj) => (
+        {getDaysInMonth()?.map((dayObj, count) => (
           <DateHeaderItem
             userColours={getDots()}
             dayObj={dayObj}
+            key={`${dayObj.date}-${count}`}
             setCurrentDate={(e) => setCurrentDate(e)}
             currentDate={currentDate}
           />

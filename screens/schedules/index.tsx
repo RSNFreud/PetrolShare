@@ -9,7 +9,7 @@ import Button, { TouchableBase } from "../../components/button";
 import axios from "axios";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
-import { useNavigation } from "@react-navigation/native";
+import { EventArg, useNavigation } from "@react-navigation/native";
 import {
   GestureHandlerRootView,
   HandlerStateChangeEvent,
@@ -70,54 +70,14 @@ export default () => {
     setVisible(false);
     getSchedules();
   };
-
-  useEffect(() => {
-    if (!isPremium) return navigation.navigate("Dashboard");
-  }, [isPremium]);
-
-  useEffect(() => {
-    if (retrieveData?.authenticationKey) getSchedules();
-
-    navigation.addListener("focus", async () => {
-      setTimeout(() => {
-        getSchedules();
-      }, 300);
-      const date = new Date();
-      setCurrentDate(getInitialDate(date).getTime());
-    });
-  }, [retrieveData]);
-
-  const randomColour = () => {
-    const randomColours = [
-      "#2ea90c",
-      "#1dd09e",
-      "#e32023",
-      "#310add",
-      "#62c879",
-      "#e94685",
-      "#16e498",
-      "#58b8d3",
-      "#49dcc8",
-      "#d973ce",
-    ];
-
-    const availableColours = randomColours.map(
-      (colour) =>
-        Boolean(!userColors.filter((user) => user.colour === colour).length) &&
-        colour
-    );
-    return availableColours[
-      Math.floor(Math.random() * availableColours.length)
-    ];
-  };
   const getSchedules = () => {
     if (!retrieveData?.authenticationKey) return;
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(({ data }: { data: ScheduleType[] }) => {
+    fetch(
+      config.REACT_APP_API_ADDRESS +
+        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
+    )
+      .then(async (e) => {
+        const data: ScheduleType[] = await e.json();
         setDataLoaded(true);
         const splitSchedules: Map<number, ScheduleType[]> = new Map();
         for (const schedule of data) {
@@ -188,6 +148,41 @@ export default () => {
         console.log(err);
         setDataLoaded(true);
       });
+  };
+  useEffect(() => {
+    if (!isPremium) return navigation.navigate("Dashboard");
+  }, [isPremium]);
+
+  useEffect(() => {
+    if (retrieveData?.authenticationKey) getSchedules();
+    const interval = setInterval(() => {
+      getSchedules();
+    }, 1000 * 60);
+    return () => clearInterval(interval);
+  }, [retrieveData]);
+
+  const randomColour = () => {
+    const randomColours = [
+      "#2ea90c",
+      "#1dd09e",
+      "#e32023",
+      "#310add",
+      "#62c879",
+      "#e94685",
+      "#16e498",
+      "#58b8d3",
+      "#49dcc8",
+      "#d973ce",
+    ];
+
+    const availableColours = randomColours.map(
+      (colour) =>
+        Boolean(!userColors.filter((user) => user.colour === colour).length) &&
+        colour
+    );
+    return availableColours[
+      Math.floor(Math.random() * availableColours.length)
+    ];
   };
 
   const getCurrentData = Object.entries(schedules).filter(
@@ -282,12 +277,11 @@ export default () => {
                 />
                 <View style={{ flex: 1 }}>
                   {getCurrentData &&
-                    getCurrentDayData.map((e) =>
+                    getCurrentDayData.map((e, count) =>
                       [...e].map(([day, schedule]) => {
                         const dayObj = new Date(day);
-
                         return (
-                          <View key={day} style={{ flex: 1 }}>
+                          <View key={`${day}-${count}`} style={{ flex: 1 }}>
                             <ScrollView
                               contentContainerStyle={{
                                 width: "100%",
@@ -445,7 +439,7 @@ export default () => {
             handleClose={() => setVisible(false)}
             title="Add a new schedule"
           >
-            <Create currentDate={currentDate} onClose={updateData} />
+            {/* <Create currentDate={currentDate} onClose={updateData} /> */}
           </Popup>
         </>
       ) : (
