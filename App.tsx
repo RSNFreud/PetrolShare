@@ -4,13 +4,19 @@ import {
   DefaultTheme,
   useNavigationContainerRef,
 } from "@react-navigation/native";
-import analytics from '@react-native-firebase/analytics';
+import analytics from "@react-native-firebase/analytics";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import React from "react";
 import axios from "axios";
-import { Animated, Dimensions, Platform, View, useWindowDimensions } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Platform,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import Dashboard from "./screens/dashboard";
 import Login from "./screens/login";
 import Register from "./screens/register";
@@ -20,7 +26,14 @@ import DesktopScreen from "./screens/desktopScreen";
 import logs from "./screens/logs";
 import preset from "./screens/distance/preset";
 import { AuthContext, AuthContextType, StoreData } from "./hooks/context";
-import { Alert, checkForUpdates, deleteItem, getItem, sendCustomEvent, setItem } from "./hooks";
+import {
+  Alert,
+  checkForUpdates,
+  deleteItem,
+  getItem,
+  sendCustomEvent,
+  setItem,
+} from "./hooks";
 import invoices from "./screens/invoices";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -35,39 +48,39 @@ import Colors from "./constants/Colors";
 import Premium from "./components/premium";
 import SplashScreenComponent from "./components/splashScreen";
 import Header from "./components/Header";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { EventRegister } from "react-native-event-listeners";
 import Toast from "react-native-toast-message";
 import { Text } from "./components/Themed";
 import AlertBox from "./components/alertBox";
-import * as Sentry from 'sentry-expo';
+import * as Sentry from "sentry-expo";
 import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
 import BottomNavigation from "./components/bottomNavigation";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
   routingInstrumentation = new Sentry.Native.RoutingInstrumentation();
 
   Sentry.init({
-    dsn: "http://6bf6ac38ab5b406e8e9309b45ec37ede@freud-online.co.uk:9000/4",
+    dsn: "https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.sentry.io/4506003538575360",
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     tracesSampleRate: 1.0,
     integrations: [
       new Sentry.Native.ReactNativeTracing({
-        routingInstrumentation
-      })
-    ]
+        routingInstrumentation,
+      }),
+    ],
   });
-} catch { }
+} catch {}
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-SplashScreen.hideAsync()
+SplashScreen.hideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -86,14 +99,18 @@ export default function App() {
   const [screen, setScreen] = useState("");
   const navRef = useNavigationContainerRef();
   const { width } = useWindowDimensions();
-  const [popupVisible, setPopupVisible] = useState(false)
+  const [popupVisible, setPopupVisible] = useState(false);
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Light": require("./assets/fonts/Roboto-Light.ttf"),
   });
-  const [loadingStatus, setLoadingStatus] = useState({ fonts: fontsLoaded, auth: false, update: false })
+  const [loadingStatus, setLoadingStatus] = useState({
+    fonts: fontsLoaded,
+    auth: false,
+    update: false,
+  });
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
   const store = React.useMemo(
     () => ({
@@ -108,8 +125,8 @@ export default function App() {
               setUserData(data);
               try {
                 setItem("userData", JSON.stringify(data));
-              } catch { }
-              sendCustomEvent('openSplash')
+              } catch {}
+              sendCustomEvent("openSplash");
               res(data);
             })
             .catch(({ response }) => {
@@ -121,7 +138,7 @@ export default function App() {
         setUserData(e);
         try {
           setItem("userData", JSON.stringify(e));
-        } catch { }
+        } catch {}
       },
       retrieveData: userData,
       setData: (e: any) => {
@@ -129,7 +146,7 @@ export default function App() {
       },
       isLoading: loading,
       isPremium: isPremium,
-      setPremiumStatus: e => setIsPremium(e),
+      setPremiumStatus: (e) => setIsPremium(e),
       signOut: async () => {
         deleteItem("userData");
         deleteItem("presets");
@@ -164,30 +181,40 @@ export default function App() {
           axios
             .get(
               config.REACT_APP_API_ADDRESS +
-              "/user/verify?authenticationKey=" +
-              parsed.authenticationKey, { timeout: 1000 }
+                "/user/verify?authenticationKey=" +
+                parsed.authenticationKey,
+              { timeout: 1000 }
             )
             .then(async ({ data }) => {
               setItem("userData", JSON.stringify({ ...parsed, ...data }));
               setUserData({ ...parsed, ...data });
-              setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
+              setLoadingStatus((loadingStatus) => ({
+                ...loadingStatus,
+                auth: true,
+              }));
               if (fontsLoaded) setLoading(false);
             })
             .catch(({ response }) => {
               console.log(response);
-              setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
-              if (response?.data.includes('This account has been deactivated'))
+              setLoadingStatus((loadingStatus) => ({
+                ...loadingStatus,
+                auth: true,
+              }));
+              if (response?.data.includes("This account has been deactivated"))
                 setTimeout(() => {
-                  Alert('Account Deactivated', response.data)
+                  Alert("Account Deactivated", response.data);
                 }, 500);
-              store.signOut()
+              store.signOut();
               return;
             });
         } else {
-          setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
+          setLoadingStatus((loadingStatus) => ({
+            ...loadingStatus,
+            auth: true,
+          }));
         }
       } catch (data) {
-        setLoadingStatus(loadingStatus => ({ ...loadingStatus, auth: true }))
+        setLoadingStatus((loadingStatus) => ({ ...loadingStatus, auth: true }));
         setUserData({});
         deleteItem("userData");
         deleteItem("presets");
@@ -196,45 +223,58 @@ export default function App() {
       }
     };
     async();
-    checkForUpdates(true).then(e => {
-      if (!e) setLoadingStatus(loadingStatus => ({ ...loadingStatus, update: true }))
-    }).catch(() => setLoadingStatus(loadingStatus => ({ ...loadingStatus, update: true })))
+    checkForUpdates(true)
+      .then((e) => {
+        if (!e)
+          setLoadingStatus((loadingStatus) => ({
+            ...loadingStatus,
+            update: true,
+          }));
+      })
+      .catch(() =>
+        setLoadingStatus((loadingStatus) => ({
+          ...loadingStatus,
+          update: true,
+        }))
+      );
   }, []);
 
   useEffect(() => {
-    EventRegister.addEventListener('sendAlert', (e) => {
+    EventRegister.addEventListener("sendAlert", (e) => {
       Toast.show({
-        type: 'default',
+        type: "default",
         text1: e,
-      })
-    })
-    EventRegister.addEventListener('popupVisible', e => {
-      setPopupVisible(e)
-    })
+      });
+    });
+    EventRegister.addEventListener("popupVisible", (e) => {
+      setPopupVisible(e);
+    });
 
     return () => {
-      EventRegister.removeEventListener('sendAlert')
-    }
-  }, [])
+      EventRegister.removeEventListener("sendAlert");
+    };
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded)
-      setLoadingStatus(loadingStatus => ({ ...loadingStatus, fonts: true }))
-  }, [fontsLoaded])
+      setLoadingStatus((loadingStatus) => ({ ...loadingStatus, fonts: true }));
+  }, [fontsLoaded]);
 
   useEffect(() => {
     let i: NodeJS.Timeout;
-    if (loadingStatus.auth && loadingStatus.fonts && loadingStatus.update) setLoading(false)
-    if (loadingStatus.auth && loadingStatus.fonts && !loadingStatus.update) i = setTimeout(() => setLoading(false), 1000)
-    return () => clearTimeout(i)
-  }, [loadingStatus])
+    if (loadingStatus.auth && loadingStatus.fonts && loadingStatus.update)
+      setLoading(false);
+    if (loadingStatus.auth && loadingStatus.fonts && !loadingStatus.update)
+      i = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(i);
+  }, [loadingStatus]);
 
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
 
     if (!loading && !notifData.invoiceID && !notifData.routeName) {
-      sendCustomEvent('closeSplash')
-    };
+      sendCustomEvent("closeSplash");
+    }
     Notifications.addNotificationResponseReceivedListener((e) => {
       const routeName = e.notification.request.content.data["route"] as any;
       const invoiceID = e.notification.request.content.data[
@@ -243,7 +283,7 @@ export default function App() {
       if (!routeName) return;
       setNotifData({ routeName: routeName, invoiceID: invoiceID });
     });
-    return () => clearTimeout(i)
+    return () => clearTimeout(i);
   }, [loading, notifData]);
 
   useEffect(() => {
@@ -252,7 +292,7 @@ export default function App() {
     if (notifData.invoiceID || notifData.routeName) {
       navRef.navigate(notifData.routeName as any, { id: notifData.invoiceID });
       setNotifData({ routeName: "", invoiceID: "" });
-      sendCustomEvent('closeSplash')
+      sendCustomEvent("closeSplash");
     }
   }, [notifData, loading, store, navRef]);
 
@@ -261,7 +301,7 @@ export default function App() {
   }, []);
 
   const checkFirstTime = () => {
-    updateScreen()
+    updateScreen();
     if (
       navRef &&
       navRef.getCurrentRoute()?.name != "Dashboard" &&
@@ -273,7 +313,7 @@ export default function App() {
   };
 
   const updateScreen = async () => {
-    if (!navRef || !navRef.getCurrentRoute()) return
+    if (!navRef || !navRef.getCurrentRoute()) return;
     try {
       await analytics().logScreenView({
         screen_name: navRef.getCurrentRoute()?.name,
@@ -281,12 +321,12 @@ export default function App() {
       });
       routingInstrumentation?.onRouteWillChange({
         name: navRef.getCurrentRoute()?.name || "",
-        op: 'navigation'
-      })
-    } catch { }
+        op: "navigation",
+      });
+    } catch {}
 
-    setScreen(navRef.getCurrentRoute()?.name || "")
-  }
+    setScreen(navRef.getCurrentRoute()?.name || "");
+  };
 
   useEffect(() => {
     if (userData["emailAddress"]) {
@@ -300,112 +340,140 @@ export default function App() {
         style={{
           backgroundColor: Colors.background,
           borderColor: Colors.border,
-          borderStyle: 'solid',
+          borderStyle: "solid",
           borderWidth: 1,
           borderRadius: 4,
           paddingVertical: 15,
           paddingHorizontal: 25,
-          marginHorizontal: 20
+          marginHorizontal: 20,
         }}
       >
         <Text
           style={{
             fontSize: 16,
-            color: 'white',
-            fontWeight: '700',
-            textAlign: 'center',
+            color: "white",
+            fontWeight: "700",
+            textAlign: "center",
             lineHeight: 24,
           }}
         >
           {text1}
         </Text>
-      </View >
+      </View>
     ),
-  }
+  };
 
-  return (<SafeAreaProvider style={{ position: 'relative', flex: 1 }}>
-    <SafeAreaView style={{ position: 'relative', flex: 1 }}>
-      <SplashScreenComponent />
-      <Animated.View style={{ flex: 1, opacity: loading ? 0 : 1 }}>
-        <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height, flex: 1 }}>
-          <AuthContext.Provider value={store}>
-            {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
-            <NavigationContainer
-              onReady={() => checkFirstTime()}
-              onStateChange={updateScreen}
-              ref={navRef}
-              linking={LinkingConfiguration}
-              theme={{
-                dark: true,
-                colors: {
-                  ...DefaultTheme.colors,
-                  background: Colors.background,
-                  text: "white",
-                },
-              }}
-            >
-              <Stack.Navigator
-                screenOptions={{
-                  gestureEnabled: false,
-                  headerShown: true,
-                  header: () => <Header />,
-                  animation: "slide_from_right",
-                  animationDuration: 600,
+  return (
+    <SafeAreaProvider style={{ position: "relative", flex: 1 }}>
+      <SafeAreaView style={{ position: "relative", flex: 1 }}>
+        <SplashScreenComponent />
+        <Animated.View style={{ flex: 1, opacity: loading ? 0 : 1 }}>
+          <View
+            style={{
+              width: Dimensions.get("window").width,
+              height: Dimensions.get("window").height,
+              flex: 1,
+            }}
+          >
+            <AuthContext.Provider value={store}>
+              {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
+              <NavigationContainer
+                onReady={() => checkFirstTime()}
+                onStateChange={updateScreen}
+                ref={navRef}
+                linking={LinkingConfiguration}
+                theme={{
+                  dark: true,
+                  colors: {
+                    ...DefaultTheme.colors,
+                    background: Colors.background,
+                    text: "white",
+                  },
                 }}
               >
-                {width > 768 && Platform.OS === "web" ? (
+                <Stack.Navigator
+                  screenOptions={{
+                    gestureEnabled: false,
+                    headerShown: true,
+                    header: () => <Header />,
+                    animation: "slide_from_right",
+                    animationDuration: 600,
+                  }}
+                >
+                  {width > 768 && Platform.OS === "web" ? (
+                    <Stack.Screen
+                      name="DesktopScreen"
+                      component={DesktopScreen}
+                      options={{ title: "PetrolShare", headerShown: false }}
+                    />
+                  ) : loading || store.isLoggedIn ? (
+                    <>
+                      <Stack.Screen
+                        name="Home"
+                        component={BottomNavigator}
+                        options={{ headerShown: false }}
+                      />
+                      {!firstSteps && (
+                        <Stack.Screen
+                          name="AddPreset"
+                          component={preset}
+                          options={{ title: "Add Preset" }}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Stack.Screen name="Login" component={Login} />
+                      <Stack.Screen name="Register" component={Register} />
+                    </>
+                  )}
+                  {width < 768 && (
+                    <Stack.Screen
+                      options={{
+                        header: () => <Header isGuestMode />,
+                        title: "Invoice",
+                      }}
+                      name="PublicInvoice"
+                      component={PublicInvoice}
+                    />
+                  )}
                   <Stack.Screen
-                    name="DesktopScreen"
-                    component={DesktopScreen}
-                    options={{ title: "PetrolShare", headerShown: false }}
+                    name="NotFound"
+                    component={NotFoundScreen}
+                    options={{ title: "Oops!" }}
                   />
-                ) : loading || store.isLoggedIn ? (
-                  <>
-                    <Stack.Screen name="Home" component={BottomNavigator} options={{ headerShown: false }} />
-                    {!firstSteps && <Stack.Screen
-                      name="AddPreset"
-                      component={preset}
-                      options={{ title: "Add Preset" }}
-                    />}
-                  </>
-                ) : (
-                  <>
-                    <Stack.Screen name="Login" component={Login} />
-                    <Stack.Screen name="Register" component={Register} />
-                  </>
-                )}
-                {width < 768 && <Stack.Screen options={{ header: () => <Header isGuestMode />, title: 'Invoice' }} name="PublicInvoice" component={PublicInvoice} />}
-                <Stack.Screen
-                  name="NotFound"
-                  component={NotFoundScreen}
-                  options={{ title: "Oops!" }}
-                />
-              </Stack.Navigator>
-            </NavigationContainer>
-            <StatusBar
-              style="light"
-              backgroundColor={
-                screen != "Dashboard" ? Colors.background : Colors.secondary
-              }
-            />
-            {!popupVisible && <AlertBox />}
-            <Toast config={ToastConfig} />
-
-          </AuthContext.Provider>
-        </View>
-      </Animated.View>
-    </SafeAreaView>
-  </SafeAreaProvider>
+                </Stack.Navigator>
+              </NavigationContainer>
+              <StatusBar
+                style="light"
+                backgroundColor={
+                  screen != "Dashboard" ? Colors.background : Colors.secondary
+                }
+              />
+              {!popupVisible && <AlertBox />}
+              <Toast config={ToastConfig} />
+            </AuthContext.Provider>
+          </View>
+        </Animated.View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const BottomNavigator = () => (
-  <Tab.Navigator screenOptions={{ headerShown: true, header: () => <Header /> }} tabBar={props => <BottomNavigation {...props} />}>
-    <Tab.Screen name="Dashboard" component={Dashboard} options={{
-      tabBarLabel: 'Home'
-    }} />
+  <Tab.Navigator
+    screenOptions={{ headerShown: true, header: () => <Header /> }}
+    tabBar={(props) => <BottomNavigation {...props} />}
+  >
+    <Tab.Screen
+      name="Dashboard"
+      component={Dashboard}
+      options={{
+        tabBarLabel: "Home",
+      }}
+    />
     <Tab.Screen name="Payments" component={invoices} />
     <Tab.Screen name="History" component={logs} />
     <Tab.Screen name="Schedules" component={schedules} />
-  </Tab.Navigator >
-)
+  </Tab.Navigator>
+);
