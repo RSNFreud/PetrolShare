@@ -4,7 +4,7 @@ import { Breadcrumbs, Text } from "../../components/Themed";
 import Colors from "../../constants/Colors";
 import { useState, useContext, useEffect, useRef } from "react";
 import Popup from "../../components/Popup";
-import Create from "./create";
+import Create, { DataType } from "./create";
 import Button, { TouchableBase } from "../../components/button";
 import axios from "axios";
 import config from "../../config";
@@ -21,16 +21,23 @@ import ScheduleHeader from "./home/scheduleHeader";
 import DateEntry from "./home/dateEntry";
 
 export type ScheduleType = {
-  allDay: string;
+  allDay: boolean;
   startDate: Date;
-  endDate: Date;
+  endDate: string;
   summary?: string;
   fullName: string;
   emailAddress: string;
   userID: string;
+  repeating?: string;
+  repeatingEndDate?: number;
+  custom?: {
+    number: string;
+    repeatingFormat: string;
+    repeatingDays: string[];
+  };
 };
 
-export const resetTime = (date: Date) => {
+export const resetTime = (date: Date | string) => {
   let temp = new Date(date);
   return new Date(temp.setHours(0, 0, 0, 0));
 };
@@ -59,10 +66,15 @@ export default () => {
     Record<number, Map<number, ScheduleType[]>[]> | []
   >([]);
   const { retrieveData, isPremium } = useContext(AuthContext);
+  const [popupData, setPopupData] = useState<{
+    title: string;
+    data?: DataType;
+  }>({
+    title: "Add a new schedule",
+  });
   const [userColors, setUserColors] = useState<
     { userID: string; colour: string }[]
   >([]);
-  const [isOpened, setIsOpened] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const navigation = useNavigation();
 
@@ -163,16 +175,16 @@ export default () => {
 
   const randomColour = () => {
     const randomColours = [
-      "#2ea90c",
-      "#1dd09e",
-      "#e32023",
-      "#310add",
-      "#62c879",
-      "#e94685",
-      "#16e498",
-      "#58b8d3",
-      "#49dcc8",
-      "#d973ce",
+      "#98FF68",
+      "#6FFFCB",
+      "#6B53FF",
+      "#654DFF",
+      "#F4FF7B",
+      "#FFB672",
+      "#FF7B7B",
+      "#92DE90",
+      "#F49A46",
+      "#FDA8FF",
     ];
 
     const availableColours = randomColours.map(
@@ -234,11 +246,28 @@ export default () => {
 
   useEffect(() => {
     setInitialScroll(true);
-    setIsOpened(0);
   }, [currentDate]);
+
+  useEffect(() => {
+    if (!visible) {
+      setPopupData({ title: "Add a new schedule" });
+    }
+  }, [visible]);
 
   const backDisabled =
     new Date(currentDate).getMonth() === new Date().getMonth();
+
+  const handleEdit = (data: ScheduleType) => {
+    setPopupData({
+      title: "Edit a schedule",
+      data: {
+        ...data,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
+      },
+    });
+    setVisible(true);
+  };
 
   if (!isPremium) return;
 
@@ -337,11 +366,7 @@ export default () => {
                                           retrieveData?.emailAddress
                                         }
                                         key={`${count}-${day}`}
-                                        onPress={() =>
-                                          isOpened === startDate.getTime()
-                                            ? setIsOpened(0)
-                                            : setIsOpened(startDate.getTime())
-                                        }
+                                        handleEdit={handleEdit}
                                       />
                                     );
                                   })}
@@ -437,9 +462,13 @@ export default () => {
           <Popup
             visible={visible}
             handleClose={() => setVisible(false)}
-            title="Add a new schedule"
+            title={popupData.title}
           >
-            {/* <Create currentDate={currentDate} onClose={updateData} /> */}
+            <Create
+              currentDate={currentDate}
+              onClose={updateData}
+              previousData={popupData.data}
+            />
           </Popup>
         </>
       ) : (
