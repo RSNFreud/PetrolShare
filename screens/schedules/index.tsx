@@ -6,10 +6,9 @@ import { useState, useContext, useEffect, useRef } from "react";
 import Popup from "../../components/Popup";
 import Create, { DataType } from "./create";
 import Button, { TouchableBase } from "../../components/button";
-import axios from "axios";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
-import { EventArg, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import {
   GestureHandlerRootView,
   HandlerStateChangeEvent,

@@ -164,10 +164,10 @@ export default ({
             size="medium"
             handleClick={() => handleEdit(data)}
             text="Edit"
-            // disabled={
-            //   Date.now() > endDate.getTime() ||
-            //   emailAddress !== data.emailAddress
-            // }
+            disabled={
+              Date.now() > endDate.getTime() ||
+              emailAddress !== data.emailAddress
+            }
             style={{
               backgroundColor: "transparent",
               borderWidth: 0,
