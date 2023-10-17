@@ -31,6 +31,7 @@ export type ScheduleType = {
   userID: string;
   repeating?: string;
   repeatingEndDate?: number;
+  changeFuture?: boolean;
   linkedSessionID?: number;
   custom?: {
     number: string;
@@ -260,17 +261,30 @@ export default () => {
     new Date(currentDate).getMonth() === new Date().getMonth();
 
   const handleEdit = (data: ScheduleType) => {
-    console.log("====================================");
-    console.log(data);
-    console.log("====================================");
     if (data.linkedSessionID) {
       Alert(
         "Edit schedule",
         "Would you like to edit just this event or all future events?",
-        [{ text: "Current Event" }, { text: "All Events" }]
+        [
+          {
+            text: "Current Event",
+            onPress: () => {
+              openPopup(data);
+            },
+          },
+          {
+            text: "All Events",
+            onPress: () => {
+              openPopup({ ...data, changeFuture: true });
+            },
+          },
+        ]
       );
       return;
-    }
+    } else openPopup(data);
+  };
+
+  const openPopup = (data: ScheduleType) => {
     setPopupData({
       title: "Edit a schedule",
       data: {

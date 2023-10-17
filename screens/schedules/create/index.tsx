@@ -28,6 +28,7 @@ export type DataType = {
   endDate: Date;
   summary?: string;
   repeating?: string;
+  changeFuture?: boolean;
   repeatingEndDate?: number;
   custom?: {
     number?: string;
