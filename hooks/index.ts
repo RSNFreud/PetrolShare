@@ -3,7 +3,7 @@ import {
 } from 'react-native'
 import { EventRegister } from 'react-native-event-listeners'
 import { MMKV } from 'react-native-mmkv'
-import { ButtonType } from '../components/alertBox'
+import { ButtonType } from '@components/alertBox'
 import { checkForUpdateAsync, fetchUpdateAsync, reloadAsync } from 'expo-updates'
 
 const storage = new MMKV()

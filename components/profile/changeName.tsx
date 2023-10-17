@@ -1,38 +1,34 @@
-import axios from 'axios'
-import React, { useState, useContext } from 'react'
-import Input from '../Input'
-import Button from '../button'
-import { setItem } from '../../hooks'
-import { AuthContext } from '../../hooks/context'
-import config from '../../config'
-import { PropsType } from './default'
+import axios from "axios";
+import React, { useState, useContext } from "react";
+import Input from "../input";
+import Button from "../button";
+import { setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
+import config from "../../config";
+import { PropsType } from "./default";
 
-export default ({
-  handleClose,
-  handleChange,
-  handleUpdate
-}: PropsType) => {
-  const [name, setName] = useState<string>()
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState('')
-  const { retrieveData } = useContext(AuthContext)
+export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
+  const [name, setName] = useState<string>();
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState("");
+  const { retrieveData } = useContext(AuthContext);
 
   const validateForm = () => {
-    if (!name) return setErrors('Please enter a valid name')
-    setLoading(true)
+    if (!name) return setErrors("Please enter a valid name");
+    setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/user/change-name`, {
         authenticationKey: retrieveData?.authenticationKey,
         newName: name,
       })
       .then(async () => {
-        setLoading(false)
-        handleUpdate && handleUpdate()
-        handleClose()
-        setItem('delayedAlert', 'Your name has been\nsuccessfully updated!')
+        setLoading(false);
+        handleUpdate && handleUpdate();
+        handleClose();
+        setItem("delayedAlert", "Your name has been\nsuccessfully updated!");
       })
-      .catch((err) => { })
-  }
+      .catch((err) => {});
+  };
 
   return (
     <>
@@ -48,8 +44,13 @@ export default ({
         handleClick={validateForm}
         loading={loading}
         style={{ marginBottom: 15 }}
-        text='Change name' />
-      <Button handleClick={() => handleChange('Settings')} variant={'ghost'} text='Back' />
+        text="Change name"
+      />
+      <Button
+        handleClick={() => handleChange("Settings")}
+        variant={"ghost"}
+        text="Back"
+      />
     </>
-  )
-}
+  );
+};

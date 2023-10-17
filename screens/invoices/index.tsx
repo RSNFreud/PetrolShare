@@ -7,15 +7,15 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { Box, Breadcrumbs } from "../../components/Themed";
-import Layout from "../../components/layout";
-import { Text } from "../../components/Themed";
+import { Box, Breadcrumbs } from "@components/Themed";
+import Layout from "@components/layout";
+import { Text } from "@components/text";
 import { convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import Invoice from "./invoice";
 import config from "../../config";
 import Colors from "../../constants/Colors";
-import { TouchableBase } from "../../components/button";
+import { TouchableBase } from "@components/button";
 
 export default ({ navigation }: any) => {
   const { params } = useRoute<any>();

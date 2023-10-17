@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Text } from "../../components/Themed";
+import { Box } from "@components/Themed";
+import { Text } from "@components/text";
 import {
   ActivityIndicator,
   LayoutChangeEvent,
   Platform,
   ScrollView,
   Share,
-  TouchableOpacity,
   View,
 } from "react-native";
 import axios from "axios";
@@ -22,11 +22,11 @@ import {
 import Toast from "react-native-toast-message";
 import { convertCurrency } from "../../hooks/getCurrencies";
 import config from "../../config";
-import AssignDistance from "../../components/assignDistance";
+import AssignDistance from "@components/assignDistance";
 import Colors from "../../constants/Colors";
 import InvoiceItem, { InvoicePropsType } from "./invoiceItem";
 import { useNavigation } from "@react-navigation/native";
-import { TouchableBase } from "../../components/button";
+import { TouchableBase } from "@components/button";
 import ShareIcon from "../../assets/icons/share";
 
 type PropsType = {

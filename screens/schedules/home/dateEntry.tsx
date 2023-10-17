@@ -1,11 +1,11 @@
 import { View } from "react-native";
 import Bin from "../../../assets/icons/bin";
 import Pencil from "../../../assets/icons/pencil";
-import SplitRow from "../../../components/splitRow";
+import SplitRow from "@components/splitRow";
 import Colors from "../../../constants/Colors";
-import { Text } from "../../../components/Themed";
+import { Text } from "@components/text";
 import { ScheduleType } from "..";
-import Button from "../../../components/button";
+import Button from "@components/button";
 
 type PropsType = {
   handleEdit: (e: ScheduleType) => void;
@@ -164,10 +164,10 @@ export default ({
             size="medium"
             handleClick={() => handleEdit(data)}
             text="Edit"
-            disabled={
-              Date.now() > endDate.getTime() ||
-              emailAddress !== data.emailAddress
-            }
+            // disabled={
+            //   Date.now() > endDate.getTime() ||
+            //   emailAddress !== data.emailAddress
+            // }
             style={{
               backgroundColor: "transparent",
               borderWidth: 0,

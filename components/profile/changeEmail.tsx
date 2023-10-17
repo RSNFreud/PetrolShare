@@ -1,16 +1,13 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
-import Input from "../Input";
+import Input from "../input";
 import Button from "../button";
 import { AuthContext } from "../../hooks/context";
 import config from "../../config";
 import { PropsType } from "./default";
 import { setItem } from "../../hooks";
 
-export default ({
-  handleClose,
-  handleChange, handleUpdate
-}: PropsType) => {
+export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
@@ -31,12 +28,14 @@ export default ({
       })
       .then(() => {
         setLoading(false);
-        handleUpdate && handleUpdate()
+        handleUpdate && handleUpdate();
         handleClose();
-        setItem('delayedAlert', "A confirmation email has been sent to your inbox to change your address",
-        )
+        setItem(
+          "delayedAlert",
+          "A confirmation email has been sent to your inbox to change your address"
+        );
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   return (
@@ -53,9 +52,14 @@ export default ({
         handleClick={validateForm}
         loading={loading}
         style={{ marginBottom: 15 }}
-        text="Change email" />
+        text="Change email"
+      />
 
-      <Button handleClick={() => handleChange('Settings')} variant={"ghost"} text="Back" />
+      <Button
+        handleClick={() => handleChange("Settings")}
+        variant={"ghost"}
+        text="Back"
+      />
     </>
   );
 };

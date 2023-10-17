@@ -4,14 +4,15 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import Input from "../../components/Input";
-import { Breadcrumbs, Text, Seperator } from "../../components/Themed";
-import Layout from "../../components/layout";
+import Input from "@components/input";
+import { Breadcrumbs, Seperator } from "@components/Themed";
+import { Text } from "@components/text";
+import Layout from "@components/layout";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
-import Button, { TouchableBase } from "../../components/button";
-import Popup from "../../components/Popup";
+import Button, { TouchableBase } from "@components/button";
+import Popup from "@components/Popup";
 import SubmitButton from "./submitButton";
 import Toast from "react-native-toast-message";
 import {

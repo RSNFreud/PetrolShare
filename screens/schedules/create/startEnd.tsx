@@ -1,9 +1,9 @@
 import React from "react";
 import { View, ViewProps } from "react-native";
-import SplitRow from "../../../components/splitRow";
+import SplitRow from "@components/splitRow";
 import Colors from "../../../constants/Colors";
 import { DataType } from ".";
-import DatePicker from "../../../components/dateTimePicker";
+import DatePicker from "@components/dateTimePicker";
 
 type PropsType = {
   data: DataType;

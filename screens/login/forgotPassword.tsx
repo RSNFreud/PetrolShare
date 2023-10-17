@@ -1,21 +1,21 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { View } from "react-native";
-import Input from "../../components/Input";
-import Popup from "../../components/Popup";
-import { Text } from "../../components/Themed";
+import Input from "@components/input";
+import Popup from "@components/Popup";
+import { Text } from "@components/text";
 import config from "../../config";
-import Button from "../../components/button";
+import Button from "@components/button";
 
 type PropTypes = {
-  visible: boolean
-  setVisible: (e: boolean) => void
+  visible: boolean;
+  setVisible: (e: boolean) => void;
   handleSubmit: (
     formData: {},
     setFormErrors: React.SetStateAction<any>,
     submitAction: () => void
-  ) => void
-}
+  ) => void;
+};
 
 export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
   const [formData, setFormData] = useState({
@@ -87,7 +87,8 @@ export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
             handleClick={() =>
               handleSubmit(formData, setFormErrors, () => sendEmail())
             }
-            text="Send Recovery Email" />
+            text="Send Recovery Email"
+          />
         </>
       )}
     </Popup>

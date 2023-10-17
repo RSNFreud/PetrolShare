@@ -2,14 +2,14 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { View } from "react-native";
 import Button from "./button";
-import Input from "./Input";
+import Input from "./input";
 import { Alert } from "../hooks";
 import { AuthContext } from "../hooks/context";
 import config from "../config";
 
 type PropsType = {
   firstSteps?: boolean;
-  handleComplete: (data: { groupID?: string, message?: string }) => void;
+  handleComplete: (data: { groupID?: string; message?: string }) => void;
   handleCancel: () => void;
 };
 
@@ -91,7 +91,12 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
         style={{ marginBottom: 20 }}
       />
       <Button loading={loading} handleClick={updateGroup} text="Join Group" />
-      <Button variant="ghost" style={{ marginTop: 20 }} handleClick={handleCancel} text="Back" />
+      <Button
+        variant="ghost"
+        style={{ marginTop: 20 }}
+        handleClick={handleCancel}
+        text="Back"
+      />
     </View>
   );
 };

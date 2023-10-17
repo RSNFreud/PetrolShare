@@ -1,7 +1,7 @@
 import { View, ScrollView } from "react-native";
 import ChevronRight from "../../../assets/icons/chevronRight";
-import { TouchableBase } from "../../../components/button";
-import DateTimePicker from "../../../components/dateTimePicker";
+import { TouchableBase } from "@components/button";
+import DateTimePicker from "@components/dateTimePicker";
 import Colors from "../../../constants/Colors";
 import DateHeaderItem from "./dateHeaderItem";
 import { useEffect, useRef } from "react";

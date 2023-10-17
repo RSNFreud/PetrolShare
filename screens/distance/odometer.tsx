@@ -1,92 +1,101 @@
-import Input from '../../components/Input'
-import { useContext, useEffect, useState } from 'react'
-import axios from 'axios'
-import { AuthContext } from '../../hooks/context'
-import SubmitButton from './submitButton'
-import { useNavigation } from '@react-navigation/native'
-import { deleteItem, setItem } from '../../hooks'
-import config from '../../config'
-import { Box, Text } from '../../components/Themed'
+import Input from "@components/input";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { AuthContext } from "../../hooks/context";
+import SubmitButton from "./submitButton";
+import { useNavigation } from "@react-navigation/native";
+import { deleteItem, setItem } from "../../hooks";
+import config from "../../config";
+import { Box } from "@components/Themed";
+import { Text } from "@components/text";
 
 export default ({
   previousData,
   handleClose,
 }: {
   previousData?: {
-    startValue: string
-    endValue: string
-  }
-  handleClose: (alert?: string) => void
+    startValue: string;
+    endValue: string;
+  };
+  handleClose: (alert?: string) => void;
 }) => {
   const [data, setData] = useState({
     ...previousData,
-  })
-  const [errors, setErrors] = useState('')
-  const [distance, setDistance] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { retrieveData } = useContext(AuthContext)
-  const { navigate } = useNavigation() as any
+  });
+  const [errors, setErrors] = useState("");
+  const [distance, setDistance] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { retrieveData } = useContext(AuthContext);
+  const { navigate } = useNavigation() as any;
 
   useEffect(() => {
     if (previousData) {
-      setData({ ...previousData })
+      setData({ ...previousData });
     }
-  }, [previousData])
+  }, [previousData]);
 
   useEffect(() => {
     if (data.startValue && data.endValue) {
-      const start = parseFloat(data.startValue)
-      const end = parseFloat(data.endValue)
-      if (isNaN(start) || isNaN(end)) return
-      if (end - start < 0) return
-      setDistance((end - start).toString())
+      const start = parseFloat(data.startValue);
+      const end = parseFloat(data.endValue);
+      if (isNaN(start) || isNaN(end)) return;
+      if (end - start < 0) return;
+      setDistance((end - start).toString());
     } else {
-      setDistance('')
+      setDistance("");
     }
-  }, [data])
+  }, [data]);
 
   const handleSubmit = async () => {
-    setErrors('')
+    setErrors("");
     if (!data.startValue) {
-      return setErrors('Please enter a start value')
+      return setErrors("Please enter a start value");
     }
 
-    let distance: number = 0
+    let distance: number = 0;
 
     if (data.startValue && data.endValue) {
-      distance = parseFloat(data.endValue) - parseFloat(data.startValue)
+      distance = parseFloat(data.endValue) - parseFloat(data.startValue);
     }
 
     if (data.startValue && !data.endValue) {
-      handleClose('Saved your distance as a draft! Access it by clicking on Manage Distance again!')
-      setItem('draft', JSON.stringify(data))
-      navigate('Dashboard')
-      return
+      handleClose(
+        "Saved your distance as a draft! Access it by clicking on Manage Distance again!"
+      );
+      setItem("draft", JSON.stringify(data));
+      navigate("Dashboard");
+      return;
     }
     if (distance <= 0 || isNaN(distance))
-      return setErrors('Please enter a distance above 0!')
+      return setErrors("Please enter a distance above 0!");
 
-    if (!retrieveData) return
-    setLoading(true)
+    if (!retrieveData) return;
+    setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
         distance: distance,
         authenticationKey: retrieveData?.authenticationKey,
       })
       .then(async () => {
-        setLoading(false)
-        handleClose('Distance successfully updated!')
-        deleteItem('draft')
+        setLoading(false);
+        handleClose("Distance successfully updated!");
+        deleteItem("draft");
       })
       .catch(({ response }) => {
-        console.log(response.message)
-      })
-  }
+        console.log(response.message);
+      });
+  };
 
   return (
     <>
-      <Box style={{ paddingHorizontal: 15, paddingVertical: 15, marginBottom: 25 }}>
-        <Text>The odometer is the readout typically displayed behind the steering wheel in an LED readout. It is a series of numbers displaying the total amount of distance the car has travelled.</Text>
+      <Box
+        style={{ paddingHorizontal: 15, paddingVertical: 15, marginBottom: 25 }}
+      >
+        <Text>
+          The odometer is the readout typically displayed behind the steering
+          wheel in an LED readout. It is a series of numbers displaying the
+          total amount of distance the car has travelled.
+        </Text>
       </Box>
       <Input
         placeholder="Enter odemetor start value"
@@ -105,12 +114,12 @@ export default ({
         style={{ marginBottom: 30 }}
       />
       <SubmitButton
-        text={data.startValue && !data.endValue ? 'Save Draft' : 'Add Distance'}
+        text={data.startValue && !data.endValue ? "Save Draft" : "Add Distance"}
         loading={loading}
         handleClick={handleSubmit}
         errors={errors}
         distance={distance}
       />
     </>
-  )
-}
+  );
+};

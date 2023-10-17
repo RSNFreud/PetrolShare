@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import Popup from "../../components/Popup";
-import { LongButton } from "../../components/Themed";
+import Popup from "@components/Popup";
+import { LongButton } from "@components/Themed";
 import Manual from "./manual";
 import Odometer from "./odometer";
 import Toast from "react-native-toast-message";

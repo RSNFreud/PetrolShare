@@ -14,39 +14,10 @@ import {
 import Colors from "../constants/Colors";
 import Button, { ButtonType } from "./button";
 import ChevronRight from "../assets/icons/chevronRight";
+import { Text } from "./text";
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
-
-export function Text(props: TextProps) {
-  const { style, ...otherProps } = props;
-
-  let fontFamily = "Roboto-Regular";
-
-  if (style) {
-    switch ((style as any)["fontWeight"]) {
-      case "bold":
-      case "700":
-        fontFamily = "Roboto-Bold";
-        break;
-      case "400":
-        fontFamily = "Roboto-Medium";
-        break;
-      case "300":
-        fontFamily = "Roboto-Light";
-        break;
-      default:
-        break;
-    }
-  }
-
-  return (
-    <DefaultText
-      style={[{ fontFamily: fontFamily, color: "white", fontSize: 16 }, style]}
-      {...otherProps}
-    />
-  );
-}
 
 export const Seperator = ({ style }: ViewProps) => {
   return (

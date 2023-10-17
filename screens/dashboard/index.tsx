@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Text } from "../../components/Themed";
+import { Text } from "@components/text";
 import { AuthContext } from "../../hooks/context";
 import {
   View,
@@ -12,7 +12,7 @@ import axios from "axios";
 import Toast from "react-native-toast-message";
 import * as Clipboard from "expo-clipboard";
 import { Alert, checkForUpdates, getItem, setItem } from "../../hooks";
-import Layout from "../../components/layout";
+import Layout from "@components/layout";
 import config from "../../config";
 import * as Location from "expo-location";
 import { useIsFocused, useRoute } from "@react-navigation/native";
@@ -21,13 +21,13 @@ import NavItem from "./navItem";
 import Distance from "../distance";
 import Petrol from "../petrol";
 import Group from "../group";
-import Popup from "../../components/Popup";
-import Demo from "../../components/demo";
-import GroupSettings from "../../components/groupSettings";
+import Popup from "@components/Popup";
+import Demo from "@components/demo";
+import GroupSettings from "@components/groupSettings";
 import ConfirmDistance from "./confirmDistance";
 import React from "react";
 import FadeWrapper from "./fadeWrapper";
-import Tooltip from "../../components/tooltip";
+import Tooltip from "@components/tooltip";
 import analytics from "@react-native-firebase/analytics";
 import Schedules from "../schedules";
 import GroupIcon from "../../assets/icons/group";

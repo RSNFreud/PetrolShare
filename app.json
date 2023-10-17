@@ -24,6 +24,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "experiments": {
+      "tsconfigPaths": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rsnfreud.PetrolShare"

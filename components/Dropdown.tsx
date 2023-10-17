@@ -1,5 +1,5 @@
 import { TouchableWithoutFeedback, View, ViewProps } from "react-native";
-import { Text } from "./Themed";
+import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import Colors from "../constants/Colors";

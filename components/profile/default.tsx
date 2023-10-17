@@ -1,5 +1,6 @@
 import { AuthContext } from "../../hooks/context";
-import { LongButton, Text } from "../Themed";
+import { LongButton } from "../Themed";
+import { Text } from "../text";
 import React, { useContext } from "react";
 import { Alert, sendCustomEvent } from "../../hooks";
 import axios from "axios";

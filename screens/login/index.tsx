@@ -1,14 +1,15 @@
 import React, { useContext, useState } from "react";
 
-import Input from "../../components/Input";
-import { Seperator, Text } from "../../components/Themed";
+import Input from "@components/input";
+import { Seperator } from "@components/Themed";
+import { Text } from "@components/text";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../../hooks/context";
 import axios from "axios";
-import Layout from "../../components/layout";
+import Layout from "@components/layout";
 import config from "../../config";
 import testID from "../../hooks/testID";
-import Button from "../../components/button";
+import Button from "@components/button";
 import ForgotPassword from "./forgotPassword";
 
 export default ({ navigation }: any) => {
@@ -78,7 +79,7 @@ export default ({ navigation }: any) => {
       .then(async () => {
         setVerificationEmailSent(true);
       })
-      .catch(({ response }) => { });
+      .catch(({ response }) => {});
   };
 
   return (
@@ -181,11 +182,21 @@ export default ({ navigation }: any) => {
         loading={loading}
         handleClick={() =>
           handleSubmit(formData, setFormErrors, () => handleLogin())
-        } text="Submit" />
+        }
+        text="Submit"
+      />
 
       <Seperator style={{ marginVertical: 30 }} />
-      <Button handleClick={() => navigation.navigate("Register")} variant="ghost" text="Register" />
-      <ForgotPassword visible={visible} setVisible={e => setVisible(e)} handleSubmit={handleSubmit} />
+      <Button
+        handleClick={() => navigation.navigate("Register")}
+        variant="ghost"
+        text="Register"
+      />
+      <ForgotPassword
+        visible={visible}
+        setVisible={(e) => setVisible(e)}
+        handleSubmit={handleSubmit}
+      />
     </Layout>
   );
 };

@@ -1,10 +1,10 @@
 import { View, ScrollView } from "react-native";
-import Dropdown from "../../../components/Dropdown";
-import Input from "../../../components/Input";
-import AnimateHeight from "../../../components/animateHeight";
+import Dropdown from "@components/Dropdown";
+import Input from "@components/input";
+import AnimateHeight from "@components/animateHeight";
 import { Day } from "./day";
 import { DataType } from ".";
-import { Text } from "../../../components/Themed";
+import { Text } from "@components/text";
 
 type PropsType = {
   data: DataType;

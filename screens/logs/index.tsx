@@ -1,6 +1,7 @@
 import { ActivityIndicator, View, ScrollView } from "react-native";
-import { Box, Breadcrumbs, Text } from "../../components/Themed";
-import Layout from "../../components/layout";
+import { Box, Breadcrumbs } from "@components/Themed";
+import { Text } from "@components/text";
+import Layout from "@components/layout";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { useContext, useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import { Text } from "../components/Themed";
+import { Text } from "./text";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthContext } from "../hooks/context";

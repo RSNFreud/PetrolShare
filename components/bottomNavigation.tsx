@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
-import { Text } from "./Themed";
+import { Text } from "./text";
 import Colors from "../constants/Colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { AuthContext } from "../hooks/context";

@@ -40,23 +40,23 @@ import * as Notifications from "expo-notifications";
 import {
   deregisterForPushNotifications,
   registerForPushNotificationsAsync,
-} from "./components/sendNotification";
+} from "@components/sendNotification";
 import config from "./config";
 import { AndroidNotificationPriority } from "expo-notifications";
 import Purchases from "react-native-purchases";
 import Colors from "./constants/Colors";
-import Premium from "./components/premium";
-import SplashScreenComponent from "./components/splashScreen";
-import Header from "./components/Header";
+import Premium from "@components/premium";
+import SplashScreenComponent from "@components/splashScreen";
+import Header from "@components/Header";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { EventRegister } from "react-native-event-listeners";
 import Toast from "react-native-toast-message";
-import { Text } from "./components/Themed";
-import AlertBox from "./components/alertBox";
+import { Text } from "@components/text";
+import AlertBox from "@components/alertBox";
 import * as Sentry from "sentry-expo";
 import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
-import BottomNavigation from "./components/bottomNavigation";
+import BottomNavigation from "@components/bottomNavigation";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "react-native-gesture-handler";
 

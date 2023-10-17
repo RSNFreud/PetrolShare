@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
-import Input from "../Input";
+import Input from "../input";
 import { Seperator } from "../Themed";
 import Button from "../button";
 import { AuthContext } from "../../hooks/context";
@@ -8,10 +8,7 @@ import config from "../../config";
 import { PropsType } from "./default";
 import { setItem } from "../../hooks";
 
-export default ({
-  handleClose,
-  handleChange,
-}: PropsType) => {
+export default ({ handleClose, handleChange }: PropsType) => {
   const [data, setData] = useState({
     currentPassword: "",
     password: "",
@@ -55,13 +52,16 @@ export default ({
         .then(() => {
           setLoading(false);
           handleClose();
-          setItem('delayedAlert', "Your password has successfully been changed! Please relogin to the application.")
+          setItem(
+            "delayedAlert",
+            "Your password has successfully been changed! Please relogin to the application."
+          );
 
           setTimeout(() => {
             if (signOut) signOut();
           }, 1200);
         })
-        .catch((err) => { });
+        .catch((err) => {});
     }
   };
 
@@ -98,8 +98,13 @@ export default ({
         handleClick={validateForm}
         loading={loading}
         style={{ marginBottom: 15 }}
-        text="Change password" />
-      <Button handleClick={() => handleChange('Settings')} variant={"ghost"} text="Back" />
+        text="Change password"
+      />
+      <Button
+        handleClick={() => handleChange("Settings")}
+        variant={"ghost"}
+        text="Back"
+      />
     </>
   );
 };

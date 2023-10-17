@@ -1,6 +1,7 @@
 import { View } from "react-native";
-import { Box, Text, Seperator } from "../../components/Themed";
-import Button, { TouchableBase } from "../../components/button";
+import { Box, Seperator } from "@components/Themed";
+import { Text } from "@components/text";
+import Button, { TouchableBase } from "@components/button";
 import { Alert, currencyPosition } from "../../hooks";
 import Colors from "../../constants/Colors";
 import { useState } from "react";

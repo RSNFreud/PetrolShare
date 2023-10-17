@@ -1,11 +1,11 @@
-import { LongButton } from "../components/Themed";
+import { LongButton } from "@components/Themed";
 import { useState } from "react";
 import { Alert } from "../hooks";
 
-import Popup from "../components/Popup";
-import CreateGroup from "../components/createGroup";
-import GroupSettings from "../components/groupSettings";
-import JoinGroup from "../components/joinGroup";
+import Popup from "@components/Popup";
+import CreateGroup from "@components/createGroup";
+import GroupSettings from "@components/groupSettings";
+import JoinGroup from "@components/joinGroup";
 import Pencil from "../assets/icons/pencil";
 import Plus from "../assets/icons/plus";
 import Cog from "../assets/icons/cog";

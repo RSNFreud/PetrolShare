@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 
-import { Text } from "../components/Themed";
+import { Text } from "@components/text";
 
 export default function NotFoundScreen() {
   return (

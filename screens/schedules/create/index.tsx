@@ -5,13 +5,14 @@ import {
   View,
   ScrollView,
 } from "react-native";
-import DatePicker from "../../../components/dateTimePicker";
-import { Seperator, Text, ViewProps } from "../../../components/Themed";
+import DatePicker from "@components/dateTimePicker";
+import { Seperator, ViewProps } from "@components/Themed";
+import { Text } from "@components/text";
 import Colors from "../../../constants/Colors";
-import Input from "../../../components/Input";
-import Dropdown from "../../../components/Dropdown";
-import AnimateHeight from "../../../components/animateHeight";
-import Button from "../../../components/button";
+import Input from "@components/input";
+import Dropdown from "@components/Dropdown";
+import AnimateHeight from "@components/animateHeight";
+import Button from "@components/button";
 import axios from "axios";
 import config from "../../../config";
 import { AuthContext } from "../../../hooks/context";
@@ -20,7 +21,6 @@ import { Alert, convertHexToRGBA, sendCustomEvent } from "../../../hooks";
 import { StartEnd } from "./startEnd";
 import { Custom } from "./custom";
 import { EndRepeating } from "./endRepeating";
-import { ScheduleType } from "..";
 
 export type DataType = {
   allDay: boolean;
@@ -212,7 +212,10 @@ export default ({
       newData = { ...data, startDate: start, endDate: end };
     }
     setLoading(true);
-
+    console.log("====================================");
+    console.log(newData);
+    console.log("====================================");
+    return;
     axios
       .post(config.REACT_APP_API_ADDRESS + "/schedules/add", {
         authenticationKey: retrieveData?.authenticationKey,

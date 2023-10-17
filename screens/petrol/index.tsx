@@ -1,25 +1,23 @@
-import Input from "../../components/Input";
+import Input from "@components/input";
 import { View } from "react-native";
-import {
-  Text,
-  Box,
-} from "../../components/Themed";
+import { Box } from "@components/Themed";
+import { Text } from "@components/text";
 import { useContext, useEffect, useState } from "react";
-import Button from "../../components/button";
+import Button from "@components/button";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
 import config from "../../config";
 import { useNavigation } from "@react-navigation/native";
-import Popup from "../../components/Popup";
+import Popup from "@components/Popup";
 import React from "react";
 type PropsType = {
-  onClose: () => void
-}
+  onClose: () => void;
+};
 
 export default React.memo(({ onClose }: PropsType) => {
-  const { navigate } = useNavigation()
-  const [open, setOpen] = useState(false)
+  const { navigate } = useNavigation();
+  const [open, setOpen] = useState(false);
   const [data, setData] = useState({
     litersFilled: "",
     totalPrice: "",
@@ -39,7 +37,7 @@ export default React.memo(({ onClose }: PropsType) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setOpen(true)
+      setOpen(true);
     }, 10);
 
     init();
@@ -73,8 +71,8 @@ export default React.memo(({ onClose }: PropsType) => {
       })
       .then(({ data }) => {
         setLoading(false);
-        setOpen(false)
-        navigate("Payments", { id: (data as string) });
+        setOpen(false);
+        navigate("Payments", { id: data as string });
       })
       .catch(({ response }) => {
         setErrors({
@@ -86,12 +84,12 @@ export default React.memo(({ onClose }: PropsType) => {
       });
   };
   const handleClose = () => {
-    setOpen(false)
-    onClose()
-  }
+    setOpen(false);
+    onClose();
+  };
 
   return (
-    <Popup visible={open} handleClose={handleClose} title="Add Petrol" >
+    <Popup visible={open} handleClose={handleClose} title="Add Petrol">
       <Box
         style={{
           paddingHorizontal: 15,
@@ -133,7 +131,11 @@ export default React.memo(({ onClose }: PropsType) => {
         />
       </View>
       <View style={{ marginTop: 30 }}>
-        <Button loading={loading} handleClick={() => handleSubmit()} text="Add Petrol" />
+        <Button
+          loading={loading}
+          handleClick={() => handleSubmit()}
+          text="Add Petrol"
+        />
 
         {!!errors.submit && (
           <View

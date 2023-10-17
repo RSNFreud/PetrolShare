@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../hooks/context";
 import { View, TouchableWithoutFeedback } from "react-native";
-import { Text } from "./Themed";
+import { Text } from "./text";
 import * as Clipboard from "expo-clipboard";
 import Button from "./button";
 import Tick from "../assets/icons/tick";

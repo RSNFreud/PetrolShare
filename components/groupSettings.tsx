@@ -1,22 +1,23 @@
-import axios from 'axios'
-import { useContext, useEffect, useState } from 'react'
-import { Pressable } from 'react-native'
-import config from '../config'
-import { Alert, getItem, sendCustomEvent } from '../hooks'
-import { AuthContext } from '../hooks/context'
-import { getAllCurrencies } from '../hooks/getCurrencies'
-import Dropdown from './Dropdown'
-import RadioButton from './RadioButton'
-import { Box, Text } from './Themed'
-import Button from './button'
-import generateGroupID from '../hooks/generateGroupID'
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import { Pressable } from "react-native";
+import config from "../config";
+import { Alert, getItem, sendCustomEvent } from "../hooks";
+import { AuthContext } from "../hooks/context";
+import { getAllCurrencies } from "../hooks/getCurrencies";
+import Dropdown from "./Dropdown";
+import RadioButton from "./RadioButton";
+import { Box } from "./Themed";
+import { Text } from "./text";
+import Button from "./button";
+import generateGroupID from "../hooks/generateGroupID";
 
 type PropsType = {
-  handleComplete: (e?: string, message?: string) => void
-  handleCancel?: () => void
-  newGroup?: boolean
-  hideCancel?: boolean
-}
+  handleComplete: (e?: string, message?: string) => void;
+  handleCancel?: () => void;
+  newGroup?: boolean;
+  hideCancel?: boolean;
+};
 
 export default ({
   handleComplete,
@@ -25,134 +26,138 @@ export default ({
   newGroup,
 }: PropsType) => {
   const [data, setData] = useState({
-    distance: '',
-    petrol: '',
-    currency: '',
-  })
+    distance: "",
+    petrol: "",
+    currency: "",
+  });
   const [errors, setErrors] = useState({
-    distance: '',
-    petrol: '',
-    currency: '',
-  })
+    distance: "",
+    petrol: "",
+    currency: "",
+  });
 
-  const [dropdownData, setDropdownData] = useState<Array<any>>([])
-  const { retrieveData } = useContext(AuthContext)
-  const [isLoading, setLoading] = useState(false)
+  const [dropdownData, setDropdownData] = useState<Array<any>>([]);
+  const { retrieveData } = useContext(AuthContext);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    generateDropdown()
-  }, [])
+    generateDropdown();
+  }, []);
 
   useEffect(() => {
     if (newGroup)
       setData({
-        distance: '',
-        petrol: '',
-        currency: '',
-      })
-    else setGroupData()
-  }, [newGroup])
+        distance: "",
+        petrol: "",
+        currency: "",
+      });
+    else setGroupData();
+  }, [newGroup]);
 
   const setGroupData = async () => {
-    const groupData = getItem('groupData')
-    if (!groupData || newGroup) return
-    setData(JSON.parse(groupData))
-  }
+    const groupData = getItem("groupData");
+    if (!groupData || newGroup) return;
+    setData(JSON.parse(groupData));
+  };
 
   const generateDropdown = async () => {
     const data: Array<{
-      name: string
-      symbol: string
-    }> = await getAllCurrencies()
-    const dropdown: Array<any> = []
+      name: string;
+      symbol: string;
+    }> = await getAllCurrencies();
+    const dropdown: Array<any> = [];
     Object.entries(data).map(([key, e]) => {
       dropdown.push({
         name: e.name,
         symbol: e.symbol,
         value: key,
-      })
-    })
-    setDropdownData(dropdown)
-  }
+      });
+    });
+    setDropdownData(dropdown);
+  };
 
   const handleSubmit = async () => {
-    let errors: any = {}
+    let errors: any = {};
 
     Object.entries(data).map(([key, value]) => {
-      if (key === 'premium') return
-      if (!value) errors[key] = 'Please complete this field!'
-    })
+      if (key === "premium") return;
+      if (!value) errors[key] = "Please complete this field!";
+    });
 
-    setErrors({ ...errors })
-    if (Object.keys(errors).length) return
-    if (newGroup) return createGroup()
+    setErrors({ ...errors });
+    if (Object.keys(errors).length) return;
+    if (newGroup) return createGroup();
     Alert(
-      'Are you sure you want to reset your data?',
-      'By clicking yes your session will be reset back to 0 for your group.',
+      "Are you sure you want to reset your data?",
+      "By clicking yes your session will be reset back to 0 for your group.",
       [
         {
-          text: 'Yes',
+          text: "Yes",
           onPress: async () => {
-            setLoading(true)
+            setLoading(true);
             axios
               .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
                 authenticationKey: retrieveData?.authenticationKey,
               })
               .then(async () => {
-                updateGroup()
+                updateGroup();
               })
-              .catch()
+              .catch();
           },
         },
-        { text: 'No', style: 'cancel' },
-      ],
-    )
-  }
+        { text: "No", style: "cancel" },
+      ]
+    );
+  };
 
   const createGroup = async () => {
-    const groupID = generateGroupID()
-    setLoading(true)
-    await axios.post(config.REACT_APP_API_ADDRESS + '/group/create', {
-      authenticationKey: retrieveData?.authenticationKey,
-      groupID: groupID,
-    }).then(({ data: { groupID, message } }) => {
-      updateGroup(groupID, message)
-    })
-  }
+    const groupID = generateGroupID();
+    setLoading(true);
+    await axios
+      .post(config.REACT_APP_API_ADDRESS + "/group/create", {
+        authenticationKey: retrieveData?.authenticationKey,
+        groupID: groupID,
+      })
+      .then(({ data: { groupID, message } }) => {
+        updateGroup(groupID, message);
+      });
+  };
 
   const updateGroup = async (groupID?: string, message?: string) => {
-    setLoading(true)
+    setLoading(true);
 
     await axios
-      .post(config.REACT_APP_API_ADDRESS + '/group/update', {
+      .post(config.REACT_APP_API_ADDRESS + "/group/update", {
         authenticationKey: retrieveData?.authenticationKey,
         distance: data.distance,
         petrol: data.petrol,
         currency: data.currency,
       })
       .then(() => {
-        setLoading(false)
+        setLoading(false);
         if (!newGroup)
-          sendCustomEvent('sendAlert', 'Group settings successfully updated!')
-        handleComplete(groupID, message)
-      })
-  }
+          sendCustomEvent("sendAlert", "Group settings successfully updated!");
+        handleComplete(groupID, message);
+      });
+  };
 
   const handleTouch = () => {
-    sendCustomEvent('bodyClicked')
-  }
+    sendCustomEvent("bodyClicked");
+  };
 
   return (
     <Pressable onPress={handleTouch}>
       <>
         {newGroup && (
-
           <Text
             style={{
-              color: 'white', marginBottom: 20, lineHeight: 24
+              color: "white",
+              marginBottom: 20,
+              lineHeight: 24,
             }}
           >
-            To finish creating your group, please fill out the following options.
+            To finish creating your group, please fill out the following
+            options.
           </Text>
         )}
         {!newGroup && (
@@ -165,7 +170,7 @@ export default ({
           >
             <Text
               style={{
-                color: 'white',
+                color: "white",
               }}
             >
               By changing group settings you will reset your current tracked
@@ -177,8 +182,8 @@ export default ({
           style={{
             fontSize: 16,
             lineHeight: 27,
-            fontWeight: '700',
-            color: 'white',
+            fontWeight: "700",
+            color: "white",
             marginBottom: 10,
           }}
         >
@@ -188,8 +193,8 @@ export default ({
           value={data.distance}
           handleChange={(e) => setData({ ...data, distance: e })}
           buttons={[
-            { name: 'Km', value: 'km' },
-            { name: 'Miles', value: 'miles' },
+            { name: "Km", value: "km" },
+            { name: "Miles", value: "miles" },
           ]}
           errorMessage={errors.distance}
         />
@@ -199,8 +204,8 @@ export default ({
             fontSize: 16,
             marginBottom: 10,
             lineHeight: 27,
-            fontWeight: '700',
-            color: 'white',
+            fontWeight: "700",
+            color: "white",
             marginTop: 30,
           }}
         >
@@ -210,8 +215,8 @@ export default ({
           value={data.petrol}
           handleChange={(e) => setData({ ...data, petrol: e })}
           buttons={[
-            { name: 'Gallons', value: 'gallons' },
-            { name: 'Liters', value: 'liters' },
+            { name: "Gallons", value: "gallons" },
+            { name: "Liters", value: "liters" },
           ]}
           errorMessage={errors.petrol}
         />
@@ -220,8 +225,8 @@ export default ({
             fontSize: 16,
             marginBottom: 10,
             lineHeight: 27,
-            fontWeight: '700',
-            color: 'white',
+            fontWeight: "700",
+            color: "white",
             marginTop: 30,
           }}
         >
@@ -234,10 +239,21 @@ export default ({
           handleSelected={(e) => setData({ ...data, currency: e })}
           errorMessage={errors.currency}
         />
-        <Button loading={isLoading} handleClick={handleSubmit} text={newGroup ? 'Create Group' : 'Save Settings'} />
+        <Button
+          loading={isLoading}
+          handleClick={handleSubmit}
+          text={newGroup ? "Create Group" : "Save Settings"}
+        />
 
-        {!hideCancel && newGroup && <Button handleClick={handleCancel} variant='ghost' style={{ marginTop: 20 }} text='Return to Menu' />}
+        {!hideCancel && newGroup && (
+          <Button
+            handleClick={handleCancel}
+            variant="ghost"
+            style={{ marginTop: 20 }}
+            text="Return to Menu"
+          />
+        )}
       </>
     </Pressable>
-  )
-}
+  );
+};

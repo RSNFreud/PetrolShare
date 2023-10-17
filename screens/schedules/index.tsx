@@ -1,11 +1,12 @@
 import { ActivityIndicator, View } from "react-native";
-import Layout from "../../components/layout";
-import { Breadcrumbs, Text } from "../../components/Themed";
+import Layout from "@components/layout";
+import { Breadcrumbs } from "@components/Themed";
+import { Text } from "@components/text";
 import Colors from "../../constants/Colors";
 import { useState, useContext, useEffect, useRef } from "react";
-import Popup from "../../components/Popup";
+import Popup from "@components/Popup";
 import Create, { DataType } from "./create";
-import Button, { TouchableBase } from "../../components/button";
+import Button, { TouchableBase } from "@components/button";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +19,7 @@ import {
 import Plus from "../../assets/icons/plus";
 import ScheduleHeader from "./home/scheduleHeader";
 import DateEntry from "./home/dateEntry";
+import { Alert } from "../../hooks";
 
 export type ScheduleType = {
   allDay: boolean;
@@ -29,6 +31,7 @@ export type ScheduleType = {
   userID: string;
   repeating?: string;
   repeatingEndDate?: number;
+  linkedSessionID?: number;
   custom?: {
     number: string;
     repeatingFormat: string;
@@ -257,6 +260,17 @@ export default () => {
     new Date(currentDate).getMonth() === new Date().getMonth();
 
   const handleEdit = (data: ScheduleType) => {
+    console.log("====================================");
+    console.log(data);
+    console.log("====================================");
+    if (data.linkedSessionID) {
+      Alert(
+        "Edit schedule",
+        "Would you like to edit just this event or all future events?",
+        [{ text: "Current Event" }, { text: "All Events" }]
+      );
+      return;
+    }
     setPopupData({
       title: "Edit a schedule",
       data: {
@@ -309,7 +323,7 @@ export default () => {
                       [...e].map(([day, schedule]) => {
                         const dayObj = new Date(day);
                         return (
-                          <View key={`${day}-${count}`} style={{ flex: 1 }}>
+                          <View key={`${day}-${count}}`} style={{ flex: 1 }}>
                             <ScrollView
                               contentContainerStyle={{
                                 width: "100%",

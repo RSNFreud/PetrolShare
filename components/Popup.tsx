@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import Colors from "../constants/Colors";
 import AlertBox from "./alertBox";
 import { sendCustomEvent } from "../hooks";
-import { Text } from "./Themed";
+import { Text } from "./text";
 import Exit from "../assets/icons/exit";
 
 const TIME_TO_CLOSE = 200;

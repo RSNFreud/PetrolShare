@@ -1,7 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { convertToDate } from "../../hooks";
-import { Text } from "../../components/Themed";
-import Button from "../../components/button";
+import { Text } from "@components/text";
+import Button from "@components/button";
 import ChevronRight from "../../assets/icons/chevronRight";
 
 type PropsType = {
