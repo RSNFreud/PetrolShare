@@ -213,10 +213,6 @@ export default ({
       newData = { ...data, startDate: start, endDate: end };
     }
     setLoading(true);
-    console.log("====================================");
-    console.log(newData);
-    console.log("====================================");
-    return;
     axios
       .post(config.REACT_APP_API_ADDRESS + "/schedules/add", {
         authenticationKey: retrieveData?.authenticationKey,
@@ -238,7 +234,7 @@ export default ({
             Alert(
               "Schedule",
               `The following dates are not available and have been skipped being added:\n\n${response?.data
-                .map((date: string) => new Date(date).toLocaleDateString())
+                ?.map((date: string) => new Date(date).toLocaleDateString())
                 .join("\n")}`
             );
           }, 500);
