@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getItem, setItem } from '.'
+import { setItem } from 'hooks'
 
 export const getAllCurrencies = async () => {
   const { data } = await axios.get(
