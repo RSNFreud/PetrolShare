@@ -120,7 +120,7 @@ export default () => {
         links={[
           {
             name: "Dashboard",
-            screenName: "Home",
+            screenName: "",
           },
           {
             name: "Logs",
