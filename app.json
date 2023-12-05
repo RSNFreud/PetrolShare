@@ -28,7 +28,8 @@
       "tsconfigPaths": true
     },
     "ios": {
-      "supportsTablet": true,
+      "googleServicesFile": "",
+      "supportsTablet": false,
       "bundleIdentifier": "com.rsnfreud.PetrolShare"
     },
     "android": {

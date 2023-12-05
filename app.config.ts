@@ -12,4 +12,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         ...config.android,
         googleServicesFile: process.env.GOOGLE_SERVICES,
     },
+    ios: {
+        ...config.ios,
+        googleServicesFile: process.env.APPLE_SERVICES,
+    },
 });
