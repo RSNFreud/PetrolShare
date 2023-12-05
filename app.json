@@ -11,7 +11,15 @@
     "plugins": [
       "./withAndroidVerifiedLinksWorkaround",
       "sentry-expo",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "splash": {
       "backgroundColor": "#292B36"
