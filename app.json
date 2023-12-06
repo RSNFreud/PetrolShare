@@ -86,9 +86,8 @@
         {
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
-            "organization": "sentry",
-            "project": "petrolshare",
-            "url": "http://freud-online.co.uk:9000/"
+            "organization": "freud-dev",
+            "project": "petrolshare"
           }
         }
       ]
