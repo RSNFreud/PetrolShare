@@ -164,6 +164,9 @@ export default function App() {
     if (Platform.OS === "android") {
       Purchases.configure({ apiKey: "goog_lTKKSMIRMQmuaTqjQwdeuRjLqQc" });
     }
+    if (Platform.OS === "ios") {
+      Purchases.configure({ apiKey: "appl_WqDbxNapCEFuKTgtIlsqKCMAXVn" });
+    }
   }, []);
 
   useEffect(() => {
