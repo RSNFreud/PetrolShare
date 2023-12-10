@@ -170,6 +170,7 @@ export default ({
               {
                 color: variableProperties.textColor,
                 fontSize: variableProperties.fontSize,
+                fontFamily: "Roboto-Bold",
                 fontWeight: "700",
                 textAlign: "center",
               },

@@ -59,6 +59,7 @@ import schedules from "./screens/schedules";
 import BottomNavigation from "@components/bottomNavigation";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "react-native-gesture-handler";
+import Constants from "expo-constants";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -367,99 +368,102 @@ export default function App() {
   };
 
   return (
-    <SafeAreaProvider style={{ position: "relative", flex: 1 }}>
-      <SafeAreaView style={{ position: "relative", flex: 1 }}>
-        <SplashScreenComponent />
-        <Animated.View style={{ flex: 1, opacity: loading ? 0 : 1 }}>
-          <View
-            style={{
-              width: Dimensions.get("window").width,
-              height: Dimensions.get("window").height,
-              flex: 1,
-            }}
-          >
-            <AuthContext.Provider value={store}>
-              {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
-              <NavigationContainer
-                onReady={() => checkFirstTime()}
-                onStateChange={updateScreen}
-                ref={navRef}
-                linking={LinkingConfiguration}
-                theme={{
-                  dark: true,
-                  colors: {
-                    ...DefaultTheme.colors,
-                    background: Colors.background,
-                    text: "white",
-                  },
+    <>
+      <SplashScreenComponent />
+      <Animated.View
+        style={{
+          flex: 1,
+          opacity: loading ? 0 : 1,
+        }}
+      >
+        <View
+          style={{
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+            flex: 1,
+          }}
+        >
+          <AuthContext.Provider value={store}>
+            {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
+            <NavigationContainer
+              onReady={() => checkFirstTime()}
+              onStateChange={updateScreen}
+              ref={navRef}
+              linking={LinkingConfiguration}
+              theme={{
+                dark: true,
+                colors: {
+                  ...DefaultTheme.colors,
+                  background: Colors.background,
+                  text: "white",
+                },
+              }}
+            >
+              <Stack.Navigator
+                screenOptions={{
+                  gestureEnabled: false,
+                  headerShown: true,
+                  header: () => <Header />,
+                  animation: "slide_from_right",
+                  animationDuration: 600,
                 }}
               >
-                <Stack.Navigator
-                  screenOptions={{
-                    gestureEnabled: false,
-                    headerShown: true,
-                    header: () => <Header />,
-                    animation: "slide_from_right",
-                    animationDuration: 600,
-                  }}
-                >
-                  {width > 768 && Platform.OS === "web" ? (
-                    <Stack.Screen
-                      name="DesktopScreen"
-                      component={DesktopScreen}
-                      options={{ title: "PetrolShare", headerShown: false }}
-                    />
-                  ) : loading || store.isLoggedIn ? (
-                    <>
-                      <Stack.Screen
-                        name="Home"
-                        component={BottomNavigator}
-                        options={{ headerShown: false }}
-                      />
-                      {!firstSteps && (
-                        <Stack.Screen
-                          name="AddPreset"
-                          component={preset}
-                          options={{ title: "Add Preset" }}
-                        />
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <Stack.Screen name="Login" component={Login} />
-                      <Stack.Screen name="Register" component={Register} />
-                    </>
-                  )}
-                  {width < 768 && (
-                    <Stack.Screen
-                      options={{
-                        header: () => <Header isGuestMode />,
-                        title: "Invoice",
-                      }}
-                      name="PublicInvoice"
-                      component={PublicInvoice}
-                    />
-                  )}
+                {width > 768 && Platform.OS === "web" ? (
                   <Stack.Screen
-                    name="NotFound"
-                    component={NotFoundScreen}
-                    options={{ title: "Oops!" }}
+                    name="DesktopScreen"
+                    component={DesktopScreen}
+                    options={{ title: "PetrolShare", headerShown: false }}
                   />
-                </Stack.Navigator>
-              </NavigationContainer>
-              <StatusBar
-                style="light"
-                backgroundColor={
-                  screen != "Dashboard" ? Colors.background : Colors.secondary
-                }
-              />
-              {!popupVisible && <AlertBox />}
-              <Toast config={ToastConfig} />
-            </AuthContext.Provider>
-          </View>
-        </Animated.View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+                ) : loading || store.isLoggedIn ? (
+                  <>
+                    <Stack.Screen
+                      name="Home"
+                      component={BottomNavigator}
+                      options={{ headerShown: false }}
+                    />
+                    {!firstSteps && (
+                      <Stack.Screen
+                        name="AddPreset"
+                        component={preset}
+                        options={{ title: "Add Preset" }}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Stack.Screen name="Login" component={Login} />
+                    <Stack.Screen name="Register" component={Register} />
+                  </>
+                )}
+                {width < 768 && (
+                  <Stack.Screen
+                    options={{
+                      header: () => <Header isGuestMode />,
+                      title: "Invoice",
+                    }}
+                    name="PublicInvoice"
+                    component={PublicInvoice}
+                  />
+                )}
+                <Stack.Screen
+                  name="NotFound"
+                  component={NotFoundScreen}
+                  options={{ title: "Oops!" }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+            <StatusBar
+              style="light"
+              backgroundColor={
+                screen != "Dashboard" ? Colors.background : Colors.secondary
+              }
+            />
+            {!popupVisible && <AlertBox />}
+            <Toast config={ToastConfig} />
+          </AuthContext.Provider>
+        </View>
+      </Animated.View>
+    </>
   );
 }
 

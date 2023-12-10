@@ -8,6 +8,7 @@ import House from "../assets/icons/house";
 import Invoice from "../assets/icons/invoice";
 import History from "../assets/icons/history";
 import Calendar from "../assets/icons/calendar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type BottonNavPropTypes = {
   icon: JSX.Element;
@@ -64,6 +65,7 @@ const BottomNavItem = ({
 export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const scrollRef = useRef<ScrollView>(null);
   const { isPremium } = useContext(AuthContext);
+  const insets = useSafeAreaInsets();
 
   const setInitialScroll = (index: number) => {
     const ref = scrollRef.current;
@@ -74,7 +76,12 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
     <ScrollView
       ref={scrollRef}
-      style={{ backgroundColor: Colors.secondary, width: "100%", flexGrow: 0 }}
+      style={{
+        backgroundColor: Colors.secondary,
+        width: "100%",
+        flexGrow: 0,
+        paddingBottom: insets.bottom,
+      }}
       horizontal
       contentContainerStyle={{
         display: "flex",

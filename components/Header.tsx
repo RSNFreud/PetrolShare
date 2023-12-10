@@ -10,9 +10,11 @@ import config from "../config";
 import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
 import { TouchableBase } from "./button";
 import Person from "../assets/icons/person";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const { isLoggedIn, retrieveData, setData } = useContext(AuthContext);
   const [settingsVisible, setSettingsVisible] = useState(false);
@@ -59,7 +61,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   return (
     <View
       style={{
-        paddingTop: 30,
+        paddingTop: insets.top + 30,
         paddingHorizontal: 25,
         display: "flex",
         flexDirection: "row",
@@ -100,7 +102,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
               position: "absolute",
               right: 25,
               paddingVertical: 0,
-              top: 25,
+              top: insets.top + 25,
               backgroundColor: Colors.primary,
               width: 40,
               height: 40,

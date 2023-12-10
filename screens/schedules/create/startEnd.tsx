@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ViewProps } from "react-native";
+import { Platform, View, ViewProps } from "react-native";
 import SplitRow from "@components/splitRow";
 import Colors from "../../../constants/Colors";
 import { DataType } from ".";
@@ -36,7 +36,9 @@ export const StartEnd = ({
         const dateProps = {
           style: {
             paddingVertical: 13,
-            paddingHorizontal: 16,
+            paddingHorizontal: Platform.OS === "ios" ? 0 : 16,
+            display: "flex",
+            justifyContent: "flex-start",
             width: "100%",
             alignItems: "flex-start",
           },
@@ -80,7 +82,13 @@ export const StartEnd = ({
                     hour: "2-digit",
                     hourCycle: "h12",
                   }}
-                  style={[dateProps.style, { alignItems: "flex-end" }]}
+                  style={[
+                    dateProps.style,
+                    {
+                      alignItems: "flex-end",
+                      paddingHorizontal: Platform.OS === "ios" ? 8 : 16,
+                    },
+                  ]}
                   setValue={onUpdate}
                 />
               ),

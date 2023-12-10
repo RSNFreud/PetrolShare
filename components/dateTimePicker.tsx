@@ -1,6 +1,6 @@
 import { TextProps, ViewProps } from "./Themed";
 import { Text } from "./text";
-import { TouchableWithoutFeedback, View } from "react-native";
+import { Platform, TouchableWithoutFeedback, View } from "react-native";
 import { useState } from "react";
 import RNDateTimePicker, {
   DateTimePickerEvent,
@@ -37,7 +37,7 @@ export default ({
   };
 
   return (
-    <View>
+    <View style={Platform.OS === "ios" && style}>
       {!!label && (
         <Text
           style={{
@@ -51,35 +51,42 @@ export default ({
           {label}
         </Text>
       )}
-      <TouchableWithoutFeedback
-        onPress={() => (disabled ? null : setModalOpen(true))}
-      >
-        <View style={[{ display: "flex", alignItems: "center" }, style]}>
-          <Text
-            style={[
-              {
-                fontWeight: "400",
-                fontSize: 16,
-              },
-              textStyle,
-            ]}
-          >
-            {mode === "date"
-              ? dateValue.toLocaleDateString("en-gb", format)
-              : dateValue.toLocaleTimeString(
-                  undefined,
-                  format || {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                )}
-          </Text>
-        </View>
-      </TouchableWithoutFeedback>
-      {modalOpen && (
+      {Platform.OS === "ios" ? (
+        <></>
+      ) : (
+        <TouchableWithoutFeedback
+          onPress={() => (disabled ? null : setModalOpen(true))}
+        >
+          <View style={[{ display: "flex", alignItems: "center" }, style]}>
+            <Text
+              style={[
+                {
+                  fontWeight: "400",
+                  fontSize: 16,
+                },
+                textStyle,
+              ]}
+            >
+              {mode === "date"
+                ? dateValue.toLocaleDateString("en-gb", format)
+                : dateValue.toLocaleTimeString(
+                    undefined,
+                    format || {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+      {(modalOpen || Platform.OS === "ios") && (
         <RNDateTimePicker
           mode={mode}
+          display="compact"
           value={dateValue}
+          themeVariant="dark"
+          textColor="white"
           minimumDate={new Date()}
           onChange={handleChange}
           maximumDate={maxDate}
