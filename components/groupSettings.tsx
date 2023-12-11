@@ -101,8 +101,7 @@ export default ({
               })
               .then(async () => {
                 updateGroup();
-              })
-              .catch();
+              });
           },
         },
         { text: "No", style: "cancel" },
@@ -138,6 +137,11 @@ export default ({
         if (!newGroup)
           sendCustomEvent("sendAlert", "Group settings successfully updated!");
         handleComplete(groupID, message);
+      })
+      .catch((e) => {
+        console.log("====================================");
+        console.log(e);
+        console.log("====================================");
       });
   };
 
@@ -236,7 +240,7 @@ export default ({
           placeholder="Choose a currency"
           value={data.currency}
           data={dropdownData}
-          handleSelected={(e) => setData({ ...data, currency: e })}
+          handleSelected={(e) => setData({ ...data, currency: e.value })}
           errorMessage={errors.currency}
         />
         <Button

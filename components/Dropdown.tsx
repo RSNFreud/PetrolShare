@@ -1,72 +1,26 @@
-import {
-  TouchableWithoutFeedback,
-  View,
-  ViewProps,
-  StyleSheet,
-} from "react-native";
+import { View, ViewProps, Dimensions } from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
-import { Picker } from "@react-native-picker/picker";
 import Colors from "../constants/Colors";
 import ChevronRight from "../assets/icons/chevronRight";
 import { Dropdown } from "react-native-element-dropdown";
+import Input from "./input";
+import Constants from "expo-constants";
 
 export type item = { name: string; value: string; symbol?: string };
 
 type PropsType = {
   data: Array<item>;
   value?: string;
-  handleSelected: (e: string) => void;
+  handleSelected: (e: { label: string; value: string }) => void;
   errorMessage?: string;
   placeholder: string;
   inputStyle?: ViewProps["style"];
   style?: ViewProps["style"];
-  height?: number;
   hiddenValue?: boolean;
   hasBottomMargin?: boolean;
   label?: string;
-  sort?: boolean;
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "red",
-    // padding: 16,
-  },
-  dropdown: {
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    borderRadius: 8,
-    // paddingHorizontal: 8,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: "absolute",
-    backgroundColor: "white",
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-  },
-});
 
 export default ({
   data,
@@ -76,57 +30,32 @@ export default ({
   placeholder,
   hiddenValue,
   label,
-  sort = true,
   style,
   hasBottomMargin = true,
   inputStyle,
 }: PropsType) => {
-  const [selected, setSelected] = useState("");
-  const [displayText, setDisplayText] = useState(selected);
-  const dropdownRef = useRef<any>("");
+  const [selected, setSelected] = useState({ label: "", value: "" });
 
-  const selectOption = (e: string) => {
-    setSelected(e);
-    handleSelected(e);
-    setDisplayText(
-      data.filter(
-        (q) =>
-          q.value.toString() === e?.toString() ||
-          q.name.toString() === e?.toString()
-      )[0]?.name
-    );
-  };
-
-  // useEffect(() => {
-  //   setDisplayText(
-  //     data.filter(
-  //       (q) =>
-  //         q.value.toString() === value?.toString() ||
-  //         q.name.toString() === value?.toString()
-  //     )[0]?.name
-  //   );
-  // }, [selected]);
-
-  // useEffect(() => {
-  //   if (!data || selected) return;
-  //   setSelected(
-  //     data.filter(
-  //       (e) => e.value.toString() === value || e.name.toString() === value
-  //     )[0]?.name
-  //   );
-  // }, [data, value, selected]);
+  useEffect(() => {
+    if (!data || !value) return;
+    const current = data.filter(
+      (e) => e.value.toString() === value || e.name.toString() === value
+    )[0];
+    if (!current) return;
+    setSelected({ label: current?.name || "", value: current.value });
+  }, [data, value]);
 
   const click = ({ label, value }: { label: string; value: string }) => {
-    console.log(label, value);
+    handleSelected({ label: label, value: value });
     setSelected({ label: label, value: value });
   };
 
-  if (!data.length) return;
   return (
     <>
       <View
         style={[
           {
+            position: "relative",
             marginBottom: hasBottomMargin ? 25 : 0,
           },
           style,
@@ -145,67 +74,7 @@ export default ({
             {label}
           </Text>
         )}
-        {/* <View>
-          <Dropdown
-            data={data.map((e) => ({ label: e.name, value: e.value }))}
-            style={[
-              {
-                position: "relative",
-                zIndex: 1,
-                borderRadius: 4,
-                width: "100%",
-                backgroundColor: Colors.primary,
-                borderStyle: "solid",
-                borderWidth: 1,
-                height: 51,
-                overflow: "hidden",
-                borderColor: Colors.border,
-                paddingHorizontal: 15,
-                // display: "flex",
-                // justifyContent: "space-between",
-                // flexDirection: "row",
-                // alignContent: "center",
-                // alignItems: "center",
-              },
-              inputStyle,
-            ]}
-            placeholder="Test..."
-            maxHeight={150}
-            minHeight={150}
-            containerStyle={{
-              backgroundColor: Colors.secondary,
-              maxHeight: 150,
-            }}
-            itemTextStyle={{ color: "white" }}
-            selectedTextStyle={{ color: "white" }}
-            mode="modal"
-            value={selected}
-            labelField={"label"}
-            valueField="value"
-            onChange={click}
-          />
-        </View> */}
-
         <Dropdown
-          style={[styles.dropdown]}
-          placeholderStyle={styles.placeholderStyle}
-          containerStyle={{ padding: 0, margin: 0, flex: 1 }}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={data.map((e) => ({ label: e.name, value: e.value }))}
-          search
-          backgroundColor="red"
-          mode="modal"
-          onChange={click}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder={"Select Item"}
-          searchPlaceholder="Search..."
-          value={selected}
-        />
-        <View
           style={[
             {
               position: "relative",
@@ -219,74 +88,83 @@ export default ({
               overflow: "hidden",
               borderColor: Colors.border,
               paddingHorizontal: 15,
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "row",
-              alignContent: "center",
-              alignItems: "center",
+              // display: "flex",
+              // justifyContent: "space-between",
+              // flexDirection: "row",
+              // alignContent: "center",
+              // alignItems: "center",
             },
             inputStyle,
           ]}
-        >
-          <Text style={{ zIndex: 3, fontSize: 16 }}>
-            {displayText || placeholder}
-          </Text>
-          <ChevronRight />
-        </View>
-        {/* <Picker
-            ref={dropdownRef}
-            selectedValue={selected}
-            onValueChange={(itemValue) => selectOption(itemValue)}
-            mode="dialog"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: 0,
-              height: "100%",
-              width: "100%",
-            }}
-            itemStyle={{
-              color: "black",
-            }}
-          >
-            {value !== undefined && !Boolean(selected) && (
-              <Picker.Item
-                color="black"
-                key={"blank"}
-                value={""}
-                label={placeholder}
-              />
-            )}
-            {sort
-              ? data
-                  .sort((a, b) => a["name"].localeCompare(b["name"]))
-                  .map((e, c) => {
-                    return (
-                      <Picker.Item
-                        color="black"
-                        key={`sorted${c}`}
-                        value={e.value}
-                        label={`${e.name} ${
-                          !hiddenValue && e.value ? `(${e.value})` : ""
-                        }`}
-                      />
-                    );
-                  })
-              : data.map((e, c) => {
-                  return (
-                    <Picker.Item
-                      color="black"
-                      key={`unsorted${c}`}
-                      value={e.value}
-                      label={`${e.name} ${
-                        !hiddenValue && e.value ? `(${e.value})` : ""
-                      }`}
-                    />
-                  );
-                })}
-          </Picker> */}
-
+          placeholderStyle={{ color: "white" }}
+          containerStyle={{
+            backgroundColor: Colors.background,
+            marginVertical: 15,
+            marginHorizontal: 15,
+            minHeight:
+              (Dimensions.get("window").height - Constants.statusBarHeight) *
+              0.8,
+            maxWidth: "90%",
+            position: "absolute",
+            top: Constants.statusBarHeight,
+            borderWidth: 0,
+            padding: 0,
+            borderRadius: 8,
+          }}
+          minHeight={Dimensions.get("window").height}
+          selectedTextStyle={{ color: "white" }}
+          inputSearchStyle={{
+            backgroundColor: Colors.tertiary,
+            width: "100%",
+            margin: 0,
+          }}
+          itemTextStyle={{ color: "white" }}
+          data={data.map((e) => ({ label: e.name, value: e.value }))}
+          search
+          backgroundColor="rgba(0,0,0,0.8)"
+          mode="modal"
+          onChange={click}
+          flatListProps={{
+            style: {
+              maxHeight:
+                (Dimensions.get("window").height - Constants.statusBarHeight) *
+                0.8,
+            },
+          }}
+          labelField="label"
+          valueField="value"
+          placeholder={placeholder}
+          searchPlaceholder="Search..."
+          value={selected}
+          renderRightIcon={() => <ChevronRight />}
+          renderInputSearch={(onSearch) => (
+            <Input
+              handleInput={onSearch}
+              placeholder="Search..."
+              inputStyle={{
+                backgroundColor: Colors.tertiary,
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                borderWidth: 0,
+              }}
+            />
+          )}
+          renderItem={({ value, label }, selected) => (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 13,
+                backgroundColor: selected
+                  ? Colors.secondary
+                  : Colors.background,
+              }}
+            >
+              <Text>
+                {label} {!hiddenValue && value ? `(${value})` : ""}
+              </Text>
+            </View>
+          )}
+        />
         {!!errorMessage && (
           <Text
             style={{
