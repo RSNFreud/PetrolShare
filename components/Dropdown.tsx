@@ -1,9 +1,15 @@
-import { TouchableWithoutFeedback, View, ViewProps } from "react-native";
+import {
+  TouchableWithoutFeedback,
+  View,
+  ViewProps,
+  StyleSheet,
+} from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import Colors from "../constants/Colors";
 import ChevronRight from "../assets/icons/chevronRight";
+import { Dropdown } from "react-native-element-dropdown";
 
 export type item = { name: string; value: string; symbol?: string };
 
@@ -21,6 +27,46 @@ type PropsType = {
   label?: string;
   sort?: boolean;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "red",
+    // padding: 16,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    borderRadius: 8,
+    // paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: "absolute",
+    backgroundColor: "white",
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+});
 
 export default ({
   data,
@@ -51,27 +97,33 @@ export default ({
     );
   };
 
-  useEffect(() => {
-    setDisplayText(
-      data.filter(
-        (q) =>
-          q.value.toString() === value?.toString() ||
-          q.name.toString() === value?.toString()
-      )[0]?.name
-    );
-  }, [selected]);
+  // useEffect(() => {
+  //   setDisplayText(
+  //     data.filter(
+  //       (q) =>
+  //         q.value.toString() === value?.toString() ||
+  //         q.name.toString() === value?.toString()
+  //     )[0]?.name
+  //   );
+  // }, [selected]);
 
-  useEffect(() => {
-    if (!data || selected) return;
-    setSelected(
-      data.filter(
-        (e) => e.value.toString() === value || e.name.toString() === value
-      )[0]?.name
-    );
-  }, [data, value, selected]);
+  // useEffect(() => {
+  //   if (!data || selected) return;
+  //   setSelected(
+  //     data.filter(
+  //       (e) => e.value.toString() === value || e.name.toString() === value
+  //     )[0]?.name
+  //   );
+  // }, [data, value, selected]);
 
+  const click = ({ label, value }: { label: string; value: string }) => {
+    console.log(label, value);
+    setSelected({ label: label, value: value });
+  };
+
+  if (!data.length) return;
   return (
-    <TouchableWithoutFeedback onPress={() => dropdownRef.current.focus()}>
+    <>
       <View
         style={[
           {
@@ -93,6 +145,66 @@ export default ({
             {label}
           </Text>
         )}
+        {/* <View>
+          <Dropdown
+            data={data.map((e) => ({ label: e.name, value: e.value }))}
+            style={[
+              {
+                position: "relative",
+                zIndex: 1,
+                borderRadius: 4,
+                width: "100%",
+                backgroundColor: Colors.primary,
+                borderStyle: "solid",
+                borderWidth: 1,
+                height: 51,
+                overflow: "hidden",
+                borderColor: Colors.border,
+                paddingHorizontal: 15,
+                // display: "flex",
+                // justifyContent: "space-between",
+                // flexDirection: "row",
+                // alignContent: "center",
+                // alignItems: "center",
+              },
+              inputStyle,
+            ]}
+            placeholder="Test..."
+            maxHeight={150}
+            minHeight={150}
+            containerStyle={{
+              backgroundColor: Colors.secondary,
+              maxHeight: 150,
+            }}
+            itemTextStyle={{ color: "white" }}
+            selectedTextStyle={{ color: "white" }}
+            mode="modal"
+            value={selected}
+            labelField={"label"}
+            valueField="value"
+            onChange={click}
+          />
+        </View> */}
+
+        <Dropdown
+          style={[styles.dropdown]}
+          placeholderStyle={styles.placeholderStyle}
+          containerStyle={{ padding: 0, margin: 0, flex: 1 }}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data.map((e) => ({ label: e.name, value: e.value }))}
+          search
+          backgroundColor="red"
+          mode="modal"
+          onChange={click}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={"Select Item"}
+          searchPlaceholder="Search..."
+          value={selected}
+        />
         <View
           style={[
             {
@@ -116,7 +228,12 @@ export default ({
             inputStyle,
           ]}
         >
-          <Picker
+          <Text style={{ zIndex: 3, fontSize: 16 }}>
+            {displayText || placeholder}
+          </Text>
+          <ChevronRight />
+        </View>
+        {/* <Picker
             ref={dropdownRef}
             selectedValue={selected}
             onValueChange={(itemValue) => selectOption(itemValue)}
@@ -168,12 +285,8 @@ export default ({
                     />
                   );
                 })}
-          </Picker>
-          <Text style={{ zIndex: 3, fontSize: 16 }}>
-            {displayText || placeholder}
-          </Text>
-          <ChevronRight />
-        </View>
+          </Picker> */}
+
         {!!errorMessage && (
           <Text
             style={{
@@ -187,6 +300,6 @@ export default ({
           </Text>
         )}
       </View>
-    </TouchableWithoutFeedback>
+    </>
   );
 };
