@@ -55,7 +55,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const getHeaderColour = () => {
     if (isLoggedIn && route.name === "Dashboard") return Colors.secondary;
     if (route.name.includes("Schedule")) return Colors.primary;
-    return "";
+    return Colors.background;
   };
 
   return (
