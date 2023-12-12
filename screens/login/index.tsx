@@ -86,6 +86,7 @@ export default ({ navigation }: any) => {
     <Layout>
       <Input
         testID={testID("emailaddress")}
+        autoComplete={"email"}
         nativeID="emailaddress"
         keyboardType="email-address"
         handleInput={(e) => setFormData({ ...formData, emailAddress: e })}
@@ -96,6 +97,7 @@ export default ({ navigation }: any) => {
         style={{ marginBottom: 20 }}
       />
       <Input
+        autoComplete="current-password"
         password={true}
         testID={testID("password")}
         value={formData.password}
@@ -193,6 +195,7 @@ export default ({ navigation }: any) => {
         text="Register"
       />
       <ForgotPassword
+        emailAddress={formData.emailAddress}
         visible={visible}
         setVisible={(e) => setVisible(e)}
         handleSubmit={handleSubmit}

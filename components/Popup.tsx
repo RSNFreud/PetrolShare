@@ -1,7 +1,9 @@
 import {
   Animated,
+  DimensionValue,
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
   LayoutChangeEvent,
   Modal,
   Pressable,
@@ -21,7 +23,7 @@ type ModalType = {
   visible: boolean;
   handleClose: () => void;
   children: JSX.Element | Array<JSX.Element>;
-  height?: string | number;
+  height?: DimensionValue;
   animate?: boolean;
   showClose?: boolean;
   title?: string;
@@ -175,19 +177,22 @@ export default ({
             </Pressable>
           )}
         </View>
-        <ScrollView
-          keyboardShouldPersistTaps={"always"}
-          style={{
-            height: "100%",
-            marginTop: 51,
-          }}
-          contentContainerStyle={{
-            paddingVertical: 30,
-            paddingHorizontal: 25,
-          }}
-        >
-          {children}
-        </ScrollView>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <ScrollView
+            keyboardShouldPersistTaps={"always"}
+            automaticallyAdjustKeyboardInsets
+            style={{
+              height: "100%",
+              marginTop: 51,
+            }}
+            contentContainerStyle={{
+              paddingVertical: 30,
+              paddingHorizontal: 25,
+            }}
+          >
+            {children}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Animated.View>
     </Modal>
   );

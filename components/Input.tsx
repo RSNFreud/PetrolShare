@@ -18,6 +18,7 @@ type PropsType = {
   errorMessage?: string;
   keyboardType?: TextInput["props"]["keyboardType"];
   testID?: string;
+  autoComplete?: TextInput["props"]["autoComplete"];
 };
 
 export default ({
@@ -33,6 +34,7 @@ export default ({
   nativeID,
   errorMessage,
   inputStyle,
+  autoComplete,
 }: PropsType) => {
   const [passwordShown, setPasswordShown] = useState(password);
 
@@ -59,6 +61,7 @@ export default ({
         <View style={{ position: "relative" }}>
           <TextInput
             testID={testID}
+            autoComplete={autoComplete}
             nativeID={nativeID}
             autoCapitalize="none"
             onChangeText={handleInput}

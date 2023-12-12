@@ -9,6 +9,7 @@ import Button from "@components/button";
 
 type PropTypes = {
   visible: boolean;
+  emailAddress?: string;
   setVisible: (e: boolean) => void;
   handleSubmit: (
     formData: {},
@@ -17,15 +18,24 @@ type PropTypes = {
   ) => void;
 };
 
-export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
+export default ({
+  visible,
+  setVisible,
+  handleSubmit,
+  emailAddress,
+}: PropTypes) => {
   const [formData, setFormData] = useState({
-    emailAddress: "",
+    emailAddress: emailAddress || "",
   });
   const [formErrors, setFormErrors] = useState({
     emailAddress: "",
   });
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!visible) setFormData({ emailAddress: emailAddress || "" });
+  }, [emailAddress]);
 
   const sendEmail = () => {
     setLoading(true);
@@ -78,6 +88,7 @@ export default ({ visible, setVisible, handleSubmit }: PropTypes) => {
             placeholder="Enter email address"
             label="Enter email address"
             keyboardType="email-address"
+            value={formData.emailAddress}
             handleInput={(e) => setFormData({ emailAddress: e })}
             style={{ marginBottom: 25 }}
             errorMessage={formErrors.emailAddress}
