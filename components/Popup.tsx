@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   LayoutChangeEvent,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   View,
@@ -49,6 +50,7 @@ export default ({
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', (e) => {
+      if (Platform.OS !== 'ios') return
       Animated.sequence([
         Animated.timing(position, {
           toValue: -e.endCoordinates.height || 0,
@@ -58,6 +60,7 @@ export default ({
       ]).start()
     })
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      if (Platform.OS !== 'ios') return
       Animated.sequence([
         Animated.timing(position, {
           toValue: 0,
@@ -106,8 +109,6 @@ export default ({
   }
 
   useEffect(() => {
-    console.log('test')
-
     if (!isVisible || opened) return
     position.setValue(modalHeight || 1000)
 
