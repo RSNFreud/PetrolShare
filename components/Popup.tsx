@@ -164,64 +164,60 @@ export default ({
           borderColor: Colors.border,
         }}
       >
-        <KeyboardAvoidingView>
-          <View
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              zIndex: 1,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%',
-              flexDirection: 'row',
-              paddingHorizontal: 25,
-              paddingVertical: 5,
-              borderBottomWidth: 1,
-              borderBottomColor: Colors.border,
-              backgroundColor: Colors.primary,
-            }}
-          >
-            <View>
-              {!!title && (
-                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                  {title}{' '}
-                </Text>
-              )}
-            </View>
-            {showClose && (
-              <Pressable
-                android_disableSound={true}
-                onPress={close}
-                accessibilityHint={'closes the popup'}
-                style={{
-                  width: 40,
-                  height: 40,
-                  alignContent: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Exit />
-              </Pressable>
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            flexDirection: 'row',
+            paddingHorizontal: 25,
+            paddingVertical: 5,
+            borderBottomWidth: 1,
+            borderBottomColor: Colors.border,
+            backgroundColor: Colors.primary,
+          }}
+        >
+          <View>
+            {!!title && (
+              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{title} </Text>
             )}
           </View>
-          <ScrollView
-            keyboardShouldPersistTaps={'always'}
-            style={{
-              height: '100%',
-              marginTop: 51,
-            }}
-            contentContainerStyle={{
-              paddingVertical: 30,
-              paddingHorizontal: 25,
-            }}
-          >
-            {children}
-          </ScrollView>
-        </KeyboardAvoidingView>
+          {showClose && (
+            <Pressable
+              android_disableSound={true}
+              onPress={close}
+              accessibilityHint={'closes the popup'}
+              style={{
+                width: 40,
+                height: 40,
+                alignContent: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Exit />
+            </Pressable>
+          )}
+        </View>
+        <ScrollView
+          keyboardShouldPersistTaps={'always'}
+          style={{
+            height: '100%',
+            marginTop: 51,
+          }}
+          contentContainerStyle={{
+            paddingVertical: 30,
+            paddingHorizontal: 25,
+          }}
+        >
+          {children}
+        </ScrollView>
       </Animated.View>
     </Modal>
   )
