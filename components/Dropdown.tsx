@@ -88,11 +88,6 @@ export default ({
               overflow: "hidden",
               borderColor: Colors.border,
               paddingHorizontal: 15,
-              // display: "flex",
-              // justifyContent: "space-between",
-              // flexDirection: "row",
-              // alignContent: "center",
-              // alignItems: "center",
             },
             inputStyle,
           ]}
@@ -101,9 +96,6 @@ export default ({
             backgroundColor: Colors.background,
             marginVertical: 15,
             marginHorizontal: 15,
-            minHeight:
-              (Dimensions.get("window").height - Constants.statusBarHeight) *
-              0.8,
             maxWidth: "90%",
             position: "absolute",
             top: Constants.statusBarHeight,
@@ -142,7 +134,7 @@ export default ({
               handleInput={onSearch}
               placeholder="Search..."
               inputStyle={{
-                backgroundColor: Colors.tertiary,
+                backgroundColor: Colors.secondary,
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
                 borderWidth: 0,
@@ -154,9 +146,7 @@ export default ({
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 13,
-                backgroundColor: selected
-                  ? Colors.secondary
-                  : Colors.background,
+                backgroundColor: selected ? Colors.tertiary : Colors.background,
               }}
             >
               <Text>
