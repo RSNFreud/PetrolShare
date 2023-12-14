@@ -81,9 +81,7 @@ try {
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
-try {
-  SplashScreen.hideAsync()
-} catch {}
+SplashScreen.hideAsync().catch(() => {})
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
