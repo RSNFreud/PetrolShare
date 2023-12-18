@@ -121,7 +121,6 @@ export default function App() {
               ...e,
             })
             .then(async ({ data }) => {
-              registerForPushNotificationsAsync(data.emailAddress);
               setUserData(data);
               try {
                 setItem("userData", JSON.stringify(data));
@@ -335,7 +334,7 @@ export default function App() {
     if (userData["emailAddress"]) {
       registerForPushNotificationsAsync(userData.emailAddress);
     }
-  }, [userData]);
+  }, [userData?.emailAddress]);
 
   const ToastConfig = {
     default: ({ text1 }: { text1?: string }) => (
