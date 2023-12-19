@@ -134,7 +134,7 @@ export default ({
   useEffect(() => {
     Animated.timing(heightAnim, {
       toValue:
-        Dimensions.get("window").height * 0.8 -
+        Dimensions.get("window").height * 0.9 -
         Constants.statusBarHeight -
         keyboardPadding,
       duration: TIME_TO_CLOSE,
