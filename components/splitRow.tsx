@@ -4,7 +4,7 @@ import { calculateWidth } from "../screens/invoices/invoice";
 
 type PropsType = {
   elements: ReactNode[];
-  gap: number;
+  gap?: number;
   style?: View["props"]["style"];
   seperator?: ReactNode;
   withoutFade?: boolean;
@@ -17,10 +17,6 @@ export default ({
   withoutFade,
   seperator,
 }: PropsType) => {
-  const [width, setWidth] = useState(0);
-
-  const elWidth = calculateWidth(width, gap, elements.length);
-
   return (
     <View
       style={[
@@ -31,7 +27,6 @@ export default ({
         },
         style,
       ]}
-      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
     >
       {elements.map((e, count) => (
         <>

@@ -26,6 +26,7 @@ const linking: any = {
       NotFound: '*/:groupID?',
       GPS: 'gps-tracking',
       DesktopScreen: '/',
+      DesktopApp: '/desktop',
       PublicInvoice: '/payments/public/:uniqueURL'
     },
   },

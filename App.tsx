@@ -60,6 +60,7 @@ import BottomNavigation from "@components/bottomNavigation";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "react-native-gesture-handler";
 import Constants from "expo-constants";
+import { DesktopApp } from "screens/desktopApp";
 
 let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
 try {
@@ -365,6 +366,47 @@ export default function App() {
     ),
   };
 
+  const renderItems = () => {
+    if (width > 768)
+      return (
+        <Stack.Screen
+          name="DesktopScreen"
+          component={DesktopScreen}
+          options={{ title: "PetrolShare", headerShown: false }}
+        />
+      );
+    if (Platform.OS === "web")
+      return (
+        <Stack.Screen
+          name="DesktopApp"
+          component={DesktopApp}
+          options={{ title: "PetrolShare", headerShown: false }}
+        />
+      );
+
+    return loading || store.isLoggedIn ? (
+      <>
+        <Stack.Screen
+          name="Home"
+          component={BottomNavigator}
+          options={{ headerShown: false }}
+        />
+        {!firstSteps && (
+          <Stack.Screen
+            name="AddPreset"
+            component={preset}
+            options={{ title: "Add Preset" }}
+          />
+        )}
+      </>
+    ) : (
+      <>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+      </>
+    );
+  };
+
   return (
     <>
       <SplashScreenComponent />
@@ -406,33 +448,7 @@ export default function App() {
                   animationDuration: 600,
                 }}
               >
-                {width > 768 && Platform.OS === "web" ? (
-                  <Stack.Screen
-                    name="DesktopScreen"
-                    component={DesktopScreen}
-                    options={{ title: "PetrolShare", headerShown: false }}
-                  />
-                ) : loading || store.isLoggedIn ? (
-                  <>
-                    <Stack.Screen
-                      name="Home"
-                      component={BottomNavigator}
-                      options={{ headerShown: false }}
-                    />
-                    {!firstSteps && (
-                      <Stack.Screen
-                        name="AddPreset"
-                        component={preset}
-                        options={{ title: "Add Preset" }}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Stack.Screen name="Login" component={Login} />
-                    <Stack.Screen name="Register" component={Register} />
-                  </>
-                )}
+                {renderItems()}
                 {width < 768 && (
                   <Stack.Screen
                     options={{
