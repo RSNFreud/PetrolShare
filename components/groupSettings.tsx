@@ -239,6 +239,7 @@ export default ({
         <Dropdown
           placeholder="Choose a currency"
           value={data.currency}
+          search
           data={dropdownData}
           handleSelected={(e) => setData({ ...data, currency: e.value })}
           errorMessage={errors.currency}

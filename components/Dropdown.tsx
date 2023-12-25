@@ -20,11 +20,13 @@ type PropsType = {
   hiddenValue?: boolean;
   hasBottomMargin?: boolean;
   label?: string;
+  search?: boolean;
 };
 
 export default ({
   data,
   value,
+  search,
   handleSelected,
   errorMessage,
   placeholder,
@@ -93,14 +95,13 @@ export default ({
           ]}
           placeholderStyle={{ color: "white" }}
           containerStyle={{
-            backgroundColor: Colors.background,
+            backgroundColor: Colors.primary,
             marginVertical: 15,
             marginHorizontal: 15,
             maxWidth: "90%",
-            position: "absolute",
-            top: Constants.statusBarHeight,
             borderWidth: 0,
-            padding: 0,
+            paddingHorizontal: 10,
+            paddingVertical: 15,
             borderRadius: 8,
           }}
           minHeight={Dimensions.get("window").height}
@@ -111,8 +112,12 @@ export default ({
             margin: 0,
           }}
           itemTextStyle={{ color: "white" }}
-          data={data.map((e) => ({ label: e.name, value: e.value }))}
-          search
+          data={data.map((e) => ({
+            label: e.name,
+            value: e.value,
+            key: e.name,
+          }))}
+          search={search}
           backgroundColor="rgba(0,0,0,0.8)"
           mode="modal"
           onChange={click}
@@ -138,15 +143,17 @@ export default ({
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
                 borderWidth: 0,
+                marginBottom: 10,
               }}
             />
           )}
           renderItem={({ value, label }, selected) => (
             <View
               style={{
-                paddingHorizontal: 16,
-                paddingVertical: 13,
-                backgroundColor: selected ? Colors.tertiary : Colors.background,
+                padding: 10,
+                borderRadius: 4,
+                borderColor: selected ? Colors.tertiary : Colors.primary,
+                backgroundColor: selected ? Colors.tertiary : Colors.primary,
               }}
             >
               <Text>

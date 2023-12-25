@@ -57,10 +57,7 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
     <View>
       {buttons.map((e, c) => {
         const RadioButton = () => (
-          <TouchableWithoutFeedback
-            key={`${c}-radio`}
-            onPress={() => setActiveRadio(e.value)}
-          >
+          <TouchableWithoutFeedback onPress={() => setActiveRadio(e.value)}>
             <View
               style={{
                 flexDirection: "row",
@@ -86,6 +83,7 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
 
         return e.rightSideElement ? (
           <View
+            key={`${c}-radio`}
             style={{
               display: "flex",
               flexDirection: "row",
@@ -97,7 +95,7 @@ export default ({ buttons, value, handleChange, errorMessage }: PropsType) => {
             {e.rightSideElement}
           </View>
         ) : (
-          <RadioButton />
+          <RadioButton key={`${c}-radio`} />
         );
       })}
       {!!errorMessage && (
