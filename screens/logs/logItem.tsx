@@ -21,6 +21,7 @@ type PropsType = {
   date: string;
   style?: View["props"]["style"];
   activeSession: boolean;
+  pending?: boolean;
   handleComplete: () => void;
 };
 
@@ -28,6 +29,7 @@ export default ({
   fullName,
   distance,
   date,
+  pending,
   style,
   id,
   activeSession,
@@ -107,10 +109,33 @@ export default ({
           borderRadius: 4,
         }}
       >
-        <View style={[{ backgroundColor: Colors.primary, padding: 15 }, style]}>
-          <Text style={{ fontSize: 14, fontWeight: "300", marginBottom: 5 }}>
-            {convertToDate(date)}
-          </Text>
+        <View
+          style={[
+            {
+              backgroundColor: Colors.primary,
+              padding: 15,
+              opacity: pending ? 0.5 : 1,
+            },
+            style,
+          ]}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 5,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "300" }}>
+              {convertToDate(date)}
+            </Text>
+            <Text
+              style={{ fontSize: 14, fontWeight: "bold", color: Colors.red }}
+            >
+              {pending ? "PENDING" : ""}
+            </Text>
+          </View>
           <View
             style={{
               display: "flex",
@@ -125,7 +150,7 @@ export default ({
             <Text style={{ fontSize: 16 }}>{distance}km</Text>
           </View>
         </View>
-        {activeSession && (
+        {!pending && activeSession && (
           <SplitRow
             gap={0}
             style={{

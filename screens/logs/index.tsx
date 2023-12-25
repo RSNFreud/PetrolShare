@@ -16,7 +16,13 @@ type LogsType = {
   sessionActive: string;
   sessionStart: string;
   sessionEnd: string;
-  logs: { date: string; distance: number; fullName: string; logID: number }[];
+  logs: {
+    date: string;
+    distance: number;
+    fullName: string;
+    logID: number;
+    pending?: boolean;
+  }[];
 };
 
 export default () => {
@@ -46,6 +52,7 @@ export default () => {
 
       currentData["logs"].map((e) => {
         if (!(e.fullName in sum)) sum[e.fullName] = 0;
+        if (e.pending) return;
         sum[e.fullName] = sum[e.fullName] + e.distance;
       });
       setSummary(sum);
