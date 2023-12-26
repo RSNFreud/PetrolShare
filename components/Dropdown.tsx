@@ -152,6 +152,7 @@ export default ({
               style={{
                 padding: 10,
                 borderRadius: 4,
+                overflow: "hidden",
                 borderColor: selected ? Colors.tertiary : Colors.primary,
                 backgroundColor: selected ? Colors.tertiary : Colors.primary,
               }}
