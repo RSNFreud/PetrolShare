@@ -1,4 +1,4 @@
-import { View, ViewProps, Dimensions } from "react-native";
+import { View, ViewProps, Dimensions, Modal } from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
 import Colors from "../constants/Colors";
@@ -97,14 +97,14 @@ export default ({
           containerStyle={{
             backgroundColor: Colors.primary,
             marginVertical: 15,
-            marginHorizontal: 15,
+            height:
+              Dimensions.get("window").height - Constants.statusBarHeight * 0.8,
             maxWidth: "90%",
             borderWidth: 0,
             paddingHorizontal: 10,
             paddingVertical: 15,
             borderRadius: 8,
           }}
-          minHeight={Dimensions.get("window").height}
           selectedTextStyle={{ color: "white" }}
           inputSearchStyle={{
             backgroundColor: Colors.tertiary,
@@ -121,13 +121,6 @@ export default ({
           backgroundColor="rgba(0,0,0,0.8)"
           mode="modal"
           onChange={click}
-          flatListProps={{
-            style: {
-              maxHeight:
-                (Dimensions.get("window").height - Constants.statusBarHeight) *
-                0.8,
-            },
-          }}
           labelField="label"
           valueField="value"
           placeholder={placeholder}
@@ -148,18 +141,22 @@ export default ({
             />
           )}
           renderItem={({ value, label }, selected) => (
-            <View
-              style={{
-                padding: 10,
-                borderRadius: 4,
-                overflow: "hidden",
-                borderColor: selected ? Colors.tertiary : Colors.primary,
-                backgroundColor: selected ? Colors.tertiary : Colors.primary,
-              }}
-            >
-              <Text>
-                {label} {!hiddenValue && value ? `(${value})` : ""}
-              </Text>
+            <View style={{ backgroundColor: Colors.primary }}>
+              <View
+                style={{
+                  padding: 10,
+                  borderRadius: 4,
+                  overflow: "hidden",
+                  borderColor: selected ? Colors.tertiary : Colors.primary,
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  backgroundColor: selected ? Colors.tertiary : Colors.primary,
+                }}
+              >
+                <Text>
+                  {label} {!hiddenValue && value ? `(${value})` : ""}
+                </Text>
+              </View>
             </View>
           )}
         />
