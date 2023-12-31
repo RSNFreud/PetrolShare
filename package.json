@@ -12,7 +12,8 @@
     "build-web": "expo export:web",
     "build-android": "eas build --profile preview --platform android",
     "build": "yarn build-web && yarn deploy",
-    "deploy": "eas build --platform android --auto-submit"
+    "deploy": "eas build --platform android --auto-submit",
+    "update": "eas update -p all -m `update app` --branch testing"
   },
   "jest": {
     "preset": "jest-expo"
