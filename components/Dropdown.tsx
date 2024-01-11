@@ -103,7 +103,11 @@ export default ({
           </Text>
         )}
         {visible && (
-          <Modal transparent>
+          <Modal
+            transparent
+            animationType="none"
+            onRequestClose={() => setVisible(false)}
+          >
             <View
               style={{
                 display: "flex",
@@ -216,7 +220,7 @@ export default ({
               inputStyle,
             ]}
           >
-            <Text>{selected.label || "Choose a currency"}</Text>
+            <Text>{selected.label || placeholder}</Text>
             <ChevronRight />
           </View>
         </TouchableWithoutFeedback>
