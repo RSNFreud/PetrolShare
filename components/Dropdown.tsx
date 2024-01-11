@@ -1,4 +1,12 @@
-import { View, ViewProps, Dimensions, Modal } from "react-native";
+import {
+  View,
+  ViewProps,
+  Dimensions,
+  Modal,
+  TouchableWithoutFeedback,
+  ScrollView,
+  LayoutChangeEvent,
+} from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
 import Colors from "../constants/Colors";
@@ -36,7 +44,14 @@ export default ({
   hasBottomMargin = true,
   inputStyle,
 }: PropsType) => {
-  const [selected, setSelected] = useState({ label: "", value: "" });
+  const [selected, setSelected] = useState<{
+    label: string;
+    value: string;
+    index?: number;
+  }>({ label: "", value: "" });
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<ScrollView>(null);
+  const selectedIndex = useRef<number>();
 
   useEffect(() => {
     if (!data || !value) return;
@@ -50,6 +65,21 @@ export default ({
   const click = ({ label, value }: { label: string; value: string }) => {
     handleSelected({ label: label, value: value });
     setSelected({ label: label, value: value });
+    setVisible(false);
+  };
+
+  useEffect(() => {
+    if (visible) scrollIntoView();
+  }, [visible]);
+
+  const scrollIntoView = () => {
+    if (ref.current) {
+      ref.current.scrollTo({
+        x: 0,
+        y: 30 + (selectedIndex.current || 0) * 39,
+        animated: false,
+      });
+    }
   };
 
   return (
@@ -76,7 +106,111 @@ export default ({
             {label}
           </Text>
         )}
-        <Dropdown
+        {visible && (
+          <Modal transparent>
+            <View
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 25,
+                flex: 1,
+                height: Dimensions.get("window").height,
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                elevation: 2,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: "rgba(0,0,0,0.8)",
+                  height: Dimensions.get("window").height,
+                  width: Dimensions.get("window").width,
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: Colors.primary,
+                  width: "100%",
+                  borderWidth: 0,
+                  paddingHorizontal: 10,
+                  paddingVertical: 15,
+                  borderRadius: 8,
+                }}
+              >
+                <ScrollView ref={ref}>
+                  {data.map(({ name, value }, count) => {
+                    if (selected.value === value) {
+                      selectedIndex.current = count;
+                    }
+                    return (
+                      <View
+                        style={{ backgroundColor: Colors.primary }}
+                        key={value}
+                      >
+                        <TouchableWithoutFeedback
+                          onPress={() => click({ label: name, value: value })}
+                        >
+                          <View
+                            style={{
+                              padding: 10,
+                              borderRadius: 4,
+                              overflow: "hidden",
+                              borderColor:
+                                selected.value === value
+                                  ? Colors.tertiary
+                                  : Colors.primary,
+                              borderWidth: 1,
+                              borderStyle: "solid",
+                              backgroundColor:
+                                selected.value === value
+                                  ? Colors.tertiary
+                                  : Colors.primary,
+                            }}
+                          >
+                            <Text>
+                              {name} {!hiddenValue && value ? `(${value})` : ""}
+                            </Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </View>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+        )}
+        <TouchableWithoutFeedback onPress={() => setVisible(true)}>
+          <View
+            style={[
+              {
+                height: 53,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                alignContent: "center",
+                borderRadius: 4,
+                backgroundColor: Colors.primary,
+                paddingVertical: 16,
+                paddingHorizontal: 13,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: Colors.border,
+              },
+              inputStyle,
+            ]}
+          >
+            <Text>{selected.label || "Choose a currency"}</Text>
+            <ChevronRight />
+          </View>
+        </TouchableWithoutFeedback>
+        {/* <Dropdown
           style={[
             {
               position: "relative",
@@ -100,6 +234,7 @@ export default ({
             height:
               Dimensions.get("window").height - Constants.statusBarHeight * 0.8,
             maxWidth: "90%",
+            width: Dimensions.get("window").width,
             borderWidth: 0,
             paddingHorizontal: 10,
             paddingVertical: 15,
@@ -159,7 +294,7 @@ export default ({
               </View>
             </View>
           )}
-        />
+        /> */}
         {!!errorMessage && (
           <Text
             style={{
