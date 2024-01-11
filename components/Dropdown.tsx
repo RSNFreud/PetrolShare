@@ -6,30 +6,30 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   LayoutChangeEvent,
-} from "react-native";
-import { Text } from "./text";
-import { useEffect, useRef, useState } from "react";
-import Colors from "../constants/Colors";
-import ChevronRight from "../assets/icons/chevronRight";
-import { Dropdown } from "react-native-element-dropdown";
-import Input from "./input";
-import Constants from "expo-constants";
+} from 'react-native'
+import { Text } from './text'
+import { useEffect, useRef, useState } from 'react'
+import Colors from '../constants/Colors'
+import ChevronRight from '../assets/icons/chevronRight'
+import { Dropdown } from 'react-native-element-dropdown'
+import Input from './input'
+import Constants from 'expo-constants'
 
-export type item = { name: string; value: string; symbol?: string };
+export type item = { name: string; value: string; symbol?: string }
 
 type PropsType = {
-  data: Array<item>;
-  value?: string;
-  handleSelected: (e: { label: string; value: string }) => void;
-  errorMessage?: string;
-  placeholder: string;
-  inputStyle?: ViewProps["style"];
-  style?: ViewProps["style"];
-  hiddenValue?: boolean;
-  hasBottomMargin?: boolean;
-  label?: string;
-  search?: boolean;
-};
+  data: Array<item>
+  value?: string
+  handleSelected: (e: { label: string; value: string }) => void
+  errorMessage?: string
+  placeholder: string
+  inputStyle?: ViewProps['style']
+  style?: ViewProps['style']
+  hiddenValue?: boolean
+  hasBottomMargin?: boolean
+  label?: string
+  search?: boolean
+}
 
 export default ({
   data,
@@ -45,49 +45,51 @@ export default ({
   inputStyle,
 }: PropsType) => {
   const [selected, setSelected] = useState<{
-    label: string;
-    value: string;
-    index?: number;
-  }>({ label: "", value: "" });
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<ScrollView>(null);
-  const selectedIndex = useRef<number>();
+    label: string
+    value: string
+    index?: number
+  }>({ label: '', value: '' })
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<ScrollView>(null)
+  const selectedIndex = useRef<number>()
 
   useEffect(() => {
-    if (!data || !value) return;
+    if (!data || !value) return
     const current = data.filter(
-      (e) => e.value.toString() === value || e.name.toString() === value
-    )[0];
-    if (!current) return;
-    setSelected({ label: current?.name || "", value: current.value });
-  }, [data, value]);
+      (e) => e.value.toString() === value || e.name.toString() === value,
+    )[0]
+    if (!current) return
+    setSelected({ label: current?.name || '', value: current.value })
+  }, [data, value])
 
   const click = ({ label, value }: { label: string; value: string }) => {
-    handleSelected({ label: label, value: value });
-    setSelected({ label: label, value: value });
-    setVisible(false);
-  };
+    handleSelected({ label: label, value: value })
+    setSelected({ label: label, value: value })
+    setVisible(false)
+  }
 
   useEffect(() => {
-    if (visible) scrollIntoView();
-  }, [visible]);
+    if (visible && ref.current) scrollIntoView()
+  }, [visible, ref])
 
   const scrollIntoView = () => {
+    console.log(30 + (selectedIndex.current || 0) * 39)
+
     if (ref.current) {
       ref.current.scrollTo({
         x: 0,
-        y: 30 + (selectedIndex.current || 0) * 39,
+        y: 800,
         animated: false,
-      });
+      })
     }
-  };
+  }
 
   return (
     <>
       <View
         style={[
           {
-            position: "relative",
+            position: 'relative',
             marginBottom: hasBottomMargin ? 25 : 0,
           },
           style,
@@ -96,11 +98,11 @@ export default ({
         {!!label && (
           <Text
             style={{
-              fontWeight: "700",
+              fontWeight: '700',
               fontSize: 16,
               lineHeight: 16,
               marginBottom: 10,
-              color: "white",
+              color: 'white',
             }}
           >
             {label}
@@ -110,12 +112,15 @@ export default ({
           <Modal transparent>
             <View
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 padding: 25,
                 flex: 1,
-                height: Dimensions.get("window").height,
+                height:
+                  (Dimensions.get('window').height -
+                    Constants.statusBarHeight) *
+                  0.8,
                 shadowOffset: {
                   width: 0,
                   height: 1,
@@ -125,10 +130,10 @@ export default ({
             >
               <View
                 style={{
-                  backgroundColor: "rgba(0,0,0,0.8)",
-                  height: Dimensions.get("window").height,
-                  width: Dimensions.get("window").width,
-                  position: "absolute",
+                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  height: Dimensions.get('window').height,
+                  width: Dimensions.get('window').width,
+                  position: 'absolute',
                   left: 0,
                   top: 0,
                 }}
@@ -136,17 +141,27 @@ export default ({
               <View
                 style={{
                   backgroundColor: Colors.primary,
-                  width: "100%",
+                  width: '100%',
                   borderWidth: 0,
                   paddingHorizontal: 10,
                   paddingVertical: 15,
                   borderRadius: 8,
+                  flex: 1,
+                  maxHeight:
+                    (Dimensions.get('window').height -
+                      Constants.statusBarHeight) *
+                    0.9,
                 }}
               >
-                <ScrollView ref={ref}>
+                <ScrollView
+                  ref={ref}
+                  style={{
+                    flex: 1,
+                  }}
+                >
                   {data.map(({ name, value }, count) => {
                     if (selected.value === value) {
-                      selectedIndex.current = count;
+                      selectedIndex.current = count
                     }
                     return (
                       <View
@@ -160,13 +175,13 @@ export default ({
                             style={{
                               padding: 10,
                               borderRadius: 4,
-                              overflow: "hidden",
+                              overflow: 'hidden',
                               borderColor:
                                 selected.value === value
                                   ? Colors.tertiary
                                   : Colors.primary,
                               borderWidth: 1,
-                              borderStyle: "solid",
+                              borderStyle: 'solid',
                               backgroundColor:
                                 selected.value === value
                                   ? Colors.tertiary
@@ -174,12 +189,12 @@ export default ({
                             }}
                           >
                             <Text>
-                              {name} {!hiddenValue && value ? `(${value})` : ""}
+                              {name} {!hiddenValue && value ? `(${value})` : ''}
                             </Text>
                           </View>
                         </TouchableWithoutFeedback>
                       </View>
-                    );
+                    )
                   })}
                 </ScrollView>
               </View>
@@ -191,22 +206,22 @@ export default ({
             style={[
               {
                 height: 53,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                alignContent: "center",
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                alignContent: 'center',
                 borderRadius: 4,
                 backgroundColor: Colors.primary,
                 paddingVertical: 16,
                 paddingHorizontal: 13,
-                borderStyle: "solid",
+                borderStyle: 'solid',
                 borderWidth: 1,
                 borderColor: Colors.border,
               },
               inputStyle,
             ]}
           >
-            <Text>{selected.label || "Choose a currency"}</Text>
+            <Text>{selected.label || 'Choose a currency'}</Text>
             <ChevronRight />
           </View>
         </TouchableWithoutFeedback>
@@ -300,8 +315,8 @@ export default ({
             style={{
               marginTop: 10,
               fontSize: 14,
-              fontWeight: "400",
-              color: "#FA4F4F",
+              fontWeight: '400',
+              color: '#FA4F4F',
             }}
           >
             {errorMessage}
@@ -309,5 +324,5 @@ export default ({
         )}
       </View>
     </>
-  );
-};
+  )
+}
