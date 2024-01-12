@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   LayoutChangeEvent,
+  FlatList,
 } from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
@@ -50,8 +51,7 @@ export default ({
     index?: number;
   }>({ label: "", value: "" });
   const [visible, setVisible] = useState(false);
-  const ref = useRef<ScrollView>(null);
-  const selectedIndex = useRef<number>();
+  const ref = useRef<FlatList>(null);
 
   useEffect(() => {
     if (!data || !value) return;
@@ -63,21 +63,73 @@ export default ({
   }, [data, value]);
 
   const click = ({ label, value }: { label: string; value: string }) => {
+    setVisible(false);
     handleSelected({ label: label, value: value });
     setSelected({ label: label, value: value });
-    setVisible(false);
   };
 
   const scrollIntoView = () => {
-    if (ref.current) {
-      ref.current.scrollTo({
-        x: 0,
-        y: 30 + (selectedIndex.current || 0) * 39,
-        animated: false,
-      });
-    }
+    setTimeout(() => {
+      if (ref.current) {
+        ref.current.scrollToIndex({
+          index: scrollIndex || 0,
+          animated: false,
+        });
+      }
+    }, 200);
   };
 
+  const scrollIndex = data.findIndex((value) => value.value === selected.value);
+
+  const _renderDropdown = () => (
+    <FlatList
+      ref={ref}
+      style={{
+        flex: 1,
+      }}
+      onScrollToIndexFailed={scrollIntoView}
+      onLayout={scrollIntoView}
+      getItemLayout={(_, index) => ({
+        length: 39,
+        offset: 39 * index + 30,
+        index,
+      })}
+      initialScrollIndex={scrollIndex}
+      data={data}
+      renderItem={({ item }) => {
+        return (
+          <View style={{ backgroundColor: Colors.primary }} key={value}>
+            <TouchableWithoutFeedback
+              onPress={() => click({ label: item.name, value: item.value })}
+            >
+              <View
+                style={{
+                  padding: 10,
+                  borderRadius: 4,
+                  overflow: "hidden",
+                  borderColor:
+                    selected.value === item.value
+                      ? Colors.tertiary
+                      : Colors.primary,
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  backgroundColor:
+                    selected.value === item.value
+                      ? Colors.tertiary
+                      : Colors.primary,
+                }}
+              >
+                <Text>
+                  {item.name}{" "}
+                  {!hiddenValue && item.value ? `(${item.value})` : ""}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        );
+      }}
+    />
+  );
   return (
     <>
       <View
@@ -102,105 +154,59 @@ export default ({
             {label}
           </Text>
         )}
-        {visible && (
-          <Modal
-            transparent
-            animationType="none"
-            onRequestClose={() => setVisible(false)}
+        <Modal
+          transparent
+          visible={visible}
+          animationType="none"
+          onRequestClose={() => setVisible(false)}
+        >
+          <View
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 25,
+              flex: 1,
+              height:
+                (Dimensions.get("window").height - Constants.statusBarHeight) *
+                0.8,
+              shadowOffset: {
+                width: 0,
+                height: 1,
+              },
+              elevation: 2,
+            }}
           >
             <View
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 25,
+                backgroundColor: "rgba(0,0,0,0.8)",
+                height: Dimensions.get("window").height,
+                width: Dimensions.get("window").width,
+                position: "absolute",
+                left: 0,
+                top: 0,
+              }}
+            />
+            <View
+              style={{
+                backgroundColor: Colors.primary,
+                width: "100%",
+                borderWidth: 0,
+                paddingHorizontal: 10,
+                paddingVertical: 15,
+                borderRadius: 8,
                 flex: 1,
-                height:
+                maxHeight:
                   (Dimensions.get("window").height -
                     Constants.statusBarHeight) *
-                  0.8,
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                elevation: 2,
+                  0.9,
               }}
             >
-              <View
-                style={{
-                  backgroundColor: "rgba(0,0,0,0.8)",
-                  height: Dimensions.get("window").height,
-                  width: Dimensions.get("window").width,
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                }}
-              />
-              <View
-                style={{
-                  backgroundColor: Colors.primary,
-                  width: "100%",
-                  borderWidth: 0,
-                  paddingHorizontal: 10,
-                  paddingVertical: 15,
-                  borderRadius: 8,
-                  flex: 1,
-                  maxHeight:
-                    (Dimensions.get("window").height -
-                      Constants.statusBarHeight) *
-                    0.9,
-                }}
-              >
-                <ScrollView
-                  ref={ref}
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  {data.map(({ name, value }, count) => {
-                    if (selected.value === value) {
-                      selectedIndex.current = count;
-                    }
-                    return (
-                      <View
-                        style={{ backgroundColor: Colors.primary }}
-                        key={value}
-                        onLayout={scrollIntoView}
-                      >
-                        <TouchableWithoutFeedback
-                          onPress={() => click({ label: name, value: value })}
-                        >
-                          <View
-                            style={{
-                              padding: 10,
-                              borderRadius: 4,
-                              overflow: "hidden",
-                              borderColor:
-                                selected.value === value
-                                  ? Colors.tertiary
-                                  : Colors.primary,
-                              borderWidth: 1,
-                              borderStyle: "solid",
-                              backgroundColor:
-                                selected.value === value
-                                  ? Colors.tertiary
-                                  : Colors.primary,
-                            }}
-                          >
-                            <Text>
-                              {name} {!hiddenValue && value ? `(${value})` : ""}
-                            </Text>
-                          </View>
-                        </TouchableWithoutFeedback>
-                      </View>
-                    );
-                  })}
-                </ScrollView>
-              </View>
+              {_renderDropdown()}
             </View>
-          </Modal>
-        )}
-        <TouchableWithoutFeedback onPress={() => setVisible(true)}>
+          </View>
+        </Modal>
+        <TouchableWithoutFeedback onPress={() => setVisible(() => true)}>
           <View
             style={[
               {
