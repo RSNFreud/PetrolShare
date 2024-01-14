@@ -58,9 +58,6 @@ export default ({
     const current = data.filter(
       (e) => e.value.toString() === value || e.name.toString() === value
     )[0];
-    console.log("====================================");
-    console.log(current);
-    console.log("====================================");
     if (!current) return;
     setSelected({ label: current?.name || "", value: current.value });
   }, [data, value]);
@@ -72,6 +69,7 @@ export default ({
   };
 
   const scrollIntoView = () => {
+    if (scrollIndex <= 0) return;
     setTimeout(() => {
       if (ref.current) {
         ref.current.scrollToIndex({
@@ -97,7 +95,6 @@ export default ({
         offset: 39 * index + 30,
         index,
       })}
-      initialScrollIndex={scrollIndex}
       data={data}
       renderItem={({ item }) => {
         return (

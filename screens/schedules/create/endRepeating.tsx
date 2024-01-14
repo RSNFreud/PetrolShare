@@ -77,6 +77,7 @@ export const EndRepeating = ({
               alignItems: "center",
               height: 53,
             }}
+            key={"date"}
             gap={0}
             elements={[
               <DatePicker
