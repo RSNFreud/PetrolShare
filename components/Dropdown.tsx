@@ -48,6 +48,8 @@ export default ({
     index?: number;
   }>({ label: "", value: "" });
   const [visible, setVisible] = useState(false);
+  const [list, setList] = useState(data);
+  const [searchInput, setSearchInput] = useState("");
   const ref = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -59,6 +61,15 @@ export default ({
     setSelected({ label: current?.name || "", value: current.value });
   }, [data, value]);
 
+  useEffect(() => {
+    setList(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (!search) return;
+    setList(data.filter((e) => e.name.includes(searchInput)));
+  }, [searchInput]);
+
   const click = ({ label, value }: { label: string; value: string }) => {
     setVisible(false);
     handleSelected({ label: label, value: value });
@@ -66,90 +77,97 @@ export default ({
   };
 
   const scrollIntoView = () => {
-    if (scrollIndex <= 0) return;
-    setTimeout(() => {
-      if (ref.current) {
-        ref.current.scrollToIndex({
-          index: scrollIndex || 0,
-          animated: true,
-          viewPosition: 0.5,
-          viewOffset: search ? -50 : 0,
-        });
-      }
-    }, 200);
+    if (scrollIndex <= 0 || !ref.current || searchInput.length) return;
+    ref.current.scrollToIndex({
+      index: scrollIndex || 0,
+      animated: true,
+      viewPosition: 0.5,
+      viewOffset: search ? -50 : 0,
+    });
   };
 
   const scrollIndex = data.findIndex((value) => value.value === selected.value);
 
+  const handleSearchInput = (e: string) => {
+    setSearchInput(e);
+  };
+
   const _renderDropdown = () => (
-    <FlatList
-      onLayout={scrollIntoView}
-      ref={ref}
-      style={{
-        flex: 1,
-      }}
-      onScrollToIndexFailed={scrollIntoView}
-      getItemLayout={(_, index) => ({
-        length: 39,
-        offset: 44 * index + 30,
-        index,
-      })}
-      ListHeaderComponent={() =>
-        search ? (
-          <View style={{ backgroundColor: Colors.primary }}>
-            <Input
-              placeholder="Search..."
-              inputStyle={{
-                backgroundColor: Colors.secondary,
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                borderWidth: 0,
-                marginBottom: 10,
-              }}
-            />
-          </View>
-        ) : (
-          <></>
-        )
-      }
-      stickyHeaderIndices={[0]}
-      data={data}
-      renderItem={({ item }) => {
-        return (
-          <View
-            style={{ backgroundColor: Colors.primary, height: 44 }}
-            key={item.value}
-          >
-            <TouchableWithoutFeedback
-              onPress={() => click({ label: item.name, value: item.value })}
+    <>
+      {search ? (
+        <View style={{ backgroundColor: Colors.primary }}>
+          <Input
+            placeholder="Search..."
+            value={searchInput}
+            handleInput={handleSearchInput}
+            inputStyle={{
+              backgroundColor: Colors.secondary,
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
+              borderWidth: 0,
+              marginBottom: 10,
+            }}
+          />
+        </View>
+      ) : (
+        <></>
+      )}
+      <FlatList
+        onLayout={scrollIntoView}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={() => (
+          <Text style={{ textAlign: "center" }}>
+            There are no results for that search request!
+          </Text>
+        )}
+        ref={ref}
+        style={{
+          flex: 1,
+        }}
+        onScrollToIndexFailed={scrollIntoView}
+        getItemLayout={(_, index) => ({
+          length: 39,
+          offset: 44 * index + 30,
+          index,
+        })}
+        data={list}
+        renderItem={({ item }) => {
+          return (
+            <View
+              style={{ backgroundColor: Colors.primary, height: 44 }}
+              key={item.value}
             >
-              <View
-                style={{
-                  padding: 10,
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  borderColor:
-                    selected.value === item.value
-                      ? Colors.tertiary
-                      : Colors.primary,
-                  borderWidth: 1,
-                  borderStyle: "solid",
-                  backgroundColor:
-                    selected.value === item.value
-                      ? Colors.tertiary
-                      : Colors.primary,
-                }}
+              <TouchableWithoutFeedback
+                onPress={() => click({ label: item.name, value: item.value })}
               >
-                <Text>
-                  {item.name}{" "}
-                  {!hiddenValue && item.value ? `(${item.value})` : ""}
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        );
-      }}
-    />
+                <View
+                  style={{
+                    padding: 10,
+                    borderRadius: 4,
+                    overflow: "hidden",
+                    borderColor:
+                      selected.value === item.value
+                        ? Colors.tertiary
+                        : Colors.primary,
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    backgroundColor:
+                      selected.value === item.value
+                        ? Colors.tertiary
+                        : Colors.primary,
+                  }}
+                >
+                  <Text>
+                    {item.name}{" "}
+                    {!hiddenValue && item.value ? `(${item.value})` : ""}
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          );
+        }}
+      />
+    </>
   );
   return (
     <>
