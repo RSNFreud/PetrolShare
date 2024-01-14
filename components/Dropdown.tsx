@@ -58,6 +58,9 @@ export default ({
     const current = data.filter(
       (e) => e.value.toString() === value || e.name.toString() === value
     )[0];
+    console.log("====================================");
+    console.log(current);
+    console.log("====================================");
     if (!current) return;
     setSelected({ label: current?.name || "", value: current.value });
   }, [data, value]);
@@ -217,7 +220,6 @@ export default ({
                 alignContent: "center",
                 borderRadius: 4,
                 backgroundColor: Colors.primary,
-                paddingVertical: 16,
                 paddingHorizontal: 13,
                 borderStyle: "solid",
                 borderWidth: 1,
