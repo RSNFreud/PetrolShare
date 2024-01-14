@@ -4,15 +4,12 @@ import {
   Dimensions,
   Modal,
   TouchableWithoutFeedback,
-  ScrollView,
-  LayoutChangeEvent,
   FlatList,
 } from "react-native";
 import { Text } from "./text";
 import { useEffect, useRef, useState } from "react";
 import Colors from "../constants/Colors";
 import ChevronRight from "../assets/icons/chevronRight";
-import { Dropdown } from "react-native-element-dropdown";
 import Input from "./input";
 import Constants from "expo-constants";
 
@@ -75,6 +72,8 @@ export default ({
         ref.current.scrollToIndex({
           index: scrollIndex || 0,
           animated: false,
+          viewPosition: 0.5,
+          viewOffset: search ? -50 : 0,
         });
       }
     }, 200);
@@ -95,10 +94,29 @@ export default ({
         offset: 39 * index + 30,
         index,
       })}
+      ListHeaderComponent={() =>
+        search ? (
+          <View style={{ backgroundColor: Colors.primary }}>
+            <Input
+              placeholder="Search..."
+              inputStyle={{
+                backgroundColor: Colors.secondary,
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                borderWidth: 0,
+                marginBottom: 10,
+              }}
+            />
+          </View>
+        ) : (
+          <></>
+        )
+      }
+      stickyHeaderIndices={[0]}
       data={data}
       renderItem={({ item }) => {
         return (
-          <View style={{ backgroundColor: Colors.primary }} key={value}>
+          <View style={{ backgroundColor: Colors.primary }} key={item.value}>
             <TouchableWithoutFeedback
               onPress={() => click({ label: item.name, value: item.value })}
             >
@@ -229,91 +247,6 @@ export default ({
             <ChevronRight />
           </View>
         </TouchableWithoutFeedback>
-        {/* <Dropdown
-          style={[
-            {
-              position: "relative",
-              zIndex: 1,
-              borderRadius: 4,
-              width: "100%",
-              backgroundColor: Colors.primary,
-              borderStyle: "solid",
-              borderWidth: 1,
-              height: 51,
-              overflow: "hidden",
-              borderColor: Colors.border,
-              paddingHorizontal: 15,
-            },
-            inputStyle,
-          ]}
-          placeholderStyle={{ color: "white" }}
-          containerStyle={{
-            backgroundColor: Colors.primary,
-            marginVertical: 15,
-            height:
-              Dimensions.get("window").height - Constants.statusBarHeight * 0.8,
-            maxWidth: "90%",
-            width: Dimensions.get("window").width,
-            borderWidth: 0,
-            paddingHorizontal: 10,
-            paddingVertical: 15,
-            borderRadius: 8,
-          }}
-          selectedTextStyle={{ color: "white" }}
-          inputSearchStyle={{
-            backgroundColor: Colors.tertiary,
-            width: "100%",
-            margin: 0,
-          }}
-          itemTextStyle={{ color: "white" }}
-          data={data.map((e) => ({
-            label: e.name,
-            value: e.value,
-            key: e.name,
-          }))}
-          search={search}
-          backgroundColor="rgba(0,0,0,0.8)"
-          mode="modal"
-          onChange={click}
-          labelField="label"
-          valueField="value"
-          placeholder={placeholder}
-          searchPlaceholder="Search..."
-          value={selected}
-          renderRightIcon={() => <ChevronRight />}
-          renderInputSearch={(onSearch) => (
-            <Input
-              handleInput={onSearch}
-              placeholder="Search..."
-              inputStyle={{
-                backgroundColor: Colors.secondary,
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                borderWidth: 0,
-                marginBottom: 10,
-              }}
-            />
-          )}
-          renderItem={({ value, label }, selected) => (
-            <View style={{ backgroundColor: Colors.primary }}>
-              <View
-                style={{
-                  padding: 10,
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  borderColor: selected ? Colors.tertiary : Colors.primary,
-                  borderWidth: 1,
-                  borderStyle: "solid",
-                  backgroundColor: selected ? Colors.tertiary : Colors.primary,
-                }}
-              >
-                <Text>
-                  {label} {!hiddenValue && value ? `(${value})` : ""}
-                </Text>
-              </View>
-            </View>
-          )}
-        /> */}
         {!!errorMessage && (
           <Text
             style={{
