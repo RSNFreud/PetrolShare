@@ -86,12 +86,12 @@ export default ({
 
   const _renderDropdown = () => (
     <FlatList
+      onLayout={scrollIntoView}
       ref={ref}
       style={{
         flex: 1,
       }}
       onScrollToIndexFailed={scrollIntoView}
-      onLayout={scrollIntoView}
       getItemLayout={(_, index) => ({
         length: 39,
         offset: 39 * index + 30,
