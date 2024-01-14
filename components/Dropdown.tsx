@@ -71,7 +71,7 @@ export default ({
       if (ref.current) {
         ref.current.scrollToIndex({
           index: scrollIndex || 0,
-          animated: false,
+          animated: true,
           viewPosition: 0.5,
           viewOffset: search ? -50 : 0,
         });
@@ -91,7 +91,7 @@ export default ({
       onScrollToIndexFailed={scrollIntoView}
       getItemLayout={(_, index) => ({
         length: 39,
-        offset: 39 * index + 30,
+        offset: 44 * index + 30,
         index,
       })}
       ListHeaderComponent={() =>
@@ -116,7 +116,10 @@ export default ({
       data={data}
       renderItem={({ item }) => {
         return (
-          <View style={{ backgroundColor: Colors.primary }} key={item.value}>
+          <View
+            style={{ backgroundColor: Colors.primary, height: 44 }}
+            key={item.value}
+          >
             <TouchableWithoutFeedback
               onPress={() => click({ label: item.name, value: item.value })}
             >
