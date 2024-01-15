@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Text } from "@components/text";
 import { AuthContext } from "../../hooks/context";
 import {
@@ -15,7 +15,7 @@ import { Alert, checkForUpdates, getItem, setItem } from "../../hooks";
 import Layout from "@components/layout";
 import config from "../../config";
 import * as Location from "expo-location";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+// import { useIsFocused, useRoute } from "@react-navigation/native";
 import Colors from "../../constants/Colors";
 import NavItem from "./navItem";
 import Distance from "../distance";
@@ -26,7 +26,7 @@ import Demo from "@components/demo";
 import GroupSettings from "@components/groupSettings";
 import ConfirmDistance from "./confirmDistance";
 import React from "react";
-import FadeWrapper from "./fadeWrapper";
+import FadeWrapper from "./fadeWrapper/fadeWrapper";
 import Tooltip from "@components/tooltip";
 import analytics from "@react-native-firebase/analytics";
 import Schedules from "../schedules";
@@ -34,13 +34,20 @@ import GroupIcon from "../../assets/icons/group";
 import PetrolIcon from "../../assets/icons/petrol";
 import NavigationMarker from "../../assets/icons/navigationMarker";
 import Share from "../../assets/icons/share";
+import {
+  useFocusEffect,
+  useNavigation,
+  usePathname,
+  useRouter,
+} from "expo-router";
+import { DashboardHeader } from "./dashboardHeader";
 
-export default ({ navigation }: any) => {
+export default () => {
   const { setData, retrieveData } = useContext(AuthContext);
   const [currentMileage, setCurrentMileage] = useState(
     retrieveData ? retrieveData?.currentMileage : 0
   );
-  const route = useRoute();
+  const route = useRouter();
   const dataRetrieved = useRef(false);
   const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -58,7 +65,8 @@ export default ({ navigation }: any) => {
   const [currentScreen, setCurrentScreen] = useState<string>("Settings");
   const [currentTab, setCurrentTab] = useState("Distance");
   const scrollRef = useRef(null);
-  const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  const pathname = usePathname();
   const [previousTab, setPreviousTab] = useState(currentTab);
 
   useEffect(() => {
@@ -86,44 +94,35 @@ export default ({ navigation }: any) => {
     }
   }, [retrieveData]);
 
-  useEffect(() => {
-    if (!dataRetrieved) return;
-    (async () => {
-      if (
-        Platform.OS === "android" &&
-        (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-      ) {
-        Alert(
-          "You are currently tracking your GPS!",
-          "Do you want to go to the Track GPS screen?",
-          [
-            {
-              text: "Yes",
-              onPress: () => {
-                navigation.navigate("GPS");
-              },
-            },
-            { text: "No", style: "cancel" },
-          ]
-        );
-      }
-    })();
-  }, [dataRetrieved]);
+  // useEffect(() => {
+  //   if (!dataRetrieved) return;
+  //   (async () => {
+  //     if (
+  //       Platform.OS === "android" &&
+  //       (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
+  //     ) {
+  //       Alert(
+  //         "You are currently tracking your GPS!",
+  //         "Do you want to go to the Track GPS screen?",
+  //         [
+  //           {
+  //             text: "Yes",
+  //             onPress: () => {
+  //               navigation.navigate("GPS");
+  //             },
+  //           },
+  //           { text: "No", style: "cancel" },
+  //         ]
+  //       );
+  //     }
+  //   })();
+  // }, [dataRetrieved]);
 
   useEffect(() => {
     if (retrieveData?.groupID && groupData.distance) {
       setVisible(false);
     }
   }, [retrieveData?.groupID]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      pageLoaded();
-    });
-
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -134,29 +133,11 @@ export default ({ navigation }: any) => {
     setPreviousTab(currentTab);
   }, [currentTab]);
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (!isFocused) return;
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        pageLoaded();
-        if (route.name === "Dashboard") checkForUpdates();
-        console.log("App has come to the foreground!");
-      }
-      appState.current = nextAppState;
-    });
-
-    if (!isFocused) return subscription.remove();
-
-    return () => {
-      subscription.remove();
-    };
-  }, [isFocused]);
-
   const pageLoaded = async () => {
-    // if (route.name === "Dashboard") setCurrentTab("Distance")
+    console.log("====================================");
+    console.log("triggered");
+    console.log("====================================");
+    if (pathname === "/") setCurrentTab("Distance");
 
     if (scrollRef.current) {
       (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 });
@@ -166,12 +147,12 @@ export default ({ navigation }: any) => {
       return sendReferal(referallCode);
     }
 
-    if (route && route.params) {
-      const groupID = (route.params as { groupID?: string })["groupID"];
-      if (groupID) {
-        sendReferal(groupID);
-      }
-    }
+    // if (route && route.params) {
+    //   const groupID = (route.params as { groupID?: string })["groupID"];
+    //   if (groupID) {
+    //     sendReferal(groupID);
+    //   }
+    // }
 
     if (retrieveData?.authenticationKey) {
       updateData();
@@ -187,7 +168,7 @@ export default ({ navigation }: any) => {
           {
             text: "Yes",
             onPress: () => {
-              if (route.name === "Login") return;
+              // if (route.name === "Login") return;
               axios
                 .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
                   authenticationKey: retrieveData?.authenticationKey,
@@ -367,106 +348,33 @@ export default ({ navigation }: any) => {
     }
   };
 
-  // return (
-  //   <Dropdown
-  //     data={[
-  //       { value: "test", name: "sdsds" },
-  //       { value: "asa", name: "sasadsds" },
-  //       { value: "tsasast", name: "sdasassds" },
-  //       { value: "teasasst", name: "sdsasasds" },
-  //     ]}
-  //     value="tsasast"
-  //     placeholder=""
-  //     handleSelected={() => {}}
-  //   />
-  // );
+  const renderPopupContent = () => {
+    switch (currentScreen) {
+      case "Settings":
+        return (
+          <GroupSettings handleComplete={handleClose} newGroup hideCancel />
+        );
+      case "ConfirmDistance":
+        if (!confirmDistanceData) return <></>;
+        return (
+          <ConfirmDistance
+            handleComplete={handleClose}
+            {...confirmDistanceData}
+          />
+        );
+
+      default:
+        return <Demo handleClose={handleClose} handleUpdate={updateData} />;
+    }
+  };
+
   return (
-    <Layout homepage>
-      <View
-        style={{
-          backgroundColor: Colors.secondary,
-          paddingHorizontal: 25,
-          paddingBottom: 35,
-        }}
-      >
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "row",
-            backgroundColor: Colors.primary,
-            paddingVertical: 10,
-            paddingHorizontal: 15,
-            borderRadius: 8,
-            borderColor: Colors.border,
-            borderStyle: "solid",
-            borderWidth: 1,
-          }}
-        >
-          <View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 5,
-              }}
-            >
-              <GroupIcon width="15" height="15" style={{ marginRight: 10 }} />
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  Alert(
-                    "Group ID",
-                    "This unique ID is used to identify your group. Share it with others to invite them to your group."
-                  )
-                }
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ fontSize: 18, fontWeight: "500" }}>
-                    {retrieveData
-                      ? retrieveData?.groupID || "Loading..."
-                      : null}
-                  </Text>
-                  <Tooltip
-                    style={{ marginLeft: 6 }}
-                    title="Group ID"
-                    message="This unique ID is used to identify your group. Share it with others to invite them to your group."
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <NavigationMarker
-                width="15"
-                height="15"
-                style={{ marginRight: 10 }}
-              />
-              <Text style={{ fontSize: 16, marginTop: 5, fontWeight: "300" }}>
-                {currentMileage || 0} {groupData.distance}
-              </Text>
-            </View>
-          </View>
-          <TouchableWithoutFeedback onPress={() => copyToClipboard()}>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              {!!(retrieveData && retrieveData?.groupID) && (
-                <Share width="25" height="25" />
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </View>
+    <>
+      <DashboardHeader
+        groupID={retrieveData?.groupID}
+        currentMileage={retrieveData?.currentMileage}
+        distance={groupData.distance}
+      />
       <View
         style={{
           display: "flex",
@@ -527,6 +435,7 @@ export default ({ navigation }: any) => {
         ref={scrollRef}
         overScrollMode={"always"}
         keyboardShouldPersistTaps={"handled"}
+        style={{ backgroundColor: Colors.background }}
         contentContainerStyle={{
           paddingHorizontal: 25,
           paddingBottom: 55,
@@ -541,31 +450,14 @@ export default ({ navigation }: any) => {
           </>
         </FadeWrapper>
       </ScrollView>
-      <Popup
+      {/* <Popup
         visible={visible}
         handleClose={() => {}}
         showClose={false}
         title={getTitle(currentScreen)}
       >
-        {currentScreen === "" ? (
-          <Demo handleClose={handleClose} handleUpdate={updateData} />
-        ) : (
-          <></>
-        )}
-        {currentScreen === "Settings" ? (
-          <GroupSettings handleComplete={handleClose} newGroup hideCancel />
-        ) : (
-          <></>
-        )}
-        {currentScreen === "ConfirmDistance" && confirmDistanceData ? (
-          <ConfirmDistance
-            handleComplete={handleClose}
-            {...confirmDistanceData}
-          />
-        ) : (
-          <></>
-        )}
-      </Popup>
-    </Layout>
+        {renderPopupContent()}
+      </Popup> */}
+    </>
   );
 };

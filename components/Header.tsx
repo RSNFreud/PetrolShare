@@ -1,6 +1,5 @@
 import { Text } from "./text";
 import { TouchableWithoutFeedback, View } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthContext } from "../hooks/context";
 import { useContext, useState } from "react";
 import Settings from "./profile";
@@ -11,13 +10,15 @@ import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
 import { TouchableBase } from "./button";
 import Person from "../assets/icons/person";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useNavigation, usePathname } from "expo-router";
+import { StackActions } from "@react-navigation/native";
 
 export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const route = useRoute();
   const { isLoggedIn, retrieveData, setData } = useContext(AuthContext);
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const pathname = usePathname();
 
   const handleUpdate = () => {
     axios
@@ -53,8 +54,8 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   };
 
   const getHeaderColour = () => {
-    if (isLoggedIn && route.name === "Dashboard") return Colors.secondary;
-    if (route.name.includes("Schedule")) return Colors.primary;
+    if (isLoggedIn && pathname === "/") return Colors.secondary;
+    if (pathname.includes("schedule")) return Colors.primary;
     return Colors.background;
   };
 
@@ -74,7 +75,9 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
       }}
     >
       <TouchableWithoutFeedback
-        onPress={() => (isGuestMode ? null : navigation.popToTop())}
+        onPress={() =>
+          isGuestMode ? null : navigation.dispatch(StackActions.popToTop)
+        }
       >
         <Text
           style={{

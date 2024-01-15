@@ -2,16 +2,22 @@ import React, { useContext, useRef } from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { Text } from "./text";
 import Colors from "../constants/Colors";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { AuthContext } from "../hooks/context";
 import House from "../assets/icons/house";
 import Invoice from "../assets/icons/invoice";
 import History from "../assets/icons/history";
 import Calendar from "../assets/icons/calendar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 type BottonNavPropTypes = {
-  icon: JSX.Element;
+  icon?:
+    | ((props: {
+        focused: boolean;
+        color: string;
+        size: number;
+      }) => React.ReactNode)
+    | undefined;
   text: string;
   active?: boolean;
   hidden?: boolean;
@@ -34,7 +40,7 @@ const icon = (route: string) => {
 };
 
 const BottomNavItem = ({
-  icon,
+  icon: Icon,
   text,
   active,
   handleClick,
@@ -53,7 +59,7 @@ const BottomNavItem = ({
           paddingHorizontal: 25,
         }}
       >
-        {icon}
+        {Icon && <Icon focused={false} color={""} size={0} />}
         <Text style={{ marginTop: 10, fontSize: 14, fontWeight: "bold" }}>
           {text}
         </Text>
@@ -97,7 +103,6 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
           typeof options.tabBarLabel !== "string"
             ? route.name
             : options.tabBarLabel;
-
         const isFocused = state.index === index;
 
         const onPress = () => {
@@ -113,7 +118,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
             active={isFocused}
             text={label}
             handleClick={onPress}
-            icon={icon(route.name)}
+            icon={options.tabBarIcon}
           />
         );
       })}

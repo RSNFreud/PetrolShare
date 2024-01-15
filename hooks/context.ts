@@ -1,3 +1,4 @@
+import React from "react";
 import { createContext } from "react";
 
 export type StoreData = {
@@ -21,3 +22,14 @@ export type AuthContextType = {
 }
 
 export const AuthContext = createContext<Partial<AuthContextType>>({});
+
+export const useSession = () => {
+    const value = React.useContext(AuthContext);
+    if (process.env.NODE_ENV !== 'production') {
+        if (!value) {
+            throw new Error('useSession must be wrapped in a <SessionProvider />');
+        }
+    }
+
+    return value;
+}

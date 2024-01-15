@@ -14,13 +14,13 @@ import {
   setItem,
 } from "../../hooks";
 import config from "../../config";
-import { useNavigation } from "@react-navigation/native";
 import AssignDistance from "./assignDistance";
 import Keypad from "../../assets/icons/keypad";
 import OdomoterIcon from "../../assets/icons/odometer";
 import List from "../../assets/icons/list";
 import Road from "../../assets/icons/road";
 import Reset from "../../assets/icons/reset";
+import { useRouter } from "expo-router";
 
 export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [popupData, setPopupData] = useState(<></>);
@@ -28,7 +28,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState({ startValue: "", endValue: "" });
   const { retrieveData } = useContext(AuthContext);
-  const { navigate } = useNavigation();
+  const { push: navigate } = useRouter();
   const [isDraft, setIsDraft] = useState(false);
 
   const openPopup = (element: JSX.Element, title: string) => {

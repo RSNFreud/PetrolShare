@@ -1,7 +1,7 @@
 {
   "name": "petrolshare",
   "version": "1.1.7",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -81,7 +81,8 @@
     "typescript": "^5.2.2"
   },
   "resolutions": {
-    "react-error-overlay": "6.0.9"
+    "react-error-overlay": "6.0.9",
+    "react-refresh": "~0.14.0"
   },
   "private": true
 }

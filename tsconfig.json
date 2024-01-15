@@ -6,6 +6,9 @@
       "@components/*": [
         "./components/*"
       ],
+      "@icons/*": [
+        "./assets/icons/*"
+      ],
     },
     "baseUrl": ".",
   },
