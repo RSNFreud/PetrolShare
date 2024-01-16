@@ -3,9 +3,9 @@ import { Text } from "@components/text";
 import analytics from "@react-native-firebase/analytics";
 
 type PropsType = {
-  icon: JSX.Element;
+  icon: React.ReactNode;
   text: string;
-  active: string;
+  active: boolean;
   handleClick: (tab: string) => void;
 };
 
@@ -26,9 +26,9 @@ export default ({ icon, text, active, handleClick }: PropsType) => {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          opacity: active === text ? 1 : 0.5,
+          gap: 10,
+          opacity: active ? 1 : 0.5,
           paddingVertical: 15,
-          paddingHorizontal: 5,
         }}
       >
         {icon}

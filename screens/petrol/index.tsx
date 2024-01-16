@@ -8,16 +8,16 @@ import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import { convertToSentenceCase, getGroupData } from "../../hooks";
 import config from "../../config";
-import { useNavigation } from "@react-navigation/native";
 import Popup from "@components/Popup";
 import React from "react";
+import { useRouter } from "expo-router";
 type PropsType = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export default React.memo(({ onClose }: PropsType) => {
-  const { navigate } = useNavigation();
   const [open, setOpen] = useState(false);
+  const navigate = useRouter();
   const [data, setData] = useState({
     litersFilled: "",
     totalPrice: "",
@@ -72,7 +72,7 @@ export default React.memo(({ onClose }: PropsType) => {
       .then(({ data }) => {
         setLoading(false);
         setOpen(false);
-        navigate("Payments", { id: data as string });
+        navigate.push({ pathname: "Payments", params: { id: data } });
       })
       .catch(({ response }) => {
         setErrors({
@@ -85,7 +85,10 @@ export default React.memo(({ onClose }: PropsType) => {
   };
   const handleClose = () => {
     setOpen(false);
-    onClose();
+    console.log("====================================");
+    console.log(onClose);
+    console.log("====================================");
+    if (onClose) onClose();
   };
 
   return (

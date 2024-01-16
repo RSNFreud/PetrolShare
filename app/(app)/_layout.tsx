@@ -22,6 +22,7 @@ export default function AppLayout() {
       screenOptions={{
         header: () => <></>,
       }}
+      sceneContainerStyle={{ backgroundColor: Colors.background }}
       tabBar={(props) => <BottomNavigation {...props} />}
       initialRouteName="index"
     >
@@ -29,6 +30,7 @@ export default function AppLayout() {
         name="index"
         options={{
           tabBarLabel: "Home",
+
           tabBarIcon: () => <House />,
         }}
       />

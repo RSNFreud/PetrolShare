@@ -26,7 +26,7 @@ import Demo from "@components/demo";
 import GroupSettings from "@components/groupSettings";
 import ConfirmDistance from "./confirmDistance";
 import React from "react";
-import FadeWrapper from "./fadeWrapper/fadeWrapper";
+import FadeWrapper from "./tabSwitcher/tabSwitcher";
 import Tooltip from "@components/tooltip";
 import analytics from "@react-native-firebase/analytics";
 import Schedules from "../schedules";
@@ -41,6 +41,7 @@ import {
   useRouter,
 } from "expo-router";
 import { DashboardHeader } from "./dashboardHeader";
+import TabSwitcher from "./tabSwitcher/tabSwitcher";
 
 export default () => {
   const { setData, retrieveData } = useContext(AuthContext);
@@ -63,11 +64,9 @@ export default () => {
   }>();
   const appState = useRef(AppState.currentState);
   const [currentScreen, setCurrentScreen] = useState<string>("Settings");
-  const [currentTab, setCurrentTab] = useState("Distance");
   const scrollRef = useRef(null);
   const navigation = useNavigation();
   const pathname = usePathname();
-  const [previousTab, setPreviousTab] = useState(currentTab);
 
   useEffect(() => {
     if (dataRetrieved.current) return;
@@ -124,20 +123,10 @@ export default () => {
     }
   }, [retrieveData?.groupID]);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 });
-    }
-
-    if (currentTab === "Petrol" || currentTab === previousTab) return;
-    setPreviousTab(currentTab);
-  }, [currentTab]);
-
   const pageLoaded = async () => {
     console.log("====================================");
     console.log("triggered");
     console.log("====================================");
-    if (pathname === "/") setCurrentTab("Distance");
 
     if (scrollRef.current) {
       (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 });
@@ -323,12 +312,7 @@ export default () => {
     updateData();
   };
 
-  const closePetrol = () => {
-    setCurrentTab(previousTab);
-  };
-
   const changeTab = async (name: string) => {
-    setCurrentTab(name);
     try {
       await analytics().logScreenView({
         screen_name: name,
@@ -375,7 +359,7 @@ export default () => {
         currentMileage={retrieveData?.currentMileage}
         distance={groupData.distance}
       />
-      <View
+      {/* <View
         style={{
           display: "flex",
           flexDirection: "row",
@@ -430,26 +414,26 @@ export default () => {
           }
           text="Group"
         />
-      </View>
-      <ScrollView
-        ref={scrollRef}
-        overScrollMode={"always"}
-        keyboardShouldPersistTaps={"handled"}
-        style={{ backgroundColor: Colors.background }}
-        contentContainerStyle={{
-          paddingHorizontal: 25,
-          paddingBottom: 55,
-          paddingTop: 30,
-        }}
-      >
-        <FadeWrapper currentTab={currentTab}>
-          <>
-            {currentTab === "Distance" && <Distance onUpdate={updateData} />}
-            {currentTab === "Petrol" && <Petrol onClose={closePetrol} />}
-            {currentTab === "Group" && <Group onUpdate={updateData} />}
-          </>
-        </FadeWrapper>
-      </ScrollView>
+      </View> */}
+      <TabSwitcher
+        tabs={[
+          {
+            title: "Distance",
+            icon: <NavigationMarker width="15" height="15" />,
+            children: () => <Distance onUpdate={updateData} />,
+          },
+          {
+            title: "Petrol",
+            icon: <PetrolIcon width="15" height="15" />,
+            children: (onClose) => <Petrol onClose={onClose} />,
+          },
+          {
+            title: "Group",
+            icon: <GroupIcon width="15" height="15" />,
+            children: () => <Group onUpdate={updateData} />,
+          },
+        ]}
+      />
       {/* <Popup
         visible={visible}
         handleClose={() => {}}
