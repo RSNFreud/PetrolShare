@@ -23,7 +23,7 @@ import {
   getItem,
 } from "hooks";
 import { Text } from "@components/text";
-import { Slot, usePathname } from "expo-router";
+import { Slot, Stack, usePathname } from "expo-router";
 import { useFonts } from "expo-font";
 import Colors from "constants/Colors";
 
@@ -247,38 +247,6 @@ export default function Layout() {
           <AuthContext.Provider value={store}>
             <Header />
             <Slot />
-            {/* {store.isLoggedIn && screen !== "PublicInvoice" && <Premium />}
-            <NavigationContainer
-              onReady={() => checkFirstTime()}
-              onStateChange={updateScreen}
-              ref={navRef}
-              linking={LinkingConfiguration}
-              theme={{
-                dark: true,
-                colors: {
-                  ...DefaultTheme.colors,
-                  background: Colors.background,
-                  text: "white",
-                },
-              }}
-            >
-              <Stack.Navigator
-                screenOptions={{
-                  gestureEnabled: false,
-                  headerShown: true,
-                  header: () => <Header />,
-                  animation: "slide_from_right",
-                  animationDuration: 600,
-                }}
-              >
-                {renderItems()}
-                <Stack.Screen
-                  name="NotFound"
-                  component={NotFoundScreen}
-                  options={{ title: "Oops!" }}
-                />
-              </Stack.Navigator>
-            </NavigationContainer> */}
             {!popupVisible && <AlertBox />}
             <Toast config={ToastConfig} />
           </AuthContext.Provider>
