@@ -85,9 +85,6 @@ export default React.memo(({ onClose }: PropsType) => {
   };
   const handleClose = () => {
     setOpen(false);
-    console.log("====================================");
-    console.log(onClose);
-    console.log("====================================");
     if (onClose) onClose();
   };
 

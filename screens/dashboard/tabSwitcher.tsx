@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, ScrollView } from "react-native";
-import { TabHeader, TabType } from "../tabHeader/tabHeader";
+import { TabHeader, TabType } from "./tabHeader";
 import analytics from "@react-native-firebase/analytics";
 
 type PropsType = {
@@ -24,7 +24,7 @@ export default ({ tabs }: PropsType) => {
   }, [currentTab]);
 
   const getCurrentTab = (tabName: string) => {
-    return tabs.filter((tab) => tab.title === tabName)[0];
+    return tabs.filter((tab) => tab?.title === tabName)[0];
   };
 
   const sendAnalytics = async (name: string) => {
@@ -34,12 +34,17 @@ export default ({ tabs }: PropsType) => {
     });
   };
 
-  const tabEl = () => {
-    const child = getCurrentTab(currentTab).children;
+  const switchTab = (e: string) => {
+    fadeAnim.setValue(0);
+    setCurrentTab(e);
+  };
+
+  const TabEl = () => {
+    const child = getCurrentTab(currentTab)?.children;
     if (child) {
-      const Child = { ...child };
-      return <Child onClose={() => {}} />;
+      return child(() => switchTab(tabs[0].title));
     }
+    return <></>;
   };
 
   return (
@@ -47,7 +52,7 @@ export default ({ tabs }: PropsType) => {
       <TabHeader
         tabs={tabs}
         currentTab={getCurrentTab(currentTab)}
-        onChange={setCurrentTab}
+        onChange={switchTab}
       />
       <Animated.View style={{ opacity: fadeAnim, flex: 1 }}>
         <ScrollView
@@ -59,7 +64,7 @@ export default ({ tabs }: PropsType) => {
             paddingTop: 30,
           }}
         >
-          {tabEl()}
+          <TabEl />
         </ScrollView>
       </Animated.View>
     </>

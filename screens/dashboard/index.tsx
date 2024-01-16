@@ -1,23 +1,9 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Text } from "@components/text";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../hooks/context";
-import {
-  View,
-  TouchableWithoutFeedback,
-  Platform,
-  AppState,
-  ScrollView,
-} from "react-native";
 import axios from "axios";
 import Toast from "react-native-toast-message";
-import * as Clipboard from "expo-clipboard";
-import { Alert, checkForUpdates, getItem, setItem } from "../../hooks";
-import Layout from "@components/layout";
+import { Alert, getItem, setItem } from "../../hooks";
 import config from "../../config";
-import * as Location from "expo-location";
-// import { useIsFocused, useRoute } from "@react-navigation/native";
-import Colors from "../../constants/Colors";
-import NavItem from "./navItem";
 import Distance from "../distance";
 import Petrol from "../petrol";
 import Group from "../group";
@@ -26,31 +12,17 @@ import Demo from "@components/demo";
 import GroupSettings from "@components/groupSettings";
 import ConfirmDistance from "./confirmDistance";
 import React from "react";
-import FadeWrapper from "./tabSwitcher/tabSwitcher";
-import Tooltip from "@components/tooltip";
-import analytics from "@react-native-firebase/analytics";
-import Schedules from "../schedules";
 import GroupIcon from "../../assets/icons/group";
 import PetrolIcon from "../../assets/icons/petrol";
 import NavigationMarker from "../../assets/icons/navigationMarker";
-import Share from "../../assets/icons/share";
-import {
-  useFocusEffect,
-  useNavigation,
-  usePathname,
-  useRouter,
-} from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { DashboardHeader } from "./dashboardHeader";
-import TabSwitcher from "./tabSwitcher/tabSwitcher";
+import TabSwitcher from "./tabSwitcher";
 
 export default () => {
   const { setData, retrieveData } = useContext(AuthContext);
-  const [currentMileage, setCurrentMileage] = useState(
-    retrieveData ? retrieveData?.currentMileage : 0
-  );
-  const route = useRouter();
+  const params = useLocalSearchParams();
   const dataRetrieved = useRef(false);
-  const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
   const [groupData, setGroupData] = useState<{
     distance?: string;
@@ -62,18 +34,14 @@ export default () => {
     assignedBy: string;
     id: string;
   }>();
-  const appState = useRef(AppState.currentState);
   const [currentScreen, setCurrentScreen] = useState<string>("Settings");
-  const scrollRef = useRef(null);
   const navigation = useNavigation();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (dataRetrieved.current) return;
     if (retrieveData && retrieveData?.authenticationKey) {
       pageLoaded();
       dataRetrieved.current = true;
-      setCurrentMileage(retrieveData?.currentMileage);
       updateData();
       if (
         retrieveData &&
@@ -93,30 +61,6 @@ export default () => {
     }
   }, [retrieveData]);
 
-  // useEffect(() => {
-  //   if (!dataRetrieved) return;
-  //   (async () => {
-  //     if (
-  //       Platform.OS === "android" &&
-  //       (await Location.hasStartedLocationUpdatesAsync("gpsTracking"))
-  //     ) {
-  //       Alert(
-  //         "You are currently tracking your GPS!",
-  //         "Do you want to go to the Track GPS screen?",
-  //         [
-  //           {
-  //             text: "Yes",
-  //             onPress: () => {
-  //               navigation.navigate("GPS");
-  //             },
-  //           },
-  //           { text: "No", style: "cancel" },
-  //         ]
-  //       );
-  //     }
-  //   })();
-  // }, [dataRetrieved]);
-
   useEffect(() => {
     if (retrieveData?.groupID && groupData.distance) {
       setVisible(false);
@@ -124,24 +68,17 @@ export default () => {
   }, [retrieveData?.groupID]);
 
   const pageLoaded = async () => {
-    console.log("====================================");
-    console.log("triggered");
-    console.log("====================================");
-
-    if (scrollRef.current) {
-      (scrollRef.current as HTMLElement).scrollTo({ left: 0, top: 0 });
-    }
     let referallCode = getItem("referalCode");
     if (referallCode) {
       return sendReferal(referallCode);
     }
 
-    // if (route && route.params) {
-    //   const groupID = (route.params as { groupID?: string })["groupID"];
-    //   if (groupID) {
-    //     sendReferal(groupID);
-    //   }
-    // }
+    if (params) {
+      const groupID = params["groupID"] as string;
+      if (groupID) {
+        sendReferal(groupID);
+      }
+    }
 
     if (retrieveData?.authenticationKey) {
       updateData();
@@ -200,7 +137,6 @@ export default () => {
           `/distance/get?authenticationKey=${retrieveData?.authenticationKey}`
       )
       .then(async ({ data }) => {
-        setCurrentMileage(data);
         let sessionStorage;
         try {
           sessionStorage = getItem("userData");
@@ -291,34 +227,9 @@ export default () => {
       .catch(() => {});
   };
 
-  const copyToClipboard = async () => {
-    Clipboard.setStringAsync(
-      retrieveData
-        ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${retrieveData?.groupID}`
-        : ""
-    );
-    Alert(
-      "Information:",
-      "Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!"
-    );
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 500);
-  };
-
   const handleClose = () => {
     setVisible(false);
     updateData();
-  };
-
-  const changeTab = async (name: string) => {
-    try {
-      await analytics().logScreenView({
-        screen_name: name,
-        screen_class: name,
-      });
-    } catch {}
   };
 
   const getTitle = (currentScreen: string) => {
@@ -359,62 +270,6 @@ export default () => {
         currentMileage={retrieveData?.currentMileage}
         distance={groupData.distance}
       />
-      {/* <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          paddingHorizontal: 25,
-          backgroundColor: Colors.primary,
-          justifyContent: "center",
-        }}
-      >
-        <NavItem
-          active={currentTab}
-          handleClick={(e) => changeTab(e)}
-          text="Distance"
-          icon={
-            <NavigationMarker
-              width="15"
-              height="15"
-              style={{ marginRight: 10 }}
-            />
-          }
-        />
-
-        <View
-          style={{
-            marginHorizontal: 20,
-            backgroundColor: Colors.border,
-            width: 1,
-            marginVertical: 15,
-          }}
-        />
-        <NavItem
-          active={currentTab}
-          handleClick={(e) => changeTab(e)}
-          icon={
-            <PetrolIcon width="15" height="15" style={{ marginRight: 10 }} />
-          }
-          text="Petrol"
-        />
-
-        <View
-          style={{
-            marginHorizontal: 20,
-            backgroundColor: Colors.border,
-            width: 1,
-            marginVertical: 15,
-          }}
-        />
-        <NavItem
-          active={currentTab}
-          handleClick={(e) => changeTab(e)}
-          icon={
-            <GroupIcon width="15" height="15" style={{ marginRight: 10 }} />
-          }
-          text="Group"
-        />
-      </View> */}
       <TabSwitcher
         tabs={[
           {
@@ -434,14 +289,14 @@ export default () => {
           },
         ]}
       />
-      {/* <Popup
+      <Popup
         visible={visible}
         handleClose={() => {}}
         showClose={false}
         title={getTitle(currentScreen)}
       >
         {renderPopupContent()}
-      </Popup> */}
+      </Popup>
     </>
   );
 };

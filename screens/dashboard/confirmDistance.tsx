@@ -15,7 +15,6 @@ type PropTypes = {
 
 export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
   const [groupData, setGroupData] = useState();
-  const [Loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
 
   useEffect(() => {
@@ -27,35 +26,29 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
   }, []);
 
   const dismiss = () => {
-    setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/dismiss`, {
         authenticationKey: retrieveData?.authenticationKey,
         logID: id,
       })
       .then(() => {
-        setLoading(false);
         handleComplete();
       })
       .catch(({ response }) => {
-        setLoading(false);
         console.log(response.data);
       });
   };
 
   const approve = () => {
-    setLoading(true);
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/approve`, {
         authenticationKey: retrieveData?.authenticationKey,
         logID: id,
       })
       .then(() => {
-        setLoading(false);
         handleComplete();
       })
       .catch(({ response }) => {
-        setLoading(false);
         console.log(response.data);
       });
   };
