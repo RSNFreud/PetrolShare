@@ -10,7 +10,15 @@
     "userInterfaceStyle": "automatic",
     "plugins": [
       "./withAndroidVerifiedLinksWorkaround",
-      "sentry-expo",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "freud-dev",
+          "project": "petrolshare"
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
       "@react-native-firebase/app",
       [
         "expo-build-properties",
@@ -80,17 +88,6 @@
       "eas": {
         "projectId": "5a6b67c6-532d-402b-ab54-ceeb04084203"
       }
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "freud-dev",
-            "project": "petrolshare"
-          }
-        }
-      ]
     }
   }
 }

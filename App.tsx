@@ -53,7 +53,7 @@ import { EventRegister } from "react-native-event-listeners";
 import Toast from "react-native-toast-message";
 import { Text } from "@components/text";
 import AlertBox from "@components/alertBox";
-import * as Sentry from "sentry-expo";
+import * as Sentry from "@sentry/react-native";
 import PublicInvoice from "./screens/publicInvoice";
 import schedules from "./screens/schedules";
 import BottomNavigation from "@components/bottomNavigation";
@@ -62,9 +62,9 @@ import "react-native-gesture-handler";
 import Constants from "expo-constants";
 import { DesktopApp } from "screens/desktopApp";
 
-let routingInstrumentation: Sentry.Native.RoutingInstrumentation;
+let routingInstrumentation: Sentry.RoutingInstrumentation;
 try {
-  routingInstrumentation = new Sentry.Native.RoutingInstrumentation();
+  routingInstrumentation = new Sentry.RoutingInstrumentation();
 
   Sentry.init({
     dsn: "https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.sentry.io/4506003538575360",
@@ -72,7 +72,7 @@ try {
     // We recommend adjusting this value in production.
     tracesSampleRate: 1.0,
     integrations: [
-      new Sentry.Native.ReactNativeTracing({
+      new Sentry.ReactNativeTracing({
         routingInstrumentation,
       }),
     ],

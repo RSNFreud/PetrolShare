@@ -1,15 +1,12 @@
 import Header from "@components/Header";
 import AlertBox from "@components/alertBox";
-import Premium from "@components/premium";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import LinkingConfiguration from "hooks/LinkingConfiguration";
 import { AuthContext, AuthContextType, StoreData } from "hooks/context";
 import React, { useEffect, useState } from "react";
 import { Animated, View, Dimensions } from "react-native";
 import Toast from "react-native-toast-message";
 import SplashScreenComponent from "@components/splashScreen";
-import NotFoundScreen from "screens/NotFoundScreen";
+import * as Sentry from "@sentry/react-native";
 import * as Notifications from "expo-notifications";
 import { deregisterForPushNotifications } from "@components/sendNotification";
 import axios from "axios";
@@ -23,9 +20,10 @@ import {
   getItem,
 } from "hooks";
 import { Text } from "@components/text";
-import { Slot, Stack, usePathname } from "expo-router";
+import { Slot, Stack, usePathname, useRootNavigation } from "expo-router";
 import { useFonts } from "expo-font";
 import Colors from "constants/Colors";
+import { useUpdates } from "expo-updates";
 
 const ToastConfig = {
   default: ({ text1 }: { text1?: string }) => (
@@ -56,7 +54,20 @@ const ToastConfig = {
   ),
 };
 
-export default function Layout() {
+const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+Sentry.init({
+  dsn: "https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.sentry.io/4506003538575360",
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  integrations: [
+    new Sentry.ReactNativeTracing({
+      routingInstrumentation,
+    }),
+  ],
+});
+
+export const App = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<Partial<StoreData>>({});
   const [isPremium, setIsPremium] = useState(true);
@@ -69,11 +80,12 @@ export default function Layout() {
   });
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
   const pathname = usePathname();
+  const ref = useRootNavigation();
   const [loadingStatus, setLoadingStatus] = useState({
     fonts: fontsLoaded,
     auth: false,
-    update: false,
   });
+  const { isChecking, isUpdateAvailable } = useUpdates();
 
   const store = React.useMemo(
     () => ({
@@ -201,13 +213,14 @@ export default function Layout() {
   }, [fontsLoaded]);
 
   useEffect(() => {
+    checkForUpdates(loading);
+  }, [isUpdateAvailable, loading]);
+
+  useEffect(() => {
     let i: NodeJS.Timeout;
-    if (loadingStatus.auth && loadingStatus.fonts && loadingStatus.update)
-      setLoading(false);
-    if (loadingStatus.auth && (!loadingStatus.update || !loadingStatus.fonts))
-      i = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(i);
-  }, [loadingStatus]);
+    if (isUpdateAvailable || isChecking) return;
+    if (loadingStatus.auth && loadingStatus.fonts) setLoading(false);
+  }, [loadingStatus, isChecking, isUpdateAvailable]);
 
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;
@@ -225,6 +238,12 @@ export default function Layout() {
     });
     return () => clearTimeout(i);
   }, [loading, notifData]);
+
+  useEffect(() => {
+    if (ref) {
+      routingInstrumentation.registerNavigationContainer(ref);
+    }
+  }, [ref]);
 
   return (
     <>
@@ -260,4 +279,6 @@ export default function Layout() {
       </Animated.View>
     </>
   );
-}
+};
+
+export default Sentry.wrap(App);
