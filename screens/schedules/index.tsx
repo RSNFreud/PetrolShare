@@ -9,7 +9,6 @@ import Create, { DataType } from "./create";
 import Button, { TouchableBase } from "@components/button";
 import config from "../../config";
 import { AuthContext } from "../../hooks/context";
-import { useNavigation } from "@react-navigation/native";
 import {
   GestureHandlerRootView,
   HandlerStateChangeEvent,
@@ -20,6 +19,7 @@ import Plus from "../../assets/icons/plus";
 import ScheduleHeader from "./home/scheduleHeader";
 import DateEntry from "./home/dateEntry";
 import { Alert } from "../../hooks";
+import { useRouter } from "expo-router";
 
 export type ScheduleType = {
   allDay: boolean;
@@ -79,7 +79,7 @@ export default () => {
     { userID: string; colour: string }[]
   >([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useRouter();
 
   const updateData = () => {
     setVisible(false);

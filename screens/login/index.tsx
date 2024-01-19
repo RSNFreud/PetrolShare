@@ -1,92 +1,96 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from "react";
 
-import Input from '@components/input'
-import { Seperator } from '@components/Themed'
-import { Text } from '@components/text'
-import { Pressable, TouchableWithoutFeedback, View } from 'react-native'
-import { AuthContext } from '../../hooks/context'
-import axios from 'axios'
-import Layout from '@components/layout'
-import config from '../../config'
-import testID from '../../hooks/testID'
-import Button from '@components/button'
-import ForgotPassword from './forgotPassword'
+import Input from "@components/input";
+import { Seperator } from "@components/Themed";
+import { Text } from "@components/text";
+import { Pressable, TouchableWithoutFeedback, View } from "react-native";
+import { AuthContext } from "../../hooks/context";
+import axios from "axios";
+import Layout from "@components/layout";
+import config from "../../config";
+import testID from "../../hooks/testID";
+import Button from "@components/button";
+import ForgotPassword from "./forgotPassword";
+import { useRouter } from "expo-router";
 
-export default ({ navigation }: any) => {
-  const [visible, setVisible] = useState(false)
+export default () => {
+  const [visible, setVisible] = useState(false);
+  const navigation = useRouter();
   const [formData, setFormData] = useState({
-    emailAddress: '',
-    password: '',
-  })
-  const [loading, setLoading] = useState(false)
+    emailAddress: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({
-    emailAddress: '',
-    password: '',
-    verification: '',
-  })
+    emailAddress: "",
+    password: "",
+    verification: "",
+  });
 
-  const [verificationEmailSent, setVerificationEmailSent] = useState(false)
+  const [verificationEmailSent, setVerificationEmailSent] = useState(false);
 
-  const { signIn } = useContext(AuthContext)
+  const { signIn, isLoggedIn } = useContext(AuthContext);
 
   const handleSubmit = (
     formData: {},
     setFormErrors: React.SetStateAction<any>,
-    submitAction: () => void,
+    submitAction: () => void
   ) => {
     let errors = {
-      emailAddress: '',
-      password: '',
-    }
+      emailAddress: "",
+      password: "",
+    };
 
     Object.keys(formData).map((e) => {
-      const value = (formData as any)[e]
-      ;(errors as any)[e] = value ? '' : 'Please fill out this field!'
+      const value = (formData as any)[e];
+      (errors as any)[e] = value ? "" : "Please fill out this field!";
 
       if (
-        e === 'emailAddress' &&
+        e === "emailAddress" &&
         value &&
         !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
       ) {
-        ;(errors as any)[e] = 'Please enter a valid email!'
+        (errors as any)[e] = "Please enter a valid email!";
       }
-    })
-    setFormErrors(errors)
+    });
+    setFormErrors(errors);
 
     if (Object.values(errors).filter((e) => e.length).length === 0) {
-      submitAction()
+      submitAction();
     }
-  }
+  };
 
   const handleLogin = () => {
-    if (!signIn) return
-    setVerificationEmailSent(false)
-    setFormErrors({ emailAddress: '', password: '', verification: '' })
-    setLoading(true)
+    if (!signIn) return;
+    setVerificationEmailSent(false);
+    setFormErrors({ emailAddress: "", password: "", verification: "" });
+    setLoading(true);
     signIn({ ...formData }).catch((err: string) => {
-      console.log(err)
+      console.log(err);
 
-      setLoading(false)
-      setFormErrors({ emailAddress: '', password: '', verification: err })
-    })
-  }
+      setLoading(false);
+      setFormErrors({ emailAddress: "", password: "", verification: err });
+    });
+  };
 
   const resendVerification = () => {
     axios
-      .post(config.REACT_APP_EMAIL_API_ADDRESS + '/resend', {
+      .post(config.REACT_APP_EMAIL_API_ADDRESS + "/resend", {
         emailAddress: formData.emailAddress,
       })
       .then(async () => {
-        setVerificationEmailSent(true)
+        setVerificationEmailSent(true);
       })
-      .catch(({ response }) => {})
-  }
+      .catch(({ response }) => {});
+  };
+
+  if (isLoggedIn) return <></>;
 
   return (
     <Layout>
       <Input
-        testID={testID('emailaddress')}
-        autoComplete={'username'}
+        testID={testID("emailaddress")}
+        autoComplete={"username"}
         nativeID="emailaddress"
         keyboardType="email-address"
         handleInput={(e) => setFormData({ ...formData, emailAddress: e })}
@@ -99,7 +103,7 @@ export default ({ navigation }: any) => {
       <Input
         autoComplete="current-password"
         password={true}
-        testID={testID('password')}
+        testID={testID("password")}
         value={formData.password}
         nativeID="password"
         placeholder="Enter password"
@@ -113,50 +117,50 @@ export default ({ navigation }: any) => {
           style={{
             marginTop: 5,
             marginBottom: 15,
-            backgroundColor: verificationEmailSent ? '#484848' : '#EECFCF',
+            backgroundColor: verificationEmailSent ? "#484848" : "#EECFCF",
             borderRadius: 4,
             paddingHorizontal: 20,
             paddingVertical: 15,
           }}
         >
           {verificationEmailSent ? (
-            <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "400" }}>
               Successfully resent the verification email to the address
-              provided! Click{' '}
+              provided! Click{" "}
               <TouchableWithoutFeedback onPress={resendVerification}>
                 <Text
                   style={{
-                    color: 'white',
+                    color: "white",
                     fontSize: 16,
-                    fontWeight: '400',
-                    textDecorationStyle: 'solid',
-                    textDecorationLine: 'underline',
+                    fontWeight: "400",
+                    textDecorationStyle: "solid",
+                    textDecorationLine: "underline",
                   }}
                 >
                   here
                 </Text>
-              </TouchableWithoutFeedback>{' '}
-              to send it again{' '}
+              </TouchableWithoutFeedback>{" "}
+              to send it again{" "}
             </Text>
           ) : (
-            <Text style={{ color: '#7B1D1D', fontSize: 16, fontWeight: '400' }}>
-              {formErrors.verification === 'Please verify your account!' ? (
+            <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
+              {formErrors.verification === "Please verify your account!" ? (
                 <>
                   Please verify your account by clicking the link in the email
-                  we sent! Click{' '}
+                  we sent! Click{" "}
                   <TouchableWithoutFeedback onPress={resendVerification}>
                     <Text
                       style={{
-                        color: '#7B1D1D',
+                        color: "#7B1D1D",
                         fontSize: 16,
-                        textDecorationStyle: 'solid',
-                        textDecorationLine: 'underline',
-                        fontWeight: '400',
+                        textDecorationStyle: "solid",
+                        textDecorationLine: "underline",
+                        fontWeight: "400",
                       }}
                     >
                       here
                     </Text>
-                  </TouchableWithoutFeedback>{' '}
+                  </TouchableWithoutFeedback>{" "}
                   to resend your verification email.
                 </>
               ) : (
@@ -174,7 +178,7 @@ export default ({ navigation }: any) => {
         <Text
           style={{
             fontSize: 16,
-            textDecorationLine: 'underline',
+            textDecorationLine: "underline",
           }}
         >
           Forgot my password...
@@ -190,7 +194,7 @@ export default ({ navigation }: any) => {
 
       <Seperator style={{ marginVertical: 30 }} />
       <Button
-        handleClick={() => navigation.navigate('Register')}
+        handleClick={() => navigation.navigate("register")}
         variant="ghost"
         text="Register"
       />
@@ -201,5 +205,5 @@ export default ({ navigation }: any) => {
         handleSubmit={handleSubmit}
       />
     </Layout>
-  )
-}
+  );
+};

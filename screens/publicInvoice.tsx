@@ -1,17 +1,15 @@
-import { useRoute } from "@react-navigation/native";
 import Layout from "@components/layout";
 import Invoice from "./invoices/invoice";
 import { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 
 export default () => {
-  const route = useRoute();
+  const route = useLocalSearchParams();
   const [invoiceID, setInvoiceID] = useState("");
 
   useEffect(() => {
-    if (route && route.params && "uniqueURL" in route.params) {
-      const key = route.params["uniqueURL"] as string;
-      if (key) setInvoiceID(key);
-    }
+    const key = route["uniqueURL"] as string;
+    if (key) setInvoiceID(key);
   }, [route]);
 
   if (!invoiceID) return <></>;

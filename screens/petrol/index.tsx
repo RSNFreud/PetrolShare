@@ -38,7 +38,7 @@ export default React.memo(({ onClose }: PropsType) => {
   useEffect(() => {
     setTimeout(() => {
       setOpen(true);
-    }, 10);
+    }, 200);
 
     init();
   }, []);
@@ -72,7 +72,7 @@ export default React.memo(({ onClose }: PropsType) => {
       .then(({ data }) => {
         setLoading(false);
         setOpen(false);
-        navigate.push({ pathname: "Payments", params: { id: data } });
+        navigate.navigate({ pathname: "Payments", params: { id: data } });
       })
       .catch(({ response }) => {
         setErrors({

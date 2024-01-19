@@ -28,7 +28,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState({ startValue: "", endValue: "" });
   const { retrieveData } = useContext(AuthContext);
-  const { push: navigate } = useRouter();
+  const { navigate } = useRouter();
   const [isDraft, setIsDraft] = useState(false);
 
   const openPopup = (element: JSX.Element, title: string) => {
@@ -145,7 +145,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
       <LongButton
         text="Presets"
         icon={<List width="20" height="20" />}
-        handleClick={() => navigate("AddPreset")}
+        handleClick={() => navigate("addPreset")}
       />
       <LongButton
         text="Assign Distance"

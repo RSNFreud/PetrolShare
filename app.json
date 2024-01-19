@@ -41,7 +41,7 @@
       "**/*"
     ],
     "experiments": {
-      "tsconfigPaths": true
+      "typedRoutes": true
     },
     "ios": {
       "googleServicesFile": "",

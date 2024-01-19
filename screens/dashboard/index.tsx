@@ -55,7 +55,7 @@ export default () => {
 
       if (retrieveData && retrieveData?.groupID !== null) getGroupData();
 
-      navigation.addListener("focus", async () => {
+      navigation?.addListener("focus", async () => {
         updateData();
       });
     }

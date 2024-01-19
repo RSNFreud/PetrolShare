@@ -1,4 +1,3 @@
-import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -16,12 +15,15 @@ import Invoice from "./invoice";
 import config from "../../config";
 import Colors from "../../constants/Colors";
 import { TouchableBase } from "@components/button";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 
-export default ({ navigation }: any) => {
-  const { params } = useRoute<any>();
+export default () => {
+  const params = useLocalSearchParams();
   const [data, setData] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const { retrieveData } = useContext(AuthContext);
+  const navigation = useNavigation();
+  const { navigate } = useRouter();
   const loaded = useRef(false);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default ({ navigation }: any) => {
       )}
 
       {params && params["id"] ? (
-        <Invoice invoiceID={params["id"]} />
+        <Invoice invoiceID={params["id"] as string} />
       ) : (
         <View style={{ flex: 1, display: "flex" }}>
           {dataLoaded ? (
@@ -104,7 +106,10 @@ export default ({ navigation }: any) => {
                   {data.map((e, c) => (
                     <TouchableBase
                       handleClick={() =>
-                        navigation.navigate("Payments", { id: e["invoiceID"] })
+                        navigate({
+                          pathname: "invoices",
+                          params: { id: e["invoiceID"] },
+                        })
                       }
                       style={{
                         display: "flex",

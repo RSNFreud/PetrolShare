@@ -25,9 +25,9 @@ import config from "../../config";
 import AssignDistance from "@components/assignDistance";
 import Colors from "../../constants/Colors";
 import InvoiceItem, { InvoicePropsType } from "./invoiceItem";
-import { useNavigation } from "@react-navigation/native";
 import { TouchableBase } from "@components/button";
 import ShareIcon from "../../assets/icons/share";
+import { useRouter } from "expo-router";
 
 type PropsType = {
   invoiceID: number | string;
@@ -85,7 +85,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     getInvoice();
   }, []);
   const [manageDistanceOpen, setManageDistanceOpen] = useState(false);
-  const navigate = useNavigation();
+  const navigate = useRouter();
 
   const [groupData, setGroupData] = useState({
     distance: "",
@@ -168,7 +168,10 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const sendLink = async () => {
     if (!invoiceID) return;
     if (Platform.OS === "web")
-      navigate.navigate("PublicInvoice", { uniqueURL: data.uniqueURL });
+      navigate.navigate({
+        pathname: "PublicInvoice",
+        params: { uniqueURL: data.uniqueURL },
+      });
     else
       Share.share({
         message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`,

@@ -110,6 +110,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
 
         if (isFocused) setInitialScroll(index);
+        // if (!route.path) return;
 
         return (
           <BottomNavItem

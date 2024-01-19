@@ -11,11 +11,13 @@ import { AuthContext } from "../../hooks/context";
 import axios from "axios";
 import config from "../../config";
 import Button from "@components/button";
+import { useRouter } from "expo-router";
 
-export default React.memo(({ navigation }: any) => {
+export default React.memo(() => {
   const { register } = useContext(AuthContext);
 
   const [stage, setStage] = useState(0);
+  const navigation = useRouter();
   const [previousStage, setPreviousStage] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [direction, setDirection] = useState("left" as "left" | "right");

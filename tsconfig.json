@@ -8,9 +8,9 @@
       ],
       "@icons/*": [
         "./assets/icons/*"
-      ],
+      ]
     },
-    "baseUrl": ".",
+    "baseUrl": "."
   },
   "exclude": [
     "node_modules",
@@ -18,5 +18,11 @@
     "metro.config.js",
     "jest.config.js",
     "dist"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ]
 }

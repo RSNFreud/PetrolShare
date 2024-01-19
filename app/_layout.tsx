@@ -3,7 +3,7 @@ import AlertBox from "@components/alertBox";
 import { StatusBar } from "expo-status-bar";
 import { AuthContext, AuthContextType, StoreData } from "hooks/context";
 import React, { useEffect, useState } from "react";
-import { Animated, View, Dimensions } from "react-native";
+import { Animated, View, Dimensions, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import SplashScreenComponent from "@components/splashScreen";
 import * as Sentry from "@sentry/react-native";
@@ -24,6 +24,8 @@ import { Slot, Stack, usePathname, useRootNavigation } from "expo-router";
 import { useFonts } from "expo-font";
 import Colors from "constants/Colors";
 import { useUpdates } from "expo-updates";
+import Premium from "@components/premium";
+import Purchases from "react-native-purchases";
 
 const ToastConfig = {
   default: ({ text1 }: { text1?: string }) => (
@@ -96,11 +98,17 @@ export const App = () => {
               ...e,
             })
             .then(async ({ data }) => {
+              console.log("====================================");
+              console.log(data);
+              console.log("====================================");
               setUserData(data);
               try {
                 setItem("userData", JSON.stringify(data));
               } catch {}
               sendCustomEvent("openSplash");
+              setTimeout(() => {
+                sendCustomEvent("closeSplash");
+              }, 500);
               res(data);
             })
             .catch(({ response }) => {
@@ -163,7 +171,7 @@ export const App = () => {
               if (fontsLoaded) setLoading(false);
             })
             .catch(({ response }) => {
-              console.log(response);
+              console.log(171, response);
               setLoadingStatus((loadingStatus) => ({
                 ...loadingStatus,
                 auth: true,
@@ -191,20 +199,6 @@ export const App = () => {
       }
     };
     async();
-    checkForUpdates(true)
-      .then((e) => {
-        if (!e)
-          setLoadingStatus((loadingStatus) => ({
-            ...loadingStatus,
-            update: true,
-          }));
-      })
-      .catch(() =>
-        setLoadingStatus((loadingStatus) => ({
-          ...loadingStatus,
-          update: true,
-        }))
-      );
   }, []);
 
   useEffect(() => {
@@ -245,6 +239,15 @@ export const App = () => {
     }
   }, [ref]);
 
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      Purchases.configure({ apiKey: "goog_lTKKSMIRMQmuaTqjQwdeuRjLqQc" });
+    }
+    if (Platform.OS === "ios") {
+      Purchases.configure({ apiKey: "appl_WqDbxNapCEFuKTgtIlsqKCMAXVn" });
+    }
+  }, []);
+
   return (
     <>
       <SplashScreenComponent />
@@ -265,6 +268,7 @@ export const App = () => {
         >
           <AuthContext.Provider value={store}>
             <Header />
+            {store.isLoggedIn && <Premium />}
             <Slot />
             {!popupVisible && <AlertBox />}
             <Toast config={ToastConfig} />

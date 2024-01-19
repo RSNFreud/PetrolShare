@@ -28,13 +28,14 @@ import Colors from "../../constants/Colors";
 import Plus from "../../assets/icons/plus";
 import Pencil from "../../assets/icons/pencil";
 import Bin from "../../assets/icons/bin";
+import { useRouter } from "expo-router";
 
 type PresetType = {
   presetName: string;
   distance: string;
   presetID: number;
 };
-export default ({ navigation }: any) => {
+export default () => {
   const [data, setData] = useState<{ selectedPreset: null | number }>({
     selectedPreset: null,
   });
@@ -43,6 +44,7 @@ export default ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
+  const navigation = useRouter();
   const [presets, setPresets] = useState<PresetType[] | null>(null);
   const [presetFormData, setPresetFormData] = useState({
     presetID: "",

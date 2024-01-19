@@ -3,7 +3,6 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { useNavigation } from "@react-navigation/native";
 import {
   Text as DefaultText,
   TouchableWithoutFeedback,
@@ -15,6 +14,7 @@ import Colors from "../constants/Colors";
 import Button, { ButtonType } from "./button";
 import ChevronRight from "../assets/icons/chevronRight";
 import { Text } from "./text";
+import { useRouter } from "expo-router";
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
@@ -70,7 +70,7 @@ export const Breadcrumbs = ({
   links: Array<{ name: string; screenName?: string }>;
   style?: ViewProps["style"];
 }) => {
-  const navigation = useNavigation() as any;
+  const navigation = useRouter();
 
   return (
     <DefaultView
@@ -100,8 +100,11 @@ export const Breadcrumbs = ({
               <>
                 <TouchableWithoutFeedback
                   onPress={() =>
-                    navigation.navigate(e.screenName || e.name, {
-                      showToast: undefined,
+                    navigation.navigate({
+                      pathname: e.screenName || e.name,
+                      params: {
+                        showToast: undefined,
+                      },
                     })
                   }
                 >

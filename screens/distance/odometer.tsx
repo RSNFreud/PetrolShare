@@ -3,11 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../../hooks/context";
 import SubmitButton from "./submitButton";
-import { useNavigation } from "@react-navigation/native";
 import { deleteItem, setItem } from "../../hooks";
 import config from "../../config";
 import { Box } from "@components/Themed";
 import { Text } from "@components/text";
+import { useRouter } from "expo-router";
 
 export default ({
   previousData,
@@ -26,7 +26,7 @@ export default ({
   const [distance, setDistance] = useState("");
   const [loading, setLoading] = useState(false);
   const { retrieveData } = useContext(AuthContext);
-  const { navigate } = useNavigation() as any;
+  const { navigate } = useRouter();
 
   useEffect(() => {
     if (previousData) {
