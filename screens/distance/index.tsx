@@ -22,7 +22,7 @@ import Road from "../../assets/icons/road";
 import Reset from "../../assets/icons/reset";
 import { useRouter } from "expo-router";
 
-export default ({ onUpdate }: { onUpdate: () => void }) => {
+export default ({ onUpdate }: { onUpdate?: () => void }) => {
   const [popupData, setPopupData] = useState(<></>);
   const [title, setTitle] = useState("");
   const [visible, setVisible] = useState(false);
@@ -76,7 +76,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
               })
               .then(async (e) => {
                 sendCustomEvent("sendAlert", "Reset your distance back to 0!");
-                onUpdate();
+                if (onUpdate) onUpdate();
               })
               .catch(({ response }) => {
                 console.log(response.message);
@@ -87,16 +87,18 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
       ]
     );
   };
+  const sendAlert = (text: string) => {
+    Toast.show({
+      text1: text,
+      type: "default",
+    });
+  };
 
   const handleClose = (alert?: string) => {
-    if (alert) {
-      setItem("delayedAlert", alert);
-    } else if (getItem("delayedAlert")) {
-      sendCustomEvent("sendAlert", getItem("delayedAlert"));
-      deleteItem("delayedAlert");
-    }
+    if (alert) sendAlert(alert);
+
     if (isDraft === false) {
-      onUpdate();
+      if (onUpdate) onUpdate();
       return setVisible(false);
     }
     Alert("Do you want to delete this draft?", undefined, [

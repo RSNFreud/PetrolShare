@@ -3,10 +3,6 @@ import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { Text } from "./text";
 import Colors from "../constants/Colors";
 import { AuthContext } from "../hooks/context";
-import House from "../assets/icons/house";
-import Invoice from "../assets/icons/invoice";
-import History from "../assets/icons/history";
-import Calendar from "../assets/icons/calendar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
@@ -22,21 +18,6 @@ type BottonNavPropTypes = {
   active?: boolean;
   hidden?: boolean;
   handleClick?: () => void;
-};
-
-const icon = (route: string) => {
-  switch (route) {
-    case "Dashboard":
-      return <House />;
-    case "Payments":
-      return <Invoice />;
-    case "History":
-      return <History />;
-    case "Schedules":
-      return <Calendar />;
-    default:
-      return <></>;
-  }
 };
 
 const BottomNavItem = ({
@@ -110,6 +91,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
 
         if (isFocused) setInitialScroll(index);
+        if (label === "addPreset") return;
         // if (!route.path) return;
 
         return (

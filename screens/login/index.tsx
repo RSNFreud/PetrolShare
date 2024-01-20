@@ -5,23 +5,26 @@ import { Seperator } from "@components/Themed";
 import { Text } from "@components/text";
 import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { AuthContext } from "../../hooks/context";
-import axios from "axios";
 import Layout from "@components/layout";
 import config from "../../config";
 import testID from "../../hooks/testID";
 import Button from "@components/button";
 import ForgotPassword from "./forgotPassword";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
+import { ErrorType } from "types";
 
 export default () => {
   const [visible, setVisible] = useState(false);
   const navigation = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    emailAddress: string;
+    password: string;
+  }>({
     emailAddress: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<ErrorType>({
     emailAddress: "",
     password: "",
     verification: "",
@@ -31,57 +34,67 @@ export default () => {
 
   const { signIn, isLoggedIn } = useContext(AuthContext);
 
-  const handleSubmit = (
-    formData: {},
-    setFormErrors: React.SetStateAction<any>,
-    submitAction: () => void
-  ) => {
-    let errors = {
+  const handleSubmit = () => {
+    let errors: ErrorType = {
       emailAddress: "",
       password: "",
     };
 
-    Object.keys(formData).map((e) => {
-      const value = (formData as any)[e];
-      (errors as any)[e] = value ? "" : "Please fill out this field!";
+    Object.entries(formData).map(([key, value]) => {
+      errors[key] = value ? "" : "Please fill out this field!";
 
       if (
-        e === "emailAddress" &&
+        key === "emailAddress" &&
         value &&
         !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
       ) {
-        (errors as any)[e] = "Please enter a valid email!";
+        errors[key] = "Please enter a valid email!";
       }
     });
     setFormErrors(errors);
 
     if (Object.values(errors).filter((e) => e.length).length === 0) {
-      submitAction();
+      handleLogin();
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!signIn) return;
     setVerificationEmailSent(false);
     setFormErrors({ emailAddress: "", password: "", verification: "" });
     setLoading(true);
-    signIn({ ...formData }).catch((err: string) => {
-      console.log(err);
+    const signedIn = await signIn({ ...formData });
 
+    if (!signedIn.valid) {
       setLoading(false);
-      setFormErrors({ emailAddress: "", password: "", verification: err });
-    });
+      setFormErrors({
+        emailAddress: "",
+        password: "",
+        verification: signedIn.message || "",
+      });
+    } else router.navigate("/");
   };
 
-  const resendVerification = () => {
-    axios
-      .post(config.REACT_APP_EMAIL_API_ADDRESS + "/resend", {
-        emailAddress: formData.emailAddress,
-      })
-      .then(async () => {
+  const resendVerification = async () => {
+    try {
+      const res = await fetch(`${config.REACT_APP_EMAIL_API_ADDRESS}/resend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailAddress: formData.emailAddress,
+        }),
+      });
+
+      if (res.ok) {
         setVerificationEmailSent(true);
-      })
-      .catch(({ response }) => {});
+      }
+    } catch (err) {
+      console.log("====================================");
+      console.log("Error found:", err);
+      console.log("====================================");
+    }
   };
 
   if (isLoggedIn) return <></>;
@@ -186,9 +199,7 @@ export default () => {
       </Pressable>
       <Button
         loading={loading}
-        handleClick={() =>
-          handleSubmit(formData, setFormErrors, () => handleLogin())
-        }
+        handleClick={() => handleSubmit()}
         text="Submit"
       />
 
@@ -202,7 +213,6 @@ export default () => {
         emailAddress={formData.emailAddress}
         visible={visible}
         setVisible={(e) => setVisible(e)}
-        handleSubmit={handleSubmit}
       />
     </Layout>
   );

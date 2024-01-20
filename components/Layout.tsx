@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ViewProps, View, ScrollView } from "react-native";
 import { AuthContext } from "../hooks/context";
 import Dropdown from "./Dropdown";

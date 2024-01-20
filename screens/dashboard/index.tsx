@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../hooks/context";
-import axios from "axios";
 import Toast from "react-native-toast-message";
 import { Alert, getItem, setItem } from "../../hooks";
 import config from "../../config";
@@ -20,15 +19,9 @@ import { DashboardHeader } from "./dashboardHeader";
 import TabSwitcher from "./tabSwitcher";
 
 export default () => {
-  const { setData, retrieveData } = useContext(AuthContext);
+  const { retrieveData, updateData } = useContext(AuthContext);
   const params = useLocalSearchParams();
-  const dataRetrieved = useRef(false);
   const [visible, setVisible] = useState(false);
-  const [groupData, setGroupData] = useState<{
-    distance?: string;
-    petrol?: string;
-    currency?: string;
-  }>({});
   const [confirmDistanceData, setConfirmDistanceData] = useState<{
     distance: string;
     assignedBy: string;
@@ -38,36 +31,20 @@ export default () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (dataRetrieved.current) return;
-    if (retrieveData && retrieveData?.authenticationKey) {
-      pageLoaded();
-      dataRetrieved.current = true;
-      updateData();
-      if (
-        retrieveData &&
-        Object.values(retrieveData).length &&
-        retrieveData?.groupID === null
-      ) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-
-      if (retrieveData && retrieveData?.groupID !== null) getGroupData();
-
-      navigation?.addListener("focus", async () => {
-        updateData();
-      });
-    }
-  }, [retrieveData]);
+    checkForReferral();
+    checkForUnconfirmedDistance();
+  }, []);
 
   useEffect(() => {
-    if (retrieveData?.groupID && groupData.distance) {
+    if (retrieveData?.groupID && retrieveData?.distance) {
       setVisible(false);
+    }
+    if (retrieveData?.groupID === null) {
+      setVisible(true);
     }
   }, [retrieveData?.groupID]);
 
-  const pageLoaded = async () => {
+  const checkForReferral = async () => {
     let referallCode = getItem("referalCode");
     if (referallCode) {
       return sendReferal(referallCode);
@@ -79,10 +56,6 @@ export default () => {
         sendReferal(groupID);
       }
     }
-
-    if (retrieveData?.authenticationKey) {
-      updateData();
-    }
   };
 
   const sendReferal = (groupID: string) => {
@@ -93,29 +66,7 @@ export default () => {
         [
           {
             text: "Yes",
-            onPress: () => {
-              // if (route.name === "Login") return;
-              axios
-                .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
-                  authenticationKey: retrieveData?.authenticationKey,
-                  groupID: groupID,
-                })
-                .then(async (e) => {
-                  updateData();
-                  Toast.show({
-                    text1: "Group ID updated succesfully!",
-                    type: "default",
-                  });
-                  setItem("referalCode", "");
-                })
-                .catch((e) => {
-                  Toast.show({
-                    text1: "There is no group with that ID!",
-                    type: "default",
-                  });
-                  setItem("referalCode", "");
-                });
-            },
+            onPress: () => changeGroup(groupID),
           },
           {
             text: "No",
@@ -130,106 +81,58 @@ export default () => {
     }, 400);
   };
 
-  const getDistance = () => {
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/distance/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(async ({ data }) => {
-        let sessionStorage;
-        try {
-          sessionStorage = getItem("userData");
-          if (!sessionStorage) return;
-          sessionStorage = JSON.parse(sessionStorage);
-          sessionStorage.currentMileage = data.toString();
+  const changeGroup = async (groupID: string) => {
+    const res = await fetch(
+      config.REACT_APP_API_ADDRESS + `/user/change-group`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          authenticationKey: retrieveData?.authenticationKey,
+          groupID: groupID,
+        }),
+      }
+    );
 
-          setItem("userData", JSON.stringify(sessionStorage));
-        } catch (err) {
-          console.log(err);
-        }
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
+    if (res.ok) {
+      if (updateData) updateData();
+      Toast.show({
+        text1: "Group ID updated succesfully!",
+        type: "default",
       });
+      setItem("referalCode", "");
+    } else {
+      Toast.show({
+        text1: "There is no group with that ID!",
+        type: "default",
+      });
+      setItem("referalCode", "");
+    }
   };
 
-  const checkForUnconfirmedDistance = () => {
-    axios
-      .get(
+  const checkForUnconfirmedDistance = async () => {
+    try {
+      const res = await fetch(
         config.REACT_APP_API_ADDRESS +
           `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(async ({ data }) => {
-        if (data) {
-          setConfirmDistanceData(data);
-          setCurrentScreen("ConfirmDistance");
-          setTimeout(() => {
-            setVisible(true);
-          }, 300);
-        }
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
-      });
-  };
+      );
 
-  const updateData = async () => {
-    await getGroupData();
-    checkForUnconfirmedDistance();
-    getDistance();
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/user/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(async ({ data }) => {
-        let sessionStorage;
-        try {
-          sessionStorage = getItem("userData");
-          if (!sessionStorage) return;
-          sessionStorage = JSON.parse(sessionStorage);
-          sessionStorage = { ...sessionStorage, ...data[0] };
-          if (setData) setData(sessionStorage);
-          getDistance();
-          setItem("userData", JSON.stringify(sessionStorage));
-        } catch (err) {
-          console.log(err);
-        }
-      })
-      .catch(({ response }) => {
-        console.log(response);
-      });
-  };
-
-  const getGroupData = async () => {
-    let sessionStorage = getItem("groupData");
-
-    if (sessionStorage) setGroupData(JSON.parse(sessionStorage));
-
-    if (!retrieveData?.groupID) return;
-
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          "/group/get?authenticationKey=" +
-          retrieveData?.authenticationKey
-      )
-      .then(async ({ data }) => {
-        if (!data.distance) {
-          setCurrentScreen("Settings");
+      if (res.ok) {
+        const data = await res.json();
+        setConfirmDistanceData(data);
+        setCurrentScreen("ConfirmDistance");
+        setTimeout(() => {
           setVisible(true);
-          return;
-        }
-        setItem("groupData", JSON.stringify(data));
-        setGroupData(data);
-      })
-      .catch(() => {});
+        }, 300);
+      }
+    } catch {}
   };
 
   const handleClose = () => {
     setVisible(false);
-    updateData();
+    if (updateData) updateData();
   };
 
   const getTitle = (currentScreen: string) => {
@@ -268,7 +171,7 @@ export default () => {
       <DashboardHeader
         groupID={retrieveData?.groupID}
         currentMileage={retrieveData?.currentMileage}
-        distance={groupData.distance}
+        distance={retrieveData?.distance}
       />
       <TabSwitcher
         tabs={[

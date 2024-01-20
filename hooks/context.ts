@@ -7,16 +7,20 @@ export type StoreData = {
     authenticationKey: string,
     currentMileage: string,
     groupID: string
+    distance?: string;
+    petrol?: string;
+    currency?: string;
 }
 
 export type AuthContextType = {
-    signIn: (e: { emailAddress: string, password: string }) => Promise<StoreData | unknown>
+    signIn: (e: { emailAddress: string, password: string }) => Promise<{ valid: boolean, message?: string }>
     setData: (e: StoreData) => void
     register: (e: { emailAddress: string, password: string }) => void
     retrieveData: StoreData
     isLoading: boolean
     isLoggedIn: boolean
     isPremium: boolean
+    updateData: () => void
     setPremiumStatus: (e: boolean) => void
     signOut: () => void
 }

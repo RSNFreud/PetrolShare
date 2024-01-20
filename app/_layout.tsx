@@ -26,6 +26,7 @@ import Colors from "constants/Colors";
 import { useUpdates } from "expo-updates";
 import Premium from "@components/premium";
 import Purchases from "react-native-purchases";
+import { logIn } from "hooks/login";
 
 const ToastConfig = {
   default: ({ text1 }: { text1?: string }) => (
@@ -91,30 +92,17 @@ export const App = () => {
 
   const store = React.useMemo(
     () => ({
-      signIn: async (e: any) => {
-        return new Promise((res, rej) => {
-          axios
-            .post(config.REACT_APP_API_ADDRESS + "/user/login", {
-              ...e,
-            })
-            .then(async ({ data }) => {
-              console.log("====================================");
-              console.log(data);
-              console.log("====================================");
-              setUserData(data);
-              try {
-                setItem("userData", JSON.stringify(data));
-              } catch {}
-              sendCustomEvent("openSplash");
-              setTimeout(() => {
-                sendCustomEvent("closeSplash");
-              }, 500);
-              res(data);
-            })
-            .catch(({ response }) => {
-              rej(response?.data);
-            });
-        });
+      signIn: async ({ emailAddress, password }) => {
+        const data = await logIn(emailAddress, password);
+        if (data) {
+          setUserData(data);
+          sendCustomEvent("openSplash");
+          setTimeout(() => {
+            sendCustomEvent("closeSplash");
+          }, 500);
+          return { valid: true };
+        } else
+          return { valid: false, message: "Invalid username or password!" };
       },
       register: async (e: any) => {
         setUserData(e);
@@ -123,12 +111,11 @@ export const App = () => {
         } catch {}
       },
       retrieveData: userData,
-      setData: (e: any) => {
-        setUserData(e);
-      },
+      setData: setUserData,
+      updateData: () => fetchData(),
       isLoading: loading,
       isPremium: isPremium,
-      setPremiumStatus: (e) => setIsPremium(e),
+      setPremiumStatus: setIsPremium,
       signOut: async () => {
         deleteItem("userData");
         deleteItem("presets");
@@ -143,63 +130,84 @@ export const App = () => {
   ) as AuthContextType;
 
   useEffect(() => {
-    const async = async () => {
-      try {
-        const data = getItem("userData");
-
-        if (data) {
-          const parsed = JSON.parse(data);
-          if (!("authenticationKey" in parsed)) {
-            setLoading(false);
-            return store.signOut;
-          }
-
-          axios
-            .get(
-              config.REACT_APP_API_ADDRESS +
-                "/user/verify?authenticationKey=" +
-                parsed.authenticationKey,
-              { timeout: 1000 }
-            )
-            .then(async ({ data }) => {
-              setItem("userData", JSON.stringify({ ...parsed, ...data }));
-              setUserData({ ...parsed, ...data });
-              setLoadingStatus((loadingStatus) => ({
-                ...loadingStatus,
-                auth: true,
-              }));
-              if (fontsLoaded) setLoading(false);
-            })
-            .catch(({ response }) => {
-              console.log(171, response);
-              setLoadingStatus((loadingStatus) => ({
-                ...loadingStatus,
-                auth: true,
-              }));
-              if (response?.data.includes("This account has been deactivated"))
-                setTimeout(() => {
-                  Alert("Account Deactivated", response.data);
-                }, 500);
-              store.signOut();
-              return;
-            });
-        } else {
-          setLoadingStatus((loadingStatus) => ({
-            ...loadingStatus,
-            auth: true,
-          }));
-        }
-      } catch (data) {
-        setLoadingStatus((loadingStatus) => ({ ...loadingStatus, auth: true }));
-        setUserData({});
-        deleteItem("userData");
-        deleteItem("presets");
-        deleteItem("groupData");
-        // Alert(`An error has occured!`, (data as string).toString());
-      }
-    };
-    async();
+    checkIfAuth();
   }, []);
+
+  // Update session data when user data changes
+  useEffect(() => {
+    setItem("userData", JSON.stringify(userData));
+  }, [userData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [pathname]);
+
+  const checkIfAuth = async () => {
+    const ogData = getItem("userData");
+    // If not signed in show login
+    if (!ogData)
+      return setLoadingStatus((loadingStatus) => ({
+        ...loadingStatus,
+        auth: true,
+      }));
+
+    // If auth key missing also show login
+    const parsed = JSON.parse(ogData);
+    if (!("authenticationKey" in parsed)) {
+      setLoading(false);
+      return store.signOut;
+    }
+
+    // Check if auth key valid
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    try {
+      const data = await fetch(
+        `${config.REACT_APP_API_ADDRESS}/user/verify?authenticationKey=${parsed.authenticationKey}`,
+        { signal: controller.signal }
+      );
+      if (data && data.status === 200) {
+        const userData = await data.json();
+        setItem("userData", JSON.stringify({ ...parsed, ...userData }));
+        setUserData({ ...parsed, ...userData });
+        setLoadingStatus((loadingStatus) => ({
+          ...loadingStatus,
+          auth: true,
+        }));
+        return;
+      }
+      if (data.status === 400 && (await data.text()).includes("deactivated")) {
+        setTimeout(async () => {
+          Alert("Account Deactivated", await data.text());
+        }, 500);
+      }
+    } catch {
+      console.log("====================================");
+      console.log("unexpected error");
+      console.log("====================================");
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    setLoadingStatus((loadingStatus) => ({
+      ...loadingStatus,
+      auth: true,
+    }));
+    store.signOut();
+  };
+
+  const fetchData = async () => {
+    if (!userData.authenticationKey) return;
+    const res = await fetch(
+      config.REACT_APP_API_ADDRESS +
+        `/user/get?authenticationKey=${userData?.authenticationKey}`
+    );
+
+    if (res.ok) {
+      const newData = await res.json();
+      setUserData((rest) => ({ ...rest, ...newData }));
+    }
+  };
 
   useEffect(() => {
     if (fontsLoaded)
@@ -211,7 +219,6 @@ export const App = () => {
   }, [isUpdateAvailable, loading]);
 
   useEffect(() => {
-    let i: NodeJS.Timeout;
     if (isUpdateAvailable || isChecking) return;
     if (loadingStatus.auth && loadingStatus.fonts) setLoading(false);
   }, [loadingStatus, isChecking, isUpdateAvailable]);

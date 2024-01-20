@@ -6,28 +6,19 @@ import Popup from "@components/Popup";
 import { Text } from "@components/text";
 import config from "../../config";
 import Button from "@components/button";
+import { ErrorType } from "types";
 
 type PropTypes = {
   visible: boolean;
   emailAddress?: string;
   setVisible: (e: boolean) => void;
-  handleSubmit: (
-    formData: {},
-    setFormErrors: React.SetStateAction<any>,
-    submitAction: () => void
-  ) => void;
 };
 
-export default ({
-  visible,
-  setVisible,
-  handleSubmit,
-  emailAddress,
-}: PropTypes) => {
+export default ({ visible, setVisible, emailAddress }: PropTypes) => {
   const [formData, setFormData] = useState({
     emailAddress: emailAddress || "",
   });
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<ErrorType>({
     emailAddress: "",
   });
   const [isEmailSent, setIsEmailSent] = useState(false);
@@ -37,26 +28,53 @@ export default ({
     if (!visible) setFormData({ emailAddress: emailAddress || "" });
   }, [emailAddress]);
 
-  const sendEmail = () => {
-    setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/user/forgot-password`, {
-        emailAddress: formData.emailAddress,
-      })
-      .then(() => {
-        setLoading(false);
-        setIsEmailSent(true);
-      })
-      .catch(() => {
-        setLoading(false);
-        setIsEmailSent(true);
-      });
-  };
+  const sendEmail = async () => {
+    const errors: ErrorType = {};
 
-  useEffect(() => {
-    if (isEmailSent) {
+    Object.entries(formData).map(([key, value]) => {
+      errors[key] = value ? "" : "Please fill out this field!";
+
+      if (
+        key === "emailAddress" &&
+        value &&
+        !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value)
+      ) {
+        errors[key] = "Please enter a valid email!";
+      }
+    });
+    setFormErrors(errors);
+
+    if (Object.values(errors).filter((e) => e.length).length) return;
+    setFormErrors(errors);
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${config.REACT_APP_API_ADDRESS}/user/forgot-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailAddress: formData.emailAddress,
+          }),
+        }
+      );
+      if (res.ok) {
+        setLoading(false);
+        setIsEmailSent(true);
+      } else {
+        setFormErrors({ emailAddress: await res.text() });
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+      setIsEmailSent(true);
+      console.log("====================================");
+      console.log("Error found:", err);
+      console.log("====================================");
     }
-  }, [isEmailSent]);
+  };
 
   return (
     <Popup
@@ -77,7 +95,7 @@ export default ({
             </Text>
             <Text style={{ lineHeight: 21, fontSize: 16 }}>
               Your request has been received and if the email exists in our
-              database you will recieve an email within the next few minutes
+              database you will receive an email within the next few minutes
               with password reset instructions.
             </Text>
           </>
@@ -95,9 +113,7 @@ export default ({
           />
           <Button
             loading={loading}
-            handleClick={() =>
-              handleSubmit(formData, setFormErrors, () => sendEmail())
-            }
+            handleClick={sendEmail}
             text="Send Recovery Email"
           />
         </>

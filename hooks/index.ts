@@ -66,28 +66,18 @@ export const sendCustomEvent = (event: string, data?: any) => {
 
 
 export const checkForUpdates = async (force?: boolean) => {
-  return new Promise(async (res, rej) => {
-    try {
-      const resolve = await checkForUpdateAsync()
-      if (resolve.isAvailable) {
-        await fetchUpdateAsync()
-        if (force) {
-          await fetchUpdateAsync()
-          await reloadAsync()
-          res(false)
-        }
-        else {
-          res(true)
-          Alert("Update Available", "An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app",
-            [{ text: 'Dismiss' }, { text: "Update", onPress: async () => await reloadAsync() }]
-          )
-        }
-      } else
-        res(false)
-    } catch {
-      rej(false)
+  try {
+    const resolve = await checkForUpdateAsync()
+    if (!resolve.isAvailable) return
+    await fetchUpdateAsync()
+    if (force) {
+      await fetchUpdateAsync()
+      await reloadAsync()
     }
-  })
+    else Alert("Update Available", "An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app",
+      [{ text: 'Dismiss' }, { text: "Update", onPress: async () => await reloadAsync() }]
+    )
+  } catch { }
 }
 
 export const convertHexToRGBA = (hexCode: string, opacity = 1) => {

@@ -18,7 +18,7 @@ type GroupType = {
   premium: boolean;
 };
 
-export default ({ onUpdate }: { onUpdate: () => void }) => {
+export default ({ onUpdate }: { onUpdate?: () => void }) => {
   const [visible, setVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState("");
 
@@ -45,7 +45,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
 
   const handleClose = () => {
     setVisible(false);
-    onUpdate();
+    if (onUpdate) onUpdate();
   };
 
   const getTitle = (currentScreen: string) => {
@@ -79,7 +79,7 @@ export default ({ onUpdate }: { onUpdate: () => void }) => {
       <Popup
         visible={visible}
         handleClose={() => {
-          setVisible(false), onUpdate();
+          setVisible(false), onUpdate && onUpdate();
         }}
         title={getTitle(currentScreen)}
       >
