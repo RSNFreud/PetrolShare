@@ -1,11 +1,12 @@
+import analytics from "@react-native-firebase/analytics";
 import {
   TouchableOpacity,
   TextProps,
   ActivityIndicator,
   View,
 } from "react-native";
+
 import { Text } from "./text";
-import analytics from "@react-native-firebase/analytics";
 import Colors from "../constants/Colors";
 
 export type VariantType = "regular" | "ghost";
@@ -13,7 +14,7 @@ export type ColorType = "blue" | "red";
 export type SizeType = "regular" | "small" | "medium";
 
 export type ButtonType = {
-  children?: JSX.Element | Array<JSX.Element> | string;
+  children?: JSX.Element | JSX.Element[] | string;
   icon?: JSX.Element;
   text?: string;
   color?: ColorType;
@@ -80,7 +81,7 @@ export default ({
   variant,
   textStyle,
 }: ButtonType) => {
-  let variableProperties = {
+  const variableProperties = {
     height: 51,
     fontSize: 18,
     backgroundColor: Colors.tertiary,

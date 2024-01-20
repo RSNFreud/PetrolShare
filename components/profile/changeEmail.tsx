@@ -1,11 +1,12 @@
-import axios from "axios";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import React, { useState, useContext } from "react";
-import Input from "../input";
-import Button from "../button";
-import { AuthContext } from "../../hooks/context";
-import config from "../../config";
+
 import { PropsType } from "./default";
+import { API_ADDRESS } from "../../constants";
 import { setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
+import Button from "../button";
+import Input from "../input";
 
 export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
   const [emailAddress, setEmailAddress] = useState("");
@@ -13,7 +14,7 @@ export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
   const [errors, setErrors] = useState({ emailAddress: "", validation: "" });
   const { retrieveData } = useContext(AuthContext);
 
-  const validateForm = () => {
+  const validateForm = async () => {
     if (!emailAddress || !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(emailAddress))
       return setErrors({
         emailAddress: "Please enter a valid email address",
@@ -21,21 +22,20 @@ export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
       });
     // Send email with link to confirm email change
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/user/change-email`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        newEmail: emailAddress,
-      })
-      .then(() => {
-        setLoading(false);
-        handleUpdate && handleUpdate();
-        handleClose();
-        setItem(
-          "delayedAlert",
-          "A confirmation email has been sent to your inbox to change your address"
-        );
-      })
-      .catch((err) => {});
+    const res = await sendPostRequest(API_ADDRESS + `/user/change-email`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      newEmail: emailAddress,
+    });
+
+    if (res?.ok) {
+      setLoading(false);
+      handleUpdate && handleUpdate();
+      handleClose();
+      setItem(
+        "delayedAlert",
+        "A confirmation email has been sent to your inbox to change your address",
+      );
+    }
   };
 
   return (
@@ -57,7 +57,7 @@ export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
 
       <Button
         handleClick={() => handleChange("Settings")}
-        variant={"ghost"}
+        variant="ghost"
         text="Back"
       />
     </>

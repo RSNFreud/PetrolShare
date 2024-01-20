@@ -1,8 +1,9 @@
+import Button from "@components/button";
+import { Text } from "@components/text";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { Text } from "@components/text";
+
 import { getGroupData } from "../../hooks";
-import Button from "@components/button";
 
 type PropsType = {
   loading: boolean;

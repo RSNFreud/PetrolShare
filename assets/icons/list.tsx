@@ -1,4 +1,5 @@
 import Svg, { Path } from "react-native-svg";
+
 import { IconType } from "./icon";
 
 export default ({ ...rest }: IconType) => (
@@ -6,6 +7,6 @@ export default ({ ...rest }: IconType) => (
     <Path
       fill="#fff"
       d="M0 10.5h18v3H0v-3zM0 3h24v3H0V3zm0 18h10.852v-3H0v3z"
-    ></Path>
+    />
   </Svg>
 );

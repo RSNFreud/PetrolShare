@@ -1,21 +1,21 @@
-import Popup from './Popup'
-import { useState, useEffect, useContext } from 'react'
-import Input from './input'
-import Dropdown, { item } from './Dropdown'
-import axios from 'axios'
-import config from '../config'
-import { AuthContext } from '../hooks/context'
-import Button from './button'
+import { API_ADDRESS, postValues } from "@constants";
+import { useState, useEffect, useContext } from "react";
+
+import Dropdown, { item } from "./Dropdown";
+import Popup from "./Popup";
+import Button from "./button";
+import Input from "./input";
+import { AuthContext } from "../hooks/context";
 
 type PropsType = {
-  active: boolean
-  handleClose: () => void
-  handleUpdate: () => void
+  active: boolean;
+  handleClose: () => void;
+  handleUpdate: () => void;
   data: {
-    [key: number]: { fullName: string; distance: number; userID: number }
-  }
-  invoiceID: number | string
-}
+    [key: number]: { fullName: string; distance: number; userID: number };
+  };
+  invoiceID: number | string;
+};
 
 export default ({
   active,
@@ -24,90 +24,91 @@ export default ({
   invoiceID,
   handleUpdate,
 }: PropsType) => {
-  const [usernames, setUsernames] = useState<Array<item>>([])
-  let maxDistance:
-    | { fullName: string; distance: number }
-    | number = Object.values(data).filter(
-    (e) => e.fullName === 'Unaccounted Distance',
-  )[0]
-  if (maxDistance) maxDistance = maxDistance.distance
+  const [usernames, setUsernames] = useState<item[]>([]);
+  let maxDistance: { fullName: string; distance: number } | number =
+    Object.values(data).filter((e) => e.fullName === "Unaccounted Distance")[0];
+  if (maxDistance) maxDistance = maxDistance.distance;
   const [errors, setErrors] = useState<{ [key: string]: string }>({
-    name: '',
-    distance: '',
-  })
-  const [values, setValues] = useState({ name: '', distance: '' })
-  const [loading, setLoading] = useState(false)
-  const { retrieveData } = useContext(AuthContext)
+    name: "",
+    distance: "",
+  });
+  const [values, setValues] = useState({ name: "", distance: "" });
+  const [loading, setLoading] = useState(false);
+  const { retrieveData } = useContext(AuthContext);
   useEffect(() => {
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/group/get-members?authenticationKey=` +
-          retrieveData?.authenticationKey,
-      )
-      .then(async ({ data }) => {
-        setUsernames(
-          data.map((e: { fullName: string; userID: string }) => ({
-            name: e.fullName,
-            value: e.userID,
-          })),
-        )
-      })
-      .catch(() => {
-        setLoading(false)
-      })
-  }, [])
+    getMembers();
+  }, []);
 
-  const submit = () => {
-    setLoading(false)
-    setErrors({ name: '', distance: '' })
-    const errors: { [key: string]: string } = {}
+  const getMembers = async () => {
+    const res = await fetch(
+      API_ADDRESS +
+        `/group/get-members?authenticationKey=` +
+        retrieveData?.authenticationKey,
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setUsernames(
+        data.map((e: { fullName: string; userID: string }) => ({
+          name: e.fullName,
+          value: e.userID,
+        })),
+      );
+    } else setLoading(false);
+  };
+
+  const submit = async () => {
+    setLoading(false);
+    setErrors({ name: "", distance: "" });
+    const errors: { [key: string]: string } = {};
     Object.entries(values).map(([key, value]) => {
-      if (key === 'distance') {
-        const distance = parseFloat(value)
+      if (key === "distance") {
+        const distance = parseFloat(value);
         if (isNaN(distance)) {
-          errors[key] = 'Please enter a value above 0 and below ' + maxDistance
+          errors[key] = "Please enter a value above 0 and below " + maxDistance;
         }
         if (distance > (maxDistance as number) || distance === 0) {
-          errors[key] = 'Please enter a value above 0 and below ' + maxDistance
+          errors[key] = "Please enter a value above 0 and below " + maxDistance;
         }
       }
-      if (value) return
-      errors[key] = 'Please enter a value!'
-    })
+      if (value) return;
+      errors[key] = "Please enter a value!";
+    });
 
-    setErrors(errors)
-    if (Object.values(errors).length != 0) return
-    if (!values.distance || !values.name) return
-    setLoading(true)
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/invoices/assign`, {
+    setErrors(errors);
+    if (Object.values(errors).length != 0 || !values.distance || !values.name)
+      return;
+    setLoading(true);
+    const res = await fetch(API_ADDRESS + `/invoices/assign`, {
+      ...postValues,
+      body: JSON.stringify({
         authenticationKey: retrieveData?.authenticationKey,
         userID: values.name,
         distance: values.distance,
-        invoiceID: invoiceID,
-      })
-      .then(async ({ data }) => {
-        setLoading(false)
-        handleUpdate()
-      })
-      .catch(() => {
-        setLoading(false)
-      })
-  }
+        invoiceID,
+      }),
+    });
+
+    if (res.ok) {
+      setLoading(false);
+      handleUpdate();
+    } else {
+      setLoading(false);
+    }
+  };
 
   return (
     <Popup visible={active} handleClose={handleClose} title="Assign Distance">
       <Input
         handleInput={(e) => setValues({ ...values, distance: e })}
-        label={`Distance to apply`}
+        label="Distance to apply"
         errorMessage={errors.distance}
         placeholder={`Enter amount (Max: ${maxDistance})`}
-        keyboardType={'numbers-and-punctuation'}
+        keyboardType="numbers-and-punctuation"
         inputStyle={{ paddingVertical: 10 }}
         style={{ marginBottom: 20, marginTop: 20 }}
       />
-      {Boolean(usernames.length) ? (
+      {usernames.length ? (
         <Dropdown
           label="User"
           placeholder="Choose a username"
@@ -122,5 +123,5 @@ export default ({
       )}
       <Button loading={loading} handleClick={submit} text="Assign Distance" />
     </Popup>
-  )
-}
+  );
+};

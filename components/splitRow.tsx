@@ -1,6 +1,5 @@
-import { ReactNode, useState } from "react";
-import { Animated, View } from "react-native";
-import { calculateWidth } from "../screens/invoices/invoice";
+import { ReactNode } from "react";
+import { View } from "react-native";
 
 type PropsType = {
   elements: ReactNode[];
@@ -10,13 +9,7 @@ type PropsType = {
   withoutFade?: boolean;
 };
 
-export default ({
-  elements,
-  gap,
-  style,
-  withoutFade,
-  seperator,
-}: PropsType) => {
+export default ({ elements, style, seperator }: PropsType) => {
   return (
     <View
       style={[

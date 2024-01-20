@@ -1,13 +1,12 @@
-import { Linking, StyleSheet, View } from "react-native";
-
-import { Text } from "@components/text";
 import Button from "@components/button";
 import SplitRow from "@components/splitRow";
+import { Text } from "@components/text";
+import { Linking, StyleSheet, View } from "react-native";
 
 export const DesktopApp = () => {
   const openPlay = () => {
     Linking.openURL(
-      "https://play.google.com/store/apps/details?id=com.rsnfreud.PetrolShare"
+      "https://play.google.com/store/apps/details?id=com.rsnfreud.PetrolShare",
     );
   };
   const openIOS = () => {

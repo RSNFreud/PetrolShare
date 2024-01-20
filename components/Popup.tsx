@@ -1,3 +1,5 @@
+import Constants from "expo-constants";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   DimensionValue,
@@ -9,20 +11,19 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { useEffect, useRef, useState } from "react";
-import Colors from "../constants/Colors";
+
 import AlertBox from "./alertBox";
-import { sendCustomEvent } from "../hooks";
 import { Text } from "./text";
 import Exit from "../assets/icons/exit";
-import Constants from "expo-constants";
+import Colors from "../constants/Colors";
+import { sendCustomEvent } from "../hooks";
 
 const TIME_TO_CLOSE = 200;
 
 type ModalType = {
   visible: boolean;
   handleClose: () => void;
-  children: JSX.Element | Array<JSX.Element>;
+  children: JSX.Element | JSX.Element[];
   height?: DimensionValue;
   animate?: boolean;
   showClose?: boolean;
@@ -42,7 +43,7 @@ export default ({
   const [modalHeight, setModalHeight] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [keyboardPadding, setKeyboardPadding] = useState(0);
-  let position = useRef(new Animated.Value(modalHeight)).current;
+  const position = useRef(new Animated.Value(modalHeight)).current;
   const heightAnim = useRef(new Animated.Value(0)).current;
 
   const containerRef = useRef<View>(null);
@@ -58,13 +59,13 @@ export default ({
       "keyboardDidShow",
       (e) => {
         setKeyboardPadding(e.endCoordinates.height);
-      }
+      },
     );
     const hideSubscriptionAndroid = Keyboard.addListener(
       "keyboardDidHide",
       (e) => {
         setKeyboardPadding(0);
-      }
+      },
     );
     const showSubscription = Keyboard.addListener("keyboardWillShow", (e) => {
       setKeyboardPadding(e.endCoordinates.height);
@@ -169,14 +170,14 @@ export default ({
     <Modal
       animationType="fade"
       visible={isVisible}
-      transparent={true}
-      accessibilityLabel={"popup"}
+      transparent
+      accessibilityLabel="popup"
       onRequestClose={() => showClose && close()}
     >
       <AlertBox />
       <Pressable
         onPress={() => showClose && close()}
-        android_disableSound={true}
+        android_disableSound
         style={{
           backgroundColor: "rgba(35, 35, 35, 0.8)",
           height: Dimensions.get("window").height,
@@ -187,7 +188,7 @@ export default ({
         onLayout={getHeight}
         style={{
           backgroundColor: Colors.secondary,
-          height: height,
+          height,
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           transform: [{ translateY: position }],
@@ -228,9 +229,9 @@ export default ({
           </View>
           {showClose && (
             <Pressable
-              android_disableSound={true}
+              android_disableSound
               onPress={close}
-              accessibilityHint={"closes the popup"}
+              accessibilityHint="closes the popup"
               style={{
                 width: 40,
                 height: 40,
@@ -245,7 +246,7 @@ export default ({
           )}
         </View>
         <ScrollView
-          keyboardShouldPersistTaps={"always"}
+          keyboardShouldPersistTaps="always"
           style={{
             marginTop: 51,
             flex: 1,

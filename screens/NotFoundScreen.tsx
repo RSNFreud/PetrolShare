@@ -1,7 +1,7 @@
+import { Text } from "@components/text";
 import { useRoute } from "@react-navigation/native";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { Text } from "@components/text";
 import { RootStackScreenProps } from "../types";
 
 export default function NotFoundScreen({

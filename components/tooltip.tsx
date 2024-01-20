@@ -1,4 +1,5 @@
 import { Platform, TouchableWithoutFeedback, View } from "react-native";
+
 import { Text } from "./text";
 import Colors from "../constants/Colors";
 import { Alert } from "../hooks";

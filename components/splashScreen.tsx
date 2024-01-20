@@ -1,44 +1,67 @@
-import { Dimensions, ImageBackground, Animated, Platform } from "react-native"
-import { useEffect, useRef, useState } from 'react'
-import Colors from "../constants/Colors"
-import SplashImage from '../assets/images/splash.png'
-import { EventRegister } from "react-native-event-listeners"
+import { useEffect, useRef, useState } from "react";
+import { Dimensions, ImageBackground, Animated, Platform } from "react-native";
+import { EventRegister } from "react-native-event-listeners";
+
+import SplashImage from "../assets/images/splash.png";
+import Colors from "../constants/Colors";
 
 export default () => {
-    const [visible, setVisible] = useState(true)
-    const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [visible, setVisible] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
-    useEffect(() => {
-        EventRegister.addEventListener('closeSplash', () => {
-            fadeOut()
-        })
-        EventRegister.addEventListener('openSplash', () => {
-            setVisible(true)
-            fadeAnim.setValue(1)
-        })
+  useEffect(() => {
+    EventRegister.addEventListener("closeSplash", () => {
+      fadeOut();
+    });
+    EventRegister.addEventListener("openSplash", () => {
+      setVisible(true);
+      fadeAnim.setValue(1);
+    });
 
-        return () => {
-            EventRegister.removeEventListener('closeSplash')
-            EventRegister.removeEventListener('openSplash')
-        }
-    }, [])
+    return () => {
+      EventRegister.removeEventListener("closeSplash");
+      EventRegister.removeEventListener("openSplash");
+    };
+  }, []);
 
-    const fadeOut = () => {
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            delay: 600,
-            duration: 400,
-            useNativeDriver: true,
-        }).start(() => {
-            setVisible(false)
-        });
-    }
+  const fadeOut = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      delay: 600,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      setVisible(false);
+    });
+  };
 
-    if (!visible) return <></>
+  if (!visible) return <></>;
 
-    const screen = Platform.OS === "web" ? Dimensions.get('window') : Dimensions.get('screen')
+  const screen =
+    Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
 
-    return <Animated.View style={{ width: Dimensions.get('window').width, opacity: fadeAnim, height: screen.height, position: 'absolute', top: 0, left: 0, zIndex: 10000, backgroundColor: Colors.background, justifyContent: 'center', alignContent: 'center', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        <ImageBackground source={SplashImage} style={{ width: 400, height: 400 }} />
+  return (
+    <Animated.View
+      style={{
+        width: Dimensions.get("window").width,
+        opacity: fadeAnim,
+        height: screen.height,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: 10000,
+        backgroundColor: Colors.background,
+        justifyContent: "center",
+        alignContent: "center",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <ImageBackground
+        source={SplashImage}
+        style={{ width: 400, height: 400 }}
+      />
     </Animated.View>
-}
+  );
+};

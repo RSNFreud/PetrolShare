@@ -1,26 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
 import Popup from "@components/Popup";
 import { LongButton } from "@components/Themed";
+import { useRouter } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import React, { useContext, useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
+
+import AssignDistance from "./assignDistance";
 import Manual from "./manual";
 import Odometer from "./odometer";
-import Toast from "react-native-toast-message";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import {
-  deleteItem,
-  getItem,
-  Alert,
-  sendCustomEvent,
-  setItem,
-} from "../../hooks";
-import config from "../../config";
-import AssignDistance from "./assignDistance";
 import Keypad from "../../assets/icons/keypad";
-import OdomoterIcon from "../../assets/icons/odometer";
 import List from "../../assets/icons/list";
-import Road from "../../assets/icons/road";
+import OdomoterIcon from "../../assets/icons/odometer";
 import Reset from "../../assets/icons/reset";
-import { useRouter } from "expo-router";
+import Road from "../../assets/icons/road";
+import { API_ADDRESS } from "../../constants";
+import { deleteItem, getItem, Alert, sendCustomEvent } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
 
 export default ({ onUpdate }: { onUpdate?: () => void }) => {
   const [popupData, setPopupData] = useState(<></>);
@@ -53,7 +48,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
             previousData={{ ...JSON.parse(draft) }}
             handleClose={() => handleClose()}
           />,
-          "Record Odometer"
+          "Record Odometer",
         );
       } else {
         setVisible(false);
@@ -62,7 +57,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
     getDraft();
   }, []);
 
-  const resetDistance = () => {
+  const resetDistance = async () => {
     Alert(
       "Are you sure you want to reset your distance?",
       "This will reset your distance back to 0 without creating a payment log!",
@@ -70,21 +65,17 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         {
           text: "Yes",
           onPress: async () => {
-            axios
-              .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
-                authenticationKey: retrieveData?.authenticationKey,
-              })
-              .then(async (e) => {
-                sendCustomEvent("sendAlert", "Reset your distance back to 0!");
-                if (onUpdate) onUpdate();
-              })
-              .catch(({ response }) => {
-                console.log(response.message);
-              });
+            const res = await sendPostRequest(API_ADDRESS + `/distance/reset`, {
+              authenticationKey: retrieveData?.authenticationKey,
+            });
+            if (res?.ok) {
+              sendCustomEvent("sendAlert", "Reset your distance back to 0!");
+              if (onUpdate) onUpdate();
+            }
           },
         },
         { text: "No", style: "cancel" },
-      ]
+      ],
     );
   };
   const sendAlert = (text: string) => {
@@ -127,20 +118,20 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         handleClick={() =>
           openPopup(
             <Manual handleClose={handleClose} />,
-            "Add Specfic Distance"
+            "Add Specfic Distance",
           )
         }
-        text={"Add Specific Distance"}
+        text="Add Specific Distance"
         icon={<Keypad width="20" height="20" />}
       />
       <LongButton
         handleClick={() =>
           openPopup(
             <Odometer previousData={data} handleClose={handleClose} />,
-            "Record Odometer"
+            "Record Odometer",
           )
         }
-        text={"Record Odometer"}
+        text="Record Odometer"
         icon={<OdomoterIcon width="20" height="20" />}
       />
 
@@ -155,7 +146,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         handleClick={() =>
           openPopup(
             <AssignDistance handleClose={handleClose} />,
-            "Assign Distance"
+            "Assign Distance",
           )
         }
       />
@@ -169,7 +160,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         visible={visible}
         handleClose={() => handleClose()}
         children={popupData}
-        animate={isDraft ? false : true}
+        animate={!isDraft}
         title={title}
       />
     </>

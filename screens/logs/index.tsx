@@ -1,15 +1,15 @@
-import { ActivityIndicator, View, ScrollView } from "react-native";
 import { Box, Breadcrumbs } from "@components/Themed";
-import { Text } from "@components/text";
 import Layout from "@components/layout";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
+import { Text } from "@components/text";
 import { useContext, useEffect, useState } from "react";
-import config from "../../config";
+import { ActivityIndicator, View, ScrollView } from "react-native";
+
 import DateHead from "./dateHead";
 import LogItem from "./logItem";
 import Summary from "./summary";
+import { API_ADDRESS } from "../../constants";
 import Colors from "../../constants/Colors";
+import { AuthContext } from "../../hooks/context";
 
 type LogsType = {
   sessionID: string;
@@ -27,7 +27,7 @@ type LogsType = {
 
 export default () => {
   const { retrieveData } = useContext(AuthContext);
-  const [data, setData] = useState<{ [key: string]: LogsType } | {}>({});
+  const [data, setData] = useState<{ [key: string]: LogsType } | object>({});
   const [activeSession, setActiveSession] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [currentData, setCurrentData] = useState<LogsType | null>(null);
@@ -48,7 +48,7 @@ export default () => {
 
   const getSummary = async () => {
     if (currentData && currentData["logs"]) {
-      let sum: { [key: string]: number } = {};
+      const sum: { [key: string]: number } = {};
 
       currentData["logs"].map((e) => {
         if (!(e.fullName in sum)) sum[e.fullName] = 0;
@@ -64,7 +64,7 @@ export default () => {
 
   const sortedData = (data: { [key: string]: LogsType }) =>
     Object.entries(data).sort(([, a], [, b]) => {
-      return parseInt(a.sessionStart) - parseInt(b.sessionStart);
+      return parseInt(a.sessionStart, 10) - parseInt(b.sessionStart, 10);
     });
 
   const nextPage = () => {
@@ -96,29 +96,26 @@ export default () => {
 
   const getLogs = async () => {
     if (!retrieveData || !retrieveData?.authenticationKey) return;
-    await axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(({ data }) => {
-        setData(data);
-        setLoaded(true);
-        const length = Object.keys(data).length;
-        if (length === 0) return;
+    const res = await fetch(
+      API_ADDRESS +
+        `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`,
+    );
+    if (res.ok) {
+      const data = await res.json();
+      setData(data);
+      setLoaded(true);
+      const length = Object.keys(data).length;
+      if (length === 0) return;
 
-        setPageData({
-          currentPage: length - 1,
-          maxPages: length - 1,
-        });
-
-        const x = sortedData(data)[length - 1][1];
-        setActiveSession(length - 1);
-        if (x) setCurrentData(x);
-      })
-      .catch(({ response }) => {
-        console.log(response);
+      setPageData({
+        currentPage: length - 1,
+        maxPages: length - 1,
       });
+
+      const x = sortedData(data)[length - 1][1];
+      setActiveSession(length - 1);
+      if (x) setCurrentData(x);
+    }
   };
 
   return (
@@ -141,14 +138,14 @@ export default () => {
               data={currentData}
               handlePrevious={previousPage}
               handleNext={nextPage}
-              hasNext={pageData.currentPage != pageData.maxPages}
+              hasNext={pageData.currentPage !== pageData.maxPages}
               hasPrevious={pageData.currentPage > 1 && pageData.maxPages > 1}
             />
             {loaded && Boolean(Object.keys(summary).length) && (
               <>
                 <Summary summary={summary} />
                 <ScrollView
-                  keyboardShouldPersistTaps={"handled"}
+                  keyboardShouldPersistTaps="handled"
                   contentContainerStyle={{ paddingBottom: 25, gap: 15 }}
                 >
                   {currentData &&
@@ -166,7 +163,7 @@ export default () => {
                 </ScrollView>
               </>
             )}
-            {currentData && !Boolean(currentData["logs"].length) && (
+            {currentData && !currentData["logs"].length && (
               <Text style={{ fontSize: 16, textAlign: "center" }}>
                 There are no logs available to display
               </Text>
@@ -188,9 +185,7 @@ export default () => {
             </Text>
           </Box>
         )}
-        {!loaded && (
-          <ActivityIndicator size={"large"} color={Colors.tertiary} />
-        )}
+        {!loaded && <ActivityIndicator size="large" color={Colors.tertiary} />}
       </View>
     </Layout>
   );

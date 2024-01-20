@@ -1,10 +1,11 @@
-import { TextProps, ViewProps } from "./Themed";
-import { Text } from "./text";
-import { Platform, TouchableWithoutFeedback, View } from "react-native";
-import { useState } from "react";
 import RNDateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useState } from "react";
+import { Platform, TouchableWithoutFeedback, View } from "react-native";
+
+import { TextProps, ViewProps } from "./Themed";
+import { Text } from "./text";
 type PropsType = {
   label?: string;
   style?: ViewProps["style"];
@@ -74,7 +75,7 @@ export default ({
                     format || {
                       hour: "2-digit",
                       minute: "2-digit",
-                    }
+                    },
                   )}
             </Text>
           </View>

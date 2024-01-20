@@ -1,6 +1,7 @@
 import { View } from "react-native";
-import { Text } from "./text";
+
 import Button from "./button";
+import { Text } from "./text";
 
 type DefaultType = {
   setModal: (modal: string) => void;

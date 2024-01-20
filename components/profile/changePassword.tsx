@@ -1,67 +1,69 @@
-import axios from "axios";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import React, { useState, useContext } from "react";
-import Input from "../input";
+import { ErrorType } from "types";
+
+import { PropsType } from "./default";
+import { API_ADDRESS } from "../../constants";
+import { setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
 import { Seperator } from "../Themed";
 import Button from "../button";
-import { AuthContext } from "../../hooks/context";
-import config from "../../config";
-import { PropsType } from "./default";
-import { setItem } from "../../hooks";
+import Input from "../input";
 
 export default ({ handleClose, handleChange }: PropsType) => {
-  const [data, setData] = useState({
+  const [data, setData] = useState<{
+    currentPassword: string;
+    password: string;
+    confirmPassword: string;
+  }>({
     currentPassword: "",
     password: "",
     confirmPassword: "",
   });
   const { retrieveData, signOut } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<ErrorType>({
     currentPassword: "",
     password: "",
     confirmPassword: "",
     validation: "",
   });
 
-  const validateForm = () => {
-    let errors: any = {};
+  const validateForm = async () => {
+    const errors: ErrorType = {};
 
-    for (let i = 0; i < Object.keys(data).length; i++) {
-      const key = Object.keys(data)[i];
-      const value = data[key];
+    for (let i = 0; i < Object.entries(data).length; i++) {
+      const [key, value] = Object.entries(data)[i];
       if (!value) errors[key] = "Please complete this field!";
 
       if (value && key === "password" && value.length < 6) {
         errors[key] = "Please enter a password longer than 6 characters";
       }
-      if (key === "confirmPassword" && value != data["password"]) {
+      if (key === "confirmPassword" && value !== data["password"]) {
         errors[key] = "The password you entered does not match";
       }
     }
 
     setErrors({ ...errors });
-    if (
-      Object.values(errors).filter((e) => (e as string).length).length === 0
-    ) {
-      setLoading(true);
-      axios
-        .post(config.REACT_APP_API_ADDRESS + `/user/change-password`, {
-          authenticationKey: retrieveData?.authenticationKey,
-          newPassword: data.password,
-        })
-        .then(() => {
-          setLoading(false);
-          handleClose();
-          setItem(
-            "delayedAlert",
-            "Your password has successfully been changed! Please relogin to the application."
-          );
+    if (Object.values(errors).filter((e) => (e as string).length).length)
+      return;
+    setLoading(true);
+    const res = await sendPostRequest(API_ADDRESS + `/user/change-password`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      newPassword: data.password,
+    });
 
-          setTimeout(() => {
-            if (signOut) signOut();
-          }, 1200);
-        })
-        .catch((err) => {});
+    if (res?.ok) {
+      setLoading(false);
+      handleClose();
+      setItem(
+        "delayedAlert",
+        "Your password has successfully been changed! Please relogin to the application.",
+      );
+
+      setTimeout(() => {
+        if (signOut) signOut();
+      }, 1200);
     }
   };
 
@@ -102,7 +104,7 @@ export default ({ handleClose, handleChange }: PropsType) => {
       />
       <Button
         handleClick={() => handleChange("Settings")}
-        variant={"ghost"}
+        variant="ghost"
         text="Back"
       />
     </>

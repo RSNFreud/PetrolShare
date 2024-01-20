@@ -1,26 +1,25 @@
+import { API_ADDRESS, postHeaders, postValues } from "@constants";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Platform,
   TouchableWithoutFeedback,
   useWindowDimensions,
 } from "react-native";
-import { Text } from "./text";
-import { useContext, useEffect, useRef } from "react";
-import Button from "./button";
-import Colors from "../constants/Colors";
-import Popup from "./Popup";
-import { useState } from "react";
-import { Alert, getItem, sendCustomEvent, setItem } from "../hooks";
-import axios from "axios";
 import Purchases from "react-native-purchases";
-import config from "../config";
+
+import Popup from "./Popup";
+import Button from "./button";
+import { Text } from "./text";
+import Colors from "../constants/Colors";
+import { Alert, sendCustomEvent } from "../hooks";
 import { AuthContext } from "../hooks/context";
-import { GroupType } from "./layout";
 
 export default () => {
   const [premium, setPremium] = useState<null | boolean>(null);
   const [showPremiumInfo, setShowPremiumInfo] = useState(false);
-  const { retrieveData, isLoading, setPremiumStatus } = useContext(AuthContext);
+  const { retrieveData, isLoading, setPremiumStatus, updateData } =
+    useContext(AuthContext);
   const heightAnim = useRef(new Animated.Value(0)).current;
   const { width } = useWindowDimensions();
 
@@ -39,53 +38,52 @@ export default () => {
           setPremium(false);
           if (setPremiumStatus && typeof premium === "boolean")
             setPremiumStatus(false);
-          axios
-            .post(config.REACT_APP_API_ADDRESS + "/group/unsubscribe", {
-              authenticationKey: retrieveData?.authenticationKey,
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
+          unsubscribe();
         }
       });
   }, [premium]);
+
   useEffect(() => {
     if (setPremiumStatus && typeof premium === "boolean")
       setPremiumStatus(premium);
     if (!premium) expand();
     else minimise();
-    let data:
-      | string
-      | {
-          currency: string;
-          distance: string;
-          groupID: string;
-          petrol: string;
-          premium: boolean;
-        }
-      | undefined
-      | null = getItem("groupData");
-    if (data && typeof data === "string") data = JSON.parse(data);
-    if (!(data as GroupType)?.premium && premium) {
-      axios
-        .post(config.REACT_APP_API_ADDRESS + "/group/subscribe", {
-          authenticationKey: retrieveData?.authenticationKey,
-        })
-        .then(({ data }) => {
-          if (data) {
-            setTimeout(() => {
-              Alert(
-                "Premium Applied",
-                "Your group has succesfully activated premium membership! Thank you for joining PetrolShare"
-              );
-            }, 400);
-          }
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
+    if (!retrieveData?.premium && premium) {
+      subscribe();
     }
   }, [premium]);
+
+  const subscribe = async () => {
+    try {
+      const res = await fetch(API_ADDRESS + "/group/subscribe", {
+        ...postHeaders,
+        body: JSON.stringify({
+          authenticationKey: retrieveData?.authenticationKey,
+        }),
+      });
+
+      if (res.ok) {
+        setTimeout(() => {
+          Alert(
+            "Premium Applied",
+            "Your group has succesfully activated premium membership! Thank you for joining PetrolShare",
+          );
+        }, 400);
+      }
+    } catch {}
+  };
+
+  const unsubscribe = async () => {
+    try {
+      await fetch(API_ADDRESS + "/group/unsubscribe", {
+        ...postHeaders,
+        body: JSON.stringify({
+          authenticationKey: retrieveData?.authenticationKey,
+        }),
+      });
+    } catch {}
+  };
+
   useEffect(() => {
     if (Platform.OS === "web") return;
     Purchases.addCustomerInfoUpdateListener((info) => {
@@ -96,46 +94,27 @@ export default () => {
   useEffect(() => {
     if (isLoading) return;
     if (premium !== null) sendCustomEvent("closeSplash");
-    let data:
-      | string
-      | {
-          currency: string;
-          distance: string;
-          groupID: string;
-          petrol: string;
-          premium: boolean;
-        }
-      | undefined
-      | null = getItem("groupData");
-    if (data && typeof data === "string") data = JSON.parse(data);
-    if ((data as GroupType)?.premium) setPremium(true);
+    if (retrieveData?.premium) setPremium(true);
     else setPremium(false);
-  }, [getItem("groupData"), isLoading]);
+  }, [isLoading]);
 
   const openPayment = async () => {
     if (Platform.OS === "web") return;
     const product = await Purchases.getProducts(
       ["premium_subscription"],
-      Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION
+      Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
     );
     Purchases.purchaseStoreProduct(product[0], null)
-      .then((e) => {
+      .then(() => {
         setShowPremiumInfo(false);
-        axios
-          .post(config.REACT_APP_API_ADDRESS + "/group/subscribe", {
+        fetch(API_ADDRESS + "/group/subscribe", {
+          ...postValues,
+          body: JSON.stringify({
             authenticationKey: retrieveData?.authenticationKey,
-          })
+          }),
+        })
           .then(async () => {
-            axios
-              .get(
-                config.REACT_APP_API_ADDRESS +
-                  "/group/get?authenticationKey=" +
-                  retrieveData?.authenticationKey
-              )
-              .then(async ({ data }) => {
-                setItem("groupData", JSON.stringify(data));
-              })
-              .catch(() => {});
+            updateData && updateData();
           })
           .catch(() => {});
         setPremium(true);
@@ -146,7 +125,7 @@ export default () => {
           setTimeout(() => {
             Alert(
               "Your payment is being processed",
-              "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!"
+              "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!",
             );
           }, 700);
         }

@@ -1,4 +1,5 @@
 import { Text as DefaultText } from "react-native";
+
 import { TextProps } from "./Themed";
 
 export function Text(props: TextProps) {
@@ -25,7 +26,7 @@ export function Text(props: TextProps) {
 
   return (
     <DefaultText
-      style={[{ fontFamily: fontFamily, color: "white", fontSize: 16 }, style]}
+      style={[{ fontFamily, color: "white", fontSize: 16 }, style]}
       {...otherProps}
     />
   );

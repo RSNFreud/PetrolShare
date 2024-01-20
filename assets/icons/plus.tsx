@@ -7,6 +7,6 @@ export default ({ ...rest }: IconType) => (
     <Path
       fill="#fff"
       d="M8.857 18v-6.857H2V8.857h6.857V2h2.286v6.857H18v2.286h-6.857V18H8.857z"
-    ></Path>
+    />
   </Svg>
 );

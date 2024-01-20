@@ -1,17 +1,18 @@
-import Geolocation from "react-native-geolocation-service";
-import * as Location from "expo-location";
-import React, { useState, useEffect, useContext } from "react";
 import { Box, Breadcrumbs, Button, FlexFull } from "@components/Themed";
-import { Text } from "@components/text";
-import Constants from "expo-constants";
-import { Alert, deleteItem, getGroupData, getItem, setItem } from "../../hooks";
-import { Platform, ToastAndroid, View } from "react-native";
 import Layout from "@components/layout";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
+import { Text } from "@components/text";
 import { useNavigation } from "@react-navigation/native";
-import config from "../../config";
+import axios from "axios";
+import Constants from "expo-constants";
+import * as Location from "expo-location";
 import haversine from "haversine";
+import React, { useState, useEffect, useContext } from "react";
+import { Platform, ToastAndroid, View } from "react-native";
+import Geolocation from "react-native-geolocation-service";
+
+import config from "../../constants";
+import { Alert, deleteItem, getGroupData, getItem, setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
 
 const parseData = (e?: string | null) => {
   if (!e)
@@ -39,7 +40,7 @@ export default () => {
   const { navigate } = useNavigation();
   useEffect(() => {
     (async () => {
-      let data = await getGroupData();
+      const data = await getGroupData();
       setDistanceFormat(data.distance);
       const cachedDistance = parseData(getItem("gpsData"));
       if (cachedDistance && parseFloat(cachedDistance.distance) > 0) {
@@ -67,7 +68,7 @@ export default () => {
   }, [isTracking]);
 
   const updateDistance = async () => {
-    let currDistance = parseData(getItem("gpsData"));
+    const currDistance = parseData(getItem("gpsData"));
     if (currDistance) setDistance(parseFloat(currDistance.distance));
   };
 
@@ -77,7 +78,7 @@ export default () => {
       "old coords",
       `${
         oldData || ""
-      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: last try before i cry`
+      }  stored distance ${distance.toString()} actual distance ${distance.toString()} version: last try before i cry`,
     );
   };
 
@@ -104,13 +105,13 @@ export default () => {
         "gpsData",
         JSON.stringify({
           distance: "0",
-          coords: { latitude: latitude, longitude: longitude },
-        })
+          coords: { latitude, longitude },
+        }),
       );
     const currDistance: { longitude: number; latitude: number } =
       oldData.coords;
 
-    let currDistanceNumber = parseFloat(oldData.distance);
+    const currDistanceNumber = parseFloat(oldData.distance);
 
     const calcDistance = haversine(
       {
@@ -118,17 +119,17 @@ export default () => {
         latitude: currDistance.latitude,
       },
       {
-        longitude: longitude,
-        latitude: latitude,
+        longitude,
+        latitude,
       },
-      { unit: distanceFormat !== "km" ? "mile" : "km" }
+      { unit: distanceFormat !== "km" ? "mile" : "km" },
     );
     setItem(
       "gpsData",
       JSON.stringify({
         distance: (currDistanceNumber + calcDistance).toString(),
-        coords: { latitude: latitude, longitude: longitude },
-      })
+        coords: { latitude, longitude },
+      }),
     );
   };
 
@@ -155,7 +156,7 @@ export default () => {
             latitude: data.coords.latitude,
             longitude: data.coords.longitude,
           },
-        })
+        }),
       );
     });
 
@@ -177,7 +178,7 @@ export default () => {
         enableHighAccuracy: true,
         distanceFilter: 15,
         forceLocationManager: true,
-      }
+      },
     );
 
     setItem("trackingRef", trackNumber.toString());
@@ -192,7 +193,7 @@ export default () => {
     }
   };
   const requestBackground = async () => {
-    let { status } = await Location.requestBackgroundPermissionsAsync();
+    const { status } = await Location.requestBackgroundPermissionsAsync();
 
     if (status !== "granted") {
       // setErrorMsg("Permission to access location was denied");
@@ -215,7 +216,7 @@ export default () => {
     if (distance === 0) return;
     axios
       .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
-        distance: distance,
+        distance,
         authenticationKey: retrieveData?.authenticationKey,
       })
       .then(async () => {
@@ -267,7 +268,7 @@ export default () => {
           <Button
             disabled={isTracking || distance <= 0}
             handleClick={saveDistance}
-            style={"ghost"}
+            style="ghost"
           >
             Save Distance
           </Button>

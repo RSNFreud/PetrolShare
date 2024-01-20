@@ -1,7 +1,8 @@
 import Layout from "@components/layout";
-import Invoice from "./invoices/invoice";
-import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+
+import Invoice from "./invoices/invoice";
 
 export default () => {
   const route = useLocalSearchParams();

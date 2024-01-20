@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+
 import { Text } from "./text";
 import Colors from "../constants/Colors";
 
 type PropsType = {
-  buttons: Array<{
+  buttons: {
     name: string;
     value: string;
     rightSideElement?: React.ReactNode;
-  }>;
+  }[];
   value: string;
   handleChange: (value: string) => void;
   errorMessage?: string;

@@ -1,6 +1,9 @@
-import { useContext, useEffect, useState } from "react";
 import { Box } from "@components/Themed";
+import AssignDistance from "@components/assignDistance";
+import { TouchableBase } from "@components/button";
 import { Text } from "@components/text";
+import { useRouter } from "expo-router";
+import { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   LayoutChangeEvent,
@@ -9,8 +12,12 @@ import {
   Share,
   View,
 } from "react-native";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
+import Toast from "react-native-toast-message";
+
+import InvoiceItem, { InvoicePropsType } from "./invoiceItem";
+import ShareIcon from "../../assets/icons/share";
+import { API_ADDRESS, APP_ADDRESS } from "../../constants";
+import Colors from "../../constants/Colors";
 import {
   Alert,
   convertToDate,
@@ -19,15 +26,8 @@ import {
   getGroupData,
   getItem,
 } from "../../hooks";
-import Toast from "react-native-toast-message";
+import { AuthContext } from "../../hooks/context";
 import { convertCurrency } from "../../hooks/getCurrencies";
-import config from "../../config";
-import AssignDistance from "@components/assignDistance";
-import Colors from "../../constants/Colors";
-import InvoiceItem, { InvoicePropsType } from "./invoiceItem";
-import { TouchableBase } from "@components/button";
-import ShareIcon from "../../assets/icons/share";
-import { useRouter } from "expo-router";
 
 type PropsType = {
   invoiceID: number | string;
@@ -72,7 +72,7 @@ const SummaryItem = ({
 export const calculateWidth = (
   containerWidth: number,
   gap: number,
-  items: number
+  items: number,
 ) => {
   return containerWidth / items - gap / items;
 };
@@ -127,37 +127,33 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     setGroupData(data);
   };
 
-  const getInvoice = () => {
+  const getInvoice = async () => {
     const url = isPublic
-      ? config.REACT_APP_API_ADDRESS +
-        `/invoices/public/get?uniqueURL=${invoiceID}`
-      : config.REACT_APP_API_ADDRESS +
+      ? API_ADDRESS + `/invoices/public/get?uniqueURL=${invoiceID}`
+      : API_ADDRESS +
         `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}&invoiceID=${invoiceID}`;
-
-    axios
-      .get(url)
-      .then(async ({ data }) => {
-        setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
-        if (isPublic)
-          setGroupData({
-            ...groupData,
-            distance: data?.distance,
-            currency: await convertCurrency(data?.currency),
-            petrol: data?.petrol,
-          });
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
-        if (isPublic) return;
-        Alert("Invalid Payment", "This payment log does not exist!");
-        navigate.navigate("Payments");
-      });
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
+      if (isPublic)
+        setGroupData({
+          ...groupData,
+          distance: data?.distance,
+          currency: await convertCurrency(data?.currency),
+          petrol: data?.petrol,
+        });
+    } else {
+      if (isPublic) return;
+      Alert("Invalid Payment", "This payment log does not exist!");
+      navigate.navigate("Payments");
+    }
   };
 
   if (Object.keys(data).length === 0)
     return (
       <>
-        <ActivityIndicator size={"large"} color={Colors.tertiary} />
+        <ActivityIndicator size="large" color={Colors.tertiary} />
       </>
     );
 
@@ -174,31 +170,31 @@ export default ({ invoiceID, isPublic }: PropsType) => {
       });
     else
       Share.share({
-        message: `I have filled up with petrol! Please see the following link to see how much you owe! ${config.REACT_APP_ADDRESS}payments/public/${data.uniqueURL}`,
+        message: `I have filled up with petrol! Please see the following link to see how much you owe! ${APP_ADDRESS}payments/public/${data.uniqueURL}`,
         title: "Share Petrol Invoice",
       });
   };
 
   const dataObj = Object.entries(
-    data.invoiceData as { fullName: string }[]
+    data.invoiceData as { fullName: string }[],
   ).filter(
     ([_, value]) =>
       value.fullName !== retrieveData?.fullName &&
-      value.fullName !== "Unaccounted Distance"
+      value.fullName !== "Unaccounted Distance",
   );
 
   const userInvoice = Object.entries(
-    data.invoiceData as { fullName: string }[]
+    data.invoiceData as { fullName: string }[],
   ).filter(([_, value]) => value.fullName === retrieveData?.fullName);
 
   const untrackedDistance = Object.entries(
-    data.invoiceData as { fullName: string }[]
+    data.invoiceData as { fullName: string }[],
   ).filter(([_, value]) => value.fullName === "Unaccounted Distance");
   const dataLength = Object.keys(data.invoiceData).length || 1;
 
   const globalProps = {
-    isPublic: isPublic,
-    groupData: groupData,
+    isPublic,
+    groupData,
     invoiceID: invoiceID || "",
     invoicedBy: data?.emailAddress,
     authenticationKey: retrieveData?.authenticationKey,
@@ -236,7 +232,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
           style={{
             display: "flex",
             flexDirection: "row",
-            marginBottom: Boolean(data.pricePerLiter) ? 10 : 0,
+            marginBottom: data.pricePerLiter ? 10 : 0,
             justifyContent: "space-between",
           }}
         >
@@ -251,7 +247,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             value={`${data.totalDistance} ${groupData?.distance}`}
           />
         </View>
-        {Boolean(data.pricePerLiter) ? (
+        {data.pricePerLiter ? (
           <View
             style={{
               display: "flex",
@@ -270,7 +266,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
         )}
       </Box>
       <ScrollView
-        keyboardShouldPersistTaps={"handled"}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 70, gap: 10 }}
       >
         {userInvoice.map(([_, value]: any) => (
@@ -310,7 +306,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
               alignItems: "center",
             }}
           >
-            <ShareIcon width={"18"} height="16" />
+            <ShareIcon width="18" height="16" />
             <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 10 }}>
               Share
             </Text>

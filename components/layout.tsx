@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { ViewProps, View, ScrollView } from "react-native";
+
 import { AuthContext } from "../hooks/context";
-import Dropdown from "./Dropdown";
 
 export type GroupType = {
   currency: string;
@@ -58,8 +58,8 @@ export default ({
           </View>
         ) : (
           <ScrollView
-            nestedScrollEnabled={true}
-            keyboardShouldPersistTaps={"handled"}
+            nestedScrollEnabled
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
               paddingBottom: noBottomPadding ? 0 : 55,
               paddingHorizontal: homepage ? 0 : 25,

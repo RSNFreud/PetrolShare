@@ -1,9 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { Text } from "@components/text";
 import Button from "@components/button";
+import { Text } from "@components/text";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import { useContext, useEffect, useState } from "react";
+
+import { API_ADDRESS } from "../../constants";
 import { getGroupData } from "../../hooks";
-import axios from "axios";
-import config from "../../config";
 import { AuthContext } from "../../hooks/context";
 
 type PropTypes = {
@@ -19,38 +20,28 @@ export default ({ assignedBy, distance, handleComplete, id }: PropTypes) => {
 
   useEffect(() => {
     (async () => {
-      let i = await getGroupData();
+      const i = await getGroupData();
       if (!i) return;
       setGroupData(i.distance);
     })();
   }, []);
 
-  const dismiss = () => {
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/dismiss`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        logID: id,
-      })
-      .then(() => {
-        handleComplete();
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
-      });
+  const dismiss = async () => {
+    const res = await sendPostRequest(API_ADDRESS + `/distance/dismiss`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      logID: id,
+    });
+
+    if (res?.ok) handleComplete();
   };
 
-  const approve = () => {
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/approve`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        logID: id,
-      })
-      .then(() => {
-        handleComplete();
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
-      });
+  const approve = async () => {
+    const res = await sendPostRequest(API_ADDRESS + `/distance/approve`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      logID: id,
+    });
+
+    if (res?.ok) handleComplete();
   };
 
   return (

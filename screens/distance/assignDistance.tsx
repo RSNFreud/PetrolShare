@@ -1,79 +1,79 @@
-import axios from 'axios'
-import { useContext, useEffect, useState } from 'react'
-import config from '../../config'
-import { AuthContext } from '../../hooks/context'
-import Dropdown, { item } from '@components/Dropdown'
-import Input from '@components/input'
-import SubmitButton from './submitButton'
-import { Box } from '@components/Themed'
-import { Text } from '@components/text'
+import Dropdown, { item } from "@components/Dropdown";
+import { Box } from "@components/Themed";
+import Input from "@components/input";
+import { Text } from "@components/text";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import { useContext, useEffect, useState } from "react";
+
+import SubmitButton from "./submitButton";
+import { API_ADDRESS } from "../../constants";
+import { AuthContext } from "../../hooks/context";
 
 export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
-  const [usernames, setUsernames] = useState<Array<item>>([])
-  const { retrieveData } = useContext(AuthContext)
-  const [loading, setLoading] = useState(false)
-  const [values, setValues] = useState({ name: '', distance: '' })
-  const [errors, setErrors] = useState({ name: '', distance: '' })
+  const [usernames, setUsernames] = useState<item[]>([]);
+  const { retrieveData } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [values, setValues] = useState({ name: "", distance: "" });
+  const [errors, setErrors] = useState({ name: "", distance: "" });
 
   useEffect(() => {
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/group/get-members?authenticationKey=` +
-          retrieveData?.authenticationKey,
-      )
-      .then(async ({ data }) => {
-        setUsernames(
-          data.map((e: { fullName: string; userID: string }) => ({
-            name: e.fullName,
-            value: e.userID,
-          })),
-        )
-      })
-      .catch(() => {})
-  }, [])
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    const res = await fetch(
+      API_ADDRESS +
+        `/group/get-members?authenticationKey=` +
+        retrieveData?.authenticationKey,
+    );
+    if (res.ok) {
+      const data = await res.json();
+      setUsernames(
+        data.map((e: { fullName: string; userID: string }) => ({
+          name: e.fullName,
+          value: e.userID,
+        })),
+      );
+    }
+  };
 
   const handleSubmit = async () => {
     if (!values.name) {
       return setErrors({
         ...errors,
-        name: 'Please choose a user to assign distance too!',
-      })
+        name: "Please choose a user to assign distance too!",
+      });
     }
     if (!values.distance) {
-      return setErrors({ ...errors, distance: 'Please enter a distance!' })
+      return setErrors({ ...errors, distance: "Please enter a distance!" });
     }
 
-    let distance: string = ''
+    let distance: string = "";
 
     if (values.distance) {
-      distance = values.distance
+      distance = values.distance;
     }
 
     if (parseFloat(distance) <= 0 || !/^[0-9.]*$/.test(distance))
       return setErrors({
         ...errors,
-        distance: 'Please enter a distance above 0!',
-      })
-    setLoading(true)
+        distance: "Please enter a distance above 0!",
+      });
+    setLoading(true);
 
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/assign`, {
-        userID: values.name,
-        distance: values.distance,
-        authenticationKey: retrieveData?.authenticationKey,
-      })
-      .then(async () => {
-        setLoading(false)
-        handleClose(
-          'Successfully requested distance\nfrom ' +
-            usernames.filter((e) => e.value === values.name)[0].name,
-        )
-      })
-      .catch(({ response }) => {
-        console.log(response.message)
-      })
-  }
+    const res = await sendPostRequest(API_ADDRESS + `/distance/assign`, {
+      userID: values.name,
+      distance: values.distance,
+      authenticationKey: retrieveData?.authenticationKey,
+    });
+    if (res?.ok) {
+      setLoading(false);
+      handleClose(
+        "Successfully requested distance\nfrom " +
+          usernames.filter((e) => e.value === values.name)[0].name,
+      );
+    }
+  };
 
   return (
     <>
@@ -97,10 +97,10 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
       />
       <Input
         handleInput={(e) => setValues({ ...values, distance: e })}
-        label={`Distance to apply`}
+        label="Distance to apply"
         errorMessage={errors.distance}
-        placeholder={'Enter amount'}
-        keyboardType={'numbers-and-punctuation'}
+        placeholder="Enter amount"
+        keyboardType="numbers-and-punctuation"
         inputStyle={{ paddingVertical: 10 }}
         style={{ marginBottom: 20 }}
       />
@@ -112,5 +112,5 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
         distance={values.distance}
       />
     </>
-  )
-}
+  );
+};

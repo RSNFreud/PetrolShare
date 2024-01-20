@@ -1,9 +1,10 @@
-import React from "react";
-import { View, ViewProps } from "react-native";
+import DatePicker from "@components/dateTimePicker";
 import SplitRow from "@components/splitRow";
 import { Text } from "@components/text";
+import React from "react";
+import { View, ViewProps } from "react-native";
+
 import { DataType } from ".";
-import DatePicker from "@components/dateTimePicker";
 import Colors from "../../../constants/Colors";
 
 type PropsType = {
@@ -11,7 +12,7 @@ type PropsType = {
   updateData: (
     e: boolean | string | number,
     value: string | number | boolean,
-    position?: "custom" | "customDays"
+    position?: "custom" | "customDays",
   ) => void;
   maxRepeatingDate: Date;
 };
@@ -77,7 +78,7 @@ export const EndRepeating = ({
               alignItems: "center",
               height: 53,
             }}
-            key={"date"}
+            key="date"
             gap={0}
             elements={[
               <DatePicker

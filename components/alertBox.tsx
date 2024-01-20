@@ -6,9 +6,10 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Colors from "../constants/Colors";
-import { Text } from "./text";
 import { EventRegister } from "react-native-event-listeners";
+
+import { Text } from "./text";
+import Colors from "../constants/Colors";
 
 export type ButtonType = {
   text: string;
@@ -49,8 +50,8 @@ export default () => {
     <Modal
       visible={visible}
       animationType="fade"
-      transparent={true}
-      accessibilityLabel={"alertBox"}
+      transparent
+      accessibilityLabel="alertBox"
       style={{ width: Dimensions.get("window").width }}
     >
       <View
@@ -65,7 +66,7 @@ export default () => {
       >
         <Pressable
           onPress={close}
-          android_disableSound={true}
+          android_disableSound
           style={{
             backgroundColor: "rgba(35, 35, 35, 0.8)",
             zIndex: 2,

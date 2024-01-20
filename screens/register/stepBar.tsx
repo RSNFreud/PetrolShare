@@ -1,6 +1,6 @@
-import React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
+
 import StepCircle from "./stepCircle";
 
 type PropTypes = {
@@ -8,12 +8,8 @@ type PropTypes = {
 };
 
 export default ({ stage }: PropTypes) => {
-  const bar = useRef(null);
   const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    if (!bar.current) return;
-  }, []);
   const handleWidth = ({ nativeEvent }: any) => {
     const { width } = nativeEvent.layout;
     setWidth(width / 2 - 45);

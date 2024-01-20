@@ -1,16 +1,16 @@
-import Input from "@components/input";
-import { View } from "react-native";
-import { Box } from "@components/Themed";
-import { Text } from "@components/text";
-import { useContext, useEffect, useState } from "react";
-import Button from "@components/button";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import { convertToSentenceCase, getGroupData } from "../../hooks";
-import config from "../../config";
 import Popup from "@components/Popup";
-import React from "react";
+import { Box } from "@components/Themed";
+import Button from "@components/button";
+import Input from "@components/input";
+import { Text } from "@components/text";
 import { useRouter } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import React, { useContext, useEffect, useState } from "react";
+import { View } from "react-native";
+
+import { API_ADDRESS } from "../../constants";
+import { convertToSentenceCase, getGroupData } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
 type PropsType = {
   onClose?: () => void;
 };
@@ -50,8 +50,8 @@ export default React.memo(({ onClose }: PropsType) => {
     setFuelFormat(data.petrol);
   };
 
-  const handleSubmit = () => {
-    let errors: any = {};
+  const handleSubmit = async () => {
+    const errors: any = {};
 
     Object.entries(data).map(([key, value]) => {
       if (!value) errors[key] = "Please complete this field!";
@@ -62,26 +62,25 @@ export default React.memo(({ onClose }: PropsType) => {
     if (Object.keys(errors).length) return;
 
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/petrol/add`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        litersFilled: data.litersFilled,
-        totalPrice: data.totalPrice,
-        odometer: data.odometer,
-      })
-      .then(({ data }) => {
-        setLoading(false);
-        setOpen(false);
-        navigate.navigate({ pathname: "Payments", params: { id: data } });
-      })
-      .catch(({ response }) => {
-        setErrors({
-          ...errors,
-          submit:
-            "You have no distance tracked in your session for us to generate a payment for.",
-        });
-        setLoading(false);
+    const res = await sendPostRequest(API_ADDRESS + `/petrol/add`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      litersFilled: data.litersFilled,
+      totalPrice: data.totalPrice,
+      odometer: data.odometer,
+    });
+    if (res?.ok) {
+      const data = await res.json();
+      setLoading(false);
+      setOpen(false);
+      navigate.navigate({ pathname: "Payments", params: { id: data } });
+    } else {
+      setErrors({
+        ...errors,
+        submit:
+          "You have no distance tracked in your session for us to generate a payment for.",
       });
+      setLoading(false);
+    }
   };
   const handleClose = () => {
     setOpen(false);
@@ -107,7 +106,7 @@ export default React.memo(({ onClose }: PropsType) => {
           handleInput={(e) => setData({ ...data, litersFilled: e })}
           value={data.litersFilled}
           errorMessage={errors.litersFilled}
-          keyboardType={"decimal-pad"}
+          keyboardType="decimal-pad"
           label={`${convertToSentenceCase(fuelFormat)} Filled`}
           placeholder={`Enter amount of ${fuelFormat} filled`}
           style={{ marginBottom: 20 }}
@@ -116,7 +115,7 @@ export default React.memo(({ onClose }: PropsType) => {
           handleInput={(e) => setData({ ...data, totalPrice: e })}
           value={data.totalPrice}
           errorMessage={errors.totalPrice}
-          keyboardType={"decimal-pad"}
+          keyboardType="decimal-pad"
           label="Total Cost"
           placeholder="Enter the total cost of refueling"
           style={{ marginBottom: 20 }}
@@ -125,7 +124,7 @@ export default React.memo(({ onClose }: PropsType) => {
           handleInput={(e) => setData({ ...data, odometer: e })}
           value={data.odometer}
           errorMessage={errors.odometer}
-          keyboardType={"numeric"}
+          keyboardType="numeric"
           label="Current Odometer"
           placeholder="Enter the current odometer value"
         />

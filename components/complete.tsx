@@ -1,11 +1,12 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../hooks/context";
-import { View, TouchableWithoutFeedback } from "react-native";
-import { Text } from "./text";
 import * as Clipboard from "expo-clipboard";
+import { useState, useContext } from "react";
+import { View, TouchableWithoutFeedback } from "react-native";
+
 import Button from "./button";
-import Tick from "../assets/icons/tick";
+import { Text } from "./text";
 import Copy from "../assets/icons/copy";
+import Tick from "../assets/icons/tick";
+import { AuthContext } from "../hooks/context";
 
 type PropsType = {
   newGroup?: boolean;
@@ -20,7 +21,7 @@ export default ({ groupID, newGroup, handleClose }: PropsType) => {
   const copyToClipboard = async () => {
     Clipboard.setStringAsync(
       `https://petrolshare.freud-online.co.uk/short/referral?groupID=${groupID}` ||
-        "test"
+        "test",
     );
     setCopied(true);
     setTimeout(() => {

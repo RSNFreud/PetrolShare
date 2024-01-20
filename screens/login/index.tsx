@@ -1,17 +1,17 @@
-import React, { useContext, useState } from "react";
-
-import Input from "@components/input";
 import { Seperator } from "@components/Themed";
-import { Text } from "@components/text";
-import { Pressable, TouchableWithoutFeedback, View } from "react-native";
-import { AuthContext } from "../../hooks/context";
-import Layout from "@components/layout";
-import config from "../../config";
-import testID from "../../hooks/testID";
 import Button from "@components/button";
-import ForgotPassword from "./forgotPassword";
+import Input from "@components/input";
+import Layout from "@components/layout";
+import { Text } from "@components/text";
 import { router, useRouter } from "expo-router";
+import React, { useContext, useState } from "react";
+import { Pressable, TouchableWithoutFeedback, View } from "react-native";
 import { ErrorType } from "types";
+
+import ForgotPassword from "./forgotPassword";
+import { EMAIL_ADRESS } from "../../constants";
+import { AuthContext } from "../../hooks/context";
+import testID from "../../hooks/testID";
 
 export default () => {
   const [visible, setVisible] = useState(false);
@@ -35,7 +35,7 @@ export default () => {
   const { signIn, isLoggedIn } = useContext(AuthContext);
 
   const handleSubmit = () => {
-    let errors: ErrorType = {
+    const errors: ErrorType = {
       emailAddress: "",
       password: "",
     };
@@ -77,7 +77,7 @@ export default () => {
 
   const resendVerification = async () => {
     try {
-      const res = await fetch(`${config.REACT_APP_EMAIL_API_ADDRESS}/resend`, {
+      const res = await fetch(`${EMAIL_ADRESS}/resend`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export default () => {
     <Layout>
       <Input
         testID={testID("emailaddress")}
-        autoComplete={"username"}
+        autoComplete="username"
         nativeID="emailaddress"
         keyboardType="email-address"
         handleInput={(e) => setFormData({ ...formData, emailAddress: e })}
@@ -115,7 +115,7 @@ export default () => {
       />
       <Input
         autoComplete="current-password"
-        password={true}
+        password
         testID={testID("password")}
         value={formData.password}
         nativeID="password"
@@ -186,7 +186,7 @@ export default () => {
       <Pressable
         onPress={() => setVisible(true)}
         style={{ paddingBottom: 30 }}
-        android_disableSound={true}
+        android_disableSound
       >
         <Text
           style={{

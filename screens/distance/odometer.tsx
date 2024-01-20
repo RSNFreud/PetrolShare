@@ -1,13 +1,14 @@
-import Input from "@components/input";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import SubmitButton from "./submitButton";
-import { deleteItem, setItem } from "../../hooks";
-import config from "../../config";
 import { Box } from "@components/Themed";
+import Input from "@components/input";
 import { Text } from "@components/text";
 import { useRouter } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import { useContext, useEffect, useState } from "react";
+
+import SubmitButton from "./submitButton";
+import { API_ADDRESS } from "../../constants";
+import { deleteItem, setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
 
 export default ({
   previousData,
@@ -60,7 +61,7 @@ export default ({
 
     if (data.startValue && !data.endValue) {
       handleClose(
-        "Saved your distance as a draft! Access it by clicking on Manage Distance again!"
+        "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
       );
       setItem("draft", JSON.stringify(data));
       navigate("Dashboard");
@@ -71,19 +72,15 @@ export default ({
 
     if (!retrieveData) return;
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
-        distance: distance,
-        authenticationKey: retrieveData?.authenticationKey,
-      })
-      .then(async () => {
-        setLoading(false);
-        handleClose("Distance successfully updated!");
-        deleteItem("draft");
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
-      });
+    const res = await sendPostRequest(API_ADDRESS + `/distance/add`, {
+      distance,
+      authenticationKey: retrieveData?.authenticationKey,
+    });
+    if (res?.ok) {
+      setLoading(false);
+      handleClose("Distance successfully updated!");
+      deleteItem("draft");
+    }
   };
 
   return (

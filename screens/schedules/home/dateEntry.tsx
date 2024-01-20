@@ -1,11 +1,12 @@
+import Button from "@components/button";
+import SplitRow from "@components/splitRow";
+import { Text } from "@components/text";
 import { View } from "react-native";
+
+import { ScheduleType } from "..";
 import Bin from "../../../assets/icons/bin";
 import Pencil from "../../../assets/icons/pencil";
-import SplitRow from "@components/splitRow";
 import Colors from "../../../constants/Colors";
-import { Text } from "@components/text";
-import { ScheduleType } from "..";
-import Button from "@components/button";
 
 type PropsType = {
   handleEdit: (e: ScheduleType) => void;

@@ -1,3 +1,3 @@
 import { SvgProps } from "react-native-svg";
 
-export type IconType = SvgProps
+export type IconType = SvgProps;

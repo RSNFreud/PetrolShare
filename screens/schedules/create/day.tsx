@@ -1,6 +1,7 @@
-import { TouchableWithoutFeedback, View } from "react-native";
-import Colors from "../../../constants/Colors";
 import { Text } from "@components/text";
+import { TouchableWithoutFeedback, View } from "react-native";
+
+import Colors from "../../../constants/Colors";
 
 type DayProps = {
   label: string;

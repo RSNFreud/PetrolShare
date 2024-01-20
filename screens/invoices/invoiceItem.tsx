@@ -1,14 +1,15 @@
-import { View } from "react-native";
 import { Box, Seperator } from "@components/Themed";
-import { Text } from "@components/text";
 import Button, { TouchableBase } from "@components/button";
-import { Alert, currencyPosition } from "../../hooks";
-import Colors from "../../constants/Colors";
+import { Text } from "@components/text";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import { useState } from "react";
-import axios from "axios";
-import config from "../../config";
-import Tick from "../../assets/icons/tick";
+import { View } from "react-native";
+
 import Bell from "../../assets/icons/bell";
+import Tick from "../../assets/icons/tick";
+import { APP_ADDRESS } from "../../constants";
+import Colors from "../../constants/Colors";
+import { Alert, currencyPosition } from "../../hooks";
 
 export type InvoicePropsType = {
   invoiceData: {
@@ -41,25 +42,23 @@ export default ({
 }: InvoicePropsType) => {
   const [alertSent, setAlertSent] = useState(false);
 
-  const sendAlert = () => {
+  const sendAlert = async () => {
     setAlertSent(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/invoices/alert`, {
-        authenticationKey: authenticationKey,
-        invoiceID: invoiceID,
-        fullName: invoiceData.fullName,
-      })
-      .then(() => {
-        setAlertSent(false);
-        Alert(
-          "Notification sent!",
-          `A notification has been succesfully sent to ${invoiceData.fullName}!`
-        );
-      })
-      .catch(({ response }) => {
-        setAlertSent(false);
-        Alert("Notification failed!", response.data);
-      });
+    const res = await sendPostRequest(APP_ADDRESS + `/invoices/alert`, {
+      authenticationKey,
+      invoiceID,
+      fullName: invoiceData.fullName,
+    });
+    if (res?.ok) {
+      setAlertSent(false);
+      Alert(
+        "Notification sent!",
+        `A notification has been succesfully sent to ${invoiceData.fullName}!`,
+      );
+    } else {
+      setAlertSent(false);
+      Alert("Notification failed!", await res?.text());
+    }
   };
 
   if (!invoiceData) return <></>;

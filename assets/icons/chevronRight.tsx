@@ -1,4 +1,5 @@
 import Svg, { Path } from "react-native-svg";
+
 import { IconType } from "./icon";
 
 export default ({ ...rest }: IconType) => (
@@ -9,6 +10,6 @@ export default ({ ...rest }: IconType) => (
       strokeLinejoin="round"
       strokeWidth="2"
       d="M1 1l6 6-6 6"
-    ></Path>
+    />
   </Svg>
 );

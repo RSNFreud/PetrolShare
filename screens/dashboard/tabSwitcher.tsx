@@ -1,7 +1,8 @@
+import analytics from "@react-native-firebase/analytics";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, ScrollView } from "react-native";
+
 import { TabHeader, TabType } from "./tabHeader";
-import analytics from "@react-native-firebase/analytics";
 
 type PropsType = {
   tabs: TabType[];
@@ -56,8 +57,8 @@ export default ({ tabs }: PropsType) => {
       />
       <Animated.View style={{ opacity: fadeAnim, flex: 1 }}>
         <ScrollView
-          overScrollMode={"always"}
-          keyboardShouldPersistTaps={"handled"}
+          overScrollMode="always"
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: 25,
             paddingBottom: 55,

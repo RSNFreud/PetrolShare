@@ -1,10 +1,11 @@
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import React, { useContext, useRef } from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { Text } from "./text";
 import Colors from "../constants/Colors";
 import { AuthContext } from "../hooks/context";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 type BottonNavPropTypes = {
   icon?:
@@ -40,7 +41,7 @@ const BottomNavItem = ({
           paddingHorizontal: 25,
         }}
       >
-        {Icon && <Icon focused={false} color={""} size={0} />}
+        {Icon && <Icon focused={false} color="" size={0} />}
         <Text style={{ marginTop: 10, fontSize: 14, fontWeight: "bold" }}>
           {text}
         </Text>

@@ -1,17 +1,17 @@
-import React, { useContext } from "react";
-import { useState } from "react";
-import { View } from "react-native";
-import Input from "@components/input";
 import { Box, FlexFull } from "@components/Themed";
-import { Text } from "@components/text";
+import Button from "@components/button";
+import Input from "@components/input";
 import Layout from "@components/layout";
+import { Text } from "@components/text";
+import { useRouter } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import React, { useContext, useState } from "react";
+import { View } from "react-native";
+
 import Stage from "./stage";
 import StepBar from "./stepBar";
+import { API_ADDRESS } from "../../constants";
 import { AuthContext } from "../../hooks/context";
-import axios from "axios";
-import config from "../../config";
-import Button from "@components/button";
-import { useRouter } from "expo-router";
 
 export default React.memo(() => {
   const { register } = useContext(AuthContext);
@@ -35,8 +35,8 @@ export default React.memo(() => {
     confirmPassword: "",
   });
 
-  const validateStage = (elements: Array<any>, submitAction: () => any) => {
-    let errors: any = {};
+  const validateStage = (elements: any[], submitAction: () => any) => {
+    const errors: any = {};
 
     for (let i = 0; i < elements.length; i++) {
       const e = elements[i];
@@ -54,7 +54,7 @@ export default React.memo(() => {
       if (e === "password" && value.length < 6) {
         errors[e] = "Please enter a password longer than 6 characters";
       }
-      if (e === "confirmPassword" && value != formData["password"]) {
+      if (e === "confirmPassword" && value !== formData["password"]) {
         errors[e] = "The password you entered does not match";
       }
     }
@@ -65,10 +65,10 @@ export default React.memo(() => {
   };
 
   const stageProps = {
-    stage: stage,
-    direction: direction,
-    isLoading: isLoading,
-    previousStage: previousStage,
+    stage,
+    direction,
+    isLoading,
+    previousStage,
   };
 
   const nextPage = () => {
@@ -101,23 +101,22 @@ export default React.memo(() => {
 
   const handleRegister = async () => {
     if (register) {
-      axios
-        .post(config.REACT_APP_API_ADDRESS + "/user/register", {
-          fullName: formData["fullName"],
-          emailAddress: formData["emailAddress"],
-          password: formData["password"],
-        })
-        .then(async ({ data }) => {
-          setFormData({ ...formData, key: data });
-          nextPage();
-        })
-        .catch((err) => {
-          previousPage();
-          setFormErrors({
-            ...formErrors,
-            emailAddress: "This email address already exists!",
-          });
+      const res = await sendPostRequest(API_ADDRESS + "/user/register", {
+        fullName: formData["fullName"],
+        emailAddress: formData["emailAddress"],
+        password: formData["password"],
+      });
+      if (res?.ok) {
+        const data = await res.text();
+        setFormData({ ...formData, key: data });
+        nextPage();
+      } else {
+        previousPage();
+        setFormErrors({
+          ...formErrors,
+          emailAddress: "This email address already exists!",
         });
+      }
     }
   };
 
@@ -183,7 +182,7 @@ export default React.memo(() => {
           style={{ marginBottom: 20 }}
           handleClick={() =>
             validateStage(["password", "confirmPassword"], () =>
-              handleRegister()
+              handleRegister(),
             )
           }
           text="Submit"

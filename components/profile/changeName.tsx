@@ -1,11 +1,12 @@
-import axios from "axios";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import React, { useState, useContext } from "react";
-import Input from "../input";
-import Button from "../button";
+
+import { PropsType } from "./default";
+import { API_ADDRESS } from "../../constants";
 import { setItem } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
-import config from "../../config";
-import { PropsType } from "./default";
+import Button from "../button";
+import Input from "../input";
 
 export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
   const [name, setName] = useState<string>();
@@ -13,21 +14,19 @@ export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
   const [errors, setErrors] = useState("");
   const { retrieveData } = useContext(AuthContext);
 
-  const validateForm = () => {
+  const validateForm = async () => {
     if (!name) return setErrors("Please enter a valid name");
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/user/change-name`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        newName: name,
-      })
-      .then(async () => {
-        setLoading(false);
-        handleUpdate && handleUpdate();
-        handleClose();
-        setItem("delayedAlert", "Your name has been\nsuccessfully updated!");
-      })
-      .catch((err) => {});
+    const res = await sendPostRequest(API_ADDRESS + `/user/change-name`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      newName: name,
+    });
+    if (res?.ok) {
+      setLoading(false);
+      handleUpdate && handleUpdate();
+      handleClose();
+      setItem("delayedAlert", "Your name has been\nsuccessfully updated!");
+    }
   };
 
   return (
@@ -48,7 +47,7 @@ export default ({ handleClose, handleChange, handleUpdate }: PropsType) => {
       />
       <Button
         handleClick={() => handleChange("Settings")}
-        variant={"ghost"}
+        variant="ghost"
         text="Back"
       />
     </>

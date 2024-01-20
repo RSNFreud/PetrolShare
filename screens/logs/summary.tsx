@@ -1,9 +1,10 @@
-import { View } from "react-native";
-import Colors from "../../constants/Colors";
 import { Text } from "@components/text";
+import { View } from "react-native";
 
-export default ({ summary }: { summary: {} }) => {
-  if (!Boolean(Object.keys(summary).length)) return <></>;
+import Colors from "../../constants/Colors";
+
+export default ({ summary }: { summary: object }) => {
+  if (!Object.keys(summary).length) return <></>;
   return (
     <>
       <View

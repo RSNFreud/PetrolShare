@@ -1,48 +1,24 @@
-import { Text } from "./text";
-import { TouchableWithoutFeedback, View } from "react-native";
-import { AuthContext } from "../hooks/context";
-import { useContext, useState } from "react";
-import Settings from "./profile";
-import Colors from "../constants/Colors";
-import axios from "axios";
-import config from "../config";
-import { deleteItem, getItem, sendCustomEvent, setItem } from "../hooks";
-import { TouchableBase } from "./button";
-import Person from "../assets/icons/person";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation, usePathname } from "expo-router";
 import { StackActions } from "@react-navigation/native";
+import { useNavigation, usePathname } from "expo-router";
+import { useContext, useState } from "react";
+import { TouchableWithoutFeedback, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { TouchableBase } from "./button";
+import Settings from "./profile";
+import { Text } from "./text";
+import Person from "../assets/icons/person";
+import Colors from "../constants/Colors";
+import { deleteItem, getItem, sendCustomEvent } from "../hooks";
+import { AuthContext } from "../hooks/context";
 
 export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { isLoggedIn, retrieveData, setData } = useContext(AuthContext);
+  const { isLoggedIn, updateData } = useContext(AuthContext);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const pathname = usePathname();
 
-  const handleUpdate = () => {
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/user/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(async ({ data }) => {
-        let sessionStorage;
-        try {
-          sessionStorage = getItem("userData");
-          if (!sessionStorage) return;
-          sessionStorage = JSON.parse(sessionStorage);
-          sessionStorage = { ...sessionStorage, ...data[0] };
-          if (setData) setData(sessionStorage);
-          setItem("userData", JSON.stringify(sessionStorage));
-        } catch (err) {
-          console.log(err);
-        }
-      })
-      .catch(({ response }) => {
-        console.log(response);
-      });
-  };
   const handleClose = () => {
     const delayedAlert = getItem("delayedAlert");
 
@@ -123,7 +99,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
             <Person />
           </TouchableBase>
           <Settings
-            onUpdate={handleUpdate}
+            onUpdate={updateData}
             visible={settingsVisible}
             handleClose={handleClose}
           />

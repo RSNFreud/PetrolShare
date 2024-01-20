@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet, DimensionValue } from "react-native";
-import Colors from "../../constants/Colors";
+
 import Tick from "../../assets/icons/tick";
+import Colors from "../../constants/Colors";
 
 type PropTypes = {
   active?: boolean;
@@ -31,7 +32,7 @@ export default ({
       height: 4,
       backgroundColor:
         active && barHighlight ? Colors.tertiary : Colors.secondary,
-      width: width,
+      width,
     },
     wrapper: {
       display: "flex",

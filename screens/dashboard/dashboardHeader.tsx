@@ -1,14 +1,13 @@
-import Tooltip from "@components/tooltip";
-import NavigationMarker from "@icons/navigationMarker";
-import React from "react";
-import { View, TouchableWithoutFeedback } from "react-native";
 import { Text } from "@components/text";
+import Tooltip from "@components/tooltip";
 import GroupIcon from "@icons/group";
+import NavigationMarker from "@icons/navigationMarker";
 import Share from "@icons/share";
-import { Alert } from "hooks";
-import * as Clipboard from "expo-clipboard";
 import Colors from "constants/Colors";
-import { StyleSheet } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import { Alert } from "hooks";
+import React from "react";
+import { View, TouchableWithoutFeedback, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -66,11 +65,11 @@ export const DashboardHeader = ({
     Clipboard.setStringAsync(
       groupID
         ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${groupID}`
-        : ""
+        : "",
     );
     Alert(
       "Information:",
-      "Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!"
+      "Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!",
     );
   };
 
@@ -84,7 +83,7 @@ export const DashboardHeader = ({
               onPress={() =>
                 Alert(
                   "Group ID",
-                  "This unique ID is used to identify your group. Share it with others to invite them to your group."
+                  "This unique ID is used to identify your group. Share it with others to invite them to your group.",
                 )
               }
             >

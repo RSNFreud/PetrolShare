@@ -1,11 +1,11 @@
-import axios from "axios";
 import { useContext, useState } from "react";
 import { View } from "react-native";
+
 import Button from "./button";
 import Input from "./input";
+import { API_ADDRESS, postHeaders } from "../constants";
 import { Alert } from "../hooks";
 import { AuthContext } from "../hooks/context";
-import config from "../config";
 
 type PropsType = {
   firstSteps?: boolean;
@@ -22,7 +22,7 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
   });
   const [loading, setLoading] = useState(false);
 
-  const updateGroup = () => {
+  const onUpdate = () => {
     if (!form.data)
       return setForm({ ...form, errors: "Please enter a group ID!" });
     else setForm({ ...form, errors: "" });
@@ -35,49 +35,41 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
           {
             text: "Yes",
             onPress: async () => {
-              setLoading(true);
-              axios
-                .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
-                  authenticationKey: retrieveData?.authenticationKey,
-                  groupID: form.data,
-                })
-                .then(async ({ data }) => {
-                  setLoading(false);
-                  setForm({
-                    data: "",
-                    errors: "",
-                  });
-                  handleComplete(data);
-                })
-                .catch(({ response }) => {
-                  setLoading(false);
-                  setForm({
-                    ...form,
-                    errors: response.data,
-                  });
-                });
+              updateGroup();
             },
           },
           { text: "No", style: "cancel", onPress: () => setLoading(false) },
-        ]
+        ],
       );
-    else
-      axios
-        .post(config.REACT_APP_API_ADDRESS + `/user/change-group`, {
-          authenticationKey: retrieveData?.authenticationKey,
-          groupID: form.data,
-        })
-        .then(async ({ data }) => {
-          setLoading(false);
-          handleComplete(data);
-        })
-        .catch(({ response }) => {
-          setLoading(false);
-          setForm({
-            ...form,
-            errors: response.data,
-          });
-        });
+    else updateGroup();
+  };
+
+  const updateGroup = async () => {
+    setLoading(true);
+    const res = await fetch(API_ADDRESS + `/user/change-group`, {
+      ...postHeaders,
+      body: JSON.stringify({
+        authenticationKey: retrieveData?.authenticationKey,
+        groupID: form.data,
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setLoading(false);
+      setForm({
+        data: "",
+        errors: "",
+      });
+      handleComplete(data);
+    } else {
+      const data = await res.text();
+      setLoading(false);
+      setForm({
+        ...form,
+        errors: data,
+      });
+    }
   };
 
   return (
@@ -90,7 +82,7 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
         errorMessage={form.errors}
         style={{ marginBottom: 20 }}
       />
-      <Button loading={loading} handleClick={updateGroup} text="Join Group" />
+      <Button loading={loading} handleClick={onUpdate} text="Join Group" />
       <Button
         variant="ghost"
         style={{ marginTop: 20 }}

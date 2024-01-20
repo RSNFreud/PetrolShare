@@ -1,9 +1,10 @@
+import DatePicker from "@components/dateTimePicker";
+import SplitRow from "@components/splitRow";
 import React from "react";
 import { Platform, View, ViewProps } from "react-native";
-import SplitRow from "@components/splitRow";
-import Colors from "../../../constants/Colors";
+
 import { DataType } from ".";
-import DatePicker from "@components/dateTimePicker";
+import Colors from "../../../constants/Colors";
 
 type PropsType = {
   data: DataType;
@@ -11,7 +12,7 @@ type PropsType = {
   updateData: (
     e: Date,
     value: string,
-    position?: "custom" | "customDays"
+    position?: "custom" | "customDays",
   ) => void;
 };
 

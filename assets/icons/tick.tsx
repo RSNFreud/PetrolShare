@@ -17,6 +17,6 @@ export default ({ ...rest }: IconType) => (
       strokeLinejoin="round"
       strokeWidth="1.5"
       d="M4.469 14.219l5.687 5.687L21.531 7.72"
-    ></Path>
+    />
   </Svg>
 );

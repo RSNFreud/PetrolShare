@@ -1,6 +1,6 @@
-import { View, TouchableWithoutFeedback } from "react-native";
 import { Text } from "@components/text";
 import analytics from "@react-native-firebase/analytics";
+import { View, TouchableWithoutFeedback } from "react-native";
 
 type PropsType = {
   icon: React.ReactNode;

@@ -1,10 +1,11 @@
 import Input from "@components/input";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
+
 import SubmitButton from "./submitButton";
+import { API_ADDRESS } from "../../constants";
 import { deleteItem } from "../../hooks";
-import config from "../../config";
+import { AuthContext } from "../../hooks/context";
 
 export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
   const [data, setData] = useState({
@@ -40,25 +41,22 @@ export default ({ handleClose }: { handleClose: (alert?: string) => void }) => {
 
     if (!retrieveData) return;
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
-        distance: distance,
-        authenticationKey: retrieveData?.authenticationKey,
-      })
-      .then(async () => {
-        setLoading(false);
-        handleClose("Distance successfully updated!");
-        deleteItem("draft");
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
-      });
+
+    const res = await sendPostRequest(API_ADDRESS + `/distance/add`, {
+      distance,
+      authenticationKey: retrieveData?.authenticationKey,
+    });
+    if (res?.ok) {
+      setLoading(false);
+      handleClose("Distance successfully updated!");
+      deleteItem("draft");
+    }
   };
 
   return (
     <>
       <Input
-        keyboardType={"decimal-pad"}
+        keyboardType="decimal-pad"
         placeholder="Enter total distance"
         label="Distance"
         value={data.distance}

@@ -1,34 +1,34 @@
+import Popup from "@components/Popup";
+import { Breadcrumbs, Seperator } from "@components/Themed";
+import Button, { TouchableBase } from "@components/button";
+import Input from "@components/input";
+import Layout from "@components/layout";
+import { Text } from "@components/text";
+import { useRouter } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   TouchableWithoutFeedback,
   View,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import Input from "@components/input";
-import { Breadcrumbs, Seperator } from "@components/Themed";
-import { Text } from "@components/text";
-import Layout from "@components/layout";
-import { useContext, useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { AuthContext } from "../../hooks/context";
-import Button, { TouchableBase } from "@components/button";
-import Popup from "@components/Popup";
-import SubmitButton from "./submitButton";
 import Toast from "react-native-toast-message";
+
+import SubmitButton from "./submitButton";
+import Bin from "../../assets/icons/bin";
+import Pencil from "../../assets/icons/pencil";
+import Plus from "../../assets/icons/plus";
+import { API_ADDRESS } from "../../constants";
+import Colors from "../../constants/Colors";
 import {
-  Alert,
   deleteItem,
   getGroupData,
   getItem,
   sendCustomEvent,
   setItem,
 } from "../../hooks";
-import config from "../../config";
-import Colors from "../../constants/Colors";
-import Plus from "../../assets/icons/plus";
-import Pencil from "../../assets/icons/pencil";
-import Bin from "../../assets/icons/bin";
-import { useRouter } from "expo-router";
+import { AuthContext } from "../../hooks/context";
 
 type PresetType = {
   presetName: string;
@@ -66,25 +66,22 @@ export default () => {
     }
 
     if (retrieveData) {
-      axios
-        .get(
-          config.REACT_APP_API_ADDRESS +
-            `/preset/get?authenticationKey=${retrieveData?.authenticationKey}`
-        )
-        .then(async ({ data }) => {
-          setPresets(data);
-          setItem("presets", JSON.stringify(data));
-        })
-        .catch(({ response }) => {
-          Alert("Error!", response.message);
-        });
+      const res = await fetch(
+        API_ADDRESS +
+          `/preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPresets(data);
+        setItem("presets", JSON.stringify(data));
+      }
     }
   };
 
   useEffect(() => {
     if (data.selectedPreset && presets) {
       const filtered: PresetType[] = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset
+        (e: any) => e.presetID === data.selectedPreset,
       );
       setDistance(filtered[0].distance);
     } else {
@@ -120,29 +117,25 @@ export default () => {
 
     if (data.selectedPreset && presets) {
       const filtered: PresetType[] = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset
+        (e: any) => e.presetID === data.selectedPreset,
       );
       distance = filtered[0].distance;
     }
-    if (!distance || parseInt(distance) <= 0)
+    if (!distance || parseInt(distance, 10) <= 0)
       return setErrors("Please enter a distance above 0!");
 
     if (!retrieveData) return;
     setLoading(true);
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/distance/add`, {
-        distance: distance,
-        authenticationKey: retrieveData?.authenticationKey,
-      })
-      .then(async () => {
-        setLoading(false);
-        deleteItem("draft");
-        sendCustomEvent("sendAlert", "Distance successfully updated!");
-        navigation.navigate("Dashboard");
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
-      });
+    const res = await sendPostRequest(API_ADDRESS + `/distance/add`, {
+      distance,
+      authenticationKey: retrieveData?.authenticationKey,
+    });
+    if (res?.ok) {
+      setLoading(false);
+      deleteItem("draft");
+      sendCustomEvent("sendAlert", "Distance successfully updated!");
+      navigation.navigate("Dashboard");
+    }
   };
   const openPopup = (type?: string, id?: string) => {
     setPopupType(type || "new");
@@ -150,25 +143,21 @@ export default () => {
     if (id) selectedToDelete.current = id;
   };
 
-  const deletePreset = () => {
-    axios
-      .post(config.REACT_APP_API_ADDRESS + "/preset/delete", {
-        presetID: selectedToDelete.current,
-        authenticationKey: retrieveData?.authenticationKey,
-      })
-      .then(() => {
-        setVisible(false);
-        Toast.show({
-          type: "default",
-          text1: "Preset successfully deleted!",
-        });
-        setTimeout(() => {
-          getPresets();
-        }, 300);
-      })
-      .catch(({ response }) => {
-        console.log(response.message);
+  const deletePreset = async () => {
+    const res = await sendPostRequest(API_ADDRESS + "/preset/delete", {
+      presetID: selectedToDelete.current,
+      authenticationKey: retrieveData?.authenticationKey,
+    });
+    if (res?.ok) {
+      setVisible(false);
+      Toast.show({
+        type: "default",
+        text1: "Preset successfully deleted!",
       });
+      setTimeout(() => {
+        getPresets();
+      }, 300);
+    }
   };
 
   const handleEdit = (id: number) => {
@@ -179,8 +168,8 @@ export default () => {
     openPopup("new");
   };
 
-  const handlePresetSubmit = () => {
-    let errors: any = {};
+  const handlePresetSubmit = async () => {
+    const errors: any = {};
     Object.entries(presetFormData).map(([key, value]) => {
       if (key === "presetID") return;
       if (!value) errors[key] = "Please complete this field!";
@@ -193,42 +182,35 @@ export default () => {
 
     if (!Object.keys(errors).length && retrieveData) {
       if (presetFormData.presetID) {
-        axios
-          .post(config.REACT_APP_API_ADDRESS + "/preset/edit", {
-            presetID: presetFormData.presetID,
-            presetName: presetFormData.presetName,
-            distance: presetFormData.distance,
-            authenticationKey: retrieveData?.authenticationKey,
-          })
-          .then(() => {
-            setVisible(false);
-            Toast.show({
-              type: "default",
-              text1: "Preset successfully edited!!",
-            });
-            getPresets();
-          })
-          .catch(({ response }) => {
-            console.log(response.message);
+        const res = await sendPostRequest(API_ADDRESS + "/preset/edit", {
+          presetID: presetFormData.presetID,
+          presetName: presetFormData.presetName,
+          distance: presetFormData.distance,
+          authenticationKey: retrieveData?.authenticationKey,
+        });
+        if (res?.ok) {
+          setVisible(false);
+          Toast.show({
+            type: "default",
+            text1: "Preset successfully edited!!",
           });
-      } else
-        axios
-          .post(config.REACT_APP_API_ADDRESS + "/preset/add", {
-            presetName: presetFormData.presetName,
-            distance: presetFormData.distance,
-            authenticationKey: retrieveData?.authenticationKey,
-          })
-          .then(() => {
-            setVisible(false);
-            Toast.show({
-              type: "default",
-              text1: "Preset successfully added!",
-            });
-            getPresets();
-          })
-          .catch(({ response }) => {
-            console.log(response.message);
+          getPresets();
+        }
+      } else {
+        const res = await sendPostRequest(API_ADDRESS + "/preset/add", {
+          presetName: presetFormData.presetName,
+          distance: presetFormData.distance,
+          authenticationKey: retrieveData?.authenticationKey,
+        });
+        if (res?.ok) {
+          setVisible(false);
+          Toast.show({
+            type: "default",
+            text1: "Preset successfully added!",
           });
+          getPresets();
+        }
+      }
     }
   };
   return (
@@ -271,10 +253,10 @@ export default () => {
                   presetID: "",
                   presetName: "",
                   distance: "",
-                }),
-                  openPopup("new");
+                });
+                openPopup("new");
               }}
-              text={"Add Preset"}
+              text="Add Preset"
             />
           </View>
           <View style={{ flex: 1 }}>
@@ -303,7 +285,7 @@ export default () => {
               <Seperator style={{ position: "absolute", top: 10 }} />
             </View>
             {presets === null && (
-              <ActivityIndicator size={"large"} color={Colors.tertiary} />
+              <ActivityIndicator size="large" color={Colors.tertiary} />
             )}
             {presets && Boolean(presets.length) && (
               <ScrollView style={{ flex: 1, marginBottom: 25 }}>

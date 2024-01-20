@@ -3,6 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
+import { useRouter } from "expo-router";
 import {
   Text as DefaultText,
   TouchableWithoutFeedback,
@@ -10,11 +11,11 @@ import {
   Dimensions,
   LayoutChangeEvent,
 } from "react-native";
-import Colors from "../constants/Colors";
+
 import Button, { ButtonType } from "./button";
-import ChevronRight from "../assets/icons/chevronRight";
 import { Text } from "./text";
-import { useRouter } from "expo-router";
+import ChevronRight from "../assets/icons/chevronRight";
+import Colors from "../constants/Colors";
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
@@ -67,7 +68,7 @@ export const Breadcrumbs = ({
   links,
   style,
 }: {
-  links: Array<{ name: string; screenName?: string }>;
+  links: { name: string; screenName?: string }[];
   style?: ViewProps["style"];
 }) => {
   const navigation = useRouter();

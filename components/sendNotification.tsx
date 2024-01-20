@@ -1,8 +1,9 @@
-import axios from "axios";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import { Platform } from "react-native";
-import config from "../config";
+
+import { API_ADDRESS } from "../constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -14,7 +15,7 @@ Notifications.setNotificationHandler({
 
 export const schedulePushNotification = async (
   title?: string,
-  body?: string
+  body?: string,
 ) => {
   await Notifications.scheduleNotificationAsync({
     content: {
@@ -27,7 +28,7 @@ export const schedulePushNotification = async (
 };
 
 export const registerForPushNotificationsAsync = async (
-  emailAddress: string
+  emailAddress: string,
 ) => {
   let token;
 
@@ -57,14 +58,10 @@ export const registerForPushNotificationsAsync = async (
 
     if (!token) return;
 
-    await axios
-      .post(config.REACT_APP_API_ADDRESS + "/notify/register", {
-        emailAddress: emailAddress,
-        notificationKey: token,
-      })
-      .catch(({ response }) => {
-        console.log(response);
-      });
+    await sendPostRequest(API_ADDRESS + "/notify/register", {
+      emailAddress,
+      notificationKey: token,
+    });
   } else {
     // alert("Must use physical device for Push Notifications");
   }
@@ -73,11 +70,7 @@ export const registerForPushNotificationsAsync = async (
 };
 
 export const deregisterForPushNotifications = async (emailAddress: string) => {
-  await axios
-    .post(config.REACT_APP_API_ADDRESS + "/notify/deregister", {
-      emailAddress: emailAddress,
-    })
-    .catch(({ response }) => {
-      console.log(response);
-    });
+  await sendPostRequest(API_ADDRESS + "/notify/deregister", {
+    emailAddress,
+  });
 };

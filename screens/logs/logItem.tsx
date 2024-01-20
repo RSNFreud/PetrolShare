@@ -1,18 +1,19 @@
-import axios from "axios";
+import Popup from "@components/Popup";
+import Button from "@components/button";
+import Input from "@components/input";
+import SplitRow from "@components/splitRow";
+import { Text } from "@components/text";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 import { useContext, useState } from "react";
 import { View } from "react-native";
 import Toast from "react-native-toast-message";
-import Input from "@components/input";
-import Popup from "@components/Popup";
-import config from "../../config";
+
+import Bin from "../../assets/icons/bin";
+import Pencil from "../../assets/icons/pencil";
+import { API_ADDRESS } from "../../constants";
+import Colors from "../../constants/Colors";
 import { Alert, convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
-import Colors from "../../constants/Colors";
-import { Text } from "@components/text";
-import Button from "@components/button";
-import SplitRow from "@components/splitRow";
-import Pencil from "../../assets/icons/pencil";
-import Bin from "../../assets/icons/bin";
 
 type PropsType = {
   fullName: string;
@@ -46,53 +47,46 @@ export default ({
       {
         text: "Yes",
         onPress: async () => {
-          axios
-            .post(config.REACT_APP_API_ADDRESS + `/logs/delete`, {
-              authenticationKey: retrieveData?.authenticationKey,
-              logID: id,
-            })
-            .then(async (e) => {
-              Toast.show({
-                text1: "Log deleted successfully!",
-                type: "default",
-              });
-              handleComplete();
-            })
-            .catch(({ response }) => {
-              console.log(response.message);
+          const res = await sendPostRequest(API_ADDRESS + `/logs/delete`, {
+            authenticationKey: retrieveData?.authenticationKey,
+            logID: id,
+          });
+          if (res?.ok) {
+            Toast.show({
+              text1: "Log deleted successfully!",
+              type: "default",
             });
+            handleComplete();
+          }
         },
       },
       { text: "No", style: "cancel" },
     ]);
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     setErrorMessage("");
     setLoading(true);
     if (parseFloat(formData) <= 0 || !/^[0-9.]*$/.test(formData.toString())) {
       setErrorMessage("Please enter a valid value!");
       return setLoading(false);
     }
-    axios
-      .post(config.REACT_APP_API_ADDRESS + `/logs/edit`, {
-        authenticationKey: retrieveData?.authenticationKey,
-        logID: id,
-        distance: formData,
-      })
-      .then(async (e) => {
-        Toast.show({
-          text1: "Log updated successfully!",
-          type: "default",
-        });
-        setVisible(false);
-        setLoading(false);
-        handleComplete();
-      })
-      .catch(({ response }) => {
-        setLoading(false);
-        console.log(response.message);
+    const res = await sendPostRequest(API_ADDRESS + `/logs/edit`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      logID: id,
+      distance: formData,
+    });
+    if (res?.ok) {
+      Toast.show({
+        text1: "Log updated successfully!",
+        type: "default",
       });
+      setVisible(false);
+      setLoading(false);
+      handleComplete();
+    } else {
+      setLoading(false);
+    }
   };
 
   const handleInput = (e: string) => {
@@ -198,7 +192,7 @@ export default ({
         <Input
           label="Distance"
           handleInput={handleInput}
-          keyboardType={"decimal-pad"}
+          keyboardType="decimal-pad"
           value={formData?.toString()}
           errorMessage={errorMessage}
           placeholder="Enter new distance"

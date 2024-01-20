@@ -1,21 +1,16 @@
-import axios from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
-  View,
-} from "react-native";
 import { Box, Breadcrumbs } from "@components/Themed";
+import { TouchableBase } from "@components/button";
 import Layout from "@components/layout";
 import { Text } from "@components/text";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, ScrollView, View } from "react-native";
+
+import Invoice from "./invoice";
+import { API_ADDRESS } from "../../constants";
+import Colors from "../../constants/Colors";
 import { convertToDate } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
-import Invoice from "./invoice";
-import config from "../../config";
-import Colors from "../../constants/Colors";
-import { TouchableBase } from "@components/button";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 
 export default () => {
   const params = useLocalSearchParams();
@@ -36,20 +31,18 @@ export default () => {
     });
   }, [retrieveData]);
 
-  const getData = () => {
-    axios
-      .get(
-        config.REACT_APP_API_ADDRESS +
-          `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`
-      )
-      .then(async ({ data }) => {
-        setData(data);
-        setDataLoaded(true);
-      })
-      .catch(({ response }) => {
-        setDataLoaded(true);
-        console.log(response.data);
-      });
+  const getData = async () => {
+    const res = await fetch(
+      API_ADDRESS +
+        `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`,
+    );
+    if (res.ok) {
+      const data = await res.json();
+      setData(data);
+      setDataLoaded(true);
+    } else {
+      setDataLoaded(true);
+    }
   };
   return (
     <Layout noScrollView noBottomPadding>
@@ -87,7 +80,7 @@ export default () => {
       ) : (
         <View style={{ flex: 1, display: "flex" }}>
           {dataLoaded ? (
-            Boolean(data.length > 0) ? (
+            data.length > 0 ? (
               <>
                 <Text
                   style={{
@@ -100,7 +93,7 @@ export default () => {
                   Please select an payment to view
                 </Text>
                 <ScrollView
-                  keyboardShouldPersistTaps={"handled"}
+                  keyboardShouldPersistTaps="handled"
                   contentContainerStyle={{ paddingBottom: 25 }}
                 >
                   {data.map((e, c) => (
@@ -151,7 +144,7 @@ export default () => {
               </Box>
             )
           ) : (
-            <ActivityIndicator size={"large"} color={Colors.tertiary} />
+            <ActivityIndicator size="large" color={Colors.tertiary} />
           )}
         </View>
       )}

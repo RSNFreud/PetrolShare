@@ -1,11 +1,12 @@
-import { View, ScrollView } from "react-native";
-import ChevronRight from "../../../assets/icons/chevronRight";
 import { TouchableBase } from "@components/button";
 import DateTimePicker from "@components/dateTimePicker";
-import Colors from "../../../constants/Colors";
-import DateHeaderItem from "./dateHeaderItem";
 import { useEffect, useRef } from "react";
+import { View, ScrollView } from "react-native";
+
+import DateHeaderItem from "./dateHeaderItem";
 import { ScheduleType, resetMonth } from "..";
+import ChevronRight from "../../../assets/icons/chevronRight";
+import Colors from "../../../constants/Colors";
 
 export type UserColourType = { userID: string; colour: string };
 
@@ -42,19 +43,17 @@ export default ({
   const getDaysInMonth = () => {
     let date = resetMonth(new Date(currentDate));
     const targetMonth = date.getMonth();
-    let dates = [];
-    let i = 0;
+    const dates = [];
 
     while (date.getMonth() === targetMonth) {
       const hasData = currentData
         ? Boolean(
             currentData[1].filter(([day, _]) => day[0] === date.getTime())
-              .length
+              .length,
           )
         : false;
       dates.push({ date: new Date(date), active: hasData });
       date = new Date(date.setDate(date.getDate() + 1));
-      i++;
     }
     return dates;
   };
@@ -62,20 +61,20 @@ export default ({
   const getDots = () => {
     if (!currentData || !userColours) return [];
     const dotsPerDay: { date: number; dots: string[] }[] = [];
-    const [_, data] = currentData;
+    const [, data] = currentData;
     data.map((e) =>
       [...e].map(([date, schedule]) => {
         dotsPerDay.push({
-          date: date,
+          date,
           dots: removeDuplicates(
             schedule.map(
               (q) =>
                 userColours?.filter((user) => user.userID === q.userID)[0]
-                  .colour
-            )
+                  .colour,
+            ),
           ),
         });
-      })
+      }),
     );
     return dotsPerDay;
   };

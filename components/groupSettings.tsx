@@ -1,16 +1,16 @@
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Pressable } from "react-native";
-import config from "../config";
-import { Alert, getItem, sendCustomEvent } from "../hooks";
-import { AuthContext } from "../hooks/context";
-import { getAllCurrencies } from "../hooks/getCurrencies";
+
 import Dropdown from "./Dropdown";
 import RadioButton from "./RadioButton";
 import { Box } from "./Themed";
-import { Text } from "./text";
 import Button from "./button";
+import { Text } from "./text";
+import { API_ADDRESS, postValues } from "../constants";
+import { Alert, sendCustomEvent } from "../hooks";
+import { AuthContext } from "../hooks/context";
 import generateGroupID from "../hooks/generateGroupID";
+import { getAllCurrencies } from "../hooks/getCurrencies";
 
 type PropsType = {
   handleComplete: (e?: string, message?: string) => void;
@@ -36,7 +36,7 @@ export default ({
     currency: "",
   });
 
-  const [dropdownData, setDropdownData] = useState<Array<any>>([]);
+  const [dropdownData, setDropdownData] = useState<any[]>([]);
   const { retrieveData } = useContext(AuthContext);
   const [isLoading, setLoading] = useState(false);
 
@@ -45,27 +45,19 @@ export default ({
   }, []);
 
   useEffect(() => {
-    if (newGroup)
-      setData({
-        distance: "",
-        petrol: "",
-        currency: "",
-      });
-    else setGroupData();
-  }, [newGroup]);
-
-  const setGroupData = async () => {
-    const groupData = getItem("groupData");
-    if (!groupData || newGroup) return;
-    setData(JSON.parse(groupData));
-  };
+    setData({
+      distance: retrieveData?.distance || "",
+      petrol: retrieveData?.petrol || "",
+      currency: retrieveData?.currency || "",
+    });
+  }, [retrieveData]);
 
   const generateDropdown = async () => {
-    const data: Array<{
+    const data: {
       name: string;
       symbol: string;
-    }> = await getAllCurrencies();
-    const dropdown: Array<any> = [];
+    }[] = await getAllCurrencies();
+    const dropdown: any[] = [];
     Object.entries(data).map(([key, e]) => {
       dropdown.push({
         name: e.name,
@@ -77,7 +69,7 @@ export default ({
   };
 
   const handleSubmit = async () => {
-    let errors: any = {};
+    const errors: any = {};
 
     Object.entries(data).map(([key, value]) => {
       if (key === "premium") return;
@@ -95,54 +87,58 @@ export default ({
           text: "Yes",
           onPress: async () => {
             setLoading(true);
-            axios
-              .post(config.REACT_APP_API_ADDRESS + `/distance/reset`, {
+            const res = await fetch(API_ADDRESS + `/distance/reset`, {
+              ...postValues,
+              body: JSON.stringify({
                 authenticationKey: retrieveData?.authenticationKey,
-              })
-              .then(async () => {
-                updateGroup();
-              });
+              }),
+            });
+            if (res.ok) {
+              updateGroup();
+            }
           },
         },
         { text: "No", style: "cancel" },
-      ]
+      ],
     );
   };
 
   const createGroup = async () => {
     const groupID = generateGroupID();
     setLoading(true);
-    await axios
-      .post(config.REACT_APP_API_ADDRESS + "/group/create", {
+    const res = await fetch(API_ADDRESS + "/group/create", {
+      ...postValues,
+      body: JSON.stringify({
         authenticationKey: retrieveData?.authenticationKey,
-        groupID: groupID,
-      })
-      .then(({ data: { groupID, message } }) => {
-        updateGroup(groupID, message);
-      });
+        groupID,
+      }),
+    });
+
+    if (res.ok) {
+      const { groupID, message } = await res.json();
+      updateGroup(groupID, message);
+    }
   };
 
   const updateGroup = async (groupID?: string, message?: string) => {
     setLoading(true);
 
-    await axios
-      .post(config.REACT_APP_API_ADDRESS + "/group/update", {
+    const res = await fetch(API_ADDRESS + "/group/update", {
+      ...postValues,
+      body: JSON.stringify({
         authenticationKey: retrieveData?.authenticationKey,
         distance: data.distance,
         petrol: data.petrol,
         currency: data.currency,
-      })
-      .then(() => {
-        setLoading(false);
-        if (!newGroup)
-          sendCustomEvent("sendAlert", "Group settings successfully updated!");
-        handleComplete(groupID, message);
-      })
-      .catch((e) => {
-        console.log("====================================");
-        console.log(e);
-        console.log("====================================");
-      });
+      }),
+    });
+
+    if (res.ok) {
+      setLoading(false);
+      if (!newGroup)
+        sendCustomEvent("sendAlert", "Group settings successfully updated!");
+      handleComplete(groupID, message);
+    }
   };
 
   const handleTouch = () => {

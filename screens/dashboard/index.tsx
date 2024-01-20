@@ -1,22 +1,23 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "../../hooks/context";
-import Toast from "react-native-toast-message";
-import { Alert, getItem, setItem } from "../../hooks";
-import config from "../../config";
-import Distance from "../distance";
-import Petrol from "../petrol";
-import Group from "../group";
 import Popup from "@components/Popup";
 import Demo from "@components/demo";
 import GroupSettings from "@components/groupSettings";
-import ConfirmDistance from "./confirmDistance";
-import React from "react";
-import GroupIcon from "../../assets/icons/group";
-import PetrolIcon from "../../assets/icons/petrol";
-import NavigationMarker from "../../assets/icons/navigationMarker";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import React, { useContext, useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
+
+import ConfirmDistance from "./confirmDistance";
 import { DashboardHeader } from "./dashboardHeader";
 import TabSwitcher from "./tabSwitcher";
+import GroupIcon from "../../assets/icons/group";
+import NavigationMarker from "../../assets/icons/navigationMarker";
+import PetrolIcon from "../../assets/icons/petrol";
+import { API_ADDRESS } from "../../constants";
+import { Alert, getItem, setItem } from "../../hooks";
+import { AuthContext } from "../../hooks/context";
+import Distance from "../distance";
+import Group from "../group";
+import Petrol from "../petrol";
 
 export default () => {
   const { retrieveData, updateData } = useContext(AuthContext);
@@ -45,7 +46,7 @@ export default () => {
   }, [retrieveData?.groupID]);
 
   const checkForReferral = async () => {
-    let referallCode = getItem("referalCode");
+    const referallCode = getItem("referalCode");
     if (referallCode) {
       return sendReferal(referallCode);
     }
@@ -75,28 +76,19 @@ export default () => {
               setItem("referalCode", "");
             },
           },
-        ]
+        ],
       );
       navigation.setParams({ groupID: "" });
     }, 400);
   };
 
   const changeGroup = async (groupID: string) => {
-    const res = await fetch(
-      config.REACT_APP_API_ADDRESS + `/user/change-group`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          authenticationKey: retrieveData?.authenticationKey,
-          groupID: groupID,
-        }),
-      }
-    );
+    const res = await sendPostRequest(API_ADDRESS + `/user/change-group`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      groupID,
+    });
 
-    if (res.ok) {
+    if (res?.ok) {
       if (updateData) updateData();
       Toast.show({
         text1: "Group ID updated succesfully!",
@@ -115,8 +107,8 @@ export default () => {
   const checkForUnconfirmedDistance = async () => {
     try {
       const res = await fetch(
-        config.REACT_APP_API_ADDRESS +
-          `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`
+        API_ADDRESS +
+          `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`,
       );
 
       if (res.ok) {

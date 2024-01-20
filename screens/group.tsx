@@ -1,22 +1,14 @@
-import { LongButton } from "@components/Themed";
-import { useState } from "react";
-import { Alert } from "../hooks";
-
 import Popup from "@components/Popup";
+import { LongButton } from "@components/Themed";
 import CreateGroup from "@components/createGroup";
 import GroupSettings from "@components/groupSettings";
 import JoinGroup from "@components/joinGroup";
+import { useState } from "react";
+
+import Cog from "../assets/icons/cog";
 import Pencil from "../assets/icons/pencil";
 import Plus from "../assets/icons/plus";
-import Cog from "../assets/icons/cog";
-
-type GroupType = {
-  currency: string;
-  distance: string;
-  groupID: string;
-  petrol: string;
-  premium: boolean;
-};
+import { Alert } from "../hooks";
 
 export default ({ onUpdate }: { onUpdate?: () => void }) => {
   const [visible, setVisible] = useState(false);
@@ -34,7 +26,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
           },
         },
         { text: "No", style: "cancel" },
-      ]
+      ],
     );
   };
 
@@ -79,7 +71,8 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
       <Popup
         visible={visible}
         handleClose={() => {
-          setVisible(false), onUpdate && onUpdate();
+          setVisible(false);
+          if (onUpdate) onUpdate();
         }}
         title={getTitle(currentScreen)}
       >

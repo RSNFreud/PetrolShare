@@ -1,6 +1,7 @@
-import { TouchableWithoutFeedback, View } from "react-native";
-import Colors from "../../../constants/Colors";
 import { Text } from "@components/text";
+import { TouchableWithoutFeedback, View } from "react-native";
+
+import Colors from "../../../constants/Colors";
 
 type PropsType = {
   dayObj: {
@@ -39,7 +40,7 @@ export default ({
   };
 
   const getDots = userColours?.filter(
-    (colours) => colours.date === dayObj.date.getTime()
+    (colours) => colours.date === dayObj.date.getTime(),
   );
   return (
     <TouchableWithoutFeedback
@@ -111,7 +112,7 @@ export default ({
                     backgroundColor: colour,
                   }}
                 />
-              ))
+              )),
             )}
           </View>
         )}

@@ -1,12 +1,12 @@
-import axios from "axios";
+import Popup from "@components/Popup";
+import Button from "@components/button";
+import Input from "@components/input";
+import { Text } from "@components/text";
 import { useState, useEffect } from "react";
 import { View } from "react-native";
-import Input from "@components/input";
-import Popup from "@components/Popup";
-import { Text } from "@components/text";
-import config from "../../config";
-import Button from "@components/button";
 import { ErrorType } from "types";
+
+import { APP_ADDRESS } from "../../constants";
 
 type PropTypes = {
   visible: boolean;
@@ -48,18 +48,15 @@ export default ({ visible, setVisible, emailAddress }: PropTypes) => {
     setFormErrors(errors);
     setLoading(true);
     try {
-      const res = await fetch(
-        `${config.REACT_APP_API_ADDRESS}/user/forgot-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            emailAddress: formData.emailAddress,
-          }),
-        }
-      );
+      const res = await fetch(`${APP_ADDRESS}/user/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailAddress: formData.emailAddress,
+        }),
+      });
       if (res.ok) {
         setLoading(false);
         setIsEmailSent(true);

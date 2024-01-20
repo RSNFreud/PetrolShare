@@ -1,15 +1,29 @@
-import { StatusBar } from "expo-status-bar";
+import Header from "@components/Header";
+import AlertBox from "@components/alertBox";
+import BottomNavigation from "@components/bottomNavigation";
+import Premium from "@components/premium";
+import {
+  deregisterForPushNotifications,
+  registerForPushNotificationsAsync,
+} from "@components/sendNotification";
+import SplashScreenComponent from "@components/splashScreen";
+import { Text } from "@components/text";
+import analytics from "@react-native-firebase/analytics";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
   DefaultTheme,
   useNavigationContainerRef,
 } from "@react-navigation/native";
-import analytics from "@react-native-firebase/analytics";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
-import React from "react";
+import * as Sentry from "@sentry/react-native";
 import axios from "axios";
+import { useFonts } from "expo-font";
+import * as Notifications from "expo-notifications";
+import { AndroidNotificationPriority } from "expo-notifications";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -17,15 +31,13 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import Dashboard from "./screens/dashboard";
-import Login from "./screens/login";
-import Register from "./screens/register";
-import NotFoundScreen from "./screens/NotFoundScreen";
-import LinkingConfiguration from "./hooks/LinkingConfiguration";
-import DesktopScreen from "./screens/desktopScreen";
-import logs from "./screens/logs";
-import preset from "./screens/distance/preset";
-import { AuthContext, AuthContextType, StoreData } from "./hooks/context";
+import { EventRegister } from "react-native-event-listeners";
+import Purchases from "react-native-purchases";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+
+import config, { API_ADDRESS } from "./constants";
+import Colors from "./constants/Colors";
 import {
   Alert,
   checkForUpdates,
@@ -34,30 +46,19 @@ import {
   sendCustomEvent,
   setItem,
 } from "./hooks";
+import LinkingConfiguration from "./hooks/LinkingConfiguration";
+import { AuthContext, AuthContextType, StoreData } from "./hooks/context";
+import NotFoundScreen from "./screens/NotFoundScreen";
+import Dashboard from "./screens/dashboard";
+import DesktopScreen from "./screens/desktopScreen";
+import preset from "./screens/distance/preset";
 import invoices from "./screens/invoices";
-import { useFonts } from "expo-font";
-import * as Notifications from "expo-notifications";
-import {
-  deregisterForPushNotifications,
-  registerForPushNotificationsAsync,
-} from "@components/sendNotification";
-import config from "./config";
-import { AndroidNotificationPriority } from "expo-notifications";
-import Purchases from "react-native-purchases";
-import Colors from "./constants/Colors";
-import Premium from "@components/premium";
-import SplashScreenComponent from "@components/splashScreen";
-import Header from "@components/Header";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { EventRegister } from "react-native-event-listeners";
-import Toast from "react-native-toast-message";
-import { Text } from "@components/text";
-import AlertBox from "@components/alertBox";
-import * as Sentry from "@sentry/react-native";
+import Login from "./screens/login";
+import logs from "./screens/logs";
 import PublicInvoice from "./screens/publicInvoice";
+import Register from "./screens/register";
 import schedules from "./screens/schedules";
-import BottomNavigation from "@components/bottomNavigation";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
 import "react-native-gesture-handler";
 import Constants from "expo-constants";
 import { DesktopApp } from "screens/desktopApp";
@@ -118,7 +119,7 @@ export default function App() {
       signIn: async (e: any) => {
         return new Promise((res, rej) => {
           axios
-            .post(config.REACT_APP_API_ADDRESS + "/user/login", {
+            .post(API_ADDRESS + "/user/login", {
               ...e,
             })
             .then(async ({ data }) => {
@@ -145,7 +146,7 @@ export default function App() {
         setUserData(e);
       },
       isLoading: loading,
-      isPremium: isPremium,
+      isPremium,
       setPremiumStatus: (e) => setIsPremium(e),
       signOut: async () => {
         deleteItem("userData");
@@ -157,7 +158,7 @@ export default function App() {
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
-    [userData, loading]
+    [userData, loading],
   ) as AuthContextType;
 
   useEffect(() => {
@@ -186,7 +187,7 @@ export default function App() {
               config.REACT_APP_API_ADDRESS +
                 "/user/verify?authenticationKey=" +
                 parsed.authenticationKey,
-              { timeout: 1000 }
+              { timeout: 1000 },
             )
             .then(async ({ data }) => {
               setItem("userData", JSON.stringify({ ...parsed, ...data }));
@@ -208,7 +209,6 @@ export default function App() {
                   Alert("Account Deactivated", response.data);
                 }, 500);
               store.signOut();
-              return;
             });
         } else {
           setLoadingStatus((loadingStatus) => ({
@@ -238,7 +238,7 @@ export default function App() {
         setLoadingStatus((loadingStatus) => ({
           ...loadingStatus,
           update: true,
-        }))
+        })),
       );
   }, []);
 
@@ -284,7 +284,7 @@ export default function App() {
         "invoiceID"
       ] as string;
       if (!routeName) return;
-      setNotifData({ routeName: routeName, invoiceID: invoiceID });
+      setNotifData({ routeName, invoiceID });
     });
     return () => clearTimeout(i);
   }, [loading, notifData]);

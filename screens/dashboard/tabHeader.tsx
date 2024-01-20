@@ -1,8 +1,8 @@
-import React from "react";
-import { View } from "react-native";
-import NavItem from "./navItem";
-import { StyleSheet } from "react-native";
 import Colors from "constants/Colors";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+
+import NavItem from "./navItem";
 
 const styles = StyleSheet.create({
   wrapper: {

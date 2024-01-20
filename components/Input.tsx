@@ -1,9 +1,10 @@
-import { View, TextInput, TouchableWithoutFeedback } from "react-native";
 import React, { useState } from "react";
+import { View, TextInput, TouchableWithoutFeedback } from "react-native";
+
 import { Text } from "./text";
-import Colors from "../constants/Colors";
-import EyeOpen from "../assets/icons/eyeOpen";
 import EyeClosed from "../assets/icons/eyeClosed";
+import EyeOpen from "../assets/icons/eyeOpen";
+import Colors from "../constants/Colors";
 
 type PropsType = {
   label?: string;

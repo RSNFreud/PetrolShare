@@ -3,12 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@components/*": [
-        "./components/*"
-      ],
-      "@icons/*": [
-        "./assets/icons/*"
-      ]
+      "@components/*": ["./components/*"],
+      "@icons/*": ["./assets/icons/*"],
+      "@constants": ["./constants.ts"]
     },
     "baseUrl": "."
   },
@@ -19,10 +16,5 @@
     "jest.config.js",
     "dist"
   ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

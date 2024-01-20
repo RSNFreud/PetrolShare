@@ -1,16 +1,17 @@
 import Header from "@components/Header";
 import AlertBox from "@components/alertBox";
-import { StatusBar } from "expo-status-bar";
-import { AuthContext, AuthContextType, StoreData } from "hooks/context";
-import React, { useEffect, useState } from "react";
-import { Animated, View, Dimensions, Platform } from "react-native";
-import Toast from "react-native-toast-message";
-import SplashScreenComponent from "@components/splashScreen";
-import * as Sentry from "@sentry/react-native";
-import * as Notifications from "expo-notifications";
+import Premium from "@components/premium";
 import { deregisterForPushNotifications } from "@components/sendNotification";
-import axios from "axios";
-import config from "config";
+import SplashScreenComponent from "@components/splashScreen";
+import { Text } from "@components/text";
+import { API_ADDRESS } from "@constants";
+import * as Sentry from "@sentry/react-native";
+import Colors from "constants/Colors";
+import { useFonts } from "expo-font";
+import * as Notifications from "expo-notifications";
+import { Slot, Stack, usePathname, useRootNavigation } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useUpdates } from "expo-updates";
 import {
   setItem,
   sendCustomEvent,
@@ -19,14 +20,13 @@ import {
   Alert,
   getItem,
 } from "hooks";
-import { Text } from "@components/text";
-import { Slot, Stack, usePathname, useRootNavigation } from "expo-router";
-import { useFonts } from "expo-font";
-import Colors from "constants/Colors";
-import { useUpdates } from "expo-updates";
-import Premium from "@components/premium";
-import Purchases from "react-native-purchases";
+import { AuthContext, AuthContextType, StoreData } from "hooks/context";
 import { logIn } from "hooks/login";
+import React, { useEffect, useState } from "react";
+import { Animated, View, Dimensions, Platform } from "react-native";
+import { EventRegister } from "react-native-event-listeners";
+import Purchases from "react-native-purchases";
+import Toast from "react-native-toast-message";
 
 const ToastConfig = {
   default: ({ text1 }: { text1?: string }) => (
@@ -114,19 +114,18 @@ export const App = () => {
       setData: setUserData,
       updateData: () => fetchData(),
       isLoading: loading,
-      isPremium: isPremium,
+      isPremium,
       setPremiumStatus: setIsPremium,
       signOut: async () => {
         deleteItem("userData");
         deleteItem("presets");
-        deleteItem("groupData");
         if (userData?.emailAddress)
           deregisterForPushNotifications(userData.emailAddress);
         setUserData({});
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
-    [userData, loading]
+    [userData, loading],
   ) as AuthContextType;
 
   useEffect(() => {
@@ -163,8 +162,8 @@ export const App = () => {
     const timeoutId = setTimeout(() => controller.abort(), 1000);
     try {
       const data = await fetch(
-        `${config.REACT_APP_API_ADDRESS}/user/verify?authenticationKey=${parsed.authenticationKey}`,
-        { signal: controller.signal }
+        `${API_ADDRESS}/user/verify?authenticationKey=${parsed.authenticationKey}`,
+        { signal: controller.signal },
       );
       if (data && data.status === 200) {
         const userData = await data.json();
@@ -199,8 +198,8 @@ export const App = () => {
   const fetchData = async () => {
     if (!userData.authenticationKey) return;
     const res = await fetch(
-      config.REACT_APP_API_ADDRESS +
-        `/user/get?authenticationKey=${userData?.authenticationKey}`
+      API_ADDRESS +
+        `/user/get?authenticationKey=${userData?.authenticationKey}`,
     );
 
     if (res.ok) {
@@ -235,7 +234,7 @@ export const App = () => {
         "invoiceID"
       ] as string;
       if (!routeName) return;
-      setNotifData({ routeName: routeName, invoiceID: invoiceID });
+      setNotifData({ routeName, invoiceID });
     });
     return () => clearTimeout(i);
   }, [loading, notifData]);
@@ -253,6 +252,23 @@ export const App = () => {
     if (Platform.OS === "ios") {
       Purchases.configure({ apiKey: "appl_WqDbxNapCEFuKTgtIlsqKCMAXVn" });
     }
+  }, []);
+
+  useEffect(() => {
+    EventRegister.addEventListener("sendAlert", (e) => {
+      Toast.show({
+        type: "default",
+        text1: e,
+      });
+    });
+    EventRegister.addEventListener("popupVisible", (e) => {
+      setPopupVisible(e);
+    });
+
+    return () => {
+      EventRegister.removeEventListener("popupVisible");
+      EventRegister.removeEventListener("sendAlert");
+    };
   }, []);
 
   return (

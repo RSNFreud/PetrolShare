@@ -1,3 +1,5 @@
+import Constants from "expo-constants";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   ViewProps,
@@ -6,17 +8,16 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from "react-native";
-import { Text } from "./text";
-import { useEffect, useRef, useState } from "react";
-import Colors from "../constants/Colors";
-import ChevronRight from "../assets/icons/chevronRight";
+
 import Input from "./input";
-import Constants from "expo-constants";
+import { Text } from "./text";
+import ChevronRight from "../assets/icons/chevronRight";
+import Colors from "../constants/Colors";
 
 export type item = { name: string; value: string; symbol?: string };
 
 type PropsType = {
-  data: Array<item>;
+  data: item[];
   value?: string;
   handleSelected: (e: { label: string; value: string }) => void;
   errorMessage?: string;
@@ -55,7 +56,7 @@ export default ({
   useEffect(() => {
     if (!data || !value) return;
     const current = data.filter(
-      (e) => e.value.toString() === value || e.name.toString() === value
+      (e) => e.value.toString() === value || e.name.toString() === value,
     )[0];
     if (!current) return;
     setSelected({ label: current?.name || "", value: current.value });
@@ -72,8 +73,8 @@ export default ({
 
   const click = ({ label, value }: { label: string; value: string }) => {
     setVisible(false);
-    handleSelected({ label: label, value: value });
-    setSelected({ label: label, value: value });
+    handleSelected({ label, value });
+    setSelected({ label, value });
   };
 
   const scrollIntoView = () => {

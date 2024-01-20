@@ -1,13 +1,14 @@
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import React, { useContext } from "react";
+
+import Bin from "../../assets/icons/bin";
+import Cog from "../../assets/icons/cog";
+import SignOut from "../../assets/icons/signOut";
+import { API_ADDRESS } from "../../constants";
+import { Alert, sendCustomEvent } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
 import { LongButton } from "../Themed";
 import { Text } from "../text";
-import React, { useContext } from "react";
-import { Alert, sendCustomEvent } from "../../hooks";
-import axios from "axios";
-import config from "../../config";
-import Cog from "../../assets/icons/cog";
-import SignOut from "../../assets/icons/signOut";
-import Bin from "../../assets/icons/bin";
 
 export type PropsType = {
   handleChange: (screen: string) => void;
@@ -30,7 +31,7 @@ export default ({ handleChange }: PropsType) => {
     ]);
   };
 
-  const deleteAccount = () => {
+  const deleteAccount = async () => {
     Alert(
       "Are you sure you want to delete\nyour account?",
       "You will recieve an email to\nconfirm this change!",
@@ -38,24 +39,25 @@ export default ({ handleChange }: PropsType) => {
         {
           text: "Yes",
           onPress: async () => {
-            axios
-              .post(config.REACT_APP_API_ADDRESS + `/user/deactivate`, {
+            const res = await sendPostRequest(
+              API_ADDRESS + `/user/deactivate`,
+              {
                 authenticationKey: retrieveData?.authenticationKey,
-              })
-              .then(async () => {
-                if (signOut) signOut();
-                setTimeout(() => {
-                  sendCustomEvent(
-                    "sendAlert",
-                    "Your account has been\nsuccessfully deactivated!"
-                  );
-                }, 500);
-              })
-              .catch((err) => {});
+              },
+            );
+            if (res?.ok) {
+              if (signOut) signOut();
+              setTimeout(() => {
+                sendCustomEvent(
+                  "sendAlert",
+                  "Your account has been\nsuccessfully deactivated!",
+                );
+              }, 500);
+            }
           },
         },
         { text: "No", style: "cancel" },
-      ]
+      ],
     );
   };
 
@@ -77,7 +79,7 @@ export default ({ handleChange }: PropsType) => {
         text="Sign Out"
       />
       <LongButton
-        icon={<Bin width={18} height={18} color={"white"} fill={"white"} />}
+        icon={<Bin width={18} height={18} color="white" fill="white" />}
         handleClick={deleteAccount}
         text="Delete my Account"
         last
