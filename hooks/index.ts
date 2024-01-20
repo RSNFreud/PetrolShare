@@ -30,20 +30,15 @@ export const convertToSentenceCase = (string: string) => {
 };
 
 export const convertToDate = (date: string, time?: boolean) => {
-  const x: Date = new Date(parseInt(date), 10);
+  const x: Date = new Date(parseInt(date, 10));
   const month = x.getMonth() + 1;
-
   if (!time)
-    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${
-      month < 10 ? "0" : ""
-    }${month}/${x.getFullYear()}`;
-  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${
-    month < 10 ? "0" : ""
-  }${month}/${x.getFullYear()}, ${
-    x.getHours() > 12 ? x.getHours() - 12 : x.getHours()
-  }:${x.getMinutes() < 10 ? "0" : ""}${x.getMinutes()}${
-    x.getHours() > 12 ? "pm" : "am"
-  }`;
+    return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${month < 10 ? "0" : ""
+      }${month}/${x.getFullYear()}`;
+  return `${x.getDate() < 10 ? "0" : ""}${x.getDate()}/${month < 10 ? "0" : ""
+    }${month}/${x.getFullYear()}, ${x.getHours() > 12 ? x.getHours() - 12 : x.getHours()
+    }:${x.getMinutes() < 10 ? "0" : ""}${x.getMinutes()}${x.getHours() > 12 ? "pm" : "am"
+    }`;
 };
 
 export const getGroupData = async () => {
@@ -91,7 +86,7 @@ export const checkForUpdates = async (force?: boolean) => {
           { text: "Update", onPress: async () => await reloadAsync() },
         ],
       );
-  } catch {}
+  } catch { }
 };
 
 export const convertHexToRGBA = (hexCode: string, opacity = 1) => {

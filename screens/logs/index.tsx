@@ -90,7 +90,6 @@ export default () => {
     });
     const x = sortedData(data);
     const y = x[page];
-
     if (y[1]) setCurrentData(y[1]);
   };
 
@@ -98,7 +97,7 @@ export default () => {
     if (!retrieveData || !retrieveData?.authenticationKey) return;
     const res = await fetch(
       API_ADDRESS +
-        `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        `/logs/get?authenticationKey=${retrieveData?.authenticationKey}`
     );
     if (res.ok) {
       const data = await res.json();
@@ -124,7 +123,7 @@ export default () => {
         links={[
           {
             name: "Dashboard",
-            screenName: "",
+            screenName: "/",
           },
           {
             name: "Logs",

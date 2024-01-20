@@ -63,7 +63,7 @@ export default () => {
   const [visible, setVisible] = useState(false);
   const date = new Date();
   const [currentDate, setCurrentDate] = useState(
-    getInitialDate(date).getTime(),
+    getInitialDate(date).getTime()
   );
   const dateRef = useRef<ScrollView | null>(null);
   const [schedules, setSchedules] = useState<
@@ -90,7 +90,7 @@ export default () => {
     if (!retrieveData?.authenticationKey) return;
     fetch(
       API_ADDRESS +
-        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
     )
       .then(async (e) => {
         const data: ScheduleType[] = await e.json();
@@ -119,7 +119,7 @@ export default () => {
 
           const amountOfDays = Math.round(
             (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
-              (1000 * 3600 * 24),
+              (1000 * 3600 * 24)
           );
           if (amountOfDays <= 1) continue;
 
@@ -134,7 +134,7 @@ export default () => {
                 ?.some(
                   (e) =>
                     resetTime(new Date(e.startDate)).getTime() ===
-                    startDate.getTime(),
+                    startDate.getTime()
                 )
             )
               continue;
@@ -194,7 +194,7 @@ export default () => {
     const availableColours = randomColours.map(
       (colour) =>
         Boolean(!userColors.filter((user) => user.colour === colour).length) &&
-        colour,
+        colour
     );
     return availableColours[
       Math.floor(Math.random() * availableColours.length)
@@ -202,8 +202,7 @@ export default () => {
   };
 
   const getCurrentData = Object.entries(schedules).filter(
-    ([key, _]) =>
-      key === resetMonth(new Date(currentDate)).getTime().toString(),
+    ([key, _]) => key === resetMonth(new Date(currentDate)).getTime().toString()
   )[0];
   const getCurrentDayData =
     getCurrentData &&
@@ -280,7 +279,7 @@ export default () => {
               openPopup({ ...data, changeFuture: true });
             },
           },
-        ],
+        ]
       );
     } else openPopup(data);
   };
@@ -313,7 +312,7 @@ export default () => {
           links={[
             {
               name: "Dashboard",
-              screenName: "Home",
+              screenName: "/",
             },
             { name: "Schedules" },
           ]}
@@ -355,7 +354,7 @@ export default () => {
                               <>
                                 {schedule
                                   .sort((a, b) =>
-                                    a.startDate > b.startDate ? 1 : -1,
+                                    a.startDate > b.startDate ? 1 : -1
                                   )
                                   .map((data, count) => {
                                     const startDate = new Date(data.startDate);
@@ -363,7 +362,7 @@ export default () => {
                                     const amountOfDays = Math.round(
                                       (resetTime(endDate).getTime() -
                                         resetTime(startDate).getTime()) /
-                                        (1000 * 3600 * 24),
+                                        (1000 * 3600 * 24)
                                     );
                                     const currentDayCount =
                                       resetTime(dayObj).getTime() ===
@@ -385,7 +384,7 @@ export default () => {
                                         colour={
                                           userColors?.filter(
                                             (user) =>
-                                              user.userID === data.userID,
+                                              user.userID === data.userID
                                           )[0]?.colour
                                         }
                                         amountOfDays={amountOfDays}
@@ -441,7 +440,7 @@ export default () => {
                             )}
                           </View>
                         );
-                      }),
+                      })
                     )}
                   {!getCurrentDayData?.length && (
                     <View

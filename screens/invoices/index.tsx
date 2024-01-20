@@ -34,7 +34,7 @@ export default () => {
   const getData = async () => {
     const res = await fetch(
       API_ADDRESS +
-        `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        `/invoices/get?authenticationKey=${retrieveData?.authenticationKey}`
     );
     if (res.ok) {
       const data = await res.json();
@@ -51,10 +51,11 @@ export default () => {
           links={[
             {
               name: "Dashboard",
-              screenName: "Home",
+              screenName: "/",
             },
             {
               name: "Payments",
+              screenName: "invoices",
             },
             {
               name: "Payments #" + params["id"],
@@ -66,7 +67,7 @@ export default () => {
           links={[
             {
               name: "Dashboard",
-              screenName: "Home",
+              screenName: "/",
             },
             {
               name: "Payments",

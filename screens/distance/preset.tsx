@@ -68,7 +68,7 @@ export default () => {
     if (retrieveData) {
       const res = await fetch(
         API_ADDRESS +
-          `/preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
+          `/preset/get?authenticationKey=${retrieveData?.authenticationKey}`
       );
       if (res.ok) {
         const data = await res.json();
@@ -81,7 +81,7 @@ export default () => {
   useEffect(() => {
     if (data.selectedPreset && presets) {
       const filtered: PresetType[] = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset,
+        (e: any) => e.presetID === data.selectedPreset
       );
       setDistance(filtered[0].distance);
     } else {
@@ -117,7 +117,7 @@ export default () => {
 
     if (data.selectedPreset && presets) {
       const filtered: PresetType[] = presets.filter(
-        (e: any) => e.presetID === data.selectedPreset,
+        (e: any) => e.presetID === data.selectedPreset
       );
       distance = filtered[0].distance;
     }
@@ -219,7 +219,7 @@ export default () => {
         links={[
           {
             name: "Dashboard",
-            screenName: "Home",
+            screenName: "/",
           },
           {
             name: "Presets",
