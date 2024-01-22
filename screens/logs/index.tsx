@@ -76,8 +76,8 @@ export default () => {
       currentPage: newPage,
     });
     const x = sortedData(data);
-    const y = x[pageData.currentPage + 1];
-    if (y[1]) setCurrentData(y[1]);
+    const y = x[newPage - 1];
+    if (y && y[1]) setCurrentData(y[1]);
   };
 
   const previousPage = () => {
@@ -89,7 +89,7 @@ export default () => {
       currentPage: page,
     });
     const x = sortedData(data);
-    const y = x[page];
+    const y = x[page - 1];
     if (y[1]) setCurrentData(y[1]);
   };
 
@@ -105,10 +105,9 @@ export default () => {
       setLoaded(true);
       const length = Object.keys(data).length;
       if (length === 0) return;
-
       setPageData({
-        currentPage: length > 2 ? length - 1 : 1,
-        maxPages: length > 2 ? length - 1 : 1,
+        currentPage: length > 1 ? length : 1,
+        maxPages: length > 1 ? length : 1,
       });
 
       const x = sortedData(data)[length - 1][1];

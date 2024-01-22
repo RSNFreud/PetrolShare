@@ -72,7 +72,7 @@ export default React.memo(({ onClose }: PropsType) => {
       const data = await res.json();
       setLoading(false);
       setOpen(false);
-      navigate.navigate({ pathname: "Payments", params: { id: data } });
+      navigate.navigate({ pathname: "invoices", params: { id: data } });
     } else {
       setErrors({
         ...errors,

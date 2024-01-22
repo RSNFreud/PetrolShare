@@ -72,7 +72,7 @@ const SummaryItem = ({
 export const calculateWidth = (
   containerWidth: number,
   gap: number,
-  items: number,
+  items: number
 ) => {
   return containerWidth / items - gap / items;
 };
@@ -146,7 +146,7 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     } else {
       if (isPublic) return;
       Alert("Invalid Payment", "This payment log does not exist!");
-      navigate.navigate("Payments");
+      navigate.navigate("invoices");
     }
   };
 
@@ -176,19 +176,19 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   };
 
   const dataObj = Object.entries(
-    data.invoiceData as { fullName: string }[],
+    data.invoiceData as { fullName: string }[]
   ).filter(
     ([_, value]) =>
       value.fullName !== retrieveData?.fullName &&
-      value.fullName !== "Unaccounted Distance",
+      value.fullName !== "Unaccounted Distance"
   );
 
   const userInvoice = Object.entries(
-    data.invoiceData as { fullName: string }[],
+    data.invoiceData as { fullName: string }[]
   ).filter(([_, value]) => value.fullName === retrieveData?.fullName);
 
   const untrackedDistance = Object.entries(
-    data.invoiceData as { fullName: string }[],
+    data.invoiceData as { fullName: string }[]
   ).filter(([_, value]) => value.fullName === "Unaccounted Distance");
   const dataLength = Object.keys(data.invoiceData).length || 1;
 

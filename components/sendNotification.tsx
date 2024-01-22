@@ -15,20 +15,20 @@ Notifications.setNotificationHandler({
 
 export const schedulePushNotification = async (
   title?: string,
-  body?: string,
+  body?: string
 ) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "You've got mail! 📬",
       body: "Here is the notification body",
-      data: { route: "Payments", invoiceID: 417 },
+      data: { route: "invoices", invoiceID: 417 },
     },
     trigger: { seconds: 2 },
   });
 };
 
 export const registerForPushNotificationsAsync = async (
-  emailAddress: string,
+  emailAddress: string
 ) => {
   let token;
 
