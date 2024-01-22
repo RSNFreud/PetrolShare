@@ -14,6 +14,6 @@ export const logIn = async (email: string, password: string) => {
     }),
   });
   if (res && res.ok && res.status === 200) {
-    return (await res.json()) as StoreData;
-  } else return null;
+    return ({ valid: true, data: await res.json() as StoreData });
+  } else return { valid: false, errors: await res.text() };
 };

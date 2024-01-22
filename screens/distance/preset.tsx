@@ -134,7 +134,7 @@ export default () => {
       setLoading(false);
       deleteItem("draft");
       sendCustomEvent("sendAlert", "Distance successfully updated!");
-      navigation.navigate("Dashboard");
+      navigation.navigate("/");
     }
   };
   const openPopup = (type?: string, id?: string) => {
@@ -214,7 +214,7 @@ export default () => {
     }
   };
   return (
-    <Layout noScrollView>
+    <Layout noScrollView noBottomPadding>
       <Breadcrumbs
         links={[
           {
@@ -232,64 +232,70 @@ export default () => {
           flex: 1,
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "space-between",
-            height: "100%",
-            width: "100%",
-          }}
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 55 }}
         >
-          <View>
-            <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 25 }}>
-              Presets:
-            </Text>
-            <Button
-              style={{ backgroundColor: Colors.secondary }}
-              icon={<Plus width="11" height="11" />}
-              handleClick={() => {
-                setPresetFormData({
-                  presetID: "",
-                  presetName: "",
-                  distance: "",
-                });
-                openPopup("new");
-              }}
-              text="Add Preset"
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <View
-              style={{
-                position: "relative",
-                marginVertical: 40,
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "row",
-              }}
-            >
+          <View
+            style={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "space-between",
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <View>
               <Text
+                style={{ fontSize: 18, fontWeight: "700", marginBottom: 25 }}
+              >
+                Presets:
+              </Text>
+              <Button
+                style={{ backgroundColor: Colors.secondary }}
+                icon={<Plus width="11" height="11" />}
+                handleClick={() => {
+                  setPresetFormData({
+                    presetID: "",
+                    presetName: "",
+                    distance: "",
+                  });
+                  openPopup("new");
+                }}
+                text="Add Preset"
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <View
                 style={{
-                  textAlign: "center",
-                  height: 20,
-                  backgroundColor: Colors.background,
-                  zIndex: 2,
                   position: "relative",
-                  width: "auto",
-                  paddingHorizontal: 10,
+                  marginVertical: 40,
+                  display: "flex",
+                  justifyContent: "center",
+                  flexDirection: "row",
                 }}
               >
-                OR
-              </Text>
-              <Seperator style={{ position: "absolute", top: 10 }} />
-            </View>
-            {presets === null && (
-              <ActivityIndicator size="large" color={Colors.tertiary} />
-            )}
-            {presets && Boolean(presets.length) && (
-              <ScrollView style={{ flex: 1, marginBottom: 25 }}>
-                {presets.map((e: PresetType) => {
+                <Text
+                  style={{
+                    textAlign: "center",
+                    height: 20,
+                    backgroundColor: Colors.background,
+                    zIndex: 2,
+                    position: "relative",
+                    width: "auto",
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  OR
+                </Text>
+                <Seperator style={{ position: "absolute", top: 10 }} />
+              </View>
+              {presets === null && (
+                <ActivityIndicator size="large" color={Colors.tertiary} />
+              )}
+              {presets &&
+                Boolean(presets.length) &&
+                presets.map((e: PresetType) => {
                   return (
                     <TouchableWithoutFeedback
                       onPress={() =>
@@ -384,22 +390,26 @@ export default () => {
                     </TouchableWithoutFeedback>
                   );
                 })}
-              </ScrollView>
-            )}
-            {presets && Boolean(presets?.length === 0) && (
-              <Text style={{ fontSize: 16, lineHeight: 24 }}>
-                You have no saved presets! Create some by clicking the button
-                above.
-              </Text>
-            )}
+              {presets && Boolean(presets?.length === 0) && (
+                <Text
+                  style={{ fontSize: 16, lineHeight: 24, textAlign: "center" }}
+                >
+                  You have no saved presets! Create some by clicking the button
+                  above.
+                </Text>
+              )}
+              {Boolean(presets?.length) && (
+                <SubmitButton
+                  disabled={!distance}
+                  loading={loading}
+                  handleClick={handleSubmit}
+                  errors={errors}
+                  distance={distance}
+                />
+              )}
+            </View>
           </View>
-          <SubmitButton
-            loading={loading}
-            handleClick={handleSubmit}
-            errors={errors}
-            distance={distance}
-          />
-        </View>
+        </ScrollView>
       </View>
 
       <Popup

@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { ErrorType } from "types";
 
 import { APP_ADDRESS } from "../../constants";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 
 type PropTypes = {
   visible: boolean;
@@ -48,20 +49,14 @@ export default ({ visible, setVisible, emailAddress }: PropTypes) => {
     setFormErrors(errors);
     setLoading(true);
     try {
-      const res = await fetch(`${APP_ADDRESS}/user/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailAddress: formData.emailAddress,
-        }),
+      const res = await sendPostRequest(`${APP_ADDRESS}/user/forgot-password`, {
+        emailAddress: formData.emailAddress,
       });
-      if (res.ok) {
+      if (res?.ok) {
         setLoading(false);
         setIsEmailSent(true);
       } else {
-        setFormErrors({ emailAddress: await res.text() });
+        setFormErrors({ emailAddress: (await res?.text()) || "" });
         setLoading(false);
       }
     } catch (err) {

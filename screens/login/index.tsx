@@ -12,6 +12,7 @@ import ForgotPassword from "./forgotPassword";
 import { EMAIL_ADRESS } from "../../constants";
 import { AuthContext } from "../../hooks/context";
 import testID from "../../hooks/testID";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 
 export default () => {
   const [visible, setVisible] = useState(false);
@@ -77,17 +78,11 @@ export default () => {
 
   const resendVerification = async () => {
     try {
-      const res = await fetch(`${EMAIL_ADRESS}/resend`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailAddress: formData.emailAddress,
-        }),
+      const res = await sendPostRequest(`${EMAIL_ADRESS}/resend`, {
+        emailAddress: formData.emailAddress,
       });
 
-      if (res.ok) {
+      if (res?.ok) {
         setVerificationEmailSent(true);
       }
     } catch (err) {

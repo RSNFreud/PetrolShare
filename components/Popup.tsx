@@ -59,13 +59,13 @@ export default ({
       "keyboardDidShow",
       (e) => {
         setKeyboardPadding(e.endCoordinates.height);
-      },
+      }
     );
     const hideSubscriptionAndroid = Keyboard.addListener(
       "keyboardDidHide",
       (e) => {
         setKeyboardPadding(0);
-      },
+      }
     );
     const showSubscription = Keyboard.addListener("keyboardWillShow", (e) => {
       setKeyboardPadding(e.endCoordinates.height);
@@ -127,8 +127,8 @@ export default ({
       setOpened(false);
       setTimeout(() => {
         handleClose();
-        sendCustomEvent("popupVisible", visible);
       }, 300);
+      sendCustomEvent("popupVisible", visible);
     });
   };
 

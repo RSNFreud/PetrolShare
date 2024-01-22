@@ -3,9 +3,10 @@ import { View } from "react-native";
 
 import Button from "./button";
 import Input from "./input";
-import { API_ADDRESS, postHeaders } from "../constants";
+import { API_ADDRESS } from "../constants";
 import { Alert } from "../hooks";
 import { AuthContext } from "../hooks/context";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 
 type PropsType = {
   firstSteps?: boolean;
@@ -39,22 +40,19 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
             },
           },
           { text: "No", style: "cancel", onPress: () => setLoading(false) },
-        ],
+        ]
       );
     else updateGroup();
   };
 
   const updateGroup = async () => {
     setLoading(true);
-    const res = await fetch(API_ADDRESS + `/user/change-group`, {
-      ...postHeaders,
-      body: JSON.stringify({
-        authenticationKey: retrieveData?.authenticationKey,
-        groupID: form.data,
-      }),
+    const res = await sendPostRequest(API_ADDRESS + `/user/change-group`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      groupID: form.data,
     });
 
-    if (res.ok) {
+    if (res?.ok) {
       const data = await res.json();
       setLoading(false);
       setForm({
@@ -63,11 +61,11 @@ export default ({ firstSteps, handleComplete, handleCancel }: PropsType) => {
       });
       handleComplete(data);
     } else {
-      const data = await res.text();
+      const data = await res?.text();
       setLoading(false);
       setForm({
         ...form,
-        errors: data,
+        errors: data || "",
       });
     }
   };

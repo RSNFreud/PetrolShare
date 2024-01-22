@@ -61,10 +61,10 @@ export default ({
 
     if (data.startValue && !data.endValue) {
       handleClose(
-        "Saved your distance as a draft! Access it by clicking on Manage Distance again!",
+        "Saved your distance as a draft! Access it by clicking on Record Odometer again!"
       );
       setItem("draft", JSON.stringify(data));
-      navigate("Dashboard");
+      navigate("/");
       return;
     }
     if (distance <= 0 || isNaN(distance))

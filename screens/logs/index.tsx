@@ -107,8 +107,8 @@ export default () => {
       if (length === 0) return;
 
       setPageData({
-        currentPage: length - 1,
-        maxPages: length - 1,
+        currentPage: length > 2 ? length - 1 : 1,
+        maxPages: length > 2 ? length - 1 : 1,
       });
 
       const x = sortedData(data)[length - 1][1];

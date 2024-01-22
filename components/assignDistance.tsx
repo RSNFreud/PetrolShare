@@ -1,4 +1,4 @@
-import { API_ADDRESS, postValues } from "@constants";
+import { API_ADDRESS } from "@constants";
 import { useState, useEffect, useContext } from "react";
 
 import Dropdown, { item } from "./Dropdown";
@@ -6,6 +6,7 @@ import Popup from "./Popup";
 import Button from "./button";
 import Input from "./input";
 import { AuthContext } from "../hooks/context";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 
 type PropsType = {
   active: boolean;
@@ -43,7 +44,7 @@ export default ({
     const res = await fetch(
       API_ADDRESS +
         `/group/get-members?authenticationKey=` +
-        retrieveData?.authenticationKey,
+        retrieveData?.authenticationKey
     );
 
     if (res.ok) {
@@ -52,7 +53,7 @@ export default ({
         data.map((e: { fullName: string; userID: string }) => ({
           name: e.fullName,
           value: e.userID,
-        })),
+        }))
       );
     } else setLoading(false);
   };
@@ -79,17 +80,14 @@ export default ({
     if (Object.values(errors).length != 0 || !values.distance || !values.name)
       return;
     setLoading(true);
-    const res = await fetch(API_ADDRESS + `/invoices/assign`, {
-      ...postValues,
-      body: JSON.stringify({
-        authenticationKey: retrieveData?.authenticationKey,
-        userID: values.name,
-        distance: values.distance,
-        invoiceID,
-      }),
+    const res = await sendPostRequest(API_ADDRESS + `/invoices/assign`, {
+      authenticationKey: retrieveData?.authenticationKey,
+      userID: values.name,
+      distance: values.distance,
+      invoiceID,
     });
 
-    if (res.ok) {
+    if (res?.ok) {
       setLoading(false);
       handleUpdate();
     } else {

@@ -59,17 +59,14 @@ export const DashboardHeader = ({
   distance,
 }: PropsType) => {
   const copyToClipboard = async () => {
-    console.log("====================================");
-    console.log("clicked");
-    console.log("====================================");
     Clipboard.setStringAsync(
       groupID
         ? `https://petrolshare.freud-online.co.uk/short/referral?groupID=${groupID}`
-        : "",
+        : ""
     );
     Alert(
       "Information:",
-      "Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!",
+      "Copied the group ID to your\nclipboard - feel free to share it to invite other members to your group!"
     );
   };
 
@@ -83,7 +80,7 @@ export const DashboardHeader = ({
               onPress={() =>
                 Alert(
                   "Group ID",
-                  "This unique ID is used to identify your group. Share it with others to invite them to your group.",
+                  "This unique ID is used to identify your group. Share it with others to invite them to your group."
                 )
               }
             >

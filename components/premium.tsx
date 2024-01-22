@@ -1,4 +1,4 @@
-import { API_ADDRESS, postHeaders, postValues } from "@constants";
+import { API_ADDRESS } from "@constants";
 import { useContext, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -12,15 +12,16 @@ import Popup from "./Popup";
 import Button from "./button";
 import { Text } from "./text";
 import Colors from "../constants/Colors";
-import { Alert, sendCustomEvent } from "../hooks";
+import { Alert } from "../hooks";
 import { AuthContext } from "../hooks/context";
+import { sendPostRequest } from "hooks/sendFetchRequest";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default () => {
-  const [premium, setPremium] = useState<null | boolean>(null);
   const [showPremiumInfo, setShowPremiumInfo] = useState(false);
-  const { retrieveData, isLoading, setPremiumStatus, updateData } =
-    useContext(AuthContext);
+  const { retrieveData, updateData } = useContext(AuthContext);
   const heightAnim = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   useEffect(() => {
@@ -30,43 +31,33 @@ export default () => {
         if (
           typeof customerInfo.entitlements.active["premium"] !== "undefined"
         ) {
-          setPremium(true);
+          subscribe();
         } else if (
           typeof customerInfo.entitlements.active["premium"] === "undefined" &&
-          premium
+          retrieveData.premium
         ) {
-          setPremium(false);
-          if (setPremiumStatus && typeof premium === "boolean")
-            setPremiumStatus(false);
           unsubscribe();
         }
       });
-  }, [premium]);
+  }, [retrieveData?.groupID]);
 
   useEffect(() => {
-    if (setPremiumStatus && typeof premium === "boolean")
-      setPremiumStatus(premium);
-    if (!premium) expand();
+    if (!retrieveData?.premium) expand();
     else minimise();
-    if (!retrieveData?.premium && premium) {
-      subscribe();
-    }
-  }, [premium]);
+  }, [retrieveData?.premium]);
 
   const subscribe = async () => {
     try {
-      const res = await fetch(API_ADDRESS + "/group/subscribe", {
-        ...postHeaders,
-        body: JSON.stringify({
-          authenticationKey: retrieveData?.authenticationKey,
-        }),
+      const res = await sendPostRequest(API_ADDRESS + "/group/subscribe", {
+        authenticationKey: retrieveData?.authenticationKey,
       });
 
-      if (res.ok) {
+      if (res?.ok) {
+        if (updateData) updateData();
         setTimeout(() => {
           Alert(
             "Premium Applied",
-            "Your group has succesfully activated premium membership! Thank you for joining PetrolShare",
+            "Your group has succesfully activated premium membership! Thank you for joining PetrolShare"
           );
         }, 400);
       }
@@ -75,11 +66,8 @@ export default () => {
 
   const unsubscribe = async () => {
     try {
-      await fetch(API_ADDRESS + "/group/unsubscribe", {
-        ...postHeaders,
-        body: JSON.stringify({
-          authenticationKey: retrieveData?.authenticationKey,
-        }),
+      await sendPostRequest(API_ADDRESS + "/group/unsubscribe", {
+        authenticationKey: retrieveData?.authenticationKey,
       });
     } catch {}
   };
@@ -87,37 +75,20 @@ export default () => {
   useEffect(() => {
     if (Platform.OS === "web") return;
     Purchases.addCustomerInfoUpdateListener((info) => {
-      if (info.entitlements.active["premium"]?.isActive) setPremium(true);
+      if (info.entitlements.active["premium"]?.isActive) subscribe();
     });
   }, []);
-
-  useEffect(() => {
-    if (isLoading) return;
-    if (premium !== null) sendCustomEvent("closeSplash");
-    if (retrieveData?.premium) setPremium(true);
-    else setPremium(false);
-  }, [isLoading]);
 
   const openPayment = async () => {
     if (Platform.OS === "web") return;
     const product = await Purchases.getProducts(
       ["premium_subscription"],
-      Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION,
+      Purchases.PRODUCT_CATEGORY.NON_SUBSCRIPTION
     );
     Purchases.purchaseStoreProduct(product[0], null)
       .then(() => {
         setShowPremiumInfo(false);
-        fetch(API_ADDRESS + "/group/subscribe", {
-          ...postValues,
-          body: JSON.stringify({
-            authenticationKey: retrieveData?.authenticationKey,
-          }),
-        })
-          .then(async () => {
-            updateData && updateData();
-          })
-          .catch(() => {});
-        setPremium(true);
+        subscribe();
       })
       .catch((err) => {
         if (err.message === "The payment is pending.") {
@@ -125,7 +96,7 @@ export default () => {
           setTimeout(() => {
             Alert(
               "Your payment is being processed",
-              "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!",
+              "Thank you for choosing to upgrade! Your payment is currently being processed and will be applied automatically when complete!"
             );
           }, 700);
         }
@@ -134,7 +105,7 @@ export default () => {
 
   const expand = () => {
     Animated.timing(heightAnim, {
-      toValue: 68,
+      toValue: 68 + insets.top,
       delay: 400,
       duration: 500,
       useNativeDriver: false,
@@ -158,6 +129,7 @@ export default () => {
         style={{
           alignItems: "center",
           backgroundColor: Colors.tertiary,
+          paddingTop: insets.top,
           maxHeight: heightAnim,
         }}
       >

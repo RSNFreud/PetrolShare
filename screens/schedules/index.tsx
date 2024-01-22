@@ -166,7 +166,7 @@ export default () => {
       });
   };
   useEffect(() => {
-    if (!isPremium) return navigation.navigate("Dashboard");
+    if (!isPremium) return navigation.navigate("/");
   }, [isPremium]);
 
   useEffect(() => {

@@ -6,11 +6,12 @@ import RadioButton from "./RadioButton";
 import { Box } from "./Themed";
 import Button from "./button";
 import { Text } from "./text";
-import { API_ADDRESS, postValues } from "../constants";
+import { API_ADDRESS } from "../constants";
 import { Alert, sendCustomEvent } from "../hooks";
 import { AuthContext } from "../hooks/context";
 import generateGroupID from "../hooks/generateGroupID";
 import { getAllCurrencies } from "../hooks/getCurrencies";
+import { sendPostRequest } from "hooks/sendFetchRequest";
 
 type PropsType = {
   handleComplete: (e?: string, message?: string) => void;
@@ -87,34 +88,28 @@ export default ({
           text: "Yes",
           onPress: async () => {
             setLoading(true);
-            const res = await fetch(API_ADDRESS + `/distance/reset`, {
-              ...postValues,
-              body: JSON.stringify({
-                authenticationKey: retrieveData?.authenticationKey,
-              }),
+            const res = await sendPostRequest(API_ADDRESS + `/distance/reset`, {
+              authenticationKey: retrieveData?.authenticationKey,
             });
-            if (res.ok) {
+            if (res?.ok) {
               updateGroup();
             }
           },
         },
         { text: "No", style: "cancel" },
-      ],
+      ]
     );
   };
 
   const createGroup = async () => {
     const groupID = generateGroupID();
     setLoading(true);
-    const res = await fetch(API_ADDRESS + "/group/create", {
-      ...postValues,
-      body: JSON.stringify({
-        authenticationKey: retrieveData?.authenticationKey,
-        groupID,
-      }),
+    const res = await sendPostRequest(API_ADDRESS + "/group/create", {
+      authenticationKey: retrieveData?.authenticationKey,
+      groupID,
     });
 
-    if (res.ok) {
+    if (res?.ok) {
       const { groupID, message } = await res.json();
       updateGroup(groupID, message);
     }
@@ -123,17 +118,14 @@ export default ({
   const updateGroup = async (groupID?: string, message?: string) => {
     setLoading(true);
 
-    const res = await fetch(API_ADDRESS + "/group/update", {
-      ...postValues,
-      body: JSON.stringify({
-        authenticationKey: retrieveData?.authenticationKey,
-        distance: data.distance,
-        petrol: data.petrol,
-        currency: data.currency,
-      }),
+    const res = await sendPostRequest(API_ADDRESS + "/group/update", {
+      authenticationKey: retrieveData?.authenticationKey,
+      distance: data.distance,
+      petrol: data.petrol,
+      currency: data.currency,
     });
 
-    if (res.ok) {
+    if (res?.ok) {
       setLoading(false);
       if (!newGroup)
         sendCustomEvent("sendAlert", "Group settings successfully updated!");

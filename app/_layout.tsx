@@ -93,16 +93,15 @@ export const App = () => {
   const store = React.useMemo(
     () => ({
       signIn: async ({ emailAddress, password }) => {
-        const data = await logIn(emailAddress, password);
-        if (data) {
-          setUserData(data);
+        const res = await logIn(emailAddress, password);
+        if (res.valid && res.data) {
+          setUserData(res.data);
           sendCustomEvent("openSplash");
           setTimeout(() => {
             sendCustomEvent("closeSplash");
           }, 500);
           return { valid: true };
-        } else
-          return { valid: false, message: "Invalid username or password!" };
+        } else return { valid: false, message: res.errors };
       },
       register: async (e: any) => {
         setUserData(e);
@@ -125,7 +124,7 @@ export const App = () => {
       },
       isLoggedIn: Boolean(Object.keys(userData).length),
     }),
-    [userData, loading],
+    [userData, loading]
   ) as AuthContextType;
 
   useEffect(() => {
@@ -163,7 +162,7 @@ export const App = () => {
     try {
       const data = await fetch(
         `${API_ADDRESS}/user/verify?authenticationKey=${parsed.authenticationKey}`,
-        { signal: controller.signal },
+        { signal: controller.signal }
       );
       if (data && data.status === 200) {
         const userData = await data.json();
@@ -198,8 +197,7 @@ export const App = () => {
   const fetchData = async () => {
     if (!userData.authenticationKey) return;
     const res = await fetch(
-      API_ADDRESS +
-        `/user/get?authenticationKey=${userData?.authenticationKey}`,
+      API_ADDRESS + `/user/get?authenticationKey=${userData?.authenticationKey}`
     );
 
     if (res.ok) {
@@ -290,10 +288,10 @@ export const App = () => {
           }}
         >
           <AuthContext.Provider value={store}>
-            <Header />
             {store.isLoggedIn && <Premium />}
+            <Header />
             <Slot />
-            {!popupVisible && <AlertBox />}
+            <AlertBox />
             <Toast config={ToastConfig} />
           </AuthContext.Provider>
           <StatusBar

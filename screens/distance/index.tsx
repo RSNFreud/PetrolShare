@@ -32,30 +32,30 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
     setTitle(title);
   };
 
-  useEffect(() => {
-    const getDraft = async () => {
-      const draft = getItem("draft");
+  const getDraft = async () => {
+    const draft = getItem("draft");
 
-      if (draft != null) {
-        setData({ ...JSON.parse(draft) });
-        Toast.show({
-          type: "default",
-          text1: "Recovered draft data!",
-        });
-        setIsDraft(true);
-        openPopup(
-          <Odometer
-            previousData={{ ...JSON.parse(draft) }}
-            handleClose={() => handleClose()}
-          />,
-          "Record Odometer",
-        );
-      } else {
-        setVisible(false);
-      }
-    };
-    getDraft();
-  }, []);
+    if (draft && draft != null) {
+      setData({ ...JSON.parse(draft) });
+      Toast.show({
+        type: "default",
+        text1: "Recovered draft data!",
+      });
+      setIsDraft(true);
+      openPopup(
+        <Odometer
+          previousData={{ ...JSON.parse(draft) }}
+          handleClose={() => handleClose()}
+        />,
+        "Record Odometer"
+      );
+    } else {
+      openPopup(
+        <Odometer previousData={data} handleClose={handleClose} />,
+        "Record Odometer"
+      );
+    }
+  };
 
   const resetDistance = async () => {
     Alert(
@@ -75,7 +75,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
           },
         },
         { text: "No", style: "cancel" },
-      ],
+      ]
     );
   };
   const sendAlert = (text: string) => {
@@ -88,7 +88,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
   const handleClose = (alert?: string) => {
     if (alert) sendAlert(alert);
 
-    if (isDraft === false) {
+    if (!isDraft) {
       if (onUpdate) onUpdate();
       return setVisible(false);
     }
@@ -99,6 +99,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
           deleteItem("draft");
           setVisible(false);
           setIsDraft(false);
+          sendAlert("Draft deleted!");
           setData({ startValue: "", endValue: "" });
         },
       },
@@ -118,19 +119,14 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         handleClick={() =>
           openPopup(
             <Manual handleClose={handleClose} />,
-            "Add Specfic Distance",
+            "Add Specfic Distance"
           )
         }
         text="Add Specific Distance"
         icon={<Keypad width="20" height="20" />}
       />
       <LongButton
-        handleClick={() =>
-          openPopup(
-            <Odometer previousData={data} handleClose={handleClose} />,
-            "Record Odometer",
-          )
-        }
+        handleClick={() => getDraft()}
         text="Record Odometer"
         icon={<OdomoterIcon width="20" height="20" />}
       />
@@ -146,7 +142,7 @@ export default ({ onUpdate }: { onUpdate?: () => void }) => {
         handleClick={() =>
           openPopup(
             <AssignDistance handleClose={handleClose} />,
-            "Assign Distance",
+            "Assign Distance"
           )
         }
       />

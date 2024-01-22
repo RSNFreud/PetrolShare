@@ -12,11 +12,13 @@ type PropsType = {
   handleClick: () => void;
   errors: string;
   distance: string;
+  disabled?: boolean;
 };
 
 export default ({
   loading,
   handleClick,
+  disabled,
   errors,
   distance,
   text,
@@ -37,6 +39,7 @@ export default ({
   return (
     <>
       <Button
+        disabled={disabled}
         loading={loading}
         handleClick={handleClick}
         variant={style}

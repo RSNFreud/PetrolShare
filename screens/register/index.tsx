@@ -151,7 +151,7 @@ export default React.memo(() => {
         />
         <Button
           variant="ghost"
-          handleClick={() => navigation.navigate("Login")}
+          handleClick={() => navigation.navigate("login")}
           text="Cancel"
         />
       </View>
@@ -182,7 +182,7 @@ export default React.memo(() => {
           style={{ marginBottom: 20 }}
           handleClick={() =>
             validateStage(["password", "confirmPassword"], () =>
-              handleRegister(),
+              handleRegister()
             )
           }
           text="Submit"
@@ -208,7 +208,7 @@ export default React.memo(() => {
         </>
       </Box>
       <Button
-        handleClick={() => navigation.navigate("Login")}
+        handleClick={() => navigation.navigate("login")}
         style={{ marginTop: 25 }}
         text="Back to Login"
       />

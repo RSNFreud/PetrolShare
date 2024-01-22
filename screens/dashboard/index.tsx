@@ -28,7 +28,7 @@ export default () => {
     assignedBy: string;
     id: string;
   }>();
-  const [currentScreen, setCurrentScreen] = useState<string>("Settings");
+  const [currentScreen, setCurrentScreen] = useState<string>("");
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default () => {
               setItem("referalCode", "");
             },
           },
-        ],
+        ]
       );
       navigation.setParams({ groupID: "" });
     }, 400);
@@ -108,7 +108,7 @@ export default () => {
     try {
       const res = await fetch(
         API_ADDRESS +
-          `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`,
+          `/distance/check-distance?authenticationKey=${retrieveData?.authenticationKey}`
       );
 
       if (res.ok) {
