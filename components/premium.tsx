@@ -47,6 +47,7 @@ export default () => {
   }, [retrieveData?.premium]);
 
   const subscribe = async () => {
+    if (retrieveData?.premium) return;
     try {
       const res = await sendPostRequest(API_ADDRESS + "/group/subscribe", {
         authenticationKey: retrieveData?.authenticationKey,
@@ -129,7 +130,7 @@ export default () => {
         style={{
           alignItems: "center",
           backgroundColor: Colors.tertiary,
-          paddingTop: insets.top,
+          paddingTop: heightAnim > 0 ? insets.top : 0,
           maxHeight: heightAnim,
         }}
       >

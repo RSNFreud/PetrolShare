@@ -1,6 +1,6 @@
 import { StackActions } from "@react-navigation/native";
 import { useNavigation, usePathname } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -19,6 +19,10 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   const [settingsVisible, setSettingsVisible] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    setSettingsVisible(false);
+  }, [isLoggedIn]);
+
   const handleClose = () => {
     const delayedAlert = getItem("delayedAlert");
 
@@ -33,6 +37,10 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
     if (isLoggedIn && pathname === "/") return Colors.secondary;
     if (pathname.includes("schedule")) return Colors.primary;
     return Colors.background;
+  };
+
+  const openSettings = () => {
+    setSettingsVisible(true);
   };
 
   return (
@@ -75,7 +83,7 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
         <>
           <TouchableBase
             analyticsLabel="Settings"
-            handleClick={() => setSettingsVisible(true)}
+            handleClick={openSettings}
             style={{
               paddingHorizontal: 0,
               position: "absolute",
