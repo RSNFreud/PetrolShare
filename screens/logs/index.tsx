@@ -30,7 +30,6 @@ export default () => {
   const [data, setData] = useState<{ [key: string]: LogsType } | object>({});
   const [activeSession, setActiveSession] = useState(0);
   const [loaded, setLoaded] = useState(false);
-  const [currentData, setCurrentData] = useState<LogsType | null>(null);
   const [summary, setSummary] = useState({});
   const [pageData, setPageData] = useState({
     currentPage: 0,
@@ -44,13 +43,13 @@ export default () => {
 
   useEffect(() => {
     getSummary();
-  }, [currentData]);
+  }, [pageData]);
 
   const getSummary = async () => {
-    if (currentData && currentData["logs"]) {
+    if (currentData) {
       const sum: { [key: string]: number } = {};
 
-      currentData["logs"].map((e) => {
+      currentData?.["logs"].map((e) => {
         if (!(e.fullName in sum)) sum[e.fullName] = 0;
         if (e.pending) return;
         sum[e.fullName] = sum[e.fullName] + e.distance;
@@ -62,11 +61,6 @@ export default () => {
     }
   };
 
-  const sortedData = (data: { [key: string]: LogsType }) =>
-    Object.entries(data).sort(([, a], [, b]) => {
-      return parseInt(a.sessionStart, 10) - parseInt(b.sessionStart, 10);
-    });
-
   const nextPage = () => {
     if (!data || !currentData?.sessionStart) return;
     setLoaded(false);
@@ -75,9 +69,6 @@ export default () => {
       ...pageData,
       currentPage: newPage,
     });
-    const x = sortedData(data);
-    const y = x[newPage - 1];
-    if (y && y[1]) setCurrentData(y[1]);
   };
 
   const previousPage = () => {
@@ -88,9 +79,6 @@ export default () => {
       ...pageData,
       currentPage: page,
     });
-    const x = sortedData(data);
-    const y = x[page - 1];
-    if (y[1]) setCurrentData(y[1]);
   };
 
   const getLogs = async () => {
@@ -103,18 +91,16 @@ export default () => {
       const data = await res.json();
       setData(data);
       setLoaded(true);
-      const length = Object.keys(data).length;
+      const length = Object.keys(data).length || 1;
       if (length === 0) return;
       setPageData({
         currentPage: length > 1 ? length : 1,
         maxPages: length > 1 ? length : 1,
       });
-
-      const x = sortedData(data)[length - 1][1];
-      setActiveSession(length - 1);
-      if (x) setCurrentData(x);
     }
   };
+
+  const currentData: LogsType = Object.values(data)[pageData.currentPage - 1];
 
   return (
     <Layout noScrollView noBottomPadding>
@@ -129,6 +115,7 @@ export default () => {
           },
         ]}
       />
+
       <View style={{ flex: 1, display: "flex" }}>
         {pageData.currentPage >= 1 && (
           <>
@@ -139,7 +126,7 @@ export default () => {
               hasNext={pageData.currentPage !== pageData.maxPages}
               hasPrevious={pageData.currentPage > 1 && pageData.maxPages > 1}
             />
-            {loaded && Boolean(Object.keys(summary).length) && (
+            {loaded && Boolean(Object.keys(summary)?.length) && (
               <>
                 <Summary summary={summary} />
                 <ScrollView
@@ -161,7 +148,7 @@ export default () => {
                 </ScrollView>
               </>
             )}
-            {currentData && !currentData["logs"].length && (
+            {currentData && !currentData["logs"]?.length && (
               <Text style={{ fontSize: 16, textAlign: "center" }}>
                 There are no logs available to display
               </Text>
