@@ -2,25 +2,17 @@ import { Text } from "@components/text";
 import { TouchableWithoutFeedback, View } from "react-native";
 
 import Colors from "../../../constants/Colors";
-
-type PropsType = {
-  dayObj: {
-    date: Date;
-    active: boolean;
-  };
-  setCurrentDate: (date: number) => void;
-  currentDate: number;
-  userColours: { date: number; dots: string[] }[];
-};
+import { DayProps } from "react-native-calendars/src/calendar/day";
+import { DateData } from "react-native-calendars";
 
 export default ({
-  dayObj,
-  setCurrentDate,
-  currentDate,
-  userColours,
-}: PropsType) => {
-  const getDayString = (date: Date) => {
-    const day = date.getDay();
+  state,
+  marking,
+  date,
+}: DayProps & {
+  date?: DateData;
+}) => {
+  const getDayString = (day: number) => {
     switch (day) {
       case 0:
         return "Sun";
@@ -38,85 +30,38 @@ export default ({
         return "Sat";
     }
   };
-
-  const getDots = userColours?.filter(
-    (colours) => colours.date === dayObj.date.getTime(),
-  );
   return (
-    <TouchableWithoutFeedback
-      touchSoundDisabled
-      key={dayObj.date.toString()}
-      onPress={() => setCurrentDate(dayObj.date.getTime())}
-    >
-      <View>
+    <View>
+      <View
+        style={{
+          gap: 2,
+          justifyContent: "center",
+          opacity: state !== "disabled" ? 1 : 0.5,
+          width: 32,
+        }}
+      >
         <View
           style={{
-            gap: 2,
-            justifyContent: "center",
-            opacity: dayObj.date.getTime() === currentDate ? 1 : 0.5,
             width: 32,
+            height: 32,
+            borderRadius: 100,
+            backgroundColor:
+              state === "selected" ? Colors.tertiary : "transparent",
+            justifyContent: "center",
+            alignContent: "center",
           }}
         >
           <Text
             style={{
-              fontWeight: "300",
+              fontWeight: "bold",
+              fontSize: 18,
               textAlign: "center",
             }}
           >
-            {getDayString(dayObj.date)}
+            {new Date(date?.timestamp || "").getDate()}
           </Text>
-          <View
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 100,
-              backgroundColor:
-                currentDate === dayObj.date.getTime()
-                  ? Colors.tertiary
-                  : "transparent",
-              justifyContent: "center",
-              alignContent: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 18,
-                textAlign: "center",
-              }}
-            >
-              {dayObj.date.getDate()}
-            </Text>
-          </View>
         </View>
-        {dayObj.active && Boolean(dayObj.date.getTime() !== currentDate) && (
-          <View
-            style={{
-              position: "absolute",
-              bottom: -3,
-              left: 0,
-              justifyContent: "center",
-              flexDirection: "row",
-              width: "100%",
-              gap: 3,
-            }}
-          >
-            {getDots.map(({ dots }) =>
-              dots.map((colour) => (
-                <View
-                  key={colour}
-                  style={{
-                    width: 5,
-                    height: 5,
-                    borderRadius: 100,
-                    backgroundColor: colour,
-                  }}
-                />
-              )),
-            )}
-          </View>
-        )}
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };

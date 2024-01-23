@@ -1,97 +1,15 @@
-import { TouchableBase } from "@components/button";
-import DateTimePicker from "@components/dateTimePicker";
-import { useEffect, useRef } from "react";
-import { View, ScrollView } from "react-native";
+import { Text } from "@components/text";
+import { View } from "react-native";
 
-import DateHeaderItem from "./dateHeaderItem";
-import { ScheduleType, resetMonth } from "..";
-import ChevronRight from "../../../assets/icons/chevronRight";
 import Colors from "../../../constants/Colors";
 
 export type UserColourType = { userID: string; colour: string };
 
 type PropsType = {
-  changeMonth: (e: "forwards" | "back") => void;
-  backDisabled: boolean;
   currentDate: number;
-  currentData: [string, Map<number, ScheduleType[]>[]];
-  setCurrentDate: (date: number) => void;
-  userColours: UserColourType[];
 };
 
-export default ({
-  changeMonth,
-  backDisabled,
-  currentDate,
-  currentData,
-  userColours,
-  setCurrentDate,
-}: PropsType) => {
-  const dateRef = useRef<ScrollView | null>(null);
-
-  const setInitialScroll = (animate: boolean = false) => {
-    const ref = dateRef.current;
-    const date = new Date(currentDate);
-    if (!ref) return;
-    ref.scrollTo({
-      y: 0,
-      x: (date.getDate() - 4) * 32 + (date.getDate() - 4) * 25,
-      animated: animate,
-    });
-  };
-
-  const getDaysInMonth = () => {
-    let date = resetMonth(new Date(currentDate));
-    const targetMonth = date.getMonth();
-    const dates = [];
-
-    while (date.getMonth() === targetMonth) {
-      const hasData = currentData
-        ? Boolean(
-            currentData[1].filter(([day, _]) => day[0] === date.getTime())
-              .length,
-          )
-        : false;
-      dates.push({ date: new Date(date), active: hasData });
-      date = new Date(date.setDate(date.getDate() + 1));
-    }
-    return dates;
-  };
-
-  const getDots = () => {
-    if (!currentData || !userColours) return [];
-    const dotsPerDay: { date: number; dots: string[] }[] = [];
-    const [, data] = currentData;
-    data.map((e) =>
-      [...e].map(([date, schedule]) => {
-        dotsPerDay.push({
-          date,
-          dots: removeDuplicates(
-            schedule.map(
-              (q) =>
-                userColours?.filter((user) => user.userID === q.userID)[0]
-                  .colour,
-            ),
-          ),
-        });
-      }),
-    );
-    return dotsPerDay;
-  };
-
-  const removeDuplicates = (array: string[]) => {
-    const arr: string[] = [];
-    array.map((e) => {
-      if (arr.includes(e)) return;
-      arr.push(e);
-    });
-    return arr;
-  };
-
-  useEffect(() => {
-    setInitialScroll(true);
-  }, [currentDate]);
-
+export default ({ currentDate }: PropsType) => {
   return (
     <View
       style={{
@@ -108,73 +26,23 @@ export default ({
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "center",
           width: "100%",
           paddingHorizontal: 20,
         }}
       >
-        <TouchableBase
-          handleClick={() => changeMonth("back")}
+        <Text
           style={{
-            opacity: backDisabled ? 0.5 : 1,
-            width: 25,
-            height: 25,
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          disabled={Boolean(backDisabled)}
-        >
-          <ChevronRight
-            width="12"
-            height="10"
-            style={{ transform: [{ rotate: "180deg" }] }}
-          />
-        </TouchableBase>
-        <DateTimePicker
-          mode="date"
-          value={new Date(currentDate)}
-          setValue={(e) => setCurrentDate(new Date(e).getTime())}
-          format={{ month: "long", year: "numeric" }}
-          textStyle={{ fontWeight: "bold" }}
-        />
-        <TouchableBase
-          handleClick={() => changeMonth("forwards")}
-          style={{
-            width: 25,
-            height: 25,
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-            alignItems: "center",
+            fontWeight: "400",
+            fontSize: 16,
           }}
         >
-          <ChevronRight width="12" height="10" />
-        </TouchableBase>
+          {new Date(currentDate).toLocaleDateString("en-gb", {
+            month: "long",
+            year: "numeric",
+          })}
+        </Text>
       </View>
-      <ScrollView
-        snapToInterval={32 + 15}
-        ref={dateRef}
-        onLayout={() => setInitialScroll()}
-        style={{ width: "100%" }}
-        horizontal
-        contentContainerStyle={{
-          paddingHorizontal: 25,
-          paddingBottom: 20,
-          gap: 25,
-        }}
-      >
-        {getDaysInMonth()?.map((dayObj, count) => (
-          <DateHeaderItem
-            userColours={getDots()}
-            dayObj={dayObj}
-            key={`${dayObj.date}-${count}`}
-            setCurrentDate={(e) => setCurrentDate(e)}
-            currentDate={currentDate}
-          />
-        ))}
-      </ScrollView>
     </View>
   );
 };

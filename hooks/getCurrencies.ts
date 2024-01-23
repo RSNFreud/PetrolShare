@@ -1,16 +1,29 @@
-import axios from "axios";
 import { setItem } from "hooks";
 
+type CurrencyType = {
+  currencies: {
+    [code: string]: {
+      name: string, symbol: string
+    }
+  }
+}
+
 export const getAllCurrencies = async () => {
-  const { data } = await axios.get(
+  const res = await fetch(
     "https://restcountries.com/v3.1/all?fields=currencies",
   );
 
-  const cleanList: any = {};
+  const cleanList: {
+    [code: string]: {
+      name: string, symbol: string
+    }
+  } = {};
+  if (!res.ok) return cleanList
 
-  data.map((e: { currencies: object }) => {
-    Object.keys(e.currencies).map((key: string) => {
-      const q: { symbol: string; name: string } = e.currencies[key];
+  const data: CurrencyType[] = await res.json()
+  data.map((e) => {
+    Object.keys(e.currencies).map((key) => {
+      const q = e.currencies[key];
       cleanList[key] = { ...q };
     });
   });

@@ -21,6 +21,13 @@ import { API_ADDRESS } from "../../constants";
 import Colors from "../../constants/Colors";
 import { Alert } from "../../hooks";
 import { AuthContext } from "../../hooks/context";
+import {
+  Agenda,
+  DateData,
+  AgendaEntry,
+  AgendaSchedule,
+} from "react-native-calendars";
+import DateHeaderItem from "./home/dateHeaderItem";
 
 export type ScheduleType = {
   allDay: boolean;
@@ -84,97 +91,97 @@ export default () => {
 
   const updateData = () => {
     setVisible(false);
-    getSchedules();
+    // getSchedules();
   };
-  const getSchedules = () => {
-    if (!retrieveData?.authenticationKey) return;
-    fetch(
-      API_ADDRESS +
-        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
-    )
-      .then(async (e) => {
-        const data: ScheduleType[] = await e.json();
-        setDataLoaded(true);
-        const splitSchedules: Map<number, ScheduleType[]> = new Map();
-        for (const schedule of data) {
-          const startDate = resetTime(schedule.startDate);
-          const endDate = resetTime(schedule.endDate);
-          if (
-            !userColors?.length ||
-            !userColors?.filter((user) => user.userID === schedule.userID)
-              .length
-          ) {
-            setUserColors((colours) => [
-              ...colours,
-              {
-                userID: schedule.userID,
-                colour: `${randomColour()}`,
-              },
-            ]);
-          }
+  // const getSchedules = () => {
+  //   if (!retrieveData?.authenticationKey) return;
+  //   fetch(
+  //     API_ADDRESS +
+  //       `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
+  //   )
+  //     .then(async (e) => {
+  //       const data: ScheduleType[] = await e.json();
+  //       setDataLoaded(true);
+  //       const splitSchedules: Map<number, ScheduleType[]> = new Map();
+  //       for (const schedule of data) {
+  //         const startDate = resetTime(schedule.startDate);
+  //         const endDate = resetTime(schedule.endDate);
+  //         if (
+  //           !userColors?.length ||
+  //           !userColors?.filter((user) => user.userID === schedule.userID)
+  //             .length
+  //         ) {
+  //           setUserColors((colours) => [
+  //             ...colours,
+  //             {
+  //               userID: schedule.userID,
+  //               colour: `${randomColour()}`,
+  //             },
+  //           ]);
+  //         }
 
-          if (!splitSchedules.has(startDate.getTime()))
-            splitSchedules.set(startDate.getTime(), []);
-          splitSchedules.get(startDate.getTime())!.push({ ...schedule });
+  //         if (!splitSchedules.has(startDate.getTime()))
+  //           splitSchedules.set(startDate.getTime(), []);
+  //         splitSchedules.get(startDate.getTime())!.push({ ...schedule });
 
-          const amountOfDays = Math.round(
-            (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
-              (1000 * 3600 * 24)
-          );
-          if (amountOfDays <= 1) continue;
+  //         const amountOfDays = Math.round(
+  //           (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
+  //             (1000 * 3600 * 24)
+  //         );
+  //         if (amountOfDays <= 1) continue;
 
-          for (let i = 0; i < amountOfDays; i++) {
-            let newDate = resetTime(startDate);
-            newDate = new Date(newDate.setDate(newDate.getDate() + i));
+  //         for (let i = 0; i < amountOfDays; i++) {
+  //           let newDate = resetTime(startDate);
+  //           newDate = new Date(newDate.setDate(newDate.getDate() + i));
 
-            // Remove possible duplicates
-            if (
-              splitSchedules
-                .get(newDate.getTime())
-                ?.some(
-                  (e) =>
-                    resetTime(new Date(e.startDate)).getTime() ===
-                    startDate.getTime()
-                )
-            )
-              continue;
-            if (!splitSchedules.has(newDate.getTime()))
-              splitSchedules.set(newDate.getTime(), []);
-            splitSchedules.get(newDate.getTime())!.push({ ...schedule });
-          }
-        }
+  //           // Remove possible duplicates
+  //           if (
+  //             splitSchedules
+  //               .get(newDate.getTime())
+  //               ?.some(
+  //                 (e) =>
+  //                   resetTime(new Date(e.startDate)).getTime() ===
+  //                   startDate.getTime()
+  //               )
+  //           )
+  //             continue;
+  //           if (!splitSchedules.has(newDate.getTime()))
+  //             splitSchedules.set(newDate.getTime(), []);
+  //           splitSchedules.get(newDate.getTime())!.push({ ...schedule });
+  //         }
+  //       }
 
-        const monthSorted: Record<number, Map<number, ScheduleType[]>[]> = {};
-        const sorted = [...splitSchedules.entries()].sort(([a], [b]) => a - b);
-        sorted.map(([key, value]) => {
-          const month = resetMonth(new Date(key)).getTime();
-          const map = new Map().set(key, value);
+  //       const monthSorted: Record<number, Map<number, ScheduleType[]>[]> = {};
+  //       const sorted = [...splitSchedules.entries()].sort(([a], [b]) => a - b);
+  //       sorted.map(([key, value]) => {
+  //         const month = resetMonth(new Date(key)).getTime();
+  //         const map = new Map().set(key, value);
 
-          if (
-            !Object.keys(monthSorted).filter((e) => e === month.toString())
-              .length
-          )
-            monthSorted[month] = [];
-          monthSorted[month].push(map);
-        });
+  //         if (
+  //           !Object.keys(monthSorted).filter((e) => e === month.toString())
+  //             .length
+  //         )
+  //           monthSorted[month] = [];
+  //         monthSorted[month].push(map);
+  //       });
 
-        setSchedules(monthSorted);
-      })
-      .catch((err) => {
-        console.log(err);
-        setDataLoaded(true);
-      });
-  };
+  //       setSchedules(monthSorted);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setDataLoaded(true);
+  //     });
+  // };
   useEffect(() => {
     if (!isPremium) return navigation.navigate("/");
   }, [isPremium]);
 
   useEffect(() => {
-    if (retrieveData?.authenticationKey) getSchedules();
-    const interval = setInterval(() => {
-      getSchedules();
-    }, 1000 * 60);
-    return () => clearInterval(interval);
+    // if (retrieveData?.authenticationKey) getSchedules();
+    // const interval = setInterval(() => {
+    //   getSchedules();
+    // }, 1000 * 60);
+    // return () => clearInterval(interval);
   }, [retrieveData]);
 
   const randomColour = () => {
@@ -297,6 +304,94 @@ export default () => {
   };
 
   if (!isPremium) return;
+  console.log("====================================");
+  console.log(new Date().toDateString());
+  console.log("====================================");
+
+  return (
+    <>
+      <View
+        style={{
+          paddingBottom: 15,
+          backgroundColor: Colors.primary,
+          paddingHorizontal: 25,
+        }}
+      >
+        <Breadcrumbs
+          style={{ marginBottom: 0 }}
+          links={[
+            {
+              name: "Dashboard",
+              screenName: "/",
+            },
+            { name: "Schedules" },
+          ]}
+        />
+      </View>
+      <ScheduleHeader currentDate={currentDate} />
+      <Agenda
+        calendarStyle={{ backgroundColor: Colors.secondary }}
+        headerStyle={{ backgroundColor: Colors.secondary, gap: 15 }}
+        enableSwipeMonths
+        disableAllTouchEventsForDisabledDays
+        allowSelectionOutOfRange={false}
+        minDate={new Date().toDateString()}
+        showClosingKnob
+        showsHorizontalScrollIndicator
+        onDayChange={(e) => setCurrentDate(e.timestamp)}
+        onDayPress={(e) => setCurrentDate(e.timestamp)}
+        theme={{
+          backgroundColor: Colors.secondary,
+          calendarBackground: Colors.secondary,
+          textDisabledColor: "white",
+          textDayStyle: {
+            opacity: expiredDate ? 0.5 : 1,
+            color: "white",
+          },
+          selectedDayBackgroundColor: Colors.tertiary,
+        }}
+        style={{ backgroundColor: Colors.secondary }}
+        renderEmptyData={() => (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: Colors.background,
+              justifyContent: "center",
+              alignContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "300",
+                textAlign: "center",
+                lineHeight: 24,
+                maxWidth: 325,
+              }}
+            >
+              There are no schedules for this date added. Please add a new
+              schedule by clicking the button below.
+            </Text>
+            {!expiredDate && (
+              <Button
+                size="medium"
+                handleClick={() => setVisible(true)}
+                style={{
+                  width: 153,
+                  marginTop: 15,
+                  borderRadius: 8,
+                  height: 44,
+                }}
+                icon={<Plus width="14" height="14" />}
+                text="Add"
+              />
+            )}
+          </View>
+        )}
+      />
+    </>
+  );
 
   return (
     <Layout homepage noScrollView>
