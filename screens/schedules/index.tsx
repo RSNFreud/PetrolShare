@@ -304,9 +304,6 @@ export default () => {
   };
 
   if (!isPremium) return;
-  console.log("====================================");
-  console.log(new Date().toDateString());
-  console.log("====================================");
 
   return (
     <>
@@ -335,6 +332,7 @@ export default () => {
         enableSwipeMonths
         disableAllTouchEventsForDisabledDays
         allowSelectionOutOfRange={false}
+        stickyHeaderHiddenOnScroll={false}
         minDate={new Date().toDateString()}
         showClosingKnob
         showsHorizontalScrollIndicator
@@ -343,11 +341,13 @@ export default () => {
         theme={{
           backgroundColor: Colors.secondary,
           calendarBackground: Colors.secondary,
-          textDisabledColor: "white",
+          textDisabledColor: "rgba(255,255,255,0.5)",
           textDayStyle: {
             opacity: expiredDate ? 0.5 : 1,
             color: "white",
           },
+          selectedDayTextColor: "white",
+          todayTextColor: "white",
           selectedDayBackgroundColor: Colors.tertiary,
         }}
         style={{ backgroundColor: Colors.secondary }}
