@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@components/Themed";
 import Button, { TouchableBase } from "@components/button";
 import Layout from "@components/layout";
 import { Text } from "@components/text";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { useState, useContext, useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
 import {
@@ -28,6 +28,7 @@ import {
   AgendaSchedule,
 } from "react-native-calendars";
 import DateHeaderItem from "./home/dateHeaderItem";
+import { endEvent } from "react-native/Libraries/Performance/Systrace";
 
 export type ScheduleType = {
   allDay: boolean;
@@ -67,6 +68,7 @@ export const getInitialDate = (date: Date) => {
 };
 
 export default () => {
+  const focused = usePathname();
   const [visible, setVisible] = useState(false);
   const date = new Date();
   const [currentDate, setCurrentDate] = useState(
@@ -87,97 +89,89 @@ export default () => {
     { userID: string; colour: string }[]
   >([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const navigation = useRouter();
 
   const updateData = () => {
     setVisible(false);
-    // getSchedules();
+    getSchedules();
   };
-  // const getSchedules = () => {
-  //   if (!retrieveData?.authenticationKey) return;
-  //   fetch(
-  //     API_ADDRESS +
-  //       `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
-  //   )
-  //     .then(async (e) => {
-  //       const data: ScheduleType[] = await e.json();
-  //       setDataLoaded(true);
-  //       const splitSchedules: Map<number, ScheduleType[]> = new Map();
-  //       for (const schedule of data) {
-  //         const startDate = resetTime(schedule.startDate);
-  //         const endDate = resetTime(schedule.endDate);
-  //         if (
-  //           !userColors?.length ||
-  //           !userColors?.filter((user) => user.userID === schedule.userID)
-  //             .length
-  //         ) {
-  //           setUserColors((colours) => [
-  //             ...colours,
-  //             {
-  //               userID: schedule.userID,
-  //               colour: `${randomColour()}`,
-  //             },
-  //           ]);
-  //         }
+  const getSchedules = async () => {
+    if (!retrieveData?.authenticationKey) return;
+    const res = await fetch(
+      API_ADDRESS +
+        `/schedules/get?authenticationKey=${retrieveData?.authenticationKey}`
+    );
 
-  //         if (!splitSchedules.has(startDate.getTime()))
-  //           splitSchedules.set(startDate.getTime(), []);
-  //         splitSchedules.get(startDate.getTime())!.push({ ...schedule });
+    if (!res.ok) return setDataLoaded(true);
+    const data: ScheduleType[] = await res.json();
 
-  //         const amountOfDays = Math.round(
-  //           (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
-  //             (1000 * 3600 * 24)
-  //         );
-  //         if (amountOfDays <= 1) continue;
+    const splitSchedules: Map<number, ScheduleType[]> = new Map();
+    for (const schedule of data) {
+      const startDate = resetTime(schedule.startDate);
+      const endDate = resetTime(schedule.endDate);
+      if (
+        !userColors?.length ||
+        !userColors?.filter((user) => user.userID === schedule.userID).length
+      ) {
+        setUserColors((colours) => [
+          ...colours,
+          {
+            userID: schedule.userID,
+            colour: `${randomColour()}`,
+          },
+        ]);
+      }
 
-  //         for (let i = 0; i < amountOfDays; i++) {
-  //           let newDate = resetTime(startDate);
-  //           newDate = new Date(newDate.setDate(newDate.getDate() + i));
+      if (!splitSchedules.has(startDate.getTime()))
+        splitSchedules.set(startDate.getTime(), []);
+      splitSchedules.get(startDate.getTime())!.push({ ...schedule });
 
-  //           // Remove possible duplicates
-  //           if (
-  //             splitSchedules
-  //               .get(newDate.getTime())
-  //               ?.some(
-  //                 (e) =>
-  //                   resetTime(new Date(e.startDate)).getTime() ===
-  //                   startDate.getTime()
-  //               )
-  //           )
-  //             continue;
-  //           if (!splitSchedules.has(newDate.getTime()))
-  //             splitSchedules.set(newDate.getTime(), []);
-  //           splitSchedules.get(newDate.getTime())!.push({ ...schedule });
-  //         }
-  //       }
+      const amountOfDays = Math.round(
+        (resetTime(endDate).getTime() - resetTime(startDate).getTime()) /
+          (1000 * 3600 * 24)
+      );
+      if (amountOfDays <= 1) continue;
 
-  //       const monthSorted: Record<number, Map<number, ScheduleType[]>[]> = {};
-  //       const sorted = [...splitSchedules.entries()].sort(([a], [b]) => a - b);
-  //       sorted.map(([key, value]) => {
-  //         const month = resetMonth(new Date(key)).getTime();
-  //         const map = new Map().set(key, value);
+      for (let i = 0; i < amountOfDays; i++) {
+        let newDate = resetTime(startDate);
+        newDate = new Date(newDate.setDate(newDate.getDate() + i));
 
-  //         if (
-  //           !Object.keys(monthSorted).filter((e) => e === month.toString())
-  //             .length
-  //         )
-  //           monthSorted[month] = [];
-  //         monthSorted[month].push(map);
-  //       });
+        // Remove possible duplicates
+        if (
+          splitSchedules
+            .get(newDate.getTime())
+            ?.some(
+              (e) =>
+                resetTime(new Date(e.startDate)).getTime() ===
+                startDate.getTime()
+            )
+        )
+          continue;
+        if (!splitSchedules.has(newDate.getTime()))
+          splitSchedules.set(newDate.getTime(), []);
+        splitSchedules.get(newDate.getTime())!.push({ ...schedule });
+      }
+    }
 
-  //       setSchedules(monthSorted);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setDataLoaded(true);
-  //     });
-  // };
-  useEffect(() => {
-    if (!isPremium) return navigation.navigate("/");
-  }, [isPremium]);
+    const monthSorted: Record<number, Map<number, ScheduleType[]>[]> = {};
+    const sorted = [...splitSchedules.entries()].sort(([a], [b]) => a - b);
+    sorted.map(([key, value]) => {
+      const month = resetMonth(new Date(key)).getTime();
+      const map = new Map().set(key, value);
+
+      if (
+        !Object.keys(monthSorted).filter((e) => e === month.toString()).length
+      )
+        monthSorted[month] = [];
+      monthSorted[month].push(map);
+    });
+    setSchedules(monthSorted);
+  };
+  // useEffect(() => {
+  //   if (!isPremium) return navigation.navigate("/");
+  // }, [isPremium]);
 
   useEffect(() => {
-    // if (retrieveData?.authenticationKey) getSchedules();
+    if (retrieveData?.authenticationKey) getSchedules();
     // const interval = setInterval(() => {
     //   getSchedules();
     // }, 1000 * 60);
@@ -208,56 +202,7 @@ export default () => {
     ];
   };
 
-  const getCurrentData = Object.entries(schedules).filter(
-    ([key, _]) => key === resetMonth(new Date(currentDate)).getTime().toString()
-  )[0];
-  const getCurrentDayData =
-    getCurrentData &&
-    getCurrentData[1].filter(([day, _]) => day[0] === currentDate);
-
   const expiredDate = currentDate < resetTime(date).getTime();
-
-  const setInitialScroll = (animate: boolean = false) => {
-    const ref = dateRef.current;
-    const date = new Date(currentDate);
-    if (!ref) return;
-    ref.scrollTo({
-      y: 0,
-      x: (date.getDate() - 4) * 32 + (date.getDate() - 4) * 25,
-      animated: animate,
-    });
-  };
-
-  const calculateDirection = (e: HandlerStateChangeEvent) => {
-    if ((e.nativeEvent.translationX as number) > 0) changeDate("forwards");
-    else changeDate("back");
-  };
-
-  const changeDate = (e: "forwards" | "back") => {
-    const date = new Date(currentDate);
-    if (e === "forwards") date.setDate(date.getDate() - 1);
-    else date.setDate(date.getDate() + 1);
-    if (date.getMonth() < new Date(currentDate).getMonth()) return;
-
-    setCurrentDate(date.getTime());
-  };
-
-  const changeMonth = (e: "forwards" | "back") => {
-    const date = new Date(currentDate);
-    if (e === "forwards") {
-      date.setMonth(date.getMonth() + 1, 1);
-    } else {
-      date.setMonth(date.getMonth(), 0);
-    }
-
-    if (e === "back" && date.getMonth() + 1 < new Date().getMonth()) return;
-
-    setCurrentDate(date.getTime());
-  };
-
-  useEffect(() => {
-    setInitialScroll(true);
-  }, [currentDate]);
 
   useEffect(() => {
     if (!visible) {
@@ -303,7 +248,7 @@ export default () => {
     setVisible(true);
   };
 
-  if (!isPremium) return;
+  // if (!isPremium) return;
 
   return (
     <>
@@ -327,11 +272,13 @@ export default () => {
       </View>
       <ScheduleHeader currentDate={currentDate} />
       <Agenda
+        items={Object.entries(schedules).map(([key, value]) => ({
+          [key]: [{ name: "test" }],
+        }))}
         calendarStyle={{ backgroundColor: Colors.secondary }}
         headerStyle={{ backgroundColor: Colors.secondary, gap: 15 }}
         enableSwipeMonths
-        disableAllTouchEventsForDisabledDays
-        allowSelectionOutOfRange={false}
+        allowSelectionOutOfRange
         stickyHeaderHiddenOnScroll={false}
         minDate={new Date().toDateString()}
         showClosingKnob

@@ -8,6 +8,31 @@ import Colors from "constants/Colors";
 import { Redirect, Tabs } from "expo-router";
 import { useSession } from "hooks/context";
 import React from "react";
+import { Text } from "@components/text";
+import { TouchableWithoutFeedback, View } from "react-native";
+
+const BottomNavItem = ({ icon: Icon, text, active, handleClick }) => {
+  return (
+    <TouchableWithoutFeedback onPress={handleClick}>
+      <View
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          opacity: active ? 1 : 0.5,
+          flex: 1,
+          paddingVertical: 15,
+          paddingHorizontal: 45,
+        }}
+      >
+        {Icon && <Icon focused={false} color="" size={0} />}
+        <Text style={{ marginTop: 10, fontSize: 14, fontWeight: "bold" }}>
+          {text}
+        </Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
 
 export default function AppLayout() {
   const { isLoggedIn, isLoading } = useSession();
@@ -23,8 +48,6 @@ export default function AppLayout() {
     <Tabs
       screenOptions={{
         header: () => <></>,
-        tabBarInactiveBackgroundColor: Colors.primary,
-        tabBarActiveBackgroundColor: Colors.primary,
       }}
       sceneContainerStyle={{ backgroundColor: Colors.background }}
       tabBar={(props) => <BottomNavigation {...props} />}
@@ -56,6 +79,7 @@ export default function AppLayout() {
         options={{
           tabBarLabel: "Schedules",
           tabBarIcon: () => <Calendar />,
+          href: null,
         }}
       />
       <Tabs.Screen

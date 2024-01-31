@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "./text";
 import Colors from "../constants/Colors";
 import { AuthContext } from "../hooks/context";
+import { useRouter } from "expo-router";
 
 type BottonNavPropTypes = {
   icon?:
@@ -37,8 +38,9 @@ const BottomNavItem = ({
           justifyContent: "center",
           alignItems: "center",
           opacity: active ? 1 : 0.5,
+          flex: 1,
           paddingVertical: 15,
-          paddingHorizontal: 25,
+          paddingHorizontal: 45,
         }}
       >
         {Icon && <Icon focused={false} color="" size={0} />}
@@ -54,6 +56,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
   const scrollRef = useRef<ScrollView>(null);
   const { isPremium } = useContext(AuthContext);
   const insets = useSafeAreaInsets();
+  const { navigate } = useRouter();
 
   const setInitialScroll = (index: number) => {
     const ref = scrollRef.current;
@@ -74,7 +77,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
       contentContainerStyle={{
         display: "flex",
         flexDirection: "row",
-        paddingHorizontal: 10,
+        paddingHorizontal: 0,
         justifyContent: "center",
         minWidth: "100%",
       }}
@@ -88,11 +91,11 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         const isFocused = state.index === index;
 
         const onPress = () => {
-          navigation.navigate(route.name);
+          navigate(route.name !== "index" ? route.name : "/");
         };
 
         if (isFocused) setInitialScroll(index);
-        if (label === "addPreset") return;
+        if (label === "addPreset" || label === "Schedules") return;
         // if (!route.path) return;
 
         return (
