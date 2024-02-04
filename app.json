@@ -2,7 +2,7 @@
   "expo": {
     "name": "PetrolShare",
     "slug": "PetrolShare",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "petrolshare",
@@ -17,6 +17,7 @@
           "project": "petrolshare"
         }
       ],
+      "expo-router",
       "expo-font",
       "expo-secure-store",
       "@react-native-firebase/app",
