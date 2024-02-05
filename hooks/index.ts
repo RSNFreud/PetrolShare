@@ -75,7 +75,6 @@ export const checkForUpdates = async (force?: boolean) => {
     if (!resolve.isAvailable) return;
     await fetchUpdateAsync();
     if (force) {
-      await fetchUpdateAsync();
       await reloadAsync();
     } else
       Alert(

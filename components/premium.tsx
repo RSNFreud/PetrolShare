@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default () => {
   const [showPremiumInfo, setShowPremiumInfo] = useState(false);
+  const [premiumShown, setPremiumShown] = useState(false);
   const { retrieveData, updateData } = useContext(AuthContext);
   const heightAnim = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
@@ -105,6 +106,7 @@ export default () => {
   };
 
   const expand = () => {
+    setPremiumShown(true);
     Animated.timing(heightAnim, {
       toValue: 68 + insets.top,
       delay: 400,
@@ -114,6 +116,7 @@ export default () => {
   };
 
   const minimise = () => {
+    setPremiumShown(false);
     Animated.timing(heightAnim, {
       toValue: 0,
       delay: 200,
@@ -130,7 +133,7 @@ export default () => {
         style={{
           alignItems: "center",
           backgroundColor: Colors.tertiary,
-          paddingTop: heightAnim > 0 ? insets.top : 0,
+          paddingTop: premiumShown ? insets.top : 0,
           maxHeight: heightAnim,
         }}
       >

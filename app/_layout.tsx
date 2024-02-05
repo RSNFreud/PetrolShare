@@ -88,7 +88,7 @@ export const App = () => {
     fonts: fontsLoaded,
     auth: false,
   });
-  const { isChecking, isUpdateAvailable } = useUpdates();
+  const { isChecking, isUpdateAvailable, isDownloading } = useUpdates();
 
   const store = React.useMemo(
     () => ({
@@ -216,9 +216,9 @@ export const App = () => {
   }, [isUpdateAvailable, loading]);
 
   useEffect(() => {
-    if (isUpdateAvailable || isChecking) return;
+    if (isUpdateAvailable || isChecking || isDownloading) return;
     if (loadingStatus.auth && loadingStatus.fonts) setLoading(false);
-  }, [loadingStatus, isChecking, isUpdateAvailable]);
+  }, [loadingStatus, isChecking, isUpdateAvailable, isDownloading]);
 
   useEffect(() => {
     let i: string | number | NodeJS.Timeout | undefined;

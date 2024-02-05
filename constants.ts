@@ -17,6 +17,6 @@ export const postValues = {
 
 export const postHeaders = postValues;
 
-export const API_ADDRESS = DEV_ADDRESS;
+export const API_ADDRESS = REACT_API_ADDRESS;
 export const APP_ADDRESS = REACT_APP_ADDRESS;
 export const EMAIL_ADRESS = `https://petrolshare.freud-online.co.uk/email`;

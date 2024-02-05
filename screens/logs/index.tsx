@@ -93,6 +93,7 @@ export default () => {
       setLoaded(true);
       const length = Object.keys(data).length || 1;
       if (length === 0) return;
+      setActiveSession(length);
       setPageData({
         currentPage: length > 1 ? length : 1,
         maxPages: length > 1 ? length : 1,

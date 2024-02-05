@@ -40,7 +40,7 @@ const BottomNavItem = ({
           opacity: active ? 1 : 0.5,
           flex: 1,
           paddingVertical: 15,
-          paddingHorizontal: 45,
+          // paddingHorizontal: 45,
         }}
       >
         {Icon && <Icon focused={false} color="" size={0} />}
@@ -65,22 +65,26 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
   };
 
   return (
-    <ScrollView
-      ref={scrollRef}
+    <View
+      // ref={scrollRef}
       style={{
         backgroundColor: Colors.secondary,
         width: "100%",
         flexGrow: 0,
         paddingBottom: insets.bottom,
-      }}
-      horizontal
-      contentContainerStyle={{
         display: "flex",
         flexDirection: "row",
-        paddingHorizontal: 0,
         justifyContent: "center",
         minWidth: "100%",
       }}
+      // horizontal
+      // contentContainerStyle={{
+      //   display: "flex",
+      //   flexDirection: "row",
+      //   paddingHorizontal: 0,
+      //   justifyContent: "center",
+      //   minWidth: "100%",
+      // }}
     >
       {state?.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -109,6 +113,6 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
           />
         );
       })}
-    </ScrollView>
+    </View>
   );
 };
