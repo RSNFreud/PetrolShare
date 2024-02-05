@@ -99,7 +99,12 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
 
         if (isFocused) setInitialScroll(index);
-        if (label === "addPreset" || label === "Schedules") return;
+        if (
+          label === "addPreset" ||
+          label === "Schedules" ||
+          label === "[index]"
+        )
+          return;
         // if (!route.path) return;
 
         return (

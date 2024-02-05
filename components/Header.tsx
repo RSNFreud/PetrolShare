@@ -34,7 +34,8 @@ export default ({ isGuestMode }: { isGuestMode?: boolean }) => {
   };
 
   const getHeaderColour = () => {
-    if (isLoggedIn && pathname === "/") return Colors.secondary;
+    if (isLoggedIn && (pathname === "/[index]" || pathname === "/"))
+      return Colors.secondary;
     if (pathname.includes("schedule")) return Colors.primary;
     return Colors.background;
   };
