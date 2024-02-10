@@ -9,7 +9,14 @@ import * as Sentry from "@sentry/react-native";
 import Colors from "constants/Colors";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
-import { Slot, Stack, usePathname, useRootNavigation } from "expo-router";
+import {
+  Slot,
+  Stack,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  usePathname,
+  useRootNavigation,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useUpdates } from "expo-updates";
 import {
@@ -83,6 +90,7 @@ export const App = () => {
   });
   const [notifData, setNotifData] = useState({ routeName: "", invoiceID: "" });
   const pathname = usePathname();
+  const routeParams = useLocalSearchParams();
   const ref = useRootNavigation();
   const [loadingStatus, setLoadingStatus] = useState({
     fonts: fontsLoaded,
@@ -139,6 +147,18 @@ export const App = () => {
   useEffect(() => {
     fetchData();
   }, [pathname]);
+
+  useEffect(() => {
+    if (routeParams["groupID"]) {
+      setItem(
+        "referalCode",
+        routeParams["groupID"]
+          ?.toString()
+          .split("groupID=")[1]
+          ?.replace(":", "")
+      );
+    }
+  }, [routeParams]);
 
   const checkIfAuth = async () => {
     const ogData = getItem("userData");

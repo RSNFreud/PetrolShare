@@ -102,7 +102,7 @@ export default ({ state, descriptors, navigation }: BottomTabBarProps) => {
         if (
           label === "addPreset" ||
           label === "Schedules" ||
-          label === "[index]"
+          label === "[groupID]"
         )
           return;
         // if (!route.path) return;

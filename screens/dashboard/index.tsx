@@ -1,7 +1,12 @@
 import Popup from "@components/Popup";
 import Demo from "@components/demo";
 import GroupSettings from "@components/groupSettings";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import {
+  router,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
 import { sendPostRequest } from "hooks/sendFetchRequest";
 import React, { useContext, useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
@@ -50,9 +55,11 @@ export default () => {
     if (referallCode) {
       return sendReferal(referallCode);
     }
-
     if (params) {
-      const groupID = params["groupID"] as string;
+      const groupID = params["groupID"]
+        ?.toString()
+        .split("groupID=")[1]
+        ?.replace(":", "");
       if (groupID) {
         sendReferal(groupID);
       }
@@ -78,8 +85,8 @@ export default () => {
           },
         ]
       );
-      navigation.setParams({ groupID: "" });
     }, 400);
+    router.setParams({ groupID: "" });
   };
 
   const changeGroup = async (groupID: string) => {
