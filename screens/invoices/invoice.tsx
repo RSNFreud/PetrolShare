@@ -87,16 +87,6 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const [manageDistanceOpen, setManageDistanceOpen] = useState(false);
   const navigate = useRouter();
 
-  const [groupData, setGroupData] = useState({
-    distance: "",
-    currency: "",
-    petrol: "",
-  });
-
-  useEffect(() => {
-    init();
-  }, []);
-
   const handleUpdate = () => {
     handleClose();
     getInvoice();
@@ -110,22 +100,6 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     setManageDistanceOpen(false);
   };
 
-  const init = async () => {
-    if (isPublic) return;
-    const getSymbol = getItem("currencySymbol");
-    if (getSymbol)
-      setGroupData({
-        ...groupData,
-        currency: getSymbol || "",
-      });
-
-    const data = await getGroupData();
-    if (!data) return;
-    setGroupData({ ...groupData, distance: data.distance });
-    const currency = await convertCurrency(data.currency);
-    data.currency = currency;
-    setGroupData(data);
-  };
 
   const getInvoice = async () => {
     const url = isPublic
@@ -136,13 +110,6 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     if (res.ok) {
       const data = await res.json();
       setData({ ...data, invoiceData: JSON.parse(data.invoiceData) });
-      if (isPublic)
-        setGroupData({
-          ...groupData,
-          distance: data?.distance,
-          currency: await convertCurrency(data?.currency),
-          petrol: data?.petrol,
-        });
     } else {
       if (isPublic) return;
       Alert("Invalid Payment", "This payment log does not exist!");
@@ -194,7 +161,11 @@ export default ({ invoiceID, isPublic }: PropsType) => {
 
   const globalProps = {
     isPublic,
-    groupData,
+    groupData: {
+      distance: retrieveData?.distance||"",
+      currency: retrieveData?.currency||"",
+      petrol: retrieveData?.petrol || ""
+    },
     invoiceID: invoiceID || "",
     invoicedBy: data?.emailAddress,
     authenticationKey: retrieveData?.authenticationKey,
@@ -239,12 +210,12 @@ export default ({ invoiceID, isPublic }: PropsType) => {
           <SummaryItem
             width={itemWidth}
             title="Amount Paid:"
-            value={currencyPosition(data.totalPrice, groupData.currency)}
+            value={currencyPosition(data.totalPrice, retrieveData?.currency ||"")}
           />
           <SummaryItem
             width={itemWidth}
             title="Total Distance:"
-            value={`${data.totalDistance} ${groupData?.distance}`}
+            value={`${data.totalDistance} ${retrieveData?.distance}`}
           />
         </View>
         {data.pricePerLiter ? (
@@ -257,8 +228,8 @@ export default ({ invoiceID, isPublic }: PropsType) => {
           >
             <SummaryItem
               width={itemWidth}
-              title={`Price Per ${convertToSentenceCase(groupData.petrol)}`}
-              value={currencyPosition(data.pricePerLiter, groupData.currency)}
+              title={`Price Per ${convertToSentenceCase(retrieveData?.petrol || "")}`}
+              value={currencyPosition(data.pricePerLiter, retrieveData?.currency||"")}
             />
           </View>
         ) : (
