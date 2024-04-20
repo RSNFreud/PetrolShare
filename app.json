@@ -2,7 +2,7 @@
   "expo": {
     "name": "PetrolShare",
     "slug": "PetrolShare",
-    "version": "1.1.8",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "petrolshare",
@@ -47,7 +47,17 @@
     "ios": {
       "googleServicesFile": "",
       "supportsTablet": false,
-      "bundleIdentifier": "com.rsnfreud.PetrolShare"
+      "bundleIdentifier": "com.rsnfreud.PetrolShare",
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
+        ]
+      }
     },
     "android": {
       "googleServicesFile": "",
