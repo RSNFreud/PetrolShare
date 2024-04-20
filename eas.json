@@ -29,7 +29,13 @@
     }
   },
   "submit": {
-    "production": {},
+    "production": {
+      "ios": {
+        "appleId": "theo@freud-online.co.uk",
+        "ascAppId": "6473802845",
+        "appleTeamId": "VX52FA84RS"
+      }
+    },
     "testing": {}
   }
 }
