@@ -100,7 +100,6 @@ export default ({ invoiceID, isPublic }: PropsType) => {
     setManageDistanceOpen(false);
   };
 
-
   const getInvoice = async () => {
     const url = isPublic
       ? API_ADDRESS + `/invoices/public/get?uniqueURL=${invoiceID}`
@@ -162,9 +161,10 @@ export default ({ invoiceID, isPublic }: PropsType) => {
   const globalProps = {
     isPublic,
     groupData: {
-      distance: retrieveData?.distance||"",
-      currency: retrieveData?.currency||"",
-      petrol: retrieveData?.petrol || ""
+      distance: retrieveData?.distance || "",
+      currency: retrieveData?.currency || "",
+      petrol: retrieveData?.petrol || "",
+      fullName: retrieveData?.fullName,
     },
     invoiceID: invoiceID || "",
     invoicedBy: data?.emailAddress,
@@ -210,7 +210,10 @@ export default ({ invoiceID, isPublic }: PropsType) => {
           <SummaryItem
             width={itemWidth}
             title="Amount Paid:"
-            value={currencyPosition(data.totalPrice, retrieveData?.currency ||"")}
+            value={currencyPosition(
+              data.totalPrice,
+              retrieveData?.currency || ""
+            )}
           />
           <SummaryItem
             width={itemWidth}
@@ -229,7 +232,10 @@ export default ({ invoiceID, isPublic }: PropsType) => {
             <SummaryItem
               width={itemWidth}
               title={`Price Per ${convertToSentenceCase(retrieveData?.petrol || "")}`}
-              value={currencyPosition(data.pricePerLiter, retrieveData?.currency||"")}
+              value={currencyPosition(
+                data.pricePerLiter,
+                retrieveData?.currency || ""
+              )}
             />
           </View>
         ) : (

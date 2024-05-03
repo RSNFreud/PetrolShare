@@ -74,17 +74,14 @@ export const checkForUpdates = async (force?: boolean) => {
     const resolve = await checkForUpdateAsync();
     if (!resolve.isAvailable) return;
     await fetchUpdateAsync();
-    if (force) {
-      await reloadAsync();
-    } else
-      Alert(
-        "Update Available",
-        "An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app",
-        [
-          { text: "Dismiss" },
-          { text: "Update", onPress: async () => await reloadAsync() },
-        ],
-      );
+    Alert(
+      "Update Available",
+      "An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app",
+      [
+        { text: "Dismiss" },
+        { text: "Update", onPress: async () => await reloadAsync() },
+      ],
+    );
   } catch { }
 };
 

@@ -21,7 +21,12 @@ export type InvoicePropsType = {
   };
   invoiceID: number | string;
   emailAddress?: string;
-  groupData: { currency: string; petrol: string; distance: string };
+  groupData: {
+    currency: string;
+    petrol: string;
+    distance: string;
+    fullName?: string;
+  };
   openManageDistance: () => void | void;
   authenticationKey?: string;
   isPublic?: boolean;
@@ -47,7 +52,7 @@ export default ({
     const res = await sendPostRequest(API_ADDRESS + `/invoices/alert`, {
       authenticationKey,
       invoiceID,
-      fullName: invoiceData.fullName,
+      fullName: groupData.fullName,
     });
     if (res?.ok) {
       setTimeout(() => {
