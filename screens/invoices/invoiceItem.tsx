@@ -7,7 +7,7 @@ import { View } from "react-native";
 
 import Bell from "../../assets/icons/bell";
 import Tick from "../../assets/icons/tick";
-import { APP_ADDRESS } from "../../constants";
+import { API_ADDRESS } from "../../constants";
 import Colors from "../../constants/Colors";
 import { Alert, currencyPosition } from "../../hooks";
 
@@ -44,16 +44,18 @@ export default ({
 
   const sendAlert = async () => {
     setAlertSent(true);
-    const res = await sendPostRequest(APP_ADDRESS + `/invoices/alert`, {
+    const res = await sendPostRequest(API_ADDRESS + `/invoices/alert`, {
       authenticationKey,
       invoiceID,
       fullName: invoiceData.fullName,
     });
     if (res?.ok) {
-      setAlertSent(false);
+      setTimeout(() => {
+        setAlertSent(false);
+      }, 5000);
       Alert(
         "Notification sent!",
-        `A notification has been succesfully sent to ${invoiceData.fullName}!`,
+        `A notification has been succesfully sent to ${invoiceData.fullName}!`
       );
     } else {
       setAlertSent(false);
