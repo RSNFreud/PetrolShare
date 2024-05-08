@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { View } from "react-native";
 import { ErrorType } from "types";
 
-import { APP_ADDRESS } from "../../constants";
+import { API_ADDRESS } from "../../constants";
 import { sendPostRequest } from "hooks/sendFetchRequest";
 
 type PropTypes = {
@@ -49,7 +49,7 @@ export default ({ visible, setVisible, emailAddress }: PropTypes) => {
     setFormErrors(errors);
     setLoading(true);
     try {
-      const res = await sendPostRequest(`${APP_ADDRESS}/user/forgot-password`, {
+      const res = await sendPostRequest(`${API_ADDRESS}/user/forgot-password`, {
         emailAddress: formData.emailAddress,
       });
       if (res?.ok) {
