@@ -102,7 +102,7 @@ export default ({
         label="Distance to apply"
         errorMessage={errors.distance}
         placeholder={`Enter amount (Max: ${maxDistance})`}
-        keyboardType="numbers-and-punctuation"
+        keyboardType="decimal-pad"
         inputStyle={{ paddingVertical: 10 }}
         style={{ marginBottom: 20, marginTop: 20 }}
       />

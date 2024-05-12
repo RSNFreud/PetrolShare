@@ -136,8 +136,9 @@ export const App = () => {
   ) as AuthContextType;
 
   useEffect(() => {
+    if (isDownloading) return;
     checkIfAuth();
-  }, []);
+  }, [isDownloading]);
 
   // Update session data when user data changes
   useEffect(() => {
@@ -145,8 +146,9 @@ export const App = () => {
   }, [userData]);
 
   useEffect(() => {
+    if (isDownloading) return;
     fetchData();
-  }, [pathname]);
+  }, [pathname, isDownloading]);
 
   useEffect(() => {
     if (routeParams["groupID"]) {
@@ -178,7 +180,7 @@ export const App = () => {
 
     // Check if auth key valid
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
     try {
       const data = await fetch(
         `${API_ADDRESS}/user/verify?authenticationKey=${parsed.authenticationKey}`,
