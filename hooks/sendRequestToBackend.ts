@@ -1,4 +1,4 @@
-import {API_ADDRESS, EMAIL_ADRESS} from '@constants';
+import { API_ADDRESS, EMAIL_ADRESS } from '@constants';
 import * as Sentry from '@sentry/react-native';
 
 type PropsType = {
@@ -8,7 +8,7 @@ type PropsType = {
     isEmail?: boolean;
 };
 
-export const sendRequestToBackend = async ({url, data, onError, isEmail}: PropsType) => {
+export const sendRequestToBackend = async ({ url, data, onError, isEmail }: PropsType) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     try {

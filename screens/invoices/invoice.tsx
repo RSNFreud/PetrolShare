@@ -20,6 +20,7 @@ import {APP_ADDRESS} from '../../constants';
 import Colors from '../../constants/Colors';
 import {Alert, convertToDate, convertToSentenceCase, currencyPosition} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
+import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
 type PropsType = {
     invoiceID: number | string;
@@ -84,11 +85,11 @@ export default ({invoiceID, isPublic}: PropsType) => {
         const url = isPublic
             ? `invoices/public/get?uniqueURL=${invoiceID}`
             : `invoices/get?authenticationKey=${retrieveData?.authenticationKey}&invoiceID=${invoiceID}`;
-        const res = await fetch(url);
-        if (res.ok) {
+        const res = await sendRequestToBackend({url});
+        if (res?.ok) {
             const data = await res.json();
             setData({...data, invoiceData: JSON.parse(data.invoiceData)});
-        } else {
+        } else if (res) {
             if (isPublic) return;
             Alert('Invalid Payment', 'This payment log does not exist!');
             navigate.navigate('invoices');

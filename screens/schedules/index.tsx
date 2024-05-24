@@ -18,6 +18,7 @@ import Plus from '../../assets/icons/plus';
 import Colors from '../../constants/Colors';
 import {Alert} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
+import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
 export type ScheduleType = {
     allDay: boolean;
@@ -81,11 +82,11 @@ export default () => {
     };
     const getSchedules = async () => {
         if (!retrieveData?.authenticationKey) return;
-        const res = await fetch(
-            `schedules/get?authenticationKey=${retrieveData?.authenticationKey}`,
-        );
+        const res = await sendRequestToBackend({
+            url: `schedules/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        });
 
-        if (!res.ok) return setDataLoaded(true);
+        if (!res?.ok) return setDataLoaded(true);
         const data: ScheduleType[] = await res.json();
 
         const splitSchedules: Map<number, ScheduleType[]> = new Map();

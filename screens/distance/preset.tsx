@@ -17,6 +17,7 @@ import Plus from '../../assets/icons/plus';
 import Colors from '../../constants/Colors';
 import {deleteItem, getGroupData, getItem, sendCustomEvent, setItem} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
+import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
 type PresetType = {
     presetName: string;
@@ -54,10 +55,10 @@ export default () => {
         }
 
         if (retrieveData) {
-            const res = await fetch(
-                `preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
-            );
-            if (res.ok) {
+            const res = await sendRequestToBackend({
+                url: `preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
+            });
+            if (res?.ok) {
                 const data = await res.json();
                 setPresets(data);
                 setItem('presets', JSON.stringify(data));

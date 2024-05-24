@@ -9,6 +9,7 @@ import LogItem from './logItem';
 import Summary from './summary';
 import Colors from '../../constants/Colors';
 import {AuthContext} from '../../hooks/context';
+import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
 type LogsType = {
     sessionID: string;
@@ -82,8 +83,10 @@ export default () => {
 
     const getLogs = async () => {
         if (!retrieveData || !retrieveData?.authenticationKey) return;
-        const res = await fetch(`logs/get?authenticationKey=${retrieveData?.authenticationKey}`);
-        if (res.ok) {
+        const res = await sendRequestToBackend({
+            url: `logs/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        });
+        if (res?.ok) {
             const data = await res.json();
             setData(data);
             setLoaded(true);

@@ -10,6 +10,7 @@ import Invoice from './invoice';
 import Colors from '../../constants/Colors';
 import {convertToDate} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
+import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
 export default () => {
     const params = useLocalSearchParams();
@@ -31,10 +32,10 @@ export default () => {
     }, [retrieveData]);
 
     const getData = async () => {
-        const res = await fetch(
-            `invoices/get?authenticationKey=${retrieveData?.authenticationKey}`,
-        );
-        if (res.ok) {
+        const res = await sendRequestToBackend({
+            url: `invoices/get?authenticationKey=${retrieveData?.authenticationKey}`,
+        });
+        if (res?.ok) {
             const data = await res.json();
             setData(data);
             setDataLoaded(true);
