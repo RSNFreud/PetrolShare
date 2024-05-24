@@ -19,6 +19,7 @@
       ],
       "expo-router",
       "expo-font",
+      "expo-asset",
       "expo-secure-store",
       "@react-native-firebase/app",
       [

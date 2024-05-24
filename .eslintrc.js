@@ -7,5 +7,5 @@ module.exports = {
         'no-duplicate-imports': 'error',
         'prettier/prettier': 'error',
     },
-    ignorePatterns: ['*/schedules/*', "*/archive/*"],
+    ignorePatterns: ['*/schedules/*', '**/archive/**'],
 };

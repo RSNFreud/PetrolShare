@@ -1,4 +1,4 @@
-import {router, useRouter} from 'expo-router';
+import {useRouter} from 'expo-router';
 import {useEffect} from 'react';
 import Dashboard from 'screens/dashboard';
 
