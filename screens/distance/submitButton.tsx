@@ -1,67 +1,59 @@
-import Button from "@components/button";
-import { Text } from "@components/text";
-import { useEffect, useState } from "react";
-import { View } from "react-native";
+import Button from '@components/button';
+import {Text} from '@components/text';
+import {useEffect, useState} from 'react';
+import {View} from 'react-native';
 
-import { getGroupData } from "../../hooks";
+import {getGroupData} from '../../hooks';
 
 type PropsType = {
-  loading: boolean;
-  text?: string;
-  style?: "regular" | "ghost";
-  handleClick: () => void;
-  errors: string;
-  distance: string;
-  disabled?: boolean;
+    loading: boolean;
+    text?: string;
+    style?: 'regular' | 'ghost';
+    handleClick: () => void;
+    errors: string;
+    distance: string;
+    disabled?: boolean;
 };
 
-export default ({
-  loading,
-  handleClick,
-  disabled,
-  errors,
-  distance,
-  text,
-  style,
-}: PropsType) => {
-  const [distanceFormat, setDistanceFormat] = useState();
+export default ({loading, handleClick, disabled, errors, distance, text, style}: PropsType) => {
+    const [distanceFormat, setDistanceFormat] = useState();
 
-  useEffect(() => {
-    getDistanceFormat();
-  });
+    useEffect(() => {
+        getDistanceFormat();
+    });
 
-  const getDistanceFormat = async () => {
-    const data = await getGroupData();
-    if (!data) return;
-    setDistanceFormat(data.distance);
-  };
+    const getDistanceFormat = async () => {
+        const data = await getGroupData();
+        if (!data) return;
+        setDistanceFormat(data.distance);
+    };
 
-  return (
-    <>
-      <Button
-        disabled={disabled}
-        loading={loading}
-        handleClick={handleClick}
-        variant={style}
-        text={`${text || "Add Distance"} ${
-          distance ? `(${distance} ${distanceFormat || ""})` : ""
-        }`}
-      />
-      {!!errors && (
-        <View
-          style={{
-            marginTop: 15,
-            backgroundColor: "#EECFCF",
-            borderRadius: 4,
-            paddingHorizontal: 20,
-            paddingVertical: 15,
-          }}
-        >
-          <Text style={{ color: "#7B1D1D", fontSize: 16, fontWeight: "400" }}>
-            {errors}
-          </Text>
-        </View>
-      )}
-    </>
-  );
+    return (
+        <>
+            <Button
+                disabled={disabled}
+                loading={loading}
+                handleClick={handleClick}
+                variant={style}
+                text={`${text || 'Add Distance'} ${
+                    distance ? `(${distance} ${distanceFormat || ''})` : ''
+                }`}
+            />
+            {!!errors && (
+                <View
+                    style={{
+                        marginTop: 15,
+                        backgroundColor: '#EECFCF',
+                        borderRadius: 4,
+                        paddingHorizontal: 20,
+                        paddingVertical: 15,
+                    }}
+                >
+                    <Text style={{color: '#7B1D1D', fontSize: 16, fontWeight: '400'}}>
+                        {errors}
+                    </Text>
+                </View>
+            )}
+        </>
+    );
 };

@@ -1,3 +1,3 @@
-import Register from "screens/register";
+import {Register} from 'screens/register';
 
 export default () => <Register />;

@@ -1,6 +1,6 @@
-import React from "react";
-import Logs from "screens/logs";
+import React from 'react';
+import Logs from 'screens/logs';
 
 export default function Page() {
-  return <Logs />;
+    return <Logs />;
 }

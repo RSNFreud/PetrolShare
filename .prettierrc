@@ -1,0 +1,24 @@
+{
+    "singleQuote": true,
+    "parser": "flow",
+    "tabWidth": 4,
+    "bracketSpacing": false,
+    "printWidth": 100,
+    "useTabs": false,
+    "semi": true,
+    "trailingComma": "all",
+    "arrowParens": "avoid",
+    "proseWrap": "never",
+    "endOfLine": "auto",
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx"
+            ],
+            "options": {
+                "parser": "typescript"
+            }
+        }
+    ]
+}

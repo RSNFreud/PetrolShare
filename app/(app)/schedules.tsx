@@ -1,5 +1,5 @@
-import Schedules from "screens/schedules";
+import Schedules from 'screens/schedules';
 
 export default function Page() {
-  return <Schedules />;
+    return <Schedules />;
 }

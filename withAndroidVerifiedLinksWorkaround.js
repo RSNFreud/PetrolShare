@@ -1,7 +1,4 @@
-const {
-  createRunOncePlugin,
-  withAndroidManifest,
-} = require("@expo/config-plugins");
+const {createRunOncePlugin, withAndroidManifest} = require('@expo/config-plugins');
 
 /**
  * @typedef {import('@expo/config-plugins').ConfigPlugin} ConfigPlugin
@@ -15,13 +12,11 @@ const {
  *
  * @type {ConfigPlugin}
  */
-const withAndroidVerifiedLinksWorkaround = (config) =>
-  withAndroidManifest(config, (config) => {
-    config.modResults = removeExpoSchemaFromVerifiedIntentFilters(
-      config.modResults,
-    );
-    return config;
-  });
+const withAndroidVerifiedLinksWorkaround = config =>
+    withAndroidManifest(config, config => {
+        config.modResults = removeExpoSchemaFromVerifiedIntentFilters(config.modResults);
+        return config;
+    });
 
 /**
  * Iterate over all `autoVerify=true` intent filters, and pull out schemes starting with `exp+`.
@@ -29,26 +24,22 @@ const withAndroidVerifiedLinksWorkaround = (config) =>
  * @param {AndroidManifest} androidManifest
  */
 function removeExpoSchemaFromVerifiedIntentFilters(androidManifest) {
-  for (const application of androidManifest.manifest.application || []) {
-    for (const activity of application.activity || []) {
-      if (activityHasSingleTaskLaunchMode(activity)) {
-        for (const intentFilter of activity["intent-filter"] || []) {
-          if (
-            intentFilterHasAutoVerification(intentFilter) &&
-            intentFilter?.data
-          ) {
-            intentFilter.data = intentFilterRemoveSchemeFromData(
-              intentFilter,
-              (scheme) => scheme?.startsWith("exp+"),
-            );
-          }
+    for (const application of androidManifest.manifest.application || []) {
+        for (const activity of application.activity || []) {
+            if (activityHasSingleTaskLaunchMode(activity)) {
+                for (const intentFilter of activity['intent-filter'] || []) {
+                    if (intentFilterHasAutoVerification(intentFilter) && intentFilter?.data) {
+                        intentFilter.data = intentFilterRemoveSchemeFromData(intentFilter, scheme =>
+                            scheme?.startsWith('exp+'),
+                        );
+                    }
+                }
+                break;
+            }
         }
-        break;
-      }
     }
-  }
 
-  return androidManifest;
+    return androidManifest;
 }
 
 /**
@@ -56,27 +47,25 @@ function removeExpoSchemaFromVerifiedIntentFilters(androidManifest) {
  *
  */
 function activityHasSingleTaskLaunchMode(activity) {
-  return activity?.$?.["android:launchMode"] === "singleTask";
+    return activity?.$?.['android:launchMode'] === 'singleTask';
 }
 
 /**
  * Determine if the intent filter has `autoVerify=true`.
  */
 function intentFilterHasAutoVerification(intentFilter) {
-  return intentFilter?.$?.["android:autoVerify"] === "true";
+    return intentFilter?.$?.['android:autoVerify'] === 'true';
 }
 
 /**
  * Remove schemes from the intent filter that matches the function.
  */
 function intentFilterRemoveSchemeFromData(intentFilter, schemeMatcher) {
-  return intentFilter?.data?.filter(
-    (entry) => !schemeMatcher(entry?.$["android:scheme"] || ""),
-  );
+    return intentFilter?.data?.filter(entry => !schemeMatcher(entry?.$['android:scheme'] || ''));
 }
 
 module.exports = createRunOncePlugin(
-  withAndroidVerifiedLinksWorkaround,
-  "withAndroidVerifiedLinksWorkaround",
-  "1.0.0",
+    withAndroidVerifiedLinksWorkaround,
+    'withAndroidVerifiedLinksWorkaround',
+    '1.0.0',
 );

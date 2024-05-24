@@ -1,3 +1,3 @@
-import Invoices from "screens/invoices";
+import Invoices from 'screens/invoices';
 
 export default () => <Invoices />;

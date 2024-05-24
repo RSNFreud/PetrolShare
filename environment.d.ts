@@ -1,7 +1,7 @@
 declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      REACT_APP_API_ADDRESS: string;
+    namespace NodeJS {
+        interface ProcessEnv {
+            REACT_APP_API_ADDRESS: string;
+        }
     }
-  }
 }

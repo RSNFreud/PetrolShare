@@ -1,1 +1,1 @@
-export type ErrorType = { [key: string]: string };
+export type ErrorType = {[key: string]: string};
