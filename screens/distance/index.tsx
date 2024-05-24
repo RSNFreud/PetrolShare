@@ -85,31 +85,33 @@ export default ({onUpdate}: {onUpdate?: () => void}) => {
     };
 
     const handleClose = (alert?: string) => {
+        const draft = getItem('draft');
         if (alert) sendAlert(alert);
 
         if (!isDraft) {
             if (onUpdate) onUpdate();
             return setVisible(false);
         }
-        Alert('Do you want to delete this draft?', undefined, [
-            {
-                text: 'Yes',
-                onPress: async () => {
-                    deleteItem('draft');
-                    setVisible(false);
-                    setIsDraft(false);
-                    sendAlert('Draft deleted!');
-                    setData({startValue: '', endValue: ''});
+        if (draft)
+            Alert('Do you want to delete this draft?', undefined, [
+                {
+                    text: 'Yes',
+                    onPress: async () => {
+                        deleteItem('draft');
+                        setVisible(false);
+                        setIsDraft(false);
+                        sendAlert('Draft deleted!');
+                        setData({startValue: '', endValue: ''});
+                    },
                 },
-            },
-            {
-                text: 'Save for later',
-                onPress: () => {
-                    setVisible(false);
+                {
+                    text: 'Save for later',
+                    onPress: () => {
+                        setVisible(false);
+                    },
+                    style: 'cancel',
                 },
-                style: 'cancel',
-            },
-        ]);
+            ]);
     };
 
     return (

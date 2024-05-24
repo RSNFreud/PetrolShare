@@ -15,7 +15,7 @@ import Bin from '../../assets/icons/bin';
 import Pencil from '../../assets/icons/pencil';
 import Plus from '../../assets/icons/plus';
 import Colors from '../../constants/Colors';
-import {deleteItem, getGroupData, getItem, sendCustomEvent, setItem} from '../../hooks';
+import {deleteItem, getItem, sendCustomEvent, setItem} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
 import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
@@ -46,7 +46,6 @@ export default () => {
     });
     const [popupType, setPopupType] = useState('new');
     const selectedToDelete = useRef('');
-    const [distanceFormat, setDistanceFormat] = useState();
     const getPresets = async () => {
         const currentPresets = getItem('presets');
 
@@ -58,6 +57,7 @@ export default () => {
             const res = await sendRequestToBackend({
                 url: `preset/get?authenticationKey=${retrieveData?.authenticationKey}`,
             });
+
             if (res?.ok) {
                 const data = await res.json();
                 setPresets(data);
@@ -86,14 +86,7 @@ export default () => {
             }
         };
         getDraft();
-        getDistanceFormat();
     }, [retrieveData]);
-
-    const getDistanceFormat = async () => {
-        const data = await getGroupData();
-        if (!data) return;
-        setDistanceFormat(data.distance);
-    };
 
     const handleSubmit = async () => {
         setErrors('');
@@ -317,7 +310,7 @@ export default () => {
                                                         style={{fontSize: 16, fontWeight: 'bold'}}
                                                     >
                                                         {e.presetName} ({e.distance}{' '}
-                                                        {distanceFormat})
+                                                        {retrieveData?.distance})
                                                     </Text>
                                                 </View>
                                                 <View

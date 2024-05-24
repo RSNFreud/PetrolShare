@@ -1,9 +1,9 @@
 import Button from '@components/button';
 import {Text} from '@components/text';
-import {useEffect, useState} from 'react';
+import {useContext} from 'react';
 import {View} from 'react-native';
 
-import {getGroupData} from '../../hooks';
+import {AuthContext} from 'hooks/context';
 
 type PropsType = {
     loading: boolean;
@@ -16,17 +16,7 @@ type PropsType = {
 };
 
 export default ({loading, handleClick, disabled, errors, distance, text, style}: PropsType) => {
-    const [distanceFormat, setDistanceFormat] = useState();
-
-    useEffect(() => {
-        getDistanceFormat();
-    });
-
-    const getDistanceFormat = async () => {
-        const data = await getGroupData();
-        if (!data) return;
-        setDistanceFormat(data.distance);
-    };
+    const {retrieveData} = useContext(AuthContext);
 
     return (
         <>
@@ -36,7 +26,7 @@ export default ({loading, handleClick, disabled, errors, distance, text, style}:
                 handleClick={handleClick}
                 variant={style}
                 text={`${text || 'Add Distance'} ${
-                    distance ? `(${distance} ${distanceFormat || ''})` : ''
+                    distance ? `(${distance} ${retrieveData?.distance || ''})` : ''
                 }`}
             />
             {!!errors && (

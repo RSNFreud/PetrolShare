@@ -95,7 +95,7 @@ export default ({handleClose}: {handleClose: (alert?: string) => void}) => {
                 label="Distance to apply"
                 errorMessage={errors.distance}
                 placeholder="Enter amount"
-                keyboardType="numbers-and-punctuation"
+                keyboardType="decimal-pad"
                 inputStyle={{paddingVertical: 10}}
                 style={{marginBottom: 20}}
             />
