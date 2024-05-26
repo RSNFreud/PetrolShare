@@ -3,6 +3,7 @@ import {checkForUpdateAsync, fetchUpdateAsync, reloadAsync} from 'expo-updates';
 import {Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import {MMKV} from 'react-native-mmkv';
+import * as Sentry from '@sentry/react-native';
 
 const storage = new MMKV();
 
@@ -75,7 +76,9 @@ export const checkForUpdates = async (force?: boolean) => {
                 'An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app',
                 [{text: 'Dismiss'}, {text: 'Update', onPress: async () => await reloadAsync()}],
             );
-    } catch {}
+    } catch (err) {
+        Sentry.captureException(err);
+    }
 };
 
 export const convertHexToRGBA = (hexCode: string, opacity = 1) => {

@@ -171,7 +171,6 @@ export const App = () => {
         });
 
         if (data) {
-            setIsServerError(false);
             if (data.status === 200) {
                 const userData = await data.json();
                 setItem('userData', JSON.stringify({...parsed, ...userData}));
@@ -180,8 +179,13 @@ export const App = () => {
                     ...loadingStatus,
                     auth: true,
                 }));
+                if (isServerError) {
+                    ref.isReady() && ref.navigate('/');
+                }
+                setIsServerError(false);
                 return;
             }
+            setIsServerError(false);
             if (data.status === 400 && (await data.text()).includes('deactivated')) {
                 setTimeout(async () => {
                     Alert('Account Deactivated', await data.text());
@@ -215,7 +219,7 @@ export const App = () => {
 
     useEffect(() => {
         checkForUpdates(loading);
-    }, [isUpdateAvailable, loading]);
+    }, [isUpdateAvailable]);
 
     useEffect(() => {
         if (isUpdateAvailable || isChecking || isDownloading) return;
