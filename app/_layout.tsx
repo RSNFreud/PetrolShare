@@ -1,5 +1,6 @@
 import Header from '@components/Header';
 import AlertBox from '@components/alertBox';
+import NetworkError from '@components/networkError';
 import Premium from '@components/premium';
 import {deregisterForPushNotifications} from '@components/sendNotification';
 import SplashScreenComponent from '@components/splashScreen';
@@ -65,6 +66,7 @@ Sentry.init({
 
 export const App = () => {
     const [loading, setLoading] = useState(true);
+    const [isServerError, setIsServerError] = useState(false);
     const [userData, setUserData] = useState<Partial<StoreData>>({});
     const [isPremium, setIsPremium] = useState(true);
     const [fontsLoaded] = useFonts({
@@ -126,7 +128,7 @@ export const App = () => {
 
     // Update session data when user data changes
     useEffect(() => {
-        setItem('userData', JSON.stringify(userData));
+        if (userData.authenticationKey) setItem('userData', JSON.stringify(userData));
     }, [userData]);
 
     useEffect(() => {
@@ -145,6 +147,7 @@ export const App = () => {
 
     const checkIfAuth = async () => {
         const ogData = getItem('userData');
+
         // If not signed in show login
         if (!ogData)
             return setLoadingStatus(loadingStatus => ({
@@ -162,17 +165,13 @@ export const App = () => {
         // Check if auth key valid
         const data = await sendRequestToBackend({
             url: `user/verify?authenticationKey=${parsed.authenticationKey}`,
-            onError: () =>
-                Alert(
-                    'Unexpected Error',
-                    'We are having trouble connecting to our authentication servers. Please click the button to try again or come back at a later time',
-                    [
-                        {text: 'Retry', onPress: () => checkIfAuth()},
-                        {text: 'Close', onPress: () => store.signOut()},
-                    ],
-                ),
+            onError: () => {
+                setIsServerError(true);
+            },
         });
+
         if (data) {
+            setIsServerError(false);
             if (data.status === 200) {
                 const userData = await data.json();
                 setItem('userData', JSON.stringify({...parsed, ...userData}));
@@ -188,6 +187,7 @@ export const App = () => {
                     Alert('Account Deactivated', await data.text());
                 }, 500);
             }
+
             store.signOut();
         }
 
@@ -267,6 +267,7 @@ export const App = () => {
     return (
         <>
             <SplashScreenComponent />
+            {isServerError && <NetworkError onRetry={checkIfAuth} />}
             <Animated.View
                 style={{
                     flex: 1,
