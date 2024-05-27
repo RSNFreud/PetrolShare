@@ -23,6 +23,7 @@ export type AuthContextType = {
     isLoading: boolean;
     isLoggedIn: boolean;
     isPremium: boolean;
+    isServerError: boolean;
     updateData: () => void;
     setPremiumStatus: (e: boolean) => void;
     signOut: () => void;

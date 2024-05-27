@@ -105,6 +105,7 @@ export const App = () => {
                 } catch {}
             },
             retrieveData: userData,
+            isServerError: isServerError,
             setData: setUserData,
             updateData: () => fetchData(),
             isLoading: loading,
@@ -171,6 +172,7 @@ export const App = () => {
         });
 
         if (data) {
+            setIsServerError(false);
             if (data.status === 200) {
                 const userData = await data.json();
                 setItem('userData', JSON.stringify({...parsed, ...userData}));
@@ -179,13 +181,8 @@ export const App = () => {
                     ...loadingStatus,
                     auth: true,
                 }));
-                if (isServerError) {
-                    ref.isReady() && ref.navigate('/');
-                }
-                setIsServerError(false);
                 return;
             }
-            setIsServerError(false);
             if (data.status === 400 && (await data.text()).includes('deactivated')) {
                 setTimeout(async () => {
                     Alert('Account Deactivated', await data.text());

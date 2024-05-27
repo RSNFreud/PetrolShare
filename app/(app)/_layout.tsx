@@ -10,10 +10,12 @@ import {useSession} from 'hooks/context';
 import React from 'react';
 
 export default function AppLayout() {
-    const {isLoggedIn, isLoading} = useSession();
+    const {isLoggedIn, isLoading, isServerError} = useSession();
+
     if (isLoading) {
         return <SplashScreen />;
     }
+    if (isServerError) return <></>;
 
     if (!isLoggedIn) {
         return <Redirect href="/login" />;
