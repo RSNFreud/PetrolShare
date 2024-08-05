@@ -4,6 +4,7 @@ import {Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import {MMKV} from 'react-native-mmkv';
 import * as Sentry from '@sentry/react-native';
+import * as Updates from 'expo-updates';
 
 const storage = new MMKV();
 
@@ -66,16 +67,16 @@ export const sendCustomEvent = (event: string, data?: any) => {
 export const checkForUpdates = async (force?: boolean) => {
     try {
         const resolve = await checkForUpdateAsync();
-        if (!resolve.isAvailable) return;
+        const hasPopupShown = getItem('updateVersion');
+        if (!resolve.isAvailable || hasPopupShown === Updates.updateId) return;
+        if (Updates.updateId) setItem('updateVersion', Updates.updateId);
         await fetchUpdateAsync();
-        if (force) {
-            await reloadAsync();
-        } else
-            Alert(
-                'Update Available',
-                'An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app',
-                [{text: 'Dismiss'}, {text: 'Update', onPress: async () => await reloadAsync()}],
-            );
+
+        Alert(
+            'Update Available',
+            'An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app',
+            [{text: 'Dismiss'}, {text: 'Update', onPress: async () => await reloadAsync()}],
+        );
     } catch (err) {
         Sentry.captureException(err);
     }

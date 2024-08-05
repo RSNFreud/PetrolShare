@@ -196,7 +196,7 @@ export const Register = React.memo(() => {
                 </>
             </Box>
             <Button
-                handleClick={() => navigation.navigate('login')}
+                handleClick={() => navigation.navigate('')}
                 style={{marginTop: 25}}
                 text="Back to Login"
             />
