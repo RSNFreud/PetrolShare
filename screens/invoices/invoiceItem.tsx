@@ -47,11 +47,13 @@ export default ({
     const [alertSent, setAlertSent] = useState(false);
 
     const sendAlert = async () => {
+        if (alertSent) return;
         setAlertSent(true);
+
         const res = await sendPostRequest(`invoices/alert`, {
             authenticationKey,
             invoiceID,
-            fullName: groupData.fullName,
+            fullName: invoiceData.fullName,
         });
         if (res?.ok) {
             setTimeout(() => {

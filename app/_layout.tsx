@@ -5,6 +5,7 @@ import Premium from '@components/premium';
 import {deregisterForPushNotifications} from '@components/sendNotification';
 import SplashScreenComponent from '@components/splashScreen';
 import {Text} from '@components/text';
+import {CommonActions} from '@react-navigation/native';
 import * as Sentry from '@sentry/react-native';
 import Colors from 'constants/Colors';
 import {useFonts} from 'expo-font';
@@ -222,6 +223,17 @@ export const App = () => {
         if (isUpdateAvailable || isChecking || isDownloading) return;
         if (loadingStatus.auth && loadingStatus.fonts) setLoading(false);
     }, [loadingStatus, isChecking, isUpdateAvailable, isDownloading]);
+
+    useEffect(() => {
+        if (loading || !ref.isReady() || !notifData.invoiceID || !notifData.routeName) return;
+        const route = CommonActions.navigate({
+            name: notifData.routeName,
+            params: {id: notifData.invoiceID},
+        });
+        sendCustomEvent('closeSplash');
+
+        ref.dispatch(route);
+    }, [notifData, loading, ref]);
 
     useEffect(() => {
         let i: string | number | NodeJS.Timeout | undefined;
