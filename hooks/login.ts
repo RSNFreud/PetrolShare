@@ -1,3 +1,4 @@
+import {registerForPushNotificationsAsync} from '@components/sendNotification';
 import {StoreData} from './context';
 import {sendPostRequest} from './sendFetchRequest';
 
@@ -8,9 +9,10 @@ export const logIn = async (email: string, password: string) => {
     });
 
     if (res) {
-        if (res.ok && res.status === 200)
+        if (res.ok && res.status === 200) {
+            await registerForPushNotificationsAsync(email);
             return {valid: true, data: (await res.json()) as StoreData};
-        else return {valid: false, errors: await res.text()};
+        } else return {valid: false, errors: await res.text()};
     } else
         return {
             valid: false,
