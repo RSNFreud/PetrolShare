@@ -75,7 +75,16 @@ export const checkForUpdates = async (force?: boolean) => {
         Alert(
             'Update Available',
             'An update to the app has been downloaded to your device. Click the Update button to install it, alternatively, it will be installed on the next boot of the app',
-            [{text: 'Dismiss'}, {text: 'Update', onPress: async () => await reloadAsync()}],
+            [
+                {text: 'Dismiss'},
+                {
+                    text: 'Update',
+                    onPress: async () => {
+                        sendCustomEvent('closeAlert');
+                        await reloadAsync();
+                    },
+                },
+            ],
         );
     } catch (err) {
         Sentry.captureException(err);

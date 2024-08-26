@@ -76,7 +76,6 @@ export const App = () => {
         'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
         'Roboto-Light': require('../assets/fonts/Roboto-Light.ttf'),
     });
-    const [notifData, setNotifData] = useState({routeName: '', invoiceID: ''});
     const pathname = usePathname();
     const routeParams = useLocalSearchParams();
     const ref = useNavigationContainerRef();
@@ -85,6 +84,7 @@ export const App = () => {
         auth: false,
     });
     const {isChecking, isUpdateAvailable, isDownloading} = useUpdates();
+    const lastNotif = Notifications.useLastNotificationResponse();
 
     const store = React.useMemo(
         () => ({
@@ -225,30 +225,23 @@ export const App = () => {
     }, [loadingStatus, isChecking, isUpdateAvailable, isDownloading]);
 
     useEffect(() => {
-        if (loading || !ref.isReady() || !notifData.invoiceID || !notifData.routeName) return;
+        const notifData = lastNotif?.notification.request.content.data;
+        const routeName = notifData?.route;
+        const invoiceID = notifData?.invoiceID;
+        if (loading || !ref.isReady() || !store.isLoggedIn) return;
+        if (!invoiceID || !routeName) {
+            sendCustomEvent('closeSplash');
+            return;
+        }
+
         const route = CommonActions.navigate({
-            name: notifData.routeName,
-            params: {id: notifData.invoiceID},
+            name: routeName,
+            params: {id: invoiceID},
         });
         sendCustomEvent('closeSplash');
 
         ref.dispatch(route);
-    }, [notifData, loading, ref]);
-
-    useEffect(() => {
-        let i: string | number | NodeJS.Timeout | undefined;
-
-        if (!loading && !notifData.invoiceID && !notifData.routeName) {
-            sendCustomEvent('closeSplash');
-        }
-        Notifications.addNotificationResponseReceivedListener(e => {
-            const routeName = e.notification.request.content.data['route'] as any;
-            const invoiceID = e.notification.request.content.data['invoiceID'] as string;
-            if (!routeName) return;
-            setNotifData({routeName, invoiceID});
-        });
-        return () => clearTimeout(i);
-    }, [loading, notifData]);
+    }, [lastNotif, loading, store.isLoggedIn, ref.isReady()]);
 
     useEffect(() => {
         if (ref) {

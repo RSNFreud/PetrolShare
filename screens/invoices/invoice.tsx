@@ -68,8 +68,6 @@ export default ({invoiceID, isPublic}: PropsType) => {
     const [manageDistanceOpen, setManageDistanceOpen] = useState(false);
     const navigate = useRouter();
 
-    console.log(invoiceID);
-
     const handleUpdate = () => {
         handleClose();
         getInvoice();
