@@ -32,9 +32,9 @@
       ]
     ],
     "splash": {
-      "backgroundColor": "#292B36"
+      "backgroundColor": "#1E2336"
     },
-    "backgroundColor": "#292B36",
+    "backgroundColor": "#1E2336",
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/5a6b67c6-532d-402b-ab54-ceeb04084203"
@@ -82,7 +82,7 @@
       "googleServicesFile": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#292B36"
+        "backgroundColor": "#1E2336"
       },
       "package": "com.rsnfreud.PetrolShare",
       "intentFilters": [

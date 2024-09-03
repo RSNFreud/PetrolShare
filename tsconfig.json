@@ -3,9 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@components/*": ["./components/*"],
-      "@icons/*": ["./assets/icons/*"],
-      "@constants": ["./constants.ts"]
+      "@components/*": ["src/components/*"],
+      "@icons/*": ["archive/icons/*"],
+      "@constants/*": ["src/constants/*"]
     },
     "baseUrl": "."
   },
