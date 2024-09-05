@@ -1,15 +1,14 @@
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
-import {ENDPOINTS} from '@constants/api-routes';
 import {Colors} from '@constants/colors';
-import {useContext, useState} from 'react';
+import {FC, useState} from 'react';
 import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View} from 'react-native';
-import {RootContext} from 'src/context/rootContext';
-import {sendCustomEvent} from 'src/hooks/common';
-import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {connect} from 'react-redux';
 import {ForgotPassword} from 'src/pages/login/forgotPassword/forgotPassword';
+import {ApplicationStoreType} from 'src/reducers';
+import {login as loginAction, resetError as resetErrorAction} from 'src/reducers/auth';
+import {getLoginData} from 'src/selectors/user';
 
 const styles = StyleSheet.create({
     logo: {marginTop: 100, fontSize: 26, textAlign: 'center', marginBottom: 20},
@@ -37,71 +36,36 @@ type FormValues = {
     password: string;
 };
 
-type FormErrors = {
-    email: string;
-    password: string;
-    formError?: string;
-};
-
 const MISSING_VALUE = 'Please fill out this required field!';
 
-export const LoginPage = () => {
-    const [values, setValues] = useState<FormValues>({email: '', password: ''});
-    const [isLoading, setIsLoading] = useState(false);
-    const [errors, setErrors] = useState<FormErrors>({email: '', password: '', formError: ''});
+type PropsType = {
+    login: typeof loginAction;
+    isLoading: boolean;
+    error: string;
+    resetError: () => void;
+};
 
-    const {setUserData, setIsLoggedIn} = useContext(RootContext);
+export const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
+    const [values, setValues] = useState<FormValues>({email: '', password: ''});
+    const [errors, setErrors] = useState<FormValues>({email: '', password: ''});
 
     const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>, id: string) => {
         const value = e.nativeEvent.text;
         setValues(values => ({...values, [id]: value}));
-        setErrors(errors => ({...errors, [id]: '', formError: ''}));
+        setErrors(errors => ({...errors, [id]: ''}));
+        resetError();
     };
 
     const handleSubmit = async () => {
-        let parsedErrors: FormErrors = {email: '', password: '', formError: ''};
+        let parsedErrors: FormValues = {email: '', password: ''};
         Object.entries(values).map(([key, value]) => {
-            if (key === 'formError') return;
             if (!value) parsedErrors[key as keyof FormValues] = MISSING_VALUE;
             if (key === 'email' && !/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value))
                 parsedErrors[key as keyof FormValues] = 'Please enter a valid email!';
         });
         setErrors(parsedErrors);
         if (Boolean(Object.values(parsedErrors).filter(e => e).length)) return;
-        setIsLoading(true);
-
-        const res = await sendPostRequest(ENDPOINTS.LOGIN, {
-            emailAddress: values.email,
-            password: values.password,
-        });
-
-        if (res) {
-            if (res.ok && res.status === 200) {
-                const data = await res.json();
-                await registerForPushNotificationsAsync(values.email);
-                sendCustomEvent('openSplash');
-                setTimeout(() => {
-                    sendCustomEvent('closeSplash');
-                }, 500);
-                setIsLoading(false);
-                setUserData(data);
-                setIsLoggedIn(true);
-            } else {
-                const text = await res.text();
-                setErrors(rest => ({
-                    ...rest,
-                    formError: text,
-                }));
-                setIsLoading(false);
-            }
-            return;
-        }
-        setIsLoading(false);
-        setErrors(rest => ({
-            ...rest,
-            formError:
-                'We are having trouble connecting to our authentication servers. Please try again later...',
-        }));
+        login({emailAddress: values.email, password: values.password});
     };
 
     return (
@@ -130,9 +94,9 @@ export const LoginPage = () => {
                         secureTextEntry
                     />
                 </View>
-                {errors.formError && (
+                {error && (
                     <View style={styles.errorBox}>
-                        <Text style={styles.error}>{errors.formError}</Text>
+                        <Text style={styles.error}>{error}</Text>
                     </View>
                 )}
                 <ForgotPassword emailAddress={values.email} handleInput={handleInput} />
@@ -146,4 +110,14 @@ export const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+const mapStateToProps = (store: ApplicationStoreType) => ({
+    isLoading: getLoginData(store).isLoading,
+    error: getLoginData(store).error,
+});
+
+export const LoginConnected = connect(mapStateToProps, {
+    login: loginAction,
+    resetError: resetErrorAction,
+})(LoginPage);
+
+export default LoginConnected;

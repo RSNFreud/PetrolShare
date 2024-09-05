@@ -1,4 +1,4 @@
-import {createContext} from 'react';
+import React, {createContext} from 'react';
 
 export type UserDataType = {
     emailAddress: string;
@@ -19,33 +19,19 @@ export type PopupType = {
     isVisible: boolean;
 };
 
-type RootContextType = {
-    isLoggedIn: boolean;
-    setIsLoggedIn: (value: boolean) => void;
+type PopupContextType = {
     popupData: PopupType;
-    userData: UserDataType;
-    setUserData: (data: {[K in keyof UserDataType]?: UserDataType[K]}) => void;
     setPopupData: (data: {[K in keyof PopupType]?: PopupType[K]}) => void;
 };
 
-export const initialState: RootContextType = {
-    isLoggedIn: false,
+export const initialState: PopupContextType = {
     popupData: {
         isVisible: false,
         title: '',
         hasClose: true,
         content: <></>,
     },
-    userData: {
-        emailAddress: '',
-        fullName: '',
-        authenticationKey: '',
-        currentMileage: '',
-        groupID: '',
-    },
     setPopupData: () => {},
-    setUserData: () => {},
-    setIsLoggedIn: () => {},
 };
 
-export const RootContext = createContext<RootContextType>(initialState);
+export const PopupContext = createContext<PopupContextType>(initialState);

@@ -3,10 +3,10 @@ import {Input} from '@components/layout/input';
 import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View} from 'react-native';
 import {Text} from '@components/layout/text';
 import {FC, useContext, useState} from 'react';
-import {RootContext} from 'src/context/rootContext';
 import {ForgotPasswordType} from './forgotPassword';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
+import {PopupContext} from 'src/popup/context';
 
 const styles = StyleSheet.create({
     container: {
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 const MISSING_VALUE = 'Please fill out this required field!';
 
 export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
-    const {setPopupData} = useContext(RootContext);
+    const {setPopupData} = useContext(PopupContext);
     const [formState, setFormState] = useState({email: emailAddress, isLoading: false, error: ''});
 
     const setEmail = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {

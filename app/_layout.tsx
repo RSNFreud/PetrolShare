@@ -1,10 +1,12 @@
-import {Popup} from '@components/layout/popup';
 import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {View} from 'react-native';
-import {RootProvider} from 'src/providers/rootProvider';
+import {Provider} from 'react-redux';
+import {Popup} from '@components/layout/popup';
+import {store} from 'src/store';
+import {PopupProvider} from 'src/popup/provider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -25,12 +27,14 @@ export default function RootLayout() {
     }
 
     return (
-        <RootProvider>
-            <View style={{paddingHorizontal: 18}}>
-                {/* <SplashScreenComponent /> */}
-                <Slot />
-                <Popup />
-            </View>
-        </RootProvider>
+        <Provider store={store}>
+            <PopupProvider>
+                <View style={{paddingHorizontal: 18}}>
+                    {/* <SplashScreenComponent /> */}
+                    <Slot />
+                    <Popup />
+                </View>
+            </PopupProvider>
+        </Provider>
     );
 }

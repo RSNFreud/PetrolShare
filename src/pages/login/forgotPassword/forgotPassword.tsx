@@ -2,8 +2,8 @@ import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {FC, useContext} from 'react';
 import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData} from 'react-native';
-import {RootContext} from 'src/context/rootContext';
 import {Form} from './helpers';
+import {PopupContext} from 'src/popup/context';
 
 const styles = StyleSheet.create({
     forgotPassword: {
@@ -17,7 +17,7 @@ export type ForgotPasswordType = {
 };
 
 export const ForgotPassword: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
-    const {setPopupData} = useContext(RootContext);
+    const {setPopupData} = useContext(PopupContext);
 
     const openPasswordResetForm = () => {
         setPopupData({
