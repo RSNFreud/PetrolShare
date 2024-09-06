@@ -5,4 +5,5 @@ export const EMAIL_ADDRESS = `https://petrolshare.freud-online.co.uk/email`;
 export const ENDPOINTS = {
     FORGOT_PASSWORD: 'user/forgot-password',
     LOGIN: 'user/login',
+    VERIFY_KEY: 'user/verify',
 };

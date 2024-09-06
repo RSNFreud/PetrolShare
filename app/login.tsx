@@ -39,13 +39,13 @@ type FormValues = {
 const MISSING_VALUE = 'Please fill out this required field!';
 
 type PropsType = {
-    login: typeof loginAction;
+    login: (data: {emailAddress: string; password: string}) => void;
     isLoading: boolean;
     error: string;
     resetError: () => void;
 };
 
-export const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
+const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
     const [values, setValues] = useState<FormValues>({email: '', password: ''});
     const [errors, setErrors] = useState<FormValues>({email: '', password: ''});
 
@@ -115,7 +115,7 @@ const mapStateToProps = (store: ApplicationStoreType) => ({
     error: getLoginData(store).error,
 });
 
-export const LoginConnected = connect(mapStateToProps, {
+const LoginConnected = connect(mapStateToProps, {
     login: loginAction,
     resetError: resetErrorAction,
 })(LoginPage);

@@ -1,4 +1,4 @@
-import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
+import {SplashScreenConnected} from '@components/layout/splashScreen';
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
 import {useState} from 'react';
@@ -9,7 +9,7 @@ import {store} from 'src/store';
 import {PopupProvider} from 'src/popup/provider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+SplashScreen.hideAsync();
 
 export default function RootLayout() {
     const [fontsLoaded] = useFonts({
@@ -20,8 +20,6 @@ export default function RootLayout() {
     });
     const [loading, setLoading] = useState(true);
 
-    SplashScreen.hideAsync();
-
     if (!loading) {
         return null;
     }
@@ -30,7 +28,7 @@ export default function RootLayout() {
         <Provider store={store}>
             <PopupProvider>
                 <View style={{paddingHorizontal: 18}}>
-                    {/* <SplashScreenComponent /> */}
+                    <SplashScreenConnected />
                     <Slot />
                     <Popup />
                 </View>

@@ -1,41 +1,42 @@
 import {useEffect, useRef, useState} from 'react';
 import {Dimensions, ImageBackground, Animated} from 'react-native';
-import {EventRegister} from 'react-native-event-listeners';
+import {connect} from 'react-redux';
 
 import SplashImage from 'src/assets/images/splash.png';
 import {Colors} from 'src/constants/colors';
+import {ApplicationStoreType} from 'src/reducers';
+import {setLoading as setLoadingAction} from 'src/reducers/loadingScreen';
 
-export const SplashScreen: React.FC = () => {
-    const [visible, setVisible] = useState(true);
+type PropsType = {
+    isLoading: boolean;
+    setLoading: (state: boolean) => void;
+};
+
+export const SplashScreen: React.FC<PropsType> = ({isLoading, setLoading}) => {
     const fadeAnim = useRef(new Animated.Value(1)).current;
+    const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
-        EventRegister.addEventListener('closeSplash', () => {
-            fadeOut();
-        });
-        EventRegister.addEventListener('openSplash', () => {
-            setVisible(true);
-            fadeAnim.setValue(1);
-        });
-
-        return () => {
-            EventRegister.removeEventListener('closeSplash');
-            EventRegister.removeEventListener('openSplash');
-        };
-    }, []);
+        if (!isLoading) {
+            return fadeOut();
+        }
+        setIsVisible(isLoading);
+        fadeAnim.setValue(1);
+    }, [isLoading]);
 
     const fadeOut = () => {
+        setIsVisible(true);
         Animated.timing(fadeAnim, {
             toValue: 0,
             delay: 600,
             duration: 400,
             useNativeDriver: true,
         }).start(() => {
-            setVisible(false);
+            setIsVisible(false);
         });
     };
 
-    if (!visible) return <></>;
+    if (!isVisible) return <></>;
 
     return (
         <Animated.View
@@ -59,3 +60,11 @@ export const SplashScreen: React.FC = () => {
         </Animated.View>
     );
 };
+
+const mapStateToProps = (store: ApplicationStoreType) => ({
+    isLoading: store.loadingScreen,
+});
+
+export const SplashScreenConnected = connect(mapStateToProps, {setLoading: setLoadingAction})(
+    SplashScreen,
+);
