@@ -6,32 +6,33 @@ import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
 import {fetchSelf, login, logOut} from 'src/reducers/auth';
 
 function* registerNotifs({payload}: ReturnType<typeof login.fulfilled>) {
-    if (!payload || !payload.emailAddress) return;
-    registerForPushNotificationsAsync(payload.emailAddress);
+    const email = payload?.emailAddress;
+    if (email) yield registerForPushNotificationsAsync(email);
 }
 
 function* saveAuthKey({payload}: ReturnType<typeof login.fulfilled>) {
-    if (!payload || !payload.authenticationKey) return;
-    setItem(STORAGE_KEYS.authKey, payload.authenticationKey);
+    const authKey = payload?.authenticationKey;
+    if (authKey) setItem(STORAGE_KEYS.authKey, authKey);
 }
 
 function* deleteAuthKey() {
-    deleteItem(STORAGE_KEYS.authKey);
+    yield deleteItem(STORAGE_KEYS.authKey);
 }
 
 function* redirectToHome() {
-    router.replace('/');
+    yield router.replace('/');
 }
 
 function* handleLoginFulfilled(result: ReturnType<typeof login.fulfilled>) {
-    yield registerNotifs(result);
-    yield redirectToHome();
-    yield saveAuthKey(result);
+    yield all([registerNotifs(result), saveAuthKey(result), redirectToHome()]);
 }
 
 export default function* authSaga() {
     yield put(fetchSelf());
-    yield all([takeLatest(login.fulfilled, handleLoginFulfilled)]);
-    yield all([takeEvery(fetchSelf.fulfilled.type, handleLoginFulfilled)]);
-    yield takeLatest(logOut, deleteAuthKey);
+
+    yield all([
+        takeLatest(login.fulfilled.type, handleLoginFulfilled),
+        takeEvery(fetchSelf.fulfilled.type, handleLoginFulfilled),
+        takeLatest(logOut, deleteAuthKey),
+    ]);
 }
