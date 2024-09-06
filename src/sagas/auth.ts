@@ -4,7 +4,6 @@ import {all, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import {deleteItem, setItem} from 'src/hooks/common';
 import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
 import {fetchSelf, login, logOut} from 'src/reducers/auth';
-import {setLoading} from 'src/reducers/loadingScreen';
 
 function* registerNotifs({payload}: ReturnType<typeof login.fulfilled>) {
     if (!payload || !payload.emailAddress) return;
@@ -24,10 +23,6 @@ function* redirectToHome() {
     router.replace('/');
 }
 
-function* setLoadingState() {
-    yield put(setLoading(false));
-}
-
 function* handleLoginFulfilled(result: ReturnType<typeof login.fulfilled>) {
     yield registerNotifs(result);
     yield redirectToHome();
@@ -36,7 +31,6 @@ function* handleLoginFulfilled(result: ReturnType<typeof login.fulfilled>) {
 
 export default function* authSaga() {
     yield put(fetchSelf());
-    yield all([takeEvery(fetchSelf.fulfilled.type, setLoadingState)]);
     yield all([takeLatest(login.fulfilled, handleLoginFulfilled)]);
     yield all([takeEvery(fetchSelf.fulfilled.type, handleLoginFulfilled)]);
     yield takeLatest(logOut, deleteAuthKey);
