@@ -7,6 +7,7 @@ import {ForgotPasswordType} from './forgotPassword';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
 import {PopupContext} from 'src/popup/context';
+import {z} from 'zod';
 
 const styles = StyleSheet.create({
     container: {
@@ -23,6 +24,12 @@ const styles = StyleSheet.create({
 
 const MISSING_VALUE = 'Please fill out this required field!';
 
+const validation = z
+    .object({
+        email: z.string().trim().min(1, MISSING_VALUE).email('Please enter a valid email!'),
+    })
+    .required();
+
 export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
     const {setPopupData} = useContext(PopupContext);
     const [formState, setFormState] = useState({email: emailAddress, isLoading: false, error: ''});
@@ -34,9 +41,16 @@ export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
     };
 
     const sendEmail = async () => {
-        if (!formState.email) return setFormState(rest => ({...rest, error: MISSING_VALUE}));
-        if (!/[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(formState.email))
-            return setFormState(rest => ({...rest, error: 'Please enter a valid email!'}));
+        const validate = validation.safeParse({email: formState.email});
+
+        if (!validate.success) {
+            const errorMessage = validate.error.format().email?._errors[0] || '';
+            return setFormState(prevState => ({
+                ...prevState,
+                error: errorMessage,
+            }));
+        }
+
         setFormState(rest => ({...rest, error: '', isLoading: true}));
         const res = await sendPostRequest(ENDPOINTS.FORGOT_PASSWORD, {
             emailAddress: formState.email,
