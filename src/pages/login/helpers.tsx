@@ -1,5 +1,6 @@
 import {Input} from '@components/layout/input';
 import {Colors} from '@constants/colors';
+import {Text} from '@components/layout/text';
 import {ComponentProps} from 'react';
 import {z} from 'zod';
 import {StyleSheet} from 'react-native';
@@ -33,7 +34,13 @@ export const validation = z
     })
     .required();
 
-export const formFields: (ComponentProps<typeof Input> & {key: string})[] = [
+export const formFields: (ComponentProps<typeof Input> & {key: 'email' | 'password'})[] = [
     {key: 'email', label: 'Email:', placeholder: 'Enter email', keyboardType: 'email-address'},
     {key: 'password', label: 'Password:', placeholder: 'Enter password', secureTextEntry: true},
 ];
+
+export const Header = () => (
+    <Text style={styles.logo} bold>
+        PetrolShare
+    </Text>
+);

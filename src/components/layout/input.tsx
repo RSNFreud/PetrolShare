@@ -36,7 +36,11 @@ export const Input: FC<PropsType> = ({label, error, style, ...rest}) => {
             <Text bold style={styles.label}>
                 {label}
             </Text>
-            <TextInput {...rest} style={combinedStyles} placeholderTextColor="white" />
+            <TextInput
+                {...rest}
+                style={combinedStyles}
+                placeholderTextColor="rgba(255,255,255,0.4)"
+            />
             {!!error && <Text style={styles.error}>{error}</Text>}
         </View>
     );

@@ -21,18 +21,30 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Button: FC<PropsType> = ({children, style, variant, loading, ...rest}) => {
+export const Button: FC<PropsType> = ({children, style, variant, loading, disabled, ...rest}) => {
+    const backgroundColour = () => {
+        if (disabled) return '#494B5F';
+        if (variant === 'ghost') return 'transparent';
+        return Colors.tertiary;
+    };
+
+    const borderColor = () => {
+        if (disabled) return 'transparent';
+        if (variant === 'ghost') return Colors.tertiary;
+        return Colors.border;
+    };
+
     const combinedStyles: ComponentProps<typeof TouchableOpacity>['style'] = [
         styles.button,
         {
-            backgroundColor: variant === 'ghost' ? 'transparent' : Colors.tertiary,
-            borderColor: variant === 'ghost' ? Colors.tertiary : Colors.border,
+            backgroundColor: backgroundColour(),
+            borderColor: borderColor(),
         },
         style,
     ];
 
     return (
-        <ButtonBase style={combinedStyles} disabled={loading} {...rest}>
+        <ButtonBase style={combinedStyles} disabled={loading || disabled} {...rest}>
             <Text
                 bold
                 style={{fontSize: 18, color: variant === 'ghost' ? Colors.tertiary : 'white'}}

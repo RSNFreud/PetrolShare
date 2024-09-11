@@ -2,7 +2,7 @@ import {SplashScreenConnected} from '@components/layout/splashScreen';
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
 import {useState} from 'react';
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {Provider} from 'react-redux';
 import {Popup} from '@components/layout/popup';
 import {store} from 'src/store';
@@ -27,11 +27,15 @@ export default function RootLayout() {
     return (
         <Provider store={store}>
             <PopupProvider>
-                <View style={{paddingHorizontal: 18}}>
-                    <SplashScreenConnected />
+                <SplashScreenConnected />
+                <ScrollView
+                    style={{paddingHorizontal: 18}}
+                    automaticallyAdjustKeyboardInsets={true}
+                    keyboardShouldPersistTaps="always"
+                >
                     <Slot />
-                    <Popup />
-                </View>
+                </ScrollView>
+                <Popup />
             </PopupProvider>
         </Provider>
     );

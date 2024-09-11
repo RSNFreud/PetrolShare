@@ -36,7 +36,7 @@ export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
 
     const setEmail = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         const value = e.nativeEvent.text;
-        setFormState(rest => ({...rest, email: value}));
+        setFormState(rest => ({...rest, email: value, error: ''}));
         handleInput(e, 'email');
     };
 

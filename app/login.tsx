@@ -1,21 +1,21 @@
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
+import {useRouter} from 'expo-router';
 import {FC, useState} from 'react';
 import {NativeSyntheticEvent, TextInputChangeEventData, View} from 'react-native';
 import {connect} from 'react-redux';
-import {ForgotPassword} from 'src/pages/login/forgotPassword/forgotPassword';
-import {formFields, styles, validation} from 'src/pages/login/helpers';
+import {ForgotPassword} from 'src/pages/forgotPassword/forgotPassword';
+import {formFields, Header, styles, validation} from 'src/pages/login/helpers';
 import {ApplicationStoreType} from 'src/reducers';
 import {login as loginAction, resetError as resetErrorAction} from 'src/reducers/auth';
 import {getLoginData} from 'src/selectors/user';
 
 type FormValues = {
-    email: string;
-    password: string;
+    error?: string;
+    value: string;
 };
 
-type FormErrors = Partial<FormValues>;
 type PropsType = {
     login: (data: {emailAddress: string; password: string}) => void;
     isLoading: boolean;
@@ -23,42 +23,45 @@ type PropsType = {
     resetError: () => void;
 };
 
+const defaultValues = {
+    error: '',
+    value: '',
+};
+
 const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
-    const [formState, setFormState] = useState<{values: FormValues; errors: FormErrors}>({
-        values: {email: '', password: ''},
-        errors: {},
+    const [data, setData] = useState<{email: FormValues; password: FormValues}>({
+        email: defaultValues,
+        password: defaultValues,
     });
+
+    const {push} = useRouter();
 
     const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>, id: string) => {
         const value = e.nativeEvent.text;
-        setFormState(prevState => ({
-            values: {...prevState.values, [id]: value},
-            errors: {...prevState.errors, [id]: ''},
+        setData(prevState => ({
+            ...prevState,
+            [id]: {value, error: ''},
         }));
         resetError();
     };
 
     const handleSubmit = async () => {
-        const validate = validation.safeParse(formState.values);
+        const {email, password} = data;
+
+        const validate = validation.safeParse({email: email.value, password: password.value});
         const errors = validate.error?.format();
 
-        setFormState(prevState => ({
-            ...prevState,
-            errors: {
-                email: errors?.email?._errors[0],
-                password: errors?.password?._errors[0],
-            },
+        setData(prevState => ({
+            email: {...prevState.email, error: errors?.email?._errors[0]},
+            password: {...prevState.password, error: errors?.password?._errors[0]},
         }));
         if (!validate.success) return;
-        const {email, password} = formState.values;
-        login({emailAddress: email, password});
+        login({emailAddress: email.value, password: password.value});
     };
 
     return (
         <>
-            <Text style={styles.logo} bold>
-                PetrolShare
-            </Text>
+            <Header />
             <View style={styles.container}>
                 <View style={styles.inputGroup}>
                     {formFields.map(field => (
@@ -66,8 +69,8 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
                             {...field}
                             onChange={e => handleInput(e, field.key)}
                             key={field.key}
-                            value={formState.values[field.key as keyof FormValues]}
-                            error={formState.errors[field.key as keyof FormValues]}
+                            value={data[field.key].value}
+                            error={data[field.key].error}
                             id={field.key}
                         />
                     ))}
@@ -77,12 +80,14 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
                         <Text style={styles.error}>{error}</Text>
                     </View>
                 )}
-                <ForgotPassword emailAddress={formState.values.email} handleInput={handleInput} />
+                <ForgotPassword emailAddress={data.email.value} handleInput={handleInput} />
                 <Button onPress={handleSubmit} loading={isLoading}>
                     Login
                 </Button>
                 <View style={styles.seperator} />
-                <Button variant="ghost">Register</Button>
+                <Button variant="ghost" onPress={() => push('/register')}>
+                    Register
+                </Button>
             </View>
         </>
     );
