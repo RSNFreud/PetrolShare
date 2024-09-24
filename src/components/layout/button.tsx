@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 
 export const Button: FC<PropsType> = ({children, style, variant, loading, disabled, ...rest}) => {
     const backgroundColour = () => {
-        if (disabled) return '#494B5F';
+        if (disabled) return Colors.primary;
         if (variant === 'ghost') return 'transparent';
         return Colors.tertiary;
     };

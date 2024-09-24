@@ -2,11 +2,11 @@ import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
 import {useRouter} from 'expo-router';
-import {FC, useState} from 'react';
-import {NativeSyntheticEvent, TextInputChangeEventData, View} from 'react-native';
+import {FC, useRef, useState} from 'react';
+import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
 import {connect} from 'react-redux';
 import {ForgotPassword} from 'src/pages/forgotPassword/forgotPassword';
-import {formFields, Header, styles, validation} from 'src/pages/login/helpers';
+import {Header, styles, validation} from 'src/pages/login/helpers';
 import {ApplicationStoreType} from 'src/reducers';
 import {login as loginAction, resetError as resetErrorAction} from 'src/reducers/auth';
 import {getLoginData} from 'src/selectors/user';
@@ -35,6 +35,7 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
     });
 
     const {push} = useRouter();
+    const password = useRef<TextInput>(null);
 
     const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>, id: string) => {
         const value = e.nativeEvent.text;
@@ -64,16 +65,28 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
             <Header />
             <View style={styles.container}>
                 <View style={styles.inputGroup}>
-                    {formFields.map(field => (
-                        <Input
-                            {...field}
-                            onChange={e => handleInput(e, field.key)}
-                            key={field.key}
-                            value={data[field.key].value}
-                            error={data[field.key].error}
-                            id={field.key}
-                        />
-                    ))}
+                    <Input
+                        label="Email:"
+                        placeholder="Enter email"
+                        keyboardType="email-address"
+                        onChange={e => handleInput(e, 'email')}
+                        value={data.email.value}
+                        error={data.email.error}
+                        id={'email'}
+                        onSubmitEditing={() => password.current?.focus()}
+                        returnKeyType="next"
+                    />
+                    <Input
+                        label="Password:"
+                        placeholder="Enter password"
+                        onChange={e => handleInput(e, 'password')}
+                        value={data.password.value}
+                        error={data.password.error}
+                        id={'password'}
+                        ref={password}
+                        secureTextEntry
+                        onSubmitEditing={handleSubmit}
+                    />
                 </View>
                 {error && (
                     <View style={styles.errorBox}>

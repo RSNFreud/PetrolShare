@@ -3,8 +3,8 @@ import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
 import {useRouter} from 'expo-router';
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {Header} from 'src/pages/login/helpers';
 import {z} from 'zod';
 
@@ -86,6 +86,9 @@ const Register = () => {
         if (validate.success) setStep(1);
     };
 
+    // Refs
+    const email = useRef<TextInput>(null);
+
     const STEPS: {[key: number]: React.ReactNode} = {
         [0]: (
             <>
@@ -104,14 +107,20 @@ const Register = () => {
                         placeholder="Enter name"
                         value={data.name.value}
                         error={data.name.error}
+                        enterKeyHint="next"
+                        onSubmitEditing={() => email.current?.focus()}
                     />
                     <Input
                         onChangeText={value => updateData('email', value)}
                         label="Email:"
+                        ref={email}
+                        autoComplete="email"
                         keyboardType="email-address"
+                        inputMode="email"
                         placeholder="Enter email"
                         value={data.email.value}
                         error={data.email.error}
+                        onSubmitEditing={validateStepOne}
                     />
                 </View>
                 <View style={styles.buttons}>

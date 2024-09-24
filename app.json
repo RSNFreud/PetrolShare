@@ -4,7 +4,7 @@
     "slug": "PetrolShare",
     "version": "1.3.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./src/assets/images/icon.png",
     "scheme": "petrolshare",
     "description": "The web version of the PetrolShare App",
     "userInterfaceStyle": "automatic",
@@ -81,7 +81,7 @@
     "android": {
       "googleServicesFile": "",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#1E2336"
       },
       "package": "com.rsnfreud.PetrolShare",
@@ -103,7 +103,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/images/favicon.png",
+      "favicon": "./src/assets/images/favicon.png",
       "bundler": "metro"
     },
     "runtimeVersion": {

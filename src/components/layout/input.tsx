@@ -1,9 +1,13 @@
-import {ComponentProps, FC} from 'react';
+import {ComponentProps, FC, forwardRef, LegacyRef} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {Text} from './text';
 import {Colors} from '@constants/colors';
 
-type PropsType = ComponentProps<typeof TextInput> & {label: string; error?: string};
+type PropsType = ComponentProps<typeof TextInput> & {
+    label: string;
+    error?: string;
+    ref?: LegacyRef<TextInput> | undefined;
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -16,7 +20,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         color: 'white',
         fontSize: 18,
-        lineHeight: 18,
+        lineHeight: 20,
+        alignItems: 'center',
     },
     error: {
         fontSize: 14,
@@ -28,7 +33,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Input: FC<PropsType> = ({label, error, style, ...rest}) => {
+export const Input: FC<PropsType> = forwardRef(({label, error, style, ...rest}, ref) => {
     const combinedStyles: ComponentProps<typeof TextInput>['style'] = [styles.container, style];
 
     return (
@@ -38,10 +43,11 @@ export const Input: FC<PropsType> = ({label, error, style, ...rest}) => {
             </Text>
             <TextInput
                 {...rest}
+                ref={ref}
                 style={combinedStyles}
-                placeholderTextColor="rgba(255,255,255,0.4)"
+                placeholderTextColor="rgba(255,255,255,0.6)"
             />
             {!!error && <Text style={styles.error}>{error}</Text>}
         </View>
     );
-};
+});
