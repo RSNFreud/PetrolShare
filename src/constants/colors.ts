@@ -4,5 +4,6 @@ export const Colors = {
     tertiary: '#454B84',
     border: '#3C4367',
     background: '#1E2336',
+    highlight: '#616BBC',
     red: '#FA4F4F',
 };

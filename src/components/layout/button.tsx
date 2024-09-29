@@ -23,15 +23,20 @@ const styles = StyleSheet.create({
 
 export const Button: FC<PropsType> = ({children, style, variant, loading, disabled, ...rest}) => {
     const backgroundColour = () => {
-        if (disabled) return Colors.primary;
+        if (disabled) return '#242B42';
         if (variant === 'ghost') return 'transparent';
         return Colors.tertiary;
     };
 
     const borderColor = () => {
-        if (disabled) return 'transparent';
-        if (variant === 'ghost') return Colors.tertiary;
+        if (variant === 'ghost') return Colors.highlight;
         return Colors.border;
+    };
+
+    const textColor = () => {
+        if (variant === 'ghost') return Colors.highlight;
+        if (disabled) return '#7A7E93';
+        return 'white';
     };
 
     const combinedStyles: ComponentProps<typeof TouchableOpacity>['style'] = [
@@ -45,10 +50,7 @@ export const Button: FC<PropsType> = ({children, style, variant, loading, disabl
 
     return (
         <ButtonBase style={combinedStyles} disabled={loading || disabled} {...rest}>
-            <Text
-                bold
-                style={{fontSize: 18, color: variant === 'ghost' ? Colors.tertiary : 'white'}}
-            >
+            <Text bold style={{fontSize: 18, color: textColor()}}>
                 {loading ? <ActivityIndicator size="small" color="#fff" /> : children}
             </Text>
         </ButtonBase>

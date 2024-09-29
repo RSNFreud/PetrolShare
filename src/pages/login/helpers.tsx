@@ -2,9 +2,9 @@ import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 import {z} from 'zod';
 import {StyleSheet} from 'react-native';
+import {MISSING_VALUE} from '@constants/common';
 
 export const styles = StyleSheet.create({
-    logo: {marginTop: 100, fontSize: 26, textAlign: 'center', marginBottom: 20},
     inputGroup: {gap: 20},
     container: {
         gap: 25,
@@ -23,7 +23,6 @@ export const styles = StyleSheet.create({
         backgroundColor: Colors.border,
     },
 });
-export const MISSING_VALUE = 'Please fill out this required field!';
 
 export const validation = z
     .object({
@@ -31,9 +30,3 @@ export const validation = z
         password: z.string().trim().min(1, MISSING_VALUE),
     })
     .required();
-
-export const Header = () => (
-    <Text style={styles.logo} bold>
-        PetrolShare
-    </Text>
-);
