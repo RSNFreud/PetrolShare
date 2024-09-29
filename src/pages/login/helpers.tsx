@@ -1,5 +1,4 @@
 import {Colors} from '@constants/colors';
-import {Text} from '@components/layout/text';
 import {z} from 'zod';
 import {StyleSheet} from 'react-native';
 import {MISSING_VALUE} from '@constants/common';

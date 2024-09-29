@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 import {ForgotPassword} from 'src/pages/forgotPassword/forgotPassword';
 import {styles, validation} from 'src/pages/login/helpers';
 import {ApplicationStoreType} from 'src/reducers';
-import {login as loginAction, resetError as resetErrorAction} from 'src/reducers/auth';
+import {login as loginAction, resetError as resetErrorAction} from '@pages/login/reducers/auth';
 import {getLoginData} from 'src/selectors/user';
 
 type FormValues = {

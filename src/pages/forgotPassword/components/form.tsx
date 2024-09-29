@@ -1,34 +1,26 @@
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
-import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData, View} from 'react-native';
-import {Text} from '@components/layout/text';
+import {NativeSyntheticEvent, TextInputChangeEventData, View, StyleSheet} from 'react-native';
 import {FC, useContext, useState} from 'react';
-import {ForgotPasswordType} from './forgotPassword';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
 import {PopupContext} from 'src/popup/context';
+import {ForgotPasswordType} from '../page';
+import {MISSING_VALUE} from '@constants/common';
 import {z} from 'zod';
-
-const styles = StyleSheet.create({
-    container: {
-        gap: 25,
-    },
-    title: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
-    text: {
-        lineHeight: 24,
-    },
-});
-
-const MISSING_VALUE = 'Please fill out this required field!';
+import {ThankYou} from './thankYou';
 
 const validation = z
     .object({
         email: z.string().trim().min(1, MISSING_VALUE).email('Please enter a valid email!'),
     })
     .required();
+
+const styles = StyleSheet.create({
+    container: {
+        gap: 25,
+    },
+});
 
 export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
     const {setPopupData} = useContext(PopupContext);
@@ -82,15 +74,3 @@ export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
         </View>
     );
 };
-
-export const ThankYou = () => (
-    <>
-        <Text bold style={styles.title}>
-            Thank you for your request
-        </Text>
-        <Text style={styles.text}>
-            Your request has been received. If the email is in our database, you will receive
-            password reset instructions within a few minutes.
-        </Text>
-    </>
-);

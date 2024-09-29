@@ -1,4 +1,4 @@
-import {auth} from './auth';
+import {auth} from '@pages/login/reducers/auth';
 import {loadingScreen} from './loadingScreen';
 
 export const reducers = {

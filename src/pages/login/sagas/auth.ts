@@ -3,7 +3,7 @@ import {router} from 'expo-router';
 import {all, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import {deleteItem, setItem} from 'src/hooks/common';
 import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
-import {fetchSelf, login, logOut} from 'src/reducers/auth';
+import {fetchSelf, login, logOut} from '../reducers/auth';
 
 function* registerNotifs({payload}: ReturnType<typeof login.fulfilled>) {
     const email = payload?.emailAddress;

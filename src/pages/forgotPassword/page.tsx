@@ -2,8 +2,8 @@ import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {FC, useContext} from 'react';
 import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData} from 'react-native';
-import {Form} from './helpers';
 import {PopupContext} from 'src/popup/context';
+import {Form} from './components/form';
 
 const styles = StyleSheet.create({
     forgotPassword: {

@@ -3,8 +3,9 @@ import {TextInput, View} from 'react-native';
 import {Text} from '@components/layout/text';
 import {commonStyles} from './commonStyles';
 import {Button} from '@components/layout/button';
-import {FormValues} from '@constants/common';
+import {FormValues, MISSING_VALUE} from '@constants/common';
 import {FC, useEffect, useRef} from 'react';
+import {z} from 'zod';
 
 type PropsType = {
     data: {
@@ -17,6 +18,16 @@ type PropsType = {
     setStep: (step: number) => void;
 };
 
+const validation = z
+    .object({
+        password: z.string().min(1, MISSING_VALUE),
+        confirmPassword: z.string().min(1, MISSING_VALUE),
+    })
+    .refine(data => data.password === data.confirmPassword, {
+        message: 'Your passwords do not match. Please ensure both passwords are identical.',
+        path: ['confirmPassword'],
+    });
+
 export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
     const password = useRef<TextInput>(null);
     const confirmPassword = useRef<TextInput>(null);
@@ -27,6 +38,21 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
 
     const updateData = (key: string, value: string) => {
         setData({[key]: {value, error: ''}});
+    };
+
+    const handleSubmit = () => {
+        const {
+            password: {value: password},
+            confirmPassword: {value: confirmPassword},
+        } = data;
+        const validate = validation.safeParse({password, confirmPassword});
+
+        const errors = validate.error?.format();
+
+        setData({
+            password: {value: password, error: errors?.password?._errors[0]},
+            confirmPassword: {value: confirmPassword, error: errors?.confirmPassword?._errors[0]},
+        });
     };
 
     return (
@@ -59,10 +85,16 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
                     onChangeText={value => updateData('confirmPassword', value)}
                     value={data.confirmPassword.value}
                     error={data.confirmPassword.error}
+                    onSubmitEditing={handleSubmit}
                 />
             </View>
             <View style={commonStyles.buttons}>
-                <Button disabled={!data.email.value || !data.name.value}>Continue</Button>
+                <Button
+                    disabled={!data.password.value || !data.confirmPassword.value}
+                    onPress={handleSubmit}
+                >
+                    Continue
+                </Button>
                 <Button variant="ghost" onPress={() => setStep(0)}>
                     Back
                 </Button>
