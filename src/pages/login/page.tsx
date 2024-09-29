@@ -5,35 +5,22 @@ import {Text} from '@components/layout/text';
 import {useRouter} from 'expo-router';
 import {FC, useRef, useState} from 'react';
 import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
-import {connect} from 'react-redux';
-import {ForgotPassword} from 'src/pages/forgotPassword/forgotPassword';
+import {useSelector} from 'react-redux';
+import {ForgotPassword} from '@pages/forgotPassword/page';
 import {styles, validation} from 'src/pages/login/helpers';
-import {ApplicationStoreType} from 'src/reducers';
-import {login as loginAction, resetError as resetErrorAction} from '@pages/login/reducers/auth';
+import {login, resetError} from '@pages/login/reducers/auth';
 import {getLoginData} from 'src/selectors/user';
+import {FormValues, defaultValues} from '@constants/common';
+import {useAppDispatch} from 'src/store';
 
-type FormValues = {
-    error?: string;
-    value: string;
-};
-
-type PropsType = {
-    login: (data: {emailAddress: string; password: string}) => void;
-    isLoading: boolean;
-    error: string;
-    resetError: () => void;
-};
-
-const defaultValues = {
-    error: '',
-    value: '',
-};
-
-const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
+export const LoginPage: FC = () => {
     const [data, setData] = useState<{email: FormValues; password: FormValues}>({
         email: defaultValues,
         password: defaultValues,
     });
+
+    const {isLoading, error} = useSelector(getLoginData);
+    const dispatch = useAppDispatch();
 
     const {push} = useRouter();
     const password = useRef<TextInput>(null);
@@ -44,7 +31,7 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
             ...prevState,
             [id]: {value, error: ''},
         }));
-        resetError();
+        dispatch(resetError());
     };
 
     const handleSubmit = async () => {
@@ -58,7 +45,7 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
             password: {...prevState.password, error: errors?.password?._errors[0]},
         }));
         if (!validate.success) return;
-        login({emailAddress: email.value, password: password.value});
+        dispatch(login({emailAddress: email.value, password: password.value}));
     };
 
     return (
@@ -106,13 +93,3 @@ const LoginPage: FC<PropsType> = ({login, isLoading, error, resetError}) => {
         </>
     );
 };
-
-const mapStateToProps = (store: ApplicationStoreType) => ({
-    isLoading: getLoginData(store).isLoading,
-    error: getLoginData(store).error,
-});
-
-export const LoginConnected = connect(mapStateToProps, {
-    login: loginAction,
-    resetError: resetErrorAction,
-})(LoginPage);

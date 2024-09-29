@@ -1,20 +1,15 @@
 import {useEffect, useRef, useState} from 'react';
 import {Dimensions, ImageBackground, Animated} from 'react-native';
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import SplashImage from 'src/assets/images/splash.png';
 import {Colors} from 'src/constants/colors';
 import {ApplicationStoreType} from 'src/reducers';
-import {setLoading as setLoadingAction} from 'src/reducers/loadingScreen';
 
-type PropsType = {
-    isLoading: boolean;
-    setLoading: (state: boolean) => void;
-};
-
-export const SplashScreen: React.FC<PropsType> = ({isLoading, setLoading}) => {
+export const SplashScreen: React.FC = () => {
     const fadeAnim = useRef(new Animated.Value(1)).current;
     const [isVisible, setIsVisible] = useState(true);
+    const isLoading = useSelector((store: ApplicationStoreType) => store.loadingScreen);
 
     useEffect(() => {
         if (!isLoading) {
@@ -60,11 +55,3 @@ export const SplashScreen: React.FC<PropsType> = ({isLoading, setLoading}) => {
         </Animated.View>
     );
 };
-
-const mapStateToProps = (store: ApplicationStoreType) => ({
-    isLoading: store.loadingScreen,
-});
-
-export const SplashScreenConnected = connect(mapStateToProps, {setLoading: setLoadingAction})(
-    SplashScreen,
-);

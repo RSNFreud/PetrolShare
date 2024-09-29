@@ -1,3 +1,3 @@
-import {LoginConnected} from 'src/pages/login/page';
+import {LoginPage} from 'src/pages/login/page';
 
-export default LoginConnected;
+export default LoginPage;

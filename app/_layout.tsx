@@ -1,8 +1,8 @@
-import {SplashScreenConnected} from '@components/layout/splashScreen';
+import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
 import {useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {ScrollView} from 'react-native';
 import {Provider} from 'react-redux';
 import {Popup} from '@components/layout/popup';
 import {store} from 'src/store';
@@ -27,7 +27,7 @@ export default function RootLayout() {
     return (
         <Provider store={store}>
             <PopupProvider>
-                <SplashScreenConnected />
+                <SplashScreenComponent />
                 <ScrollView
                     style={{paddingHorizontal: 18}}
                     contentContainerStyle={{paddingBottom: 18}}
