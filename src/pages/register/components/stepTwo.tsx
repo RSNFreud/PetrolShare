@@ -6,6 +6,8 @@ import {Button} from '@components/layout/button';
 import {FormValues, MISSING_VALUE} from '@constants/common';
 import {FC, useEffect, useRef} from 'react';
 import {z} from 'zod';
+import {useAppDispatch} from 'src/store';
+import {register} from '../reducers/register';
 
 type PropsType = {
     data: {
@@ -31,6 +33,7 @@ const validation = z
 export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
     const password = useRef<TextInput>(null);
     const confirmPassword = useRef<TextInput>(null);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         password.current?.focus();
@@ -44,6 +47,8 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
         const {
             password: {value: password},
             confirmPassword: {value: confirmPassword},
+            email: {value: emailAddress},
+            name: {value: fullName},
         } = data;
         const validate = validation.safeParse({password, confirmPassword});
 
@@ -53,6 +58,9 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
             password: {value: password, error: errors?.password?._errors[0]},
             confirmPassword: {value: confirmPassword, error: errors?.confirmPassword?._errors[0]},
         });
+
+        if (!validate.success) return;
+        dispatch(register({password, emailAddress, fullName}));
     };
 
     return (
