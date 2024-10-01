@@ -1,5 +1,5 @@
 import {Input} from '@components/layout/input';
-import {TextInput, View} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {Text} from '@components/layout/text';
 import {commonStyles} from './commonStyles';
 import {Button} from '@components/layout/button';
@@ -8,6 +8,8 @@ import {FC, useEffect, useRef} from 'react';
 import {z} from 'zod';
 import {useAppDispatch} from 'src/store';
 import {register} from '../reducers/register';
+import {useSelector} from 'react-redux';
+import {getRegisterData} from '../selectors';
 
 type PropsType = {
     data: {
@@ -30,9 +32,24 @@ const validation = z
         path: ['confirmPassword'],
     });
 
+const styles = StyleSheet.create({
+    errorBox: {
+        borderRadius: 4,
+        marginTop: 20,
+        backgroundColor: '#EECFCF',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+    },
+    error: {
+        color: '#7B1D1D',
+    },
+});
+
 export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
     const password = useRef<TextInput>(null);
     const confirmPassword = useRef<TextInput>(null);
+
+    const {isLoading, error} = useSelector(getRegisterData);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -69,8 +86,7 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
                 <View>
                     <Text bold>Now, please create your password.</Text>
                     <Text style={commonStyles.description}>
-                        Make sure to choose a strong password that includes at least 8 characters
-                        and that you'll easily remember.
+                        Make sure to choose a strong password that you'll easily remember.
                     </Text>
                 </View>
                 <View style={commonStyles.horizontalLine} />
@@ -96,9 +112,15 @@ export const StepTwo: FC<PropsType> = ({data, setData, setStep}) => {
                     onSubmitEditing={handleSubmit}
                 />
             </View>
+            {error && (
+                <View style={styles.errorBox}>
+                    <Text style={styles.error}>{error}</Text>
+                </View>
+            )}
             <View style={commonStyles.buttons}>
                 <Button
                     disabled={!data.password.value || !data.confirmPassword.value}
+                    loading={isLoading}
                     onPress={handleSubmit}
                 >
                     Continue

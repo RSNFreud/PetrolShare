@@ -3,13 +3,13 @@ import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
 import {useRouter} from 'expo-router';
-import {FC, useRef, useState} from 'react';
+import {FC, useEffect, useRef, useState} from 'react';
 import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {ForgotPassword} from '@pages/forgotPassword/page';
 import {styles, validation} from 'src/pages/login/helpers';
 import {login, resetError} from '@pages/login/reducers/auth';
-import {getLoginData} from 'src/selectors/user';
+import {getInitialEmail, getLoginData} from '@pages/login/selectors/user';
 import {FormValues, defaultValues} from '@constants/common';
 import {useAppDispatch} from 'src/store';
 
@@ -20,10 +20,19 @@ export const LoginPage: FC = () => {
     });
 
     const {isLoading, error} = useSelector(getLoginData);
+    const initialEmail = useSelector(getInitialEmail);
     const dispatch = useAppDispatch();
 
     const {push} = useRouter();
     const password = useRef<TextInput>(null);
+
+    useEffect(() => {
+        if (data.email.value) return;
+        setData(originalState => ({
+            ...originalState,
+            email: {...defaultValues, value: initialEmail},
+        }));
+    }, [initialEmail]);
 
     const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>, id: string) => {
         const value = e.nativeEvent.text;
@@ -31,7 +40,7 @@ export const LoginPage: FC = () => {
             ...prevState,
             [id]: {value, error: ''},
         }));
-        dispatch(resetError());
+        if (error) dispatch(resetError());
     };
 
     const handleSubmit = async () => {

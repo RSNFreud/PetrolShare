@@ -43,7 +43,6 @@ export const registerReducer = createReducer<RegisterType>(initialState, builder
         .addCase(register.pending, state => ({
             ...state,
             isLoading: true,
-            error: '',
         }))
         .addCase(register.rejected, (state, action) => ({
             ...state,

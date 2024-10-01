@@ -1,4 +1,4 @@
-import {ComponentProps, FC} from 'react';
+import {ComponentProps, FC, useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
 import {ButtonBase} from './buttonBase';
 import {Colors} from '@constants/colors';
@@ -22,6 +22,13 @@ const styles = StyleSheet.create({
 });
 
 export const Button: FC<PropsType> = ({children, style, variant, loading, disabled, ...rest}) => {
+    const [isLoading, setIsLoading] = useState(loading);
+
+    useEffect(() => {
+        if (loading) setIsLoading(loading);
+        setTimeout(() => setIsLoading(false), 300);
+    }, [loading]);
+
     const backgroundColour = () => {
         if (disabled) return '#242B42';
         if (variant === 'ghost') return 'transparent';
@@ -49,9 +56,9 @@ export const Button: FC<PropsType> = ({children, style, variant, loading, disabl
     ];
 
     return (
-        <ButtonBase style={combinedStyles} disabled={loading || disabled} {...rest}>
+        <ButtonBase style={combinedStyles} disabled={isLoading || disabled} {...rest}>
             <Text bold style={{fontSize: 18, color: textColor()}}>
-                {loading ? <ActivityIndicator size="small" color="#fff" /> : children}
+                {isLoading ? <ActivityIndicator size="small" color="#fff" /> : children}
             </Text>
         </ButtonBase>
     );

@@ -3,7 +3,7 @@ import {Redirect, Slot} from 'expo-router';
 import {FC} from 'react';
 import {SafeAreaView} from 'react-native';
 import {useSelector} from 'react-redux';
-import {isLoggedIn as isLoggedInSelector} from 'src/selectors/user';
+import {isLoggedIn as isLoggedInSelector} from '@pages/login/selectors/user';
 
 const AuthLayout: FC = () => {
     const isLoggedIn = useSelector(isLoggedInSelector);

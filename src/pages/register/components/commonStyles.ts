@@ -10,6 +10,7 @@ export const commonStyles = StyleSheet.create({
         borderStyle: 'solid',
         borderRadius: 4,
         gap: 20,
+        height: 358,
     },
     description: {
         marginTop: 10,

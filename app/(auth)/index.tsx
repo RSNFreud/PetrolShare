@@ -1,7 +1,6 @@
 import {Button} from '@components/layout/button';
-import {Text} from '@components/layout/text';
+import {logOut} from '@pages/login/reducers/auth';
 import {useDispatch} from 'react-redux';
-import {logOut} from 'src/reducers/auth';
 
 const Homepage = () => {
     const dispatch = useDispatch();
