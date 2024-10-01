@@ -1,13 +1,20 @@
 import {put, takeLatest} from 'redux-saga/effects';
-import {register} from '../reducers/register';
+import {register, setName, showSuccessPopup} from '../reducers/register';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {setPersistData} from 'src/reducers/userPersistData';
+import {router} from 'expo-router';
 
-function* openRegisterPopup() {}
+function* openRegisterPopup() {
+    yield router.replace('/');
+    yield put(showSuccessPopup());
+}
 
-function* storeUserData(action: PayloadAction<void, string, {arg: {emailAddress: string}}>) {
-    const {emailAddress} = action.meta.arg;
+function* storeUserData(
+    action: PayloadAction<void, string, {arg: {emailAddress: string; fullName: string}}>,
+) {
+    const {emailAddress, fullName} = action.meta.arg;
     yield put(setPersistData({emailAddress}));
+    yield put(setName(fullName));
 }
 
 export default function* registerSaga() {

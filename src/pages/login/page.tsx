@@ -3,15 +3,18 @@ import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {Text} from '@components/layout/text';
 import {useRouter} from 'expo-router';
-import {FC, useEffect, useRef, useState} from 'react';
+import {FC, useContext, useEffect, useRef, useState} from 'react';
 import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {ForgotPassword} from '@pages/forgotPassword/page';
 import {styles, validation} from 'src/pages/login/helpers';
 import {login, resetError} from '@pages/login/reducers/auth';
-import {getInitialEmail, getLoginData} from '@pages/login/selectors/user';
+import {getInitialEmail, getLoginData, getRegisterSuccess} from '@pages/login/selectors/user';
 import {FormValues, defaultValues} from '@constants/common';
 import {useAppDispatch} from 'src/store';
+import {PopupContext} from 'src/popup/context';
+import {RegisterComplete} from './components/registerComplete';
+import {resetSuccessPopup} from '@pages/register/reducers/register';
 
 export const LoginPage: FC = () => {
     const [data, setData] = useState<{email: FormValues; password: FormValues}>({
@@ -20,6 +23,8 @@ export const LoginPage: FC = () => {
     });
 
     const {isLoading, error} = useSelector(getLoginData);
+    const shouldShowRegister = useSelector(getRegisterSuccess);
+    const {setPopupData} = useContext(PopupContext);
     const initialEmail = useSelector(getInitialEmail);
     const dispatch = useAppDispatch();
 
@@ -33,6 +38,16 @@ export const LoginPage: FC = () => {
             email: {...defaultValues, value: initialEmail},
         }));
     }, [initialEmail]);
+
+    useEffect(() => {
+        if (!shouldShowRegister) return;
+        setPopupData({
+            title: 'Thank you!',
+            isVisible: true,
+            content: <RegisterComplete />,
+        });
+        dispatch(resetSuccessPopup());
+    }, [shouldShowRegister]);
 
     const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>, id: string) => {
         const value = e.nativeEvent.text;
