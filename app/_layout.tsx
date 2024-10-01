@@ -8,6 +8,7 @@ import {Popup} from '@components/layout/popup';
 import {persistor, store} from 'src/store';
 import {PopupProvider} from 'src/popup/provider';
 import {PersistGate} from 'redux-persist/integration/react';
+import {StatusBar} from 'expo-status-bar';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.hideAsync();
@@ -40,6 +41,7 @@ export default function RootLayout() {
                 </ScrollView>
                 <Popup />
             </PopupProvider>
+            <StatusBar style="light" />
         </Provider>
     );
 }

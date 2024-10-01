@@ -52,6 +52,7 @@ const TIME_TO_CLOSE = 300;
 
 export const Popup = () => {
     const {popupData, setPopupData} = useContext(PopupContext);
+    const [isPopupOpen, setIsPopupOpen] = useState(popupData.isVisible);
     const position = useRef(new Animated.Value(1000)).current;
     const [keyboardPadding, setKeyboardPadding] = useState(0);
     const heightAnim = useRef(new Animated.Value(0)).current;
@@ -92,7 +93,12 @@ export const Popup = () => {
     }, [keyboardPadding]);
 
     useEffect(() => {
-        if (popupData.isVisible) open();
+        if (popupData.isVisible) {
+            setIsPopupOpen(popupData.isVisible);
+            open();
+        } else {
+            handleClose();
+        }
     }, [popupData.isVisible]);
 
     const open = () => {
@@ -117,16 +123,12 @@ export const Popup = () => {
             }),
         ]).start(_e => {
             setPopupData({isVisible: false});
+            setIsPopupOpen(false);
         });
     };
 
     return (
-        <Modal
-            animationType="fade"
-            visible={popupData?.isVisible}
-            transparent
-            onRequestClose={handleClose}
-        >
+        <Modal animationType="fade" visible={isPopupOpen} transparent onRequestClose={handleClose}>
             <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
             <Animated.ScrollView
                 style={[styles.popup, {transform: [{translateY: position}], maxHeight: heightAnim}]}
