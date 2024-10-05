@@ -1,6 +1,5 @@
 import {StyleSheet, TouchableHighlight, View} from 'react-native';
 import {Text} from './text';
-import Constants from 'expo-constants';
 import {Cog} from 'src/icons/cog';
 import {Colors} from '@constants/colors';
 import {useContext} from 'react';
@@ -12,7 +11,7 @@ const styles = StyleSheet.create({
         fontSize: 26,
     },
     container: {
-        marginTop: Constants.statusBarHeight + 30,
+        marginTop: 30,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignContent: 'center',
