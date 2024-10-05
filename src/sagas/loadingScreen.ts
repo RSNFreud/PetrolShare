@@ -1,9 +1,11 @@
 import {fetchSelf, login} from '@pages/login/reducers/auth';
-import {all, put, takeEvery} from 'redux-saga/effects';
+import {all, delay, put, takeEvery} from 'redux-saga/effects';
 import {setLoading} from 'src/reducers/loadingScreen';
 
 function* setLoadingState() {
     yield put(setLoading(true));
+    delay(300);
+    yield put(setLoading(false));
 }
 
 function* setLoadedState() {
@@ -12,7 +14,5 @@ function* setLoadedState() {
 
 export default function* loadingSaga() {
     yield all([takeEvery(fetchSelf.fulfilled.type, setLoadedState)]);
-    // yield all([takeEvery(login.pending.type, setLoadingState)]);
-    // yield all([takeEvery(login.rejected.type, setLoadedState)]);
-    yield all([takeEvery(login.fulfilled.type, setLoadedState)]);
+    yield all([takeEvery(login.fulfilled.type, setLoadingState)]);
 }

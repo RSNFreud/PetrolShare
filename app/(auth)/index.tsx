@@ -1,13 +1,9 @@
-import {Button} from '@components/layout/button';
-import {logOut} from '@pages/login/reducers/auth';
-import {useDispatch} from 'react-redux';
+import {Header} from '@components/layout/header';
 
 const Homepage = () => {
-    const dispatch = useDispatch();
-
     return (
         <>
-            <Button onPress={() => dispatch(logOut())}>Logout!</Button>
+            <Header />
         </>
     );
 };

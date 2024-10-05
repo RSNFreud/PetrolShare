@@ -6,6 +6,7 @@ import {Text} from './text';
 
 type PropsType = ComponentProps<typeof TouchableOpacity> & {
     variant?: 'ghost' | 'filled';
+    color?: 'red';
     loading?: boolean;
 };
 
@@ -21,7 +22,15 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Button: FC<PropsType> = ({children, style, variant, loading, disabled, ...rest}) => {
+export const Button: FC<PropsType> = ({
+    children,
+    style,
+    variant,
+    loading,
+    disabled,
+    color,
+    ...rest
+}) => {
     const [isLoading, setIsLoading] = useState(loading);
 
     useEffect(() => {
@@ -32,10 +41,12 @@ export const Button: FC<PropsType> = ({children, style, variant, loading, disabl
     const backgroundColour = () => {
         if (disabled) return '#242B42';
         if (variant === 'ghost') return 'transparent';
+        if (color === 'red') return Colors.red;
         return Colors.tertiary;
     };
 
     const borderColor = () => {
+        if (color === 'red') return Colors.red;
         if (variant === 'ghost') return Colors.highlight;
         return Colors.border;
     };

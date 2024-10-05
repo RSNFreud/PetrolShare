@@ -22,3 +22,7 @@ export const deleteItem = (key: string) => {
     if (Platform.OS === 'web') return window.localStorage.removeItem(key);
     else return storage.delete(key);
 };
+
+export const convertToSentanceCase = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
