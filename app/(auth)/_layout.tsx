@@ -4,12 +4,14 @@ import {FC} from 'react';
 import {SafeAreaView} from 'react-native';
 import {useSelector} from 'react-redux';
 import {isLoggedIn as isLoggedInSelector} from '@pages/login/selectors/user';
+import {Header} from '@components/layout/header';
 
 const AuthLayout: FC = () => {
     const isLoggedIn = useSelector(isLoggedInSelector);
     if (isLoggedIn)
         return (
             <SafeAreaView style={{paddingTop: Constants.statusBarHeight}}>
+                <Header />
                 <Slot />
             </SafeAreaView>
         );

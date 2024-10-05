@@ -1,11 +1,3 @@
-import {Header} from '@components/layout/header';
+import {Dashboard} from '@pages/dashboard/page';
 
-const Homepage = () => {
-    return (
-        <>
-            <Header />
-        </>
-    );
-};
-
-export default Homepage;
+export default Dashboard;
