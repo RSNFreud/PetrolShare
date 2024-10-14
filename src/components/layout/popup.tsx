@@ -124,6 +124,7 @@ export const Popup = () => {
         ]).start(_e => {
             setPopupData({isVisible: false});
             setIsPopupOpen(false);
+            position.setValue(1000);
         });
     };
 
