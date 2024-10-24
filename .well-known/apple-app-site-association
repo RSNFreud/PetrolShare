@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "VX52FA84RS.com.rsnfreud.PetrolShare"
+        ],
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches all routes"
+          }
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "VX52FA84RS.com.rsnfreud.PetrolShare"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "VX52FA84RS.com.rsnfreud.PetrolShare"
+    ]
+  }
+}

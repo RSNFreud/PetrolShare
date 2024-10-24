@@ -76,7 +76,10 @@
             ]
           }
         ]
-      }
+      },
+      "associatedDomains": [
+        "applinks:petrolshare.freud-online.co.uk"
+      ]
     },
     "android": {
       "googleServicesFile": "",
