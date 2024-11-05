@@ -66,10 +66,6 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
 
         const errors = validate.error?.format();
 
-        console.log('====================================');
-        console.log(validate, errors);
-        console.log('====================================');
-
         const newValues = Object.entries(formData).reduce(
             (prevData, [key, value]) => ({
                 ...prevData,
@@ -112,6 +108,7 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
                             value={formData[input.id]?.value || ''}
                             error={formData[input.id]?.error}
                             onChangeText={value => onInput(input.id, value)}
+                            {...input.props}
                         />
                     ))}
                 </View>

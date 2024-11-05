@@ -1,7 +1,7 @@
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
-import React, {useContext} from 'react';
+import React, {ComponentProps, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {AddUser} from 'src/icons/add-user';
@@ -22,6 +22,7 @@ import {PopupWrapper} from './components/common';
 import {stringToNumberValidation} from 'src/utils/validation';
 import {z} from 'zod';
 import {MISSING_VALUE} from '@constants/common';
+import {Input} from '@components/layout/input';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -88,6 +89,7 @@ export type PopupType = {
         label: string;
         placeholder: string;
         id: string;
+        props?: Partial<ComponentProps<typeof Input>>;
     }[];
     buttons?: {
         label: string;
@@ -122,6 +124,9 @@ const MENU_OPTIONS: {
                             label: 'Distance',
                             placeholder: 'Enter total distance',
                             id: 'distance',
+                            props: {
+                                keyboardType: 'number-pad',
+                            },
                         },
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
@@ -139,11 +144,17 @@ const MENU_OPTIONS: {
                             label: 'Start Odometer',
                             placeholder: 'Enter start odometer',
                             id: 'odemeterStart',
+                            props: {
+                                keyboardType: 'number-pad',
+                            },
                         },
                         {
                             label: 'End Odometer',
                             placeholder: 'Enter end odometer',
                             id: 'odemeterEnd',
+                            props: {
+                                keyboardType: 'number-pad',
+                            },
                         },
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true, isDraftButton: true}],
