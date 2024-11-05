@@ -1,7 +1,7 @@
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {AddUser} from 'src/icons/add-user';
@@ -16,7 +16,12 @@ import {Petrol} from 'src/icons/petrol';
 import {Plus} from 'src/icons/plus';
 import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
+import {PopupContext} from 'src/popup/context';
 import {getUserData} from 'src/selectors/common';
+import {PopupWrapper} from './components/common';
+import {stringToNumberValidation} from 'src/utils/validation';
+import {z} from 'zod';
+import {MISSING_VALUE} from '@constants/common';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -78,19 +83,89 @@ const styles = StyleSheet.create({
     },
 });
 
+export type PopupType = {
+    inputs?: {
+        label: string;
+        placeholder: string;
+        id: string;
+    }[];
+    buttons?: {
+        label: string;
+        isSubmitButton?: boolean;
+        isDraftButton?: boolean;
+    }[];
+    validation?: z.ZodObject<any>;
+    pretext?: string;
+};
+
+type MenuType = {
+    icon: React.ReactNode;
+    label: string;
+    popup?: PopupType;
+    link?: string;
+};
+
 const MENU_OPTIONS: {
     header: string;
-    items: {
-        icon: React.ReactNode;
-        label: string;
-    }[];
+    items: MenuType[];
 }[] = [
     {
         header: 'Distance',
         items: [
             {icon: <List style={styles.icon} />, label: 'Presets'},
-            {icon: <DashboardIcon style={styles.icon} />, label: 'Add Specific Distance'},
-            {icon: <Odometer style={styles.icon} />, label: 'Record Odometer'},
+            {
+                icon: <DashboardIcon style={styles.icon} />,
+                label: 'Add Specific Distance',
+                popup: {
+                    inputs: [
+                        {
+                            label: 'Distance',
+                            placeholder: 'Enter total distance',
+                            id: 'distance',
+                        },
+                    ],
+                    buttons: [{label: 'Add Distance', isSubmitButton: true}],
+                    validation: z.object({
+                        distance: stringToNumberValidation,
+                    }),
+                },
+            },
+            {
+                icon: <Odometer style={styles.icon} />,
+                label: 'Record Odometer',
+                popup: {
+                    inputs: [
+                        {
+                            label: 'Start Odometer',
+                            placeholder: 'Enter start odometer',
+                            id: 'odemeterStart',
+                        },
+                        {
+                            label: 'End Odometer',
+                            placeholder: 'Enter end odometer',
+                            id: 'odemeterEnd',
+                        },
+                    ],
+                    buttons: [{label: 'Add Distance', isSubmitButton: true, isDraftButton: true}],
+                    validation: z.object({
+                        odemeterStart: stringToNumberValidation,
+                        odemeterEnd: z
+                            .string()
+                            .transform(val => (val === '' ? undefined : parseInt(val)))
+                            .optional()
+                            .pipe(
+                                z
+                                    .number({
+                                        invalid_type_error: 'Please enter a valid number',
+                                    })
+                                    .nonnegative(MISSING_VALUE)
+                                    .optional(),
+                            ),
+                    }),
+                    pretext:
+                        'The odometer, usually shown on the LED display behind the steering wheel, indicates the total distance the car has traveled.',
+                },
+            },
             {icon: <Road style={styles.icon} />, label: 'Assign Distance'},
             {icon: <ResetArrow style={styles.icon} />, label: 'Reset Distance'},
         ],
@@ -116,6 +191,23 @@ const MENU_OPTIONS: {
 
 export const Dashboard = () => {
     const userData = useSelector(getUserData);
+    const {setPopupData} = useContext(PopupContext);
+
+    const onClick = ({label, popup, link}: MenuType) => {
+        switch (true) {
+            case Boolean(popup):
+                setPopupData({
+                    isVisible: true,
+                    title: label,
+                    content: <PopupWrapper data={popup as PopupType} />,
+                });
+                break;
+            case Boolean(link):
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <>
@@ -133,7 +225,11 @@ export const Dashboard = () => {
                         </Text>
                         <View style={styles.menuItemsContainer}>
                             {menuTab.items.map(menuItem => (
-                                <ButtonBase key={menuItem.label} style={styles.menuItem}>
+                                <ButtonBase
+                                    key={menuItem.label}
+                                    style={styles.menuItem}
+                                    onPress={() => onClick(menuItem)}
+                                >
                                     <>
                                         {menuItem.icon}
                                         <Text bold style={styles.menuText}>
