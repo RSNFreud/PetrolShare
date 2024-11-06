@@ -7,4 +7,6 @@ export const ENDPOINTS = {
     LOGIN: 'user/login',
     VERIFY_KEY: 'user/verify',
     REGISTER: 'user/register',
+    GET_DATA: 'user/get',
+    ADD_DISTANCE: 'distance/add',
 };

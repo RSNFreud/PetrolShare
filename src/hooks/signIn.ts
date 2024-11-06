@@ -1,6 +1,6 @@
 import {sendCustomEvent} from './common';
 import {registerForPushNotificationsAsync} from './notifications';
-import {sendPostRequest} from './sendPostRequest';
+import {sendPostRequest} from './sendRequestToBackend';
 
 type PropsType = {
     emailAddress: string;

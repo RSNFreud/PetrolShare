@@ -52,6 +52,26 @@ export const login = createAsyncThunk<
     );
 });
 
+export const fetchData = createAsyncThunk<ResponseType | undefined, {authenticationKey: string}>(
+    'FETCH_DATA',
+    async ({authenticationKey}) => {
+        const response = await sendRequestToBackend({
+            url: `${ENDPOINTS.GET_DATA}?authenticationKey=${authenticationKey}`,
+        });
+
+        if (response?.ok) {
+            return await response.json();
+        }
+
+        const errorMessage = await response?.text();
+
+        throw new Error(
+            errorMessage ||
+                'We are having trouble connecting to our authentication servers. Please try again later...',
+        );
+    },
+);
+
 export const fetchSelf = createAsyncThunk<ResponseType | undefined>('FETCH_SELF@AUTH', async () => {
     const authKey = getItem(STORAGE_KEYS.authKey);
 
@@ -73,6 +93,7 @@ export const fetchSelf = createAsyncThunk<ResponseType | undefined>('FETCH_SELF@
     );
 });
 
+export const updateData = createAction<void>('UPDATE_DATA');
 export const resetError = createAction<void>('RESET_ERROR');
 export const logOut = createAction<void>('LOGOUT');
 
@@ -109,6 +130,12 @@ export const auth = createReducer<UserType>(initialState, builder => {
             error: '',
         }))
         .addCase(fetchSelf.fulfilled, (state, {payload}) => ({
+            ...state,
+            ...payload,
+            isLoading: false,
+            error: '',
+        }))
+        .addCase(fetchData.fulfilled, (state, {payload}) => ({
             ...state,
             ...payload,
             isLoading: false,
