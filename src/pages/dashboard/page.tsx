@@ -1,14 +1,13 @@
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
-import React, {ComponentProps, useContext} from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {PopupContext} from 'src/popup/context';
 import {getUserData} from 'src/selectors/common';
-import {PopupWrapper} from './components/common';
+import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
-import {Input} from '@components/layout/input';
 import {MENU_OPTIONS, MenuType} from './constants';
 
 const styles = StyleSheet.create({
@@ -68,11 +67,11 @@ const styles = StyleSheet.create({
 
 export type PopupType = {
     id: string;
-    inputs?: {
-        label: string;
-        placeholder: string;
-        id: string;
-        props?: Partial<ComponentProps<typeof Input>>;
+    children?: {
+        component: React.FC<any>;
+        props: {
+            id: string;
+        };
     }[];
     buttons?: {
         label: string;

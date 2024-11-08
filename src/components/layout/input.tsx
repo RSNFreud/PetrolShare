@@ -7,6 +7,7 @@ type PropsType = ComponentProps<typeof TextInput> & {
     label: string;
     error?: string;
     ref?: LegacyRef<TextInput> | undefined;
+    innerRef?: LegacyRef<TextInput> | undefined;
 };
 
 const styles = StyleSheet.create({
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Input: FC<PropsType> = forwardRef(({label, error, style, ...rest}, ref) => {
+export const Input: FC<PropsType> = forwardRef(({label, error, style, innerRef, ...rest}, ref) => {
     const combinedStyles: ComponentProps<typeof TextInput>['style'] = [styles.container, style];
 
     return (
@@ -43,7 +44,7 @@ export const Input: FC<PropsType> = forwardRef(({label, error, style, ...rest}, 
             </Text>
             <TextInput
                 {...rest}
-                ref={ref}
+                ref={innerRef || ref}
                 style={combinedStyles}
                 placeholderTextColor="rgba(255,255,255,0.6)"
             />

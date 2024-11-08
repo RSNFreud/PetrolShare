@@ -1,12 +1,11 @@
 import {createRef, FC, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {PopupType} from '../page';
-import {Input} from '@components/layout/input';
 import {defaultValues, FormValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
-import {useSubmitRequest} from './submitRequest';
+import {useSubmitRequest} from './useSubmitRequest';
 import {POPUP_IDS} from '../constants';
 
 type PropsType = {
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
 
 export const PopupWrapper: FC<PropsType> = ({data}) => {
     const [formData, setFormData] = useState<{[key: string]: FormValues}>({});
-    const inputRefs = useRef(data.inputs?.map(() => createRef<TextInput>()));
+    const inputRefs = useRef(data.children?.map(() => createRef<TextInput>()));
 
     const setErrors = (errors: {[key: string]: string}) => {
         const newValues = Object.entries(formData).reduce(
@@ -55,16 +54,16 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
     const {handleSubmit, isLoading} = useSubmitRequest(setErrors);
 
     useEffect(() => {
-        if (!data.inputs) return;
-        const inputs = data.inputs?.reduce(
+        if (!data.children) return;
+        const inputs = data.children?.reduce(
             (original, input) => ({
                 ...original,
-                [input.id]: defaultValues,
+                [input.props.id]: defaultValues,
             }),
             {},
         );
         setFormData(inputs);
-    }, [data.inputs]);
+    }, [data.children]);
 
     const onInput = (key: string, value: string) => {
         setFormData(oldState => ({...oldState, [key]: {value, error: ''}}));
@@ -130,21 +129,22 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
                     <Text style={styles.text}>{data.pretext}</Text>
                 </View>
             )}
-            {data.inputs && (
+            {data.children && (
                 <View style={styles.input}>
-                    {data.inputs.map((input, index) => (
-                        <Input
-                            ref={inputRefs?.current?.[index]}
-                            label={input.label}
-                            placeholder={input.placeholder}
-                            key={input.id}
-                            value={formData[input.id]?.value || ''}
-                            error={formData[input.id]?.error}
-                            onChangeText={value => onInput(input.id, value)}
-                            onSubmitEditing={() => handleKeyboardSubmit(index)}
-                            {...input.props}
-                        />
-                    ))}
+                    {data.children.map((child, index) => {
+                        const id = child.props.id;
+                        return (
+                            <child.component
+                                {...child.props}
+                                innerRef={inputRefs?.current?.[index]}
+                                value={formData[id]?.value || ''}
+                                error={formData[id]?.error}
+                                key={child.props.id}
+                                onChangeText={(value: string) => onInput(id, value)}
+                                onSubmitEditing={() => handleKeyboardSubmit(index)}
+                            />
+                        );
+                    })}
                 </View>
             )}
             {data.buttons && (

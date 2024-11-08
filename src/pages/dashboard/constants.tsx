@@ -15,6 +15,9 @@ import {stringToNumberValidation} from 'src/utils/validation';
 import {z} from 'zod';
 import {PopupType} from './page';
 import {StyleSheet} from 'react-native';
+import {Input} from '@components/layout/input';
+import {ComponentProps} from 'react';
+import {Dropdown} from '@components/layout/dropdown/dropdownBase';
 
 const styles = StyleSheet.create({
     icon: {
@@ -36,6 +39,38 @@ export const POPUP_IDS = {
     ODOMETER: 'odometer',
 };
 
+const input = (
+    label: string,
+    placeholder: string,
+    id: string,
+    props?: Partial<ComponentProps<typeof Input>>,
+) => ({
+    component: Input,
+    props: {
+        placeholder,
+        label,
+        id,
+        ...props,
+    },
+});
+
+const dropdown = (
+    label: string,
+    placeholder: string,
+    id: string,
+    items: {value: string; label: string}[],
+    props?: Partial<ComponentProps<typeof Dropdown>>,
+) => ({
+    component: Dropdown,
+    props: {
+        placeholder,
+        label,
+        items,
+        id,
+        ...props,
+    },
+});
+
 export const MENU_OPTIONS: {
     header: string;
     items: MenuType[];
@@ -49,15 +84,11 @@ export const MENU_OPTIONS: {
                 label: 'Add Specific Distance',
                 popup: {
                     id: POPUP_IDS.SPECIFIC_DISTANCE,
-                    inputs: [
-                        {
-                            label: 'Distance',
-                            placeholder: 'Enter total distance',
-                            id: 'distance',
-                            props: {
-                                keyboardType: 'number-pad',
-                            },
-                        },
+                    children: [
+                        input('Distance', 'Enter total distance', 'distance', {
+                            keyboardType: 'number-pad',
+                        }),
+                        dropdown('Test', 'Test', 'test', [{value: 'Test', label: 'Testing'}]),
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
                     validation: z.object({
@@ -72,23 +103,13 @@ export const MENU_OPTIONS: {
                 label: 'Record Odometer',
                 popup: {
                     id: POPUP_IDS.ODOMETER,
-                    inputs: [
-                        {
-                            label: 'Start Odometer',
-                            placeholder: 'Enter start odometer',
-                            id: 'odemeterStart',
-                            props: {
-                                keyboardType: 'number-pad',
-                            },
-                        },
-                        {
-                            label: 'End Odometer',
-                            placeholder: 'Enter end odometer',
-                            id: 'odemeterEnd',
-                            props: {
-                                keyboardType: 'number-pad',
-                            },
-                        },
+                    children: [
+                        input('Start Odometer', 'Enter start odometer', 'odemeterStart', {
+                            keyboardType: 'number-pad',
+                        }),
+                        input('End Odometer', 'Enter end odometer', 'odemeterEnd', {
+                            keyboardType: 'number-pad',
+                        }),
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true, isDraftButton: true}],
                     validation: z.object({
