@@ -3,12 +3,12 @@ import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
 import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useSelector} from 'react-redux';
+import {shallowEqual, useSelector} from 'react-redux';
 import {PopupContext} from 'src/popup/context';
-import {getUserData} from 'src/selectors/common';
 import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
-import {MENU_OPTIONS, MenuType} from './constants';
+import {MENU_OPTIONS, MenuType, POPUP_IDS} from './constants';
+import {ApplicationStoreType} from 'src/reducers';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -63,6 +63,18 @@ const styles = StyleSheet.create({
     menuText: {
         fontSize: 14,
     },
+    menuTextContainer: {
+        flexDirection: 'row',
+        gap: 5,
+        alignContent: 'center',
+        alignItems: 'center',
+    },
+    notificationDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 1000,
+        backgroundColor: Colors.tertiary,
+    },
 });
 
 export type PopupType = {
@@ -84,7 +96,13 @@ export type PopupType = {
 };
 
 export const Dashboard = () => {
-    const userData = useSelector(getUserData);
+    const {userData, hasSavedOdometer} = useSelector(
+        (store: ApplicationStoreType) => ({
+            userData: store.auth,
+            hasSavedOdometer: Boolean(store.userPersistData.odometerStart),
+        }),
+        shallowEqual,
+    );
     const {setPopupData} = useContext(PopupContext);
 
     const onClick = ({label, popup, link}: MenuType) => {
@@ -100,6 +118,16 @@ export const Dashboard = () => {
                 break;
             default:
                 break;
+        }
+    };
+
+    const shouldShowNotificationDot = (popupID?: string) => {
+        switch (true) {
+            case popupID === POPUP_IDS.ODOMETER && hasSavedOdometer:
+                return true;
+
+            default:
+                return false;
         }
     };
 
@@ -126,9 +154,14 @@ export const Dashboard = () => {
                                 >
                                     <>
                                         {menuItem.icon}
-                                        <Text bold style={styles.menuText}>
-                                            {menuItem.label}
-                                        </Text>
+                                        <View style={styles.menuTextContainer}>
+                                            <Text bold style={styles.menuText}>
+                                                {menuItem.label}
+                                            </Text>
+                                            {shouldShowNotificationDot(menuItem?.popup?.id) && (
+                                                <View style={styles.notificationDot} />
+                                            )}
+                                        </View>
                                     </>
                                 </ButtonBase>
                             ))}

@@ -17,7 +17,7 @@ import {PopupType} from './page';
 import {StyleSheet} from 'react-native';
 import {Input} from '@components/layout/input';
 import {ComponentProps} from 'react';
-import {Dropdown} from '@components/layout/dropdown/dropdownBase';
+import {Dropdown} from '@components/layout/dropdown/dropdown';
 
 const styles = StyleSheet.create({
     icon: {
@@ -88,7 +88,6 @@ export const MENU_OPTIONS: {
                         input('Distance', 'Enter total distance', 'distance', {
                             keyboardType: 'number-pad',
                         }),
-                        dropdown('Test', 'Test', 'test', [{value: 'Test', label: 'Testing'}]),
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
                     validation: z.object({

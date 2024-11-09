@@ -6,7 +6,6 @@ import {Button} from '@components/layout/button';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 import {useSubmitRequest} from './useSubmitRequest';
-import {POPUP_IDS} from '../constants';
 
 type PropsType = {
     data: PopupType;
@@ -51,7 +50,11 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
         setFormData(newValues);
     };
 
-    const {handleSubmit, isLoading} = useSubmitRequest(setErrors);
+    const onInput = (key: string, value: string) => {
+        setFormData(oldState => ({...oldState, [key]: {value, error: ''}}));
+    };
+
+    const {isLoading, handleValidate} = useSubmitRequest(setErrors, onInput, data.id, formData);
 
     useEffect(() => {
         if (!data.children) return;
@@ -65,50 +68,12 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
         setFormData(inputs);
     }, [data.children]);
 
-    const onInput = (key: string, value: string) => {
-        setFormData(oldState => ({...oldState, [key]: {value, error: ''}}));
-    };
-
-    const onSubmit = () => {
-        if (!data.validation) return;
-
-        const values = Object.entries(formData).reduce(
-            (prevData, [key, value]) => ({
-                ...prevData,
-                [key]: value.value,
-            }),
-            {},
-        );
-
-        const validate = data.validation.safeParse(values);
-
-        const errors = validate.error?.format();
-
-        const newValues = Object.entries(formData).reduce(
-            (prevData, [key, value]) => ({
-                ...prevData,
-                [key]: {
-                    value: value.value,
-                    error: errors ? errors[key]?._errors[0] : '',
-                },
-            }),
-            {} as {[key: string]: {value: string}},
-        );
-
-        setFormData(newValues);
-        if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
-            // Handle draft logic
-            return;
-        }
-        if (validate.success) handleSubmit(values, data);
-    };
-
     const handleKeyboardSubmit = (index: number) => {
         const nextEl = inputRefs?.current?.[index + 1];
         if (nextEl) {
             return nextEl.current?.focus();
         }
-        onSubmit();
+        handleValidate(data, setFormData);
     };
 
     const getButtonText = (button: {
@@ -153,7 +118,9 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
                         <Button
                             loading={isLoading}
                             key={button.label}
-                            onPress={() => (button.isSubmitButton ? onSubmit() : null)}
+                            onPress={() =>
+                                button.isSubmitButton ? handleValidate(data, setFormData) : null
+                            }
                         >
                             {getButtonText(button)}
                         </Button>

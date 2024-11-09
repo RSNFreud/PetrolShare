@@ -4,7 +4,7 @@ import {Text} from './text';
 import {Colors} from '@constants/colors';
 
 type PropsType = ComponentProps<typeof TextInput> & {
-    label: string;
+    label?: string;
     error?: string;
     ref?: LegacyRef<TextInput> | undefined;
     innerRef?: LegacyRef<TextInput> | undefined;
@@ -39,9 +39,11 @@ export const Input: FC<PropsType> = forwardRef(({label, error, style, innerRef, 
 
     return (
         <View>
-            <Text bold style={styles.label}>
-                {label}
-            </Text>
+            {!!label && (
+                <Text bold style={styles.label}>
+                    {label}
+                </Text>
+            )}
             <TextInput
                 {...rest}
                 ref={innerRef || ref}

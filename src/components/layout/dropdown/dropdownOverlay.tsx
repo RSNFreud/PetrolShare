@@ -11,10 +11,13 @@ import {
 import {ButtonBase} from '../buttonBase';
 import {Text} from '../text';
 import Constants from 'expo-constants';
+import {Input} from '../input';
 
 type PropsType = {
     isVisible: boolean;
+    hasSearchBar?: boolean;
     onRequestClose: () => void;
+    onSubmitEditing?: () => void;
     onClick?: (value: string) => void;
     items: {value: string; label: string}[];
     value?: string;
@@ -51,6 +54,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 15,
         height: 'auto',
+        zIndex: 2,
+        position: 'relative',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        elevation: 3,
     },
     dropdownItem: {
         padding: 10,
@@ -59,15 +69,37 @@ const styles = StyleSheet.create({
     active: {
         backgroundColor: Colors.tertiary,
     },
+    searchBox: {
+        paddingBottom: 10,
+    },
+    input: {
+        backgroundColor: Colors.secondary,
+    },
 });
 
 export const DropdownOverlay: FC<PropsType> = ({
     isVisible,
     onRequestClose,
     items,
+    onSubmitEditing,
     onClick,
     value,
+    hasSearchBar,
 }) => {
+    const handleClick = (value: string) => {
+        onSubmitEditing?.();
+        onClick?.(value);
+    };
+
+    const renderSearchbox = () => {
+        if (!hasSearchBar) return null;
+        return (
+            <View style={styles.searchBox}>
+                <Input placeholder="Enter name" style={styles.input} />
+            </View>
+        );
+    };
+
     return (
         <Modal transparent visible={isVisible} animationType="none" onRequestClose={onRequestClose}>
             <View style={styles.container}>
@@ -80,18 +112,23 @@ export const DropdownOverlay: FC<PropsType> = ({
                     data={items}
                     keyExtractor={({value}) => value}
                     extraData={value}
-                    keyboardShouldPersistTaps="always"
+                    keyboardShouldPersistTaps="handled"
+                    ListHeaderComponent={renderSearchbox}
+                    stickyHeaderIndices={hasSearchBar ? [0] : undefined}
+                    showsVerticalScrollIndicator
                     renderItem={({item}) => (
-                        <ButtonBase
-                            style={{
-                                ...styles.dropdownItem,
-                                ...(value === item.value ? styles.active : {}),
-                            }}
-                            key={item.value}
-                            onPress={() => onClick?.(item.value)}
-                        >
-                            <Text bold>{item.label}</Text>
-                        </ButtonBase>
+                        <View>
+                            <ButtonBase
+                                style={{
+                                    ...styles.dropdownItem,
+                                    ...(value === item.value ? styles.active : {}),
+                                }}
+                                key={item.value}
+                                onPress={() => handleClick(item.value)}
+                            >
+                                <Text bold>{item.label}</Text>
+                            </ButtonBase>
+                        </View>
                     )}
                 />
             </View>

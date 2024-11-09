@@ -1,10 +1,9 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from '../text';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {Colors} from '@constants/colors';
 import {Chevron} from 'src/icons/chevron';
 import {ButtonBase} from '../buttonBase';
-import {DropdownOverlay} from './dropdownOverlay';
 
 const styles = StyleSheet.create({
     label: {
@@ -38,17 +37,11 @@ type PropsType = {
     label: string;
     placeholder: string;
     value?: string;
-    onChangeText?: (value: string) => void;
     items: {value: string; label: string}[];
+    onRequestOpen: () => void;
 };
 
-export const DropdownBase: FC<PropsType & {onRequestOpen: () => void}> = ({
-    label,
-    placeholder,
-    value,
-    onRequestOpen,
-    items,
-}) => {
+export const DropdownBase: FC<PropsType> = ({label, placeholder, value, onRequestOpen, items}) => {
     const selectedItem = items.find(item => item.value === value);
     return (
         <>
@@ -63,33 +56,6 @@ export const DropdownBase: FC<PropsType & {onRequestOpen: () => void}> = ({
                     <Chevron style={styles.icon} />
                 </ButtonBase>
             </View>
-        </>
-    );
-};
-
-export const Dropdown: FC<PropsType> = ({value, onChangeText, items, ...rest}) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleClick = (value: string) => {
-        setIsOpen(false);
-        onChangeText?.(value);
-    };
-
-    return (
-        <>
-            <DropdownBase
-                value={value}
-                items={items}
-                {...rest}
-                onRequestOpen={() => setIsOpen(true)}
-            />
-            <DropdownOverlay
-                isVisible={isOpen}
-                onClick={handleClick}
-                onRequestClose={() => setIsOpen(false)}
-                items={items}
-                value={value}
-            />
         </>
     );
 };

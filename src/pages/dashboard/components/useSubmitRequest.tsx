@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {POPUP_IDS} from '../constants';
 import {ENDPOINTS} from '@constants/api-routes';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
@@ -8,6 +8,8 @@ import {updateData} from '@pages/login/reducers/auth';
 import {PopupType} from '../page';
 import {PopupContext} from 'src/popup/context';
 import {Text} from '@components/layout/text';
+import {FormValues} from '@constants/common';
+import {setPersistData} from 'src/reducers/userPersistData';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -20,22 +22,78 @@ const getAPIURL = (id: string) => {
     }
 };
 
-export const useSubmitRequest = (setErrors: (data: {[key: string]: string}) => void) => {
+export const useSubmitRequest = (
+    setErrors: (data: {[key: string]: string}) => void,
+    setData: (key: string, value: string) => void,
+    id: string,
+    formData: {[key: string]: FormValues},
+) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const {setPopupData} = useContext(PopupContext);
     const dispatch = useDispatch();
-    const {authenticationKey, currentMileage, distance} = useSelector(
+    const {authenticationKey, currentMileage, distance, initialOdometer} = useSelector(
         (store: ApplicationStoreType) => ({
             authenticationKey: store.auth.authenticationKey,
             currentMileage: store.auth.currentMileage,
             distance: store.auth.distance,
+            initialOdometer: store.userPersistData.odometerStart,
         }),
         shallowEqual,
     );
 
+    useEffect(() => {
+        if (
+            id !== POPUP_IDS.ODOMETER ||
+            !initialOdometer ||
+            Number(formData?.odemeterStart?.value) > 0
+        )
+            return;
+        setData('odemeterStart', String(initialOdometer));
+    }, [id, formData?.odemeterStart]);
+
     const showSuccessPopup = (text: string) => {
         setPopupData({content: <Text style={{lineHeight: 24}}>{text}</Text>});
+    };
+
+    const handleValidate = (
+        data: PopupType,
+        setData: (data: {[key: string]: {value: string}}) => void,
+    ) => {
+        if (!data.validation) return;
+        const values = Object.entries(formData).reduce(
+            (prevData, [key, value]) => ({
+                ...prevData,
+                [key]: value.value,
+            }),
+            {},
+        );
+
+        const validate = data.validation.safeParse(values);
+
+        const errors = validate.error?.format();
+
+        const newValues = Object.entries(formData).reduce(
+            (prevData, [key, value]) => ({
+                ...prevData,
+                [key]: {
+                    value: value.value,
+                    error: errors ? errors[key]?._errors[0] : '',
+                },
+            }),
+            {} as {[key: string]: {value: string}},
+        );
+
+        setData(newValues);
+        if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
+            dispatch(setPersistData({odometerStart: Number(formData?.odemeterStart.value)}));
+            showSuccessPopup(
+                'Your odometer reading has been saved. You can access it anytime by clicking the "Record Odometer" button.',
+            );
+            // Handle draft logic
+            return;
+        }
+        if (validate.success) handleSubmit(values, data);
     };
 
     const handleSubmit = async (values: {[key: string]: string}, data: PopupType) => {
@@ -82,5 +140,5 @@ export const useSubmitRequest = (setErrors: (data: {[key: string]: string}) => v
         }
     };
 
-    return {handleSubmit, isLoading};
+    return {isLoading, handleValidate};
 };
