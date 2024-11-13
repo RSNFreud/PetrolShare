@@ -4,11 +4,11 @@ import {NativeSyntheticEvent, TextInputChangeEventData, View, StyleSheet} from '
 import {FC, useContext, useState} from 'react';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
-import {PopupContext} from 'src/popup/context';
 import {ForgotPasswordType} from '../page';
 import {MISSING_VALUE} from '@constants/common';
 import {z} from 'zod';
 import {ThankYou} from './thankYou';
+import {AppContext} from '@components/appContext/context';
 
 const validation = z
     .object({
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 });
 
 export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
     const [formState, setFormState] = useState({email: emailAddress, isLoading: false, error: ''});
 
     const setEmail = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {

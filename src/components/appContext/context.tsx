@@ -19,19 +19,35 @@ export type PopupType = {
     isVisible: boolean;
 };
 
-type PopupContextType = {
-    popupData: PopupType;
-    setPopupData: (data: {[K in keyof PopupType]?: PopupType[K]}) => void;
+export type AlertBoxType = {
+    title: string;
+    isVisible: boolean;
+    content: string;
+    buttons: {text: string; onClick?: () => void; isError?: boolean}[];
 };
 
-export const initialState: PopupContextType = {
+type AppContextType = {
+    popupData: PopupType;
+    setPopupData: (data: {[K in keyof PopupType]?: PopupType[K]}) => void;
+    alertBoxData: AlertBoxType;
+    setAlertBoxData: (data: {[K in keyof AlertBoxType]?: AlertBoxType[K]}) => void;
+};
+
+export const initialState: AppContextType = {
     popupData: {
         isVisible: false,
         title: '',
         hasClose: true,
         content: <></>,
     },
+    alertBoxData: {
+        isVisible: false,
+        content: '',
+        title: '',
+        buttons: [],
+    },
     setPopupData: () => {},
+    setAlertBoxData: () => {},
 };
 
-export const PopupContext = createContext<PopupContextType>(initialState);
+export const AppContext = createContext<AppContextType>(initialState);

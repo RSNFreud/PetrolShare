@@ -6,9 +6,10 @@ import {ScrollView} from 'react-native';
 import {Provider} from 'react-redux';
 import {Popup} from '@components/layout/popup';
 import {persistor, store} from 'src/store';
-import {PopupProvider} from 'src/popup/provider';
 import {PersistGate} from 'redux-persist/integration/react';
 import {StatusBar} from 'expo-status-bar';
+import {AppProvider} from '@components/appContext/provider';
+import {Alertbox} from '@components/layout/alertBox';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.hideAsync();
@@ -29,7 +30,7 @@ export default function RootLayout() {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}></PersistGate>
-            <PopupProvider>
+            <AppProvider>
                 <SplashScreenComponent />
                 <ScrollView
                     style={{paddingHorizontal: 18}}
@@ -40,7 +41,8 @@ export default function RootLayout() {
                     <Slot />
                 </ScrollView>
                 <Popup />
-            </PopupProvider>
+                <Alertbox />
+            </AppProvider>
             <StatusBar style="light" />
         </Provider>
     );

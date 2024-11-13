@@ -3,9 +3,9 @@ import {Text} from '../layout/text';
 import {Chevron} from 'src/icons/chevron';
 import {Colors} from '@constants/colors';
 import {useContext} from 'react';
-import {PopupContext} from 'src/popup/context';
 import {convertToSentanceCase} from 'src/hooks/common';
 import {Logout} from './logout';
+import {AppContext} from '@components/appContext/context';
 
 const POPUP_IDS = {
     LOGOUT: 'logout',
@@ -73,7 +73,7 @@ const getPopup = (id: PopupIDType) =>
     })[id];
 
 export const Settings = () => {
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
 
     const handleClick = (item: ItemType) => {
         const sentanceTitle = item.title

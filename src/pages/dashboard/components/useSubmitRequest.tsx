@@ -6,10 +6,10 @@ import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {ApplicationStoreType} from 'src/reducers';
 import {updateData} from '@pages/login/reducers/auth';
 import {PopupType} from '../page';
-import {PopupContext} from 'src/popup/context';
 import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
-import {setPersistData} from 'src/reducers/userPersistData';
+import {AppContext} from '@components/appContext/context';
+import {setOdometerData} from '../reducers/odometer';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -30,17 +30,19 @@ export const useSubmitRequest = (
 ) => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const dispatch = useDispatch();
-    const {authenticationKey, currentMileage, distance, initialOdometer} = useSelector(
-        (store: ApplicationStoreType) => ({
-            authenticationKey: store.auth.authenticationKey,
-            currentMileage: store.auth.currentMileage,
-            distance: store.auth.distance,
-            initialOdometer: store.userPersistData.odometerStart,
-        }),
-        shallowEqual,
-    );
+    const {authenticationKey, currentMileage, distance, initialOdometer, hasShownAlert} =
+        useSelector(
+            (store: ApplicationStoreType) => ({
+                authenticationKey: store.auth.authenticationKey,
+                currentMileage: store.auth.currentMileage,
+                distance: store.auth.distance,
+                initialOdometer: store.odometer.odometerStart,
+                hasShownAlert: store.odometer.recoverMessageShown,
+            }),
+            shallowEqual,
+        );
 
     useEffect(() => {
         if (
@@ -50,7 +52,19 @@ export const useSubmitRequest = (
         )
             return;
         setData('odemeterStart', String(initialOdometer));
-    }, [id, formData?.odemeterStart]);
+        if (!hasShownAlert)
+            setAlertBoxData({
+                isVisible: true,
+                content: 'We have automatically applied your previous odometer value.',
+                title: 'Distance recovered!',
+                buttons: [
+                    {
+                        text: 'OK',
+                    },
+                ],
+            });
+        dispatch(setOdometerData({recoverMessageShown: true}));
+    }, [id, formData?.odemeterStart, hasShownAlert]);
 
     const showSuccessPopup = (text: string) => {
         setPopupData({content: <Text style={{lineHeight: 24}}>{text}</Text>});
@@ -86,7 +100,7 @@ export const useSubmitRequest = (
 
         setData(newValues);
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
-            dispatch(setPersistData({odometerStart: Number(formData?.odemeterStart.value)}));
+            dispatch(setOdometerData({odometerStart: Number(formData?.odemeterStart.value)}));
             showSuccessPopup(
                 'Your odometer reading has been saved. You can access it anytime by clicking the "Record Odometer" button.',
             );

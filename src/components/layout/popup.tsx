@@ -5,7 +5,7 @@ import {Colors} from '@constants/colors';
 import {Cross} from 'src/icons/cross';
 import {useContext, useEffect, useRef, useState} from 'react';
 import Constants from 'expo-constants';
-import {PopupContext} from 'src/popup/context';
+import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({
     overlay: {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 const TIME_TO_CLOSE = 300;
 
 export const Popup = () => {
-    const {popupData, setPopupData} = useContext(PopupContext);
+    const {popupData, setPopupData} = useContext(AppContext);
     const [isPopupOpen, setIsPopupOpen] = useState(popupData.isVisible);
     const position = useRef(new Animated.Value(1000)).current;
     const [keyboardPadding, setKeyboardPadding] = useState(0);

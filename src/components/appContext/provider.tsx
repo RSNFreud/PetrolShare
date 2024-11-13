@@ -1,12 +1,13 @@
 import React, {FC, useEffect, useState} from 'react';
-import {PopupContext, PopupType, initialState} from './context';
+import {AlertBoxType, AppContext, PopupType, initialState} from './context';
 
 type PropsType = {
     children: React.ReactNode;
 };
 
-export const PopupProvider: FC<PropsType> = ({children}) => {
+export const AppProvider: FC<PropsType> = ({children}) => {
     const [popupData, setPopupData] = useState<PopupType>(initialState.popupData);
+    const [alertBoxData, setAlertBoxData] = useState<AlertBoxType>(initialState.alertBoxData);
 
     useEffect(() => {
         return () => {
@@ -15,14 +16,17 @@ export const PopupProvider: FC<PropsType> = ({children}) => {
     }, []);
 
     return (
-        <PopupContext.Provider
+        <AppContext.Provider
             value={{
                 popupData,
                 setPopupData: data =>
                     setPopupData(originalValues => ({...originalValues, ...data})),
+                alertBoxData,
+                setAlertBoxData: data =>
+                    setAlertBoxData(originalValues => ({...originalValues, ...data})),
             }}
         >
             {children}
-        </PopupContext.Provider>
+        </AppContext.Provider>
     );
 };

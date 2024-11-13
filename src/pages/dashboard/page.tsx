@@ -4,7 +4,7 @@ import {Colors} from '@constants/colors';
 import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
-import {PopupContext} from 'src/popup/context';
+import {AppContext} from '@components/appContext/context';
 import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
 import {MENU_OPTIONS, MenuType, POPUP_IDS} from './constants';
@@ -99,11 +99,11 @@ export const Dashboard = () => {
     const {userData, hasSavedOdometer} = useSelector(
         (store: ApplicationStoreType) => ({
             userData: store.auth,
-            hasSavedOdometer: Boolean(store.userPersistData.odometerStart),
+            hasSavedOdometer: Boolean(store.odometer.odometerStart),
         }),
         shallowEqual,
     );
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
 
     const onClick = ({label, popup, link}: MenuType) => {
         switch (true) {

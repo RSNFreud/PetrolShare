@@ -12,9 +12,9 @@ import {login, resetError} from '@pages/login/reducers/auth';
 import {getInitialEmail, getLoginData, getRegisterSuccess} from '@pages/login/selectors/user';
 import {FormValues, defaultValues} from '@constants/common';
 import {useAppDispatch} from 'src/store';
-import {PopupContext} from 'src/popup/context';
 import {RegisterComplete} from './components/registerComplete';
 import {resetSuccessPopup} from '@pages/register/reducers/register';
+import {AppContext} from '@components/appContext/context';
 
 export const LoginPage: FC = () => {
     const [data, setData] = useState<{email: FormValues; password: FormValues}>({
@@ -24,7 +24,7 @@ export const LoginPage: FC = () => {
 
     const {isLoading, error} = useSelector(getLoginData);
     const shouldShowRegister = useSelector(getRegisterSuccess);
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
     const initialEmail = useSelector(getInitialEmail);
     const dispatch = useAppDispatch();
 

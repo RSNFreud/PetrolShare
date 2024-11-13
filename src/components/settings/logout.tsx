@@ -4,7 +4,7 @@ import {logOut} from '@pages/login/reducers/auth';
 import {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {PopupContext} from 'src/popup/context';
+import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({
     title: {
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 export const Logout = () => {
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
     const dispatch = useDispatch();
 
     const handleNo = () => {

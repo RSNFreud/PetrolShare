@@ -3,8 +3,8 @@ import {Text} from './text';
 import {Cog} from 'src/icons/cog';
 import {Colors} from '@constants/colors';
 import {useContext} from 'react';
-import {PopupContext} from 'src/popup/context';
 import {Settings} from '@components/settings/settings';
+import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({
     logo: {
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 });
 
 export const Header = () => {
-    const {setPopupData} = useContext(PopupContext);
+    const {setPopupData} = useContext(AppContext);
 
     const openSettings = () => {
         setPopupData({

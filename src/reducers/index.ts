@@ -5,6 +5,7 @@ import {userPersistData} from './userPersistData';
 import {persistReducer} from 'redux-persist';
 import {MMKV} from 'react-native-mmkv';
 import {combineReducers} from 'redux';
+import {odometerData} from '@pages/dashboard/reducers/odometer';
 
 const storage = new MMKV();
 
@@ -34,6 +35,7 @@ export const reducers = combineReducers({
     auth,
     loadingScreen,
     register,
+    odometer: persistReducer(persistConfig, odometerData),
     userPersistData: persistedReducer,
 });
 
