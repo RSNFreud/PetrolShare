@@ -22,7 +22,7 @@ export type PopupType = {
 export type AlertBoxType = {
     title: string;
     isVisible: boolean;
-    content: string;
+    content: React.ReactNode;
     buttons: {text: string; onClick?: () => void; isError?: boolean}[];
 };
 

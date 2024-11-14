@@ -10,6 +10,7 @@ import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
 import {setOdometerData} from '../reducers/odometer';
+import {OdometerAlert} from './odometerAlert';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -29,6 +30,7 @@ export const useSubmitRequest = (
     formData: {[key: string]: FormValues},
 ) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
     const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const dispatch = useDispatch();
@@ -55,16 +57,31 @@ export const useSubmitRequest = (
         if (!hasShownAlert)
             setAlertBoxData({
                 isVisible: true,
-                content: 'We have automatically applied your previous odometer value.',
+                content: <OdometerAlert isChecked={isChecked} setIsChecked={handleCheckbox} />,
                 title: 'Distance recovered!',
                 buttons: [
                     {
                         text: 'OK',
+                        onClick: closeOdometerAlert,
                     },
                 ],
             });
-        dispatch(setOdometerData({recoverMessageShown: true}));
-    }, [id, formData?.odemeterStart, hasShownAlert]);
+    }, [id, formData?.odemeterStart, hasShownAlert, isChecked]);
+
+    useEffect(() => {
+        setAlertBoxData({
+            content: <OdometerAlert isChecked={isChecked} setIsChecked={handleCheckbox} />,
+        });
+    }, [isChecked]);
+
+    const handleCheckbox = () => {
+        setIsChecked(!isChecked);
+    };
+
+    const closeOdometerAlert = () => {
+        dispatch(setOdometerData({recoverMessageShown: isChecked}));
+        setAlertBoxData({isVisible: false});
+    };
 
     const showSuccessPopup = (text: string) => {
         setPopupData({content: <Text style={{lineHeight: 24}}>{text}</Text>});
@@ -100,11 +117,14 @@ export const useSubmitRequest = (
 
         setData(newValues);
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
-            dispatch(setOdometerData({odometerStart: Number(formData?.odemeterStart.value)}));
+            dispatch(
+                setOdometerData({
+                    odometerStart: Number(formData?.odemeterStart.value),
+                }),
+            );
             showSuccessPopup(
                 'Your odometer reading has been saved. You can access it anytime by clicking the "Record Odometer" button.',
             );
-            // Handle draft logic
             return;
         }
         if (validate.success) handleSubmit(values, data);

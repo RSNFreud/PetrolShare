@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         padding: 15,
         gap: 20,
+        borderRadius: 8,
         marginHorizontal: 25,
         flex: 1,
     },
@@ -46,6 +47,10 @@ const styles = StyleSheet.create({
     text: {
         lineHeight: 24,
     },
+    title: {
+        lineHeight: 24,
+        fontSize: 18,
+    },
     buttons: {
         justifyContent: 'flex-end',
         flexDirection: 'row',
@@ -56,6 +61,8 @@ const styles = StyleSheet.create({
     },
 });
 
+export const AlertBoxText = ({text}: {text: string}) => <Text style={styles.text}>{text}</Text>;
+
 export const Alertbox = () => {
     const {alertBoxData, setAlertBoxData} = useContext(AppContext);
 
@@ -64,20 +71,15 @@ export const Alertbox = () => {
     };
 
     return (
-        <Modal
-            animationType="fade"
-            visible={alertBoxData.isVisible}
-            transparent
-            onRequestClose={handleClose}
-        >
+        <Modal animationType="fade" visible={alertBoxData.isVisible} transparent>
             <View style={styles.wrapper}>
-                <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
+                <Pressable android_disableSound style={styles.overlay} />
                 <View style={styles.alertBox}>
                     <View style={styles.content}>
-                        <Text style={styles.text} bold>
+                        <Text style={styles.title} bold>
                             {alertBoxData.title}
                         </Text>
-                        <Text style={styles.text}>{alertBoxData.content}</Text>
+                        {alertBoxData.content}
                     </View>
                     <View style={styles.buttons}>
                         {alertBoxData.buttons.map(button => (
