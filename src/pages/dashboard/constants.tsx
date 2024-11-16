@@ -11,13 +11,15 @@ import {Petrol} from 'src/icons/petrol';
 import {Plus} from 'src/icons/plus';
 import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
-import {stringToNumberValidation} from 'src/utils/validation';
+import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
 import {z} from 'zod';
 import {PopupType} from './page';
 import {StyleSheet} from 'react-native';
 import {Input} from '@components/layout/input';
 import {ComponentProps} from 'react';
 import {Dropdown} from '@components/layout/dropdown/dropdown';
+import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
+import {ENDPOINTS} from '@constants/api-routes';
 
 const styles = StyleSheet.create({
     icon: {
@@ -37,6 +39,7 @@ export type MenuType = {
 export const POPUP_IDS = {
     SPECIFIC_DISTANCE: 'Specific Distance',
     ODOMETER: 'odometer',
+    ASSIGN_DISTANCE: 'assign_distance',
 };
 
 const input = (
@@ -71,14 +74,42 @@ const dropdown = (
     },
 });
 
-export const MENU_OPTIONS: {
-    header: string;
-    items: MenuType[];
-}[] = [
+type GetMemberType = {fullName: string; userID: number}[];
+
+const getMembers = async (
+    authKey: string,
+    userID: string,
+): Promise<{value: string; label: string}[]> => {
+    const res = await sendRequestToBackend({
+        url: `${ENDPOINTS.GET_MEMBERS}?authenticationKey=${authKey}`,
+    });
+
+    if (res?.ok) {
+        const data = (await res.json()) as GetMemberType;
+
+        return data
+            .filter(data => String(data.userID) !== String(userID))
+            .map(data => ({
+                value: String(data.userID),
+                label: data.fullName,
+            }));
+    }
+    return [];
+};
+
+export const getMenuOptions = async (
+    authKey: string,
+    userID: string,
+): Promise<
+    {
+        header: string;
+        items: MenuType[];
+    }[]
+> => [
     {
         header: 'Distance',
         items: [
-            {icon: <List style={styles.icon} />, label: 'Presets'},
+            {icon: <List style={styles.icon} />, label: 'Presets', link: 'presets'},
             {
                 icon: <DashboardIcon style={styles.icon} />,
                 label: 'Add Specific Distance',
@@ -132,7 +163,31 @@ export const MENU_OPTIONS: {
                         '$distance has been successfully added to your account! Your current total distance is now $total_distance.',
                 },
             },
-            {icon: <Road style={styles.icon} />, label: 'Assign Distance'},
+            {
+                icon: <Road style={styles.icon} />,
+                label: 'Assign Distance',
+                popup: {
+                    id: POPUP_IDS.ASSIGN_DISTANCE,
+                    children: [
+                        dropdown(
+                            'User:',
+                            'Choose a username',
+                            'username',
+                            await getMembers(authKey, userID),
+                        ),
+                        input('Distance to apply:', 'Enter total distance', 'totalDistance', {
+                            keyboardType: 'number-pad',
+                        }),
+                    ],
+                    buttons: [{label: 'Add Distance', isSubmitButton: true}],
+                    validation: z.object({
+                        username: commonValidation,
+                        totalDistance: stringToNumberValidation,
+                    }),
+                    successText:
+                        '$distance has been successfully added to your account! Your current total distance is now $total_distance.',
+                },
+            },
             {icon: <ResetArrow style={styles.icon} />, label: 'Reset Distance'},
         ],
     },

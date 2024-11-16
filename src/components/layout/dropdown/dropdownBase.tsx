@@ -31,30 +31,61 @@ const styles = StyleSheet.create({
         color: 'white',
         height: 7,
     },
+    error: {
+        fontSize: 14,
+        color: Colors.red,
+        marginTop: 8,
+    },
+    disabled: {
+        backgroundColor: '#292E46',
+    },
+    disabledText: {
+        color: '#7A7E93',
+    },
 });
 
 type PropsType = {
     label: string;
     placeholder: string;
     value?: string;
+    error?: string;
     items: {value: string; label: string}[];
     onRequestOpen: () => void;
 };
 
-export const DropdownBase: FC<PropsType> = ({label, placeholder, value, onRequestOpen, items}) => {
+export const DropdownBase: FC<PropsType> = ({
+    label,
+    error,
+    placeholder,
+    value,
+    onRequestOpen,
+    items,
+}) => {
     const selectedItem = items.find(item => item.value === value);
+    const isDisabled = !items.length;
     return (
         <>
             <View>
                 <Text bold style={styles.label}>
                     {label}
                 </Text>
-                <ButtonBase style={styles.dropdownContainer} onPress={onRequestOpen}>
-                    <Text style={{...styles.input, ...(value ? styles.activeInput : {})}}>
+                <ButtonBase
+                    style={{...styles.dropdownContainer, ...(isDisabled ? styles.disabled : {})}}
+                    onPress={onRequestOpen}
+                    disabled={isDisabled}
+                >
+                    <Text
+                        style={{
+                            ...styles.input,
+                            ...(value ? styles.activeInput : {}),
+                            ...(isDisabled ? styles.disabledText : {}),
+                        }}
+                    >
                         {selectedItem?.label || placeholder}
                     </Text>
-                    <Chevron style={styles.icon} />
+                    <Chevron style={{...styles.icon, ...(isDisabled ? styles.disabledText : {})}} />
                 </ButtonBase>
+                {!!error && <Text style={styles.error}>{error}</Text>}
             </View>
         </>
     );

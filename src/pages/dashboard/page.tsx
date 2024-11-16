@@ -1,14 +1,15 @@
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
 import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
-import {MENU_OPTIONS, MenuType, POPUP_IDS} from './constants';
+import {getMenuOptions, MenuType, POPUP_IDS} from './constants';
 import {ApplicationStoreType} from 'src/reducers';
+import {useRouter} from 'expo-router';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -96,14 +97,25 @@ export type PopupType = {
 };
 
 export const Dashboard = () => {
-    const {userData, hasSavedOdometer} = useSelector(
+    const {navigate} = useRouter();
+    const {userData, hasSavedOdometer, authkey} = useSelector(
         (store: ApplicationStoreType) => ({
             userData: store.auth,
+            authkey: store.auth.authenticationKey,
             hasSavedOdometer: Boolean(store.odometer.odometerStart),
         }),
         shallowEqual,
     );
     const {setPopupData} = useContext(AppContext);
+    const [data, setData] = useState<{header: string; items: MenuType[]}[]>();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getMenuOptions(authkey, userData.userID);
+            setData(res);
+        };
+        fetchData();
+    }, [authkey]);
 
     const onClick = ({label, popup, link}: MenuType) => {
         switch (true) {
@@ -115,6 +127,7 @@ export const Dashboard = () => {
                 });
                 break;
             case Boolean(link):
+                navigate({pathname: `./${link}`});
                 break;
             default:
                 break;
@@ -140,7 +153,7 @@ export const Dashboard = () => {
                 </Text>
             </View>
             <View style={styles.menuContainer}>
-                {MENU_OPTIONS.map(menuTab => (
+                {data?.map(menuTab => (
                     <View key={menuTab.header}>
                         <Text bold style={styles.menuHeader}>
                             {menuTab.header.toUpperCase()}

@@ -12,11 +12,13 @@ const initialState: UserType = {
     currentMileage: '',
     groupID: '',
     error: '',
+    userID: '',
 };
 
 type ResponseType = {
     emailAddress: string;
     fullName: string;
+    userID: string;
     authenticationKey: string;
     currentMileage: string;
     groupID: string;
