@@ -54,3 +54,5 @@ export const Input: FC<PropsType> = forwardRef(({label, error, style, innerRef, 
         </View>
     );
 });
+
+Input.displayName = 'Input';

@@ -1,6 +1,7 @@
 const REACT_APP_ADDRESS = 'https://petrolshare.freud-online.co.uk/';
-// eslint-disable-next-line no-unused-vars
+
 const REACT_API_ADDRESS = `https://petrolshare.freud-online.co.uk/api`;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const DEV_ADDRESS = 'http://10.0.2.2:3434/api';
 
 export default {
