@@ -17,6 +17,13 @@
           "project": "petrolshare"
         }
       ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1E2336",
+          "image": "./src/assets/images/adaptive_icon.png"
+        }
+      ],
       "expo-router",
       "expo-font",
       "expo-asset",
@@ -31,9 +38,6 @@
         }
       ]
     ],
-    "splash": {
-      "backgroundColor": "#1E2336"
-    },
     "backgroundColor": "#1E2336",
     "updates": {
       "fallbackToCacheTimeout": 0,

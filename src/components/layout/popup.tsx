@@ -129,7 +129,13 @@ export const Popup = () => {
     };
 
     return (
-        <Modal animationType="fade" visible={isPopupOpen} transparent onRequestClose={handleClose}>
+        <Modal
+            animationType="fade"
+            visible={isPopupOpen}
+            transparent
+            onRequestClose={handleClose}
+            style={{height: Dimensions.get('screen').height}}
+        >
             <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
             <Animated.ScrollView
                 style={[styles.popup, {transform: [{translateY: position}], maxHeight: heightAnim}]}
@@ -143,8 +149,8 @@ export const Popup = () => {
                             <Cross color="white" />
                         </ButtonBase>
                     </View>
+                    <View style={styles.content}>{popupData.content}</View>
                 </>
-                <View style={styles.content}>{popupData.content}</View>
             </Animated.ScrollView>
         </Modal>
     );

@@ -5,6 +5,7 @@
   },
   "build": {
     "preview": {
+      "node": "20.9.0",
       "distribution": "internal",
       "channel": "development",
       "android": {
@@ -12,6 +13,7 @@
       }
     },
     "development": {
+      "node": "20.9.0",
       "developmentClient": true,
       "channel": "development",
       "distribution": "internal",
@@ -20,10 +22,12 @@
       }
     },
     "testing": {
+      "node": "20.9.0",
       "channel": "development",
       "autoIncrement": true
     },
     "production": {
+      "node": "20.9.0",
       "channel": "production",
       "autoIncrement": true
     }
