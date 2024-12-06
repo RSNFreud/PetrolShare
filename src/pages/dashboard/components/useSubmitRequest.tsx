@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react';
-import {POPUP_IDS} from '../constants';
+import {GetMemberType, POPUP_IDS} from '../constants';
 import {ENDPOINTS} from '@constants/api-routes';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {ApplicationStoreType} from 'src/reducers';
 import {updateData} from '@pages/login/reducers/auth';
@@ -17,9 +17,26 @@ const getAPIURL = (id: string) => {
         case POPUP_IDS.ODOMETER:
         case POPUP_IDS.SPECIFIC_DISTANCE:
             return ENDPOINTS.ADD_DISTANCE;
-
+        case POPUP_IDS.ASSIGN_DISTANCE:
+            return ENDPOINTS.ASSIGN_DISTANCE;
         default:
             break;
+    }
+};
+
+const getUsername = async (authKey: string, userID: string) => {
+    try {
+        const res = await sendRequestToBackend({
+            url: `${ENDPOINTS.GET_MEMBERS}?authenticationKey=${authKey}`,
+        });
+        if (res?.ok) {
+            const data = (await res.json()) as GetMemberType;
+
+            return data.find(data => String(data.userID) === String(userID))?.fullName || '';
+        }
+        return '';
+    } catch {
+        return '';
     }
 };
 
@@ -150,6 +167,9 @@ export const useSubmitRequest = (
                 break;
             case POPUP_IDS.SPECIFIC_DISTANCE:
                 parsedData.distance = values?.distance;
+            case POPUP_IDS.ASSIGN_DISTANCE:
+                parsedData.distance = values?.totalDistance;
+                parsedData.userID = values?.username;
             default:
                 break;
         }
@@ -169,6 +189,11 @@ export const useSubmitRequest = (
                         /\$total_distance/,
                         `${Number(currentMileage) + Number(parsedData.distance)} ${distance}`,
                     );
+            }
+            if (id === POPUP_IDS.ASSIGN_DISTANCE) {
+                successText = successText
+                    .replace(/\$distance/, `${parsedData.distance} ${distance}`)
+                    .replace(/\$username/, await getUsername(authenticationKey, values?.username));
             }
             showSuccessPopup(successText);
         }

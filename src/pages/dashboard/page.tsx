@@ -7,7 +7,7 @@ import {shallowEqual, useSelector} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
 import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
-import {getMenuOptions, MenuType, POPUP_IDS} from './constants';
+import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
 import {ApplicationStoreType} from 'src/reducers';
 import {useRouter} from 'expo-router';
 
@@ -117,7 +117,7 @@ export const Dashboard = () => {
         fetchData();
     }, [authkey]);
 
-    const onClick = ({label, popup, link}: MenuType) => {
+    const onClick = ({label, popup, link, customPopupId}: MenuType) => {
         switch (true) {
             case Boolean(popup):
                 setPopupData({
@@ -128,6 +128,15 @@ export const Dashboard = () => {
                 break;
             case Boolean(link):
                 navigate({pathname: `./${link}`});
+                break;
+            case Boolean(customPopupId):
+                setPopupData({
+                    isVisible: true,
+                    title: label,
+                    content: getCustomPopups(
+                        customPopupId as (typeof CUSTOM_POPUPS_ID)[keyof typeof CUSTOM_POPUPS_ID],
+                    ),
+                });
                 break;
             default:
                 break;

@@ -20,6 +20,7 @@ import {ComponentProps} from 'react';
 import {Dropdown} from '@components/layout/dropdown/dropdown';
 import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
+import {ResetDistance} from './components/resetDistance';
 
 const styles = StyleSheet.create({
     icon: {
@@ -29,11 +30,16 @@ const styles = StyleSheet.create({
     },
 });
 
+export const CUSTOM_POPUPS_ID = {
+    RESET_DISTANCE: 'resetDistance',
+};
+
 export type MenuType = {
     icon: React.ReactNode;
     label: string;
     popup?: PopupType;
     link?: string;
+    customPopupId?: (typeof CUSTOM_POPUPS_ID)[keyof typeof CUSTOM_POPUPS_ID];
 };
 
 export const POPUP_IDS = {
@@ -74,7 +80,7 @@ const dropdown = (
     },
 });
 
-type GetMemberType = {fullName: string; userID: number}[];
+export type GetMemberType = {fullName: string; userID: number}[];
 
 const getMembers = async (
     authKey: string,
@@ -185,10 +191,14 @@ export const getMenuOptions = async (
                         totalDistance: stringToNumberValidation,
                     }),
                     successText:
-                        '$distance has been successfully added to your account! Your current total distance is now $total_distance.',
+                        'A request to add $distance has been sent to $username! They’ll get a notification to accept it, and once they do, it’ll be assigned. For now, it’s in draft mode.',
                 },
             },
-            {icon: <ResetArrow style={styles.icon} />, label: 'Reset Distance'},
+            {
+                icon: <ResetArrow style={styles.icon} />,
+                label: 'Reset Distance',
+                customPopupId: CUSTOM_POPUPS_ID.RESET_DISTANCE,
+            },
         ],
     },
     {
@@ -209,3 +219,15 @@ export const getMenuOptions = async (
         ],
     },
 ];
+
+export const getCustomPopups = (
+    popupID: (typeof CUSTOM_POPUPS_ID)[keyof typeof CUSTOM_POPUPS_ID],
+) => {
+    switch (popupID) {
+        case CUSTOM_POPUPS_ID.RESET_DISTANCE:
+            return <ResetDistance />;
+
+        default:
+            break;
+    }
+};

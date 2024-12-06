@@ -9,5 +9,6 @@ export const ENDPOINTS = {
     REGISTER: 'user/register',
     GET_DATA: 'user/get',
     ADD_DISTANCE: 'distance/add',
+    ASSIGN_DISTANCE: 'distance/assign',
     GET_MEMBERS: 'group/get-members',
 };
