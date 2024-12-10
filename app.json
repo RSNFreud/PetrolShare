@@ -21,7 +21,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#1E2336",
-          "image": "./src/assets/images/adaptive_icon.png"
+          "image": "./src/assets/images/adaptive-icon.png"
         }
       ],
       "expo-router",

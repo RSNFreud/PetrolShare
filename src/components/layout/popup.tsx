@@ -132,9 +132,9 @@ export const Popup = () => {
         <Modal
             animationType="fade"
             visible={isPopupOpen}
+            statusBarTranslucent
             transparent
             onRequestClose={handleClose}
-            style={{height: Dimensions.get('screen').height}}
         >
             <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
             <Animated.ScrollView
