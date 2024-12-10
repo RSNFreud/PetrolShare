@@ -11,4 +11,5 @@ export const ENDPOINTS = {
     ADD_DISTANCE: 'distance/add',
     ASSIGN_DISTANCE: 'distance/assign',
     GET_MEMBERS: 'group/get-members',
+    RESET_DISTANCE: 'distance/reset',
 };

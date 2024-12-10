@@ -167,9 +167,11 @@ export const useSubmitRequest = (
                 break;
             case POPUP_IDS.SPECIFIC_DISTANCE:
                 parsedData.distance = values?.distance;
+                break;
             case POPUP_IDS.ASSIGN_DISTANCE:
                 parsedData.distance = values?.totalDistance;
                 parsedData.userID = values?.username;
+                break;
             default:
                 break;
         }
