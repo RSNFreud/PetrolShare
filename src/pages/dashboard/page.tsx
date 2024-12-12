@@ -1,7 +1,8 @@
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext} from 'react';
+import {dropdown, input} from './components/popupHelpers';
 import {StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
@@ -10,6 +11,7 @@ import {z} from 'zod';
 import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
 import {ApplicationStoreType} from 'src/reducers';
 import {useRouter} from 'expo-router';
+import {getMembers} from './hooks';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -107,23 +109,36 @@ export const Dashboard = () => {
         shallowEqual,
     );
     const {setPopupData} = useContext(AppContext);
-    const [data, setData] = useState<{header: string; items: MenuType[]}[]>();
+    const data = getMenuOptions();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const res = await getMenuOptions(authkey, userData.userID);
-            setData(res);
-        };
-        fetchData();
-    }, [authkey]);
+    const validatePopupData = async (popup: PopupType): Promise<PopupType> => {
+        switch (popup.id) {
+            case POPUP_IDS.ASSIGN_DISTANCE:
+                const dropdownOptions = await getMembers(authkey, userData.userID);
+                return {
+                    ...popup,
+                    children: [
+                        dropdown('User:', 'Choose a username', 'username', dropdownOptions),
+                        input('Distance to apply:', 'Enter total distance', 'totalDistance', {
+                            keyboardType: 'number-pad',
+                        }),
+                    ],
+                };
 
-    const onClick = ({label, popup, link, customPopupId}: MenuType) => {
+            default:
+                return popup;
+        }
+    };
+
+    const onClick = async ({label, popup, link, customPopupId}: MenuType) => {
         switch (true) {
             case Boolean(popup):
+                const popupData = await validatePopupData(popup as PopupType);
+
                 setPopupData({
                     isVisible: true,
                     title: label,
-                    content: <PopupWrapper data={popup as PopupType} />,
+                    content: <PopupWrapper data={popupData} />,
                 });
                 break;
             case Boolean(link):

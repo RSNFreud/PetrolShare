@@ -15,12 +15,9 @@ import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
 import {z} from 'zod';
 import {PopupType} from './page';
 import {StyleSheet} from 'react-native';
-import {Input} from '@components/layout/input';
-import {ComponentProps} from 'react';
-import {Dropdown} from '@components/layout/dropdown/dropdown';
-import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
-import {ENDPOINTS} from '@constants/api-routes';
+
 import {ResetDistance} from './components/resetDistance';
+import {input} from './components/popupHelpers';
 
 const styles = StyleSheet.create({
     icon: {
@@ -48,70 +45,12 @@ export const POPUP_IDS = {
     ASSIGN_DISTANCE: 'assign_distance',
 };
 
-const input = (
-    label: string,
-    placeholder: string,
-    id: string,
-    props?: Partial<ComponentProps<typeof Input>>,
-) => ({
-    component: Input,
-    props: {
-        placeholder,
-        label,
-        id,
-        ...props,
-    },
-});
-
-const dropdown = (
-    label: string,
-    placeholder: string,
-    id: string,
-    items: {value: string; label: string}[],
-    props?: Partial<ComponentProps<typeof Dropdown>>,
-) => ({
-    component: Dropdown,
-    props: {
-        placeholder,
-        label,
-        items,
-        id,
-        ...props,
-    },
-});
-
 export type GetMemberType = {fullName: string; userID: number}[];
 
-const getMembers = async (
-    authKey: string,
-    userID: string,
-): Promise<{value: string; label: string}[]> => {
-    const res = await sendRequestToBackend({
-        url: `${ENDPOINTS.GET_MEMBERS}?authenticationKey=${authKey}`,
-    });
-
-    if (res?.ok) {
-        const data = (await res.json()) as GetMemberType;
-
-        return data
-            .filter(data => String(data.userID) !== String(userID))
-            .map(data => ({
-                value: String(data.userID),
-                label: data.fullName,
-            }));
-    }
-    return [];
-};
-
-export const getMenuOptions = async (
-    authKey: string,
-    userID: string,
-): Promise<
-    {
-        header: string;
-        items: MenuType[];
-    }[]
-> => [
+export const getMenuOptions = (): {
+    header: string;
+    items: MenuType[];
+}[] => [
     {
         header: 'Distance',
         items: [
@@ -174,17 +113,7 @@ export const getMenuOptions = async (
                 label: 'Assign Distance',
                 popup: {
                     id: POPUP_IDS.ASSIGN_DISTANCE,
-                    children: [
-                        dropdown(
-                            'User:',
-                            'Choose a username',
-                            'username',
-                            await getMembers(authKey, userID),
-                        ),
-                        input('Distance to apply:', 'Enter total distance', 'totalDistance', {
-                            keyboardType: 'number-pad',
-                        }),
-                    ],
+                    children: [],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
                     validation: z.object({
                         username: commonValidation,
