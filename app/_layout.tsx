@@ -11,6 +11,16 @@ import {StatusBar} from 'expo-status-bar';
 import {AppProvider} from '@components/appContext/provider';
 import {Alertbox} from '@components/layout/alertBox';
 
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import * as Network from 'expo-network';
+
+onlineManager.setEventListener(setOnline => {
+    const subscription = Network.addNetworkStateListener(state => {
+        setOnline(state?.isConnected || false);
+    });
+    return () => subscription.remove();
+});
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.hideAsync();
 
@@ -22,6 +32,7 @@ export default function RootLayout() {
         'Roboto-Light': require('src/assets/fonts/Roboto-Light.ttf'),
     });
     const [loading, setLoading] = useState(true);
+    const queryClient = new QueryClient();
 
     if (!loading) {
         return null;
@@ -29,21 +40,23 @@ export default function RootLayout() {
 
     return (
         <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}></PersistGate>
-            <AppProvider>
-                <SplashScreenComponent />
-                <ScrollView
-                    style={{paddingHorizontal: 18}}
-                    contentContainerStyle={{paddingBottom: 18}}
-                    automaticallyAdjustKeyboardInsets={true}
-                    keyboardShouldPersistTaps="always"
-                >
-                    <Slot />
-                </ScrollView>
-                <Popup />
-                <Alertbox />
-            </AppProvider>
-            <StatusBar style="light" />
+            <QueryClientProvider client={queryClient}>
+                <PersistGate loading={null} persistor={persistor}></PersistGate>
+                <AppProvider>
+                    <SplashScreenComponent />
+                    <ScrollView
+                        style={{paddingHorizontal: 18}}
+                        contentContainerStyle={{paddingBottom: 18}}
+                        automaticallyAdjustKeyboardInsets={true}
+                        keyboardShouldPersistTaps="always"
+                    >
+                        <Slot />
+                    </ScrollView>
+                    <Popup />
+                    <Alertbox />
+                </AppProvider>
+                <StatusBar style="light" />
+            </QueryClientProvider>
         </Provider>
     );
 }

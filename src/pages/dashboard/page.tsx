@@ -11,7 +11,7 @@ import {z} from 'zod';
 import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
 import {ApplicationStoreType} from 'src/reducers';
 import {useRouter} from 'expo-router';
-import {getMembers} from './hooks';
+import {useMemberRequest} from './hooks';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -109,16 +109,16 @@ export const Dashboard = () => {
         shallowEqual,
     );
     const {setPopupData} = useContext(AppContext);
+    const memberList = useMemberRequest(authkey, userData.userID);
     const data = getMenuOptions();
 
     const validatePopupData = async (popup: PopupType): Promise<PopupType> => {
         switch (popup.id) {
             case POPUP_IDS.ASSIGN_DISTANCE:
-                const dropdownOptions = await getMembers(authkey, userData.userID);
                 return {
                     ...popup,
                     children: [
-                        dropdown('User:', 'Choose a username', 'username', dropdownOptions),
+                        dropdown('User:', 'Choose a username', 'username', memberList || []),
                         input('Distance to apply:', 'Enter total distance', 'totalDistance', {
                             keyboardType: 'number-pad',
                         }),
@@ -134,7 +134,6 @@ export const Dashboard = () => {
         switch (true) {
             case Boolean(popup):
                 const popupData = await validatePopupData(popup as PopupType);
-
                 setPopupData({
                     isVisible: true,
                     title: label,
