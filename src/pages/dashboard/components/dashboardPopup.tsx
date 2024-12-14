@@ -1,11 +1,11 @@
 import {createRef, FC, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {PopupType} from '../page';
+import {useSubmitRequest} from './useSubmitRequest';
 import {defaultValues, FormValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
-import {useSubmitRequest} from './useSubmitRequest';
 
 type PropsType = {
     data: PopupType;

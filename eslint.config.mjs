@@ -1,10 +1,9 @@
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import {FlatCompat} from '@eslint/eslintrc';
+import js from '@eslint/js';
 import prettier from 'eslint-plugin-prettier';
 import {tanstackConfig} from '@tanstack/config/eslint';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import js from '@eslint/js';
-
-import {FlatCompat} from '@eslint/eslintrc';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,9 +26,11 @@ export default [
 
         rules: {
             'no-unused-vars': 'error',
+            'no-console': 'error',
             'no-duplicate-imports': 'error',
             'react-hooks/exhaustive-deps': 'off',
             'prettier/prettier': 'error',
+            'import/order': 'error',
         },
     },
 ];

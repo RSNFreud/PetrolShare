@@ -1,6 +1,6 @@
+import {createAction, createAsyncThunk, createReducer} from '@reduxjs/toolkit';
 import {ENDPOINTS} from '@constants/api-routes';
 import {STORAGE_KEYS} from '@constants/storage-keys';
-import {createAction, createAsyncThunk, createReducer} from '@reduxjs/toolkit';
 import {getItem} from 'src/hooks/common';
 import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 

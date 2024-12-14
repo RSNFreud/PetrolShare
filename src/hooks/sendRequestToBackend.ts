@@ -1,5 +1,5 @@
-import {API_ADDRESS, EMAIL_ADDRESS} from '@constants/api-routes';
 import * as Sentry from '@sentry/react-native';
+import {API_ADDRESS, EMAIL_ADDRESS} from '@constants/api-routes';
 
 type PropsType = {
     url: string;

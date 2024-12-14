@@ -1,9 +1,9 @@
 import {StyleSheet, View} from 'react-native';
-import {Text} from '../text';
 import {FC} from 'react';
+import {Text} from '../text';
+import {ButtonBase} from '../buttonBase';
 import {Colors} from '@constants/colors';
 import {Chevron} from 'src/icons/chevron';
-import {ButtonBase} from '../buttonBase';
 
 const styles = StyleSheet.create({
     label: {

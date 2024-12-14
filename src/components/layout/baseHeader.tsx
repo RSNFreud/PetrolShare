@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
-import {Text} from './text';
 import Constants from 'expo-constants';
+import {Text} from './text';
 
 const styles = StyleSheet.create({
     logo: {

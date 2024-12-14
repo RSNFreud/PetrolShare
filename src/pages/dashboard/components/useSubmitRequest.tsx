@@ -1,16 +1,16 @@
 import {useContext, useEffect, useState} from 'react';
+import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {GetMemberType, POPUP_IDS} from '../constants';
+import {PopupType} from '../page';
+import {setOdometerData} from '../reducers/odometer';
+import {OdometerAlert} from './odometerAlert';
 import {ENDPOINTS} from '@constants/api-routes';
 import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
-import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {ApplicationStoreType} from 'src/reducers';
 import {updateData} from '@pages/login/reducers/auth';
-import {PopupType} from '../page';
 import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
-import {setOdometerData} from '../reducers/odometer';
-import {OdometerAlert} from './odometerAlert';
 
 const getAPIURL = (id: string) => {
     switch (id) {

@@ -1,15 +1,15 @@
-import {Input} from '@components/layout/input';
 import {StyleSheet, TextInput, View} from 'react-native';
-import {Text} from '@components/layout/text';
-import {commonStyles} from './commonStyles';
-import {Button} from '@components/layout/button';
-import {FormValues, MISSING_VALUE} from '@constants/common';
 import {FC, useEffect, useRef} from 'react';
 import {z} from 'zod';
-import {useAppDispatch} from 'src/store';
-import {register} from '../reducers/register';
 import {useSelector} from 'react-redux';
+import {register} from '../reducers/register';
 import {getRegisterData} from '../selectors';
+import {commonStyles} from './commonStyles';
+import {Input} from '@components/layout/input';
+import {Text} from '@components/layout/text';
+import {Button} from '@components/layout/button';
+import {FormValues, MISSING_VALUE} from '@constants/common';
+import {useAppDispatch} from 'src/store';
 
 type PropsType = {
     data: {

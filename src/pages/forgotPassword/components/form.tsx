@@ -1,13 +1,13 @@
-import {Button} from '@components/layout/button';
-import {Input} from '@components/layout/input';
 import {NativeSyntheticEvent, TextInputChangeEventData, View, StyleSheet} from 'react-native';
 import {FC, useContext, useState} from 'react';
+import {z} from 'zod';
+import {ForgotPasswordType} from '../page';
+import {ThankYou} from './thankYou';
+import {Button} from '@components/layout/button';
+import {Input} from '@components/layout/input';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
-import {ForgotPasswordType} from '../page';
 import {MISSING_VALUE} from '@constants/common';
-import {z} from 'zod';
-import {ThankYou} from './thankYou';
 import {AppContext} from '@components/appContext/context';
 
 const validation = z

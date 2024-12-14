@@ -1,9 +1,9 @@
-import {Button} from '@components/layout/button';
-import {Text} from '@components/layout/text';
-import {logOut} from '@pages/login/reducers/auth';
 import {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useDispatch} from 'react-redux';
+import {Button} from '@components/layout/button';
+import {Text} from '@components/layout/text';
+import {logOut} from '@pages/login/reducers/auth';
 import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({

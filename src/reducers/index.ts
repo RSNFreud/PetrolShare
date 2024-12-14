@@ -1,10 +1,10 @@
-import {auth} from '@pages/login/reducers/auth';
-import {loadingScreen} from './loadingScreen';
-import {registerReducer as register} from '@pages/register/reducers/register';
-import {userPersistData} from './userPersistData';
 import {persistReducer} from 'redux-persist';
 import {MMKV} from 'react-native-mmkv';
 import {combineReducers} from 'redux';
+import {userPersistData} from './userPersistData';
+import {loadingScreen} from './loadingScreen';
+import {registerReducer as register} from '@pages/register/reducers/register';
+import {auth} from '@pages/login/reducers/auth';
 import {odometerData} from '@pages/dashboard/reducers/odometer';
 
 const storage = new MMKV();

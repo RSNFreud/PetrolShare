@@ -1,8 +1,8 @@
 import {put, takeLatest} from 'redux-saga/effects';
-import {register, setName, showSuccessPopup} from '../reducers/register';
 import {PayloadAction} from '@reduxjs/toolkit';
-import {setPersistData} from 'src/reducers/userPersistData';
 import {router} from 'expo-router';
+import {register, setName, showSuccessPopup} from '../reducers/register';
+import {setPersistData} from 'src/reducers/userPersistData';
 
 function* openRegisterPopup() {
     yield router.replace('/');

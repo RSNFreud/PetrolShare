@@ -1,10 +1,10 @@
 import {Animated, Dimensions, Keyboard, Modal, Pressable, StyleSheet, View} from 'react-native';
+import {useContext, useEffect, useRef, useState} from 'react';
+import Constants from 'expo-constants';
 import {Text} from './text';
 import {ButtonBase} from './buttonBase';
 import {Colors} from '@constants/colors';
 import {Cross} from 'src/icons/cross';
-import {useContext, useEffect, useRef, useState} from 'react';
-import Constants from 'expo-constants';
 import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({

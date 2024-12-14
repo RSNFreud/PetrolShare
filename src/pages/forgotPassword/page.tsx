@@ -1,8 +1,8 @@
-import {ButtonBase} from '@components/layout/buttonBase';
-import {Text} from '@components/layout/text';
 import {FC, useContext} from 'react';
 import {NativeSyntheticEvent, StyleSheet, TextInputChangeEventData} from 'react-native';
 import {Form} from './components/form';
+import {Text} from '@components/layout/text';
+import {ButtonBase} from '@components/layout/buttonBase';
 import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({

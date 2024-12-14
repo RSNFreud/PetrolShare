@@ -1,7 +1,7 @@
-import {Text} from '@components/layout/text';
 import {useSelector} from 'react-redux';
-import {getUserName} from '../selectors/user';
 import {StyleSheet} from 'react-native';
+import {getUserName} from '../selectors/user';
+import {Text} from '@components/layout/text';
 
 const style = StyleSheet.create({
     text: {

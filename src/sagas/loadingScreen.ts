@@ -1,5 +1,5 @@
-import {fetchSelf, login} from '@pages/login/reducers/auth';
 import {all, delay, put, takeEvery} from 'redux-saga/effects';
+import {fetchSelf, login} from '@pages/login/reducers/auth';
 import {setLoading} from 'src/reducers/loadingScreen';
 
 function* setLoadingState() {

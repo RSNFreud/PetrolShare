@@ -1,8 +1,8 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Text} from './text';
 import {Href, Link} from 'expo-router';
 import Svg, {SvgProps, Path} from 'react-native-svg';
+import {Text} from './text';
 
 type PropsType = {
     pages: {label: string; href?: Href}[];

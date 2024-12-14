@@ -1,11 +1,11 @@
+import React, {useContext} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
 import {Button} from '@components/layout/button';
 import {Text} from '@components/layout/text';
 import {ENDPOINTS} from '@constants/api-routes';
 import {updateData} from '@pages/login/reducers/auth';
-import {useContext} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {getAuthKey} from 'src/selectors/common';
 

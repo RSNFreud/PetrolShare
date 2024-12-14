@@ -1,5 +1,5 @@
-import {Text} from '@components/layout/text';
 import {StyleSheet} from 'react-native';
+import {Text} from '@components/layout/text';
 
 const styles = StyleSheet.create({
     title: {

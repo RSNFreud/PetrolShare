@@ -1,8 +1,8 @@
 import {StyleSheet, TouchableHighlight, View} from 'react-native';
+import {useContext} from 'react';
 import {Text} from './text';
 import {Cog} from 'src/icons/cog';
 import {Colors} from '@constants/colors';
-import {useContext} from 'react';
 import {Settings} from '@components/settings/settings';
 import {AppContext} from '@components/appContext/context';
 

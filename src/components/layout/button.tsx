@@ -1,8 +1,8 @@
 import {ComponentProps, FC, useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
 import {ButtonBase} from './buttonBase';
-import {Colors} from '@constants/colors';
 import {Text} from './text';
+import {Colors} from '@constants/colors';
 
 type PropsType = ComponentProps<typeof TouchableOpacity> & {
     variant?: 'ghost' | 'filled';

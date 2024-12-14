@@ -1,5 +1,5 @@
-import {MISSING_VALUE} from '@constants/common';
 import {z} from 'zod';
+import {MISSING_VALUE} from '@constants/common';
 
 export const commonValidation = z.string().trim().min(1, MISSING_VALUE);
 

@@ -1,7 +1,7 @@
-import {AlertBoxText} from '@components/layout/alertBox';
-import {Checkbox} from '@components/layout/checkbox';
 import {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {AlertBoxText} from '@components/layout/alertBox';
+import {Checkbox} from '@components/layout/checkbox';
 
 const styles = StyleSheet.create({
     container: {

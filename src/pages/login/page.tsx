@@ -1,18 +1,18 @@
-import {Header} from '@components/layout/baseHeader';
-import {Button} from '@components/layout/button';
-import {Input} from '@components/layout/input';
-import {Text} from '@components/layout/text';
 import {useRouter} from 'expo-router';
 import {FC, useContext, useEffect, useRef, useState} from 'react';
 import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
 import {useSelector} from 'react-redux';
+import {RegisterComplete} from './components/registerComplete';
+import {Header} from '@components/layout/baseHeader';
+import {Button} from '@components/layout/button';
+import {Input} from '@components/layout/input';
+import {Text} from '@components/layout/text';
 import {ForgotPassword} from '@pages/forgotPassword/page';
 import {styles, validation} from 'src/pages/login/helpers';
 import {login, resetError} from '@pages/login/reducers/auth';
 import {getInitialEmail, getLoginData, getRegisterSuccess} from '@pages/login/selectors/user';
 import {FormValues, defaultValues} from '@constants/common';
 import {useAppDispatch} from 'src/store';
-import {RegisterComplete} from './components/registerComplete';
 import {resetSuccessPopup} from '@pages/register/reducers/register';
 import {AppContext} from '@components/appContext/context';
 

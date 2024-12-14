@@ -1,3 +1,8 @@
+import {z} from 'zod';
+import {StyleSheet} from 'react-native';
+import {PopupType} from './page';
+import {ResetDistance} from './components/resetDistance';
+import {input} from './components/popupHelpers';
 import {MISSING_VALUE} from '@constants/common';
 import {AddUser} from 'src/icons/add-user';
 import {Cog} from 'src/icons/cog';
@@ -12,12 +17,6 @@ import {Plus} from 'src/icons/plus';
 import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
-import {z} from 'zod';
-import {PopupType} from './page';
-import {StyleSheet} from 'react-native';
-
-import {ResetDistance} from './components/resetDistance';
-import {input} from './components/popupHelpers';
 
 const styles = StyleSheet.create({
     icon: {

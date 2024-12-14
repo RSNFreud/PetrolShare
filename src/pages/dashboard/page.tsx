@@ -1,17 +1,17 @@
-import {ButtonBase} from '@components/layout/buttonBase';
-import {Text} from '@components/layout/text';
-import {Colors} from '@constants/colors';
 import React, {useContext} from 'react';
-import {dropdown, input} from './components/popupHelpers';
 import {StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
-import {AppContext} from '@components/appContext/context';
-import {PopupWrapper} from './components/dashboardPopup';
 import {z} from 'zod';
-import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
-import {ApplicationStoreType} from 'src/reducers';
 import {useRouter} from 'expo-router';
+import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
+import {PopupWrapper} from './components/dashboardPopup';
+import {dropdown, input} from './components/popupHelpers';
 import {useMemberRequest} from './hooks';
+import {ApplicationStoreType} from 'src/reducers';
+import {AppContext} from '@components/appContext/context';
+import {Colors} from '@constants/colors';
+import {Text} from '@components/layout/text';
+import {ButtonBase} from '@components/layout/buttonBase';
 
 const styles = StyleSheet.create({
     userCard: {

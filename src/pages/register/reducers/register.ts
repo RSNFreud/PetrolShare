@@ -1,5 +1,5 @@
-import {ENDPOINTS} from '@constants/api-routes';
 import {createAction, createAsyncThunk, createReducer} from '@reduxjs/toolkit';
+import {ENDPOINTS} from '@constants/api-routes';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 
 type RegisterUserPayload = {emailAddress: string; password: string; fullName: string};

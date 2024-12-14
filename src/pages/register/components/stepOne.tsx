@@ -1,12 +1,12 @@
-import {Input} from '@components/layout/input';
 import {TextInput, View} from 'react-native';
-import {Text} from '@components/layout/text';
-import {commonStyles} from './commonStyles';
-import {Button} from '@components/layout/button';
 import {z} from 'zod';
-import {FormValues, MISSING_VALUE} from '@constants/common';
 import {FC, useRef} from 'react';
 import {useRouter} from 'expo-router';
+import {commonStyles} from './commonStyles';
+import {Input} from '@components/layout/input';
+import {Text} from '@components/layout/text';
+import {Button} from '@components/layout/button';
+import {FormValues, MISSING_VALUE} from '@constants/common';
 
 const stepOneValidation = z.object({
     name: z.string().min(1, MISSING_VALUE).trim(),

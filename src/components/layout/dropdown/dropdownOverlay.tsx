@@ -1,4 +1,3 @@
-import {Colors} from '@constants/colors';
 import React, {FC} from 'react';
 import {
     Dimensions,
@@ -8,10 +7,11 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import Constants from 'expo-constants';
 import {ButtonBase} from '../buttonBase';
 import {Text} from '../text';
-import Constants from 'expo-constants';
 import {Input} from '../input';
+import {Colors} from '@constants/colors';
 
 type PropsType = {
     isVisible: boolean;

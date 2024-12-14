@@ -1,9 +1,9 @@
 import {Dimensions, Modal, Pressable, StyleSheet, View} from 'react-native';
-import {Text} from './text';
-import {Colors} from '@constants/colors';
 import {useContext} from 'react';
-import {AppContext} from '@components/appContext/context';
+import {Text} from './text';
 import {ButtonBase} from './buttonBase';
+import {Colors} from '@constants/colors';
+import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({
     overlay: {

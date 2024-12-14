@@ -1,10 +1,10 @@
-import {STORAGE_KEYS} from '@constants/storage-keys';
 import {router} from 'expo-router';
 import {all, put, select, takeEvery, takeLatest} from 'redux-saga/effects';
+import {PayloadAction} from '@reduxjs/toolkit';
+import {fetchData, fetchSelf, login, logOut, updateData} from '../reducers/auth';
+import {STORAGE_KEYS} from '@constants/storage-keys';
 import {deleteItem, setItem} from 'src/hooks/common';
 import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
-import {fetchData, fetchSelf, login, logOut, updateData} from '../reducers/auth';
-import {PayloadAction} from '@reduxjs/toolkit';
 import {setPersistData} from 'src/reducers/userPersistData';
 import {ApplicationStoreType} from 'src/reducers';
 

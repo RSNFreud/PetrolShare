@@ -1,6 +1,6 @@
+import {ComponentProps} from 'react';
 import {Dropdown} from '@components/layout/dropdown/dropdown';
 import {Input} from '@components/layout/input';
-import {ComponentProps} from 'react';
 
 export const input = (
     label: string,

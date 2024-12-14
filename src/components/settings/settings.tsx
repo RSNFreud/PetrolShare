@@ -1,10 +1,10 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {useContext} from 'react';
 import {Text} from '../layout/text';
+import {Logout} from './logout';
 import {Chevron} from 'src/icons/chevron';
 import {Colors} from '@constants/colors';
-import {useContext} from 'react';
 import {convertToSentanceCase} from 'src/hooks/common';
-import {Logout} from './logout';
 import {AppContext} from '@components/appContext/context';
 
 const POPUP_IDS = {

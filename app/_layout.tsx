@@ -1,18 +1,18 @@
-import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
 import {useState} from 'react';
 import {ScrollView} from 'react-native';
 import {Provider} from 'react-redux';
-import {Popup} from '@components/layout/popup';
-import {persistor, store} from 'src/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {StatusBar} from 'expo-status-bar';
+import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import * as Network from 'expo-network';
+import {Popup} from '@components/layout/popup';
+import {persistor, store} from 'src/store';
 import {AppProvider} from '@components/appContext/provider';
 import {Alertbox} from '@components/layout/alertBox';
 
-import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import * as Network from 'expo-network';
+import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
 
 onlineManager.setEventListener(setOnline => {
     const subscription = Network.addNetworkStateListener(state => {
