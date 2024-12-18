@@ -46,7 +46,10 @@ export default function RootLayout() {
                     <SplashScreenComponent />
                     <ScrollView
                         style={{paddingHorizontal: 18}}
-                        contentContainerStyle={{paddingBottom: 18}}
+                        contentContainerStyle={{
+                            paddingBottom: 18,
+                            flex: 1,
+                        }}
                         automaticallyAdjustKeyboardInsets={true}
                         keyboardShouldPersistTaps="always"
                     >

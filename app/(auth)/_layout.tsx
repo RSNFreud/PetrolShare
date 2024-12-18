@@ -10,7 +10,7 @@ const AuthLayout: FC = () => {
     const isLoggedIn = useSelector(isLoggedInSelector);
     if (isLoggedIn)
         return (
-            <SafeAreaView style={{paddingTop: Constants.statusBarHeight}}>
+            <SafeAreaView style={{paddingTop: Constants.statusBarHeight, flex: 1}}>
                 <Header />
                 <Slot />
             </SafeAreaView>

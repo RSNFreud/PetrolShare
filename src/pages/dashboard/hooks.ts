@@ -23,7 +23,6 @@ export const useMemberRequest = (authKey: string, userID: string) => {
             }
             return [];
         },
-        enabled: true,
         refetchInterval: 2000,
     });
     return data;

@@ -12,4 +12,5 @@ export const ENDPOINTS = {
     ASSIGN_DISTANCE: 'distance/assign',
     GET_MEMBERS: 'group/get-members',
     RESET_DISTANCE: 'distance/reset',
+    GET_PRESETS: 'preset/get',
 };

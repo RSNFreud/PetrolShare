@@ -1,5 +1,5 @@
 import {useRouter} from 'expo-router';
-import {FC, useContext, useEffect, useRef, useState} from 'react';
+import React, {FC, useContext, useEffect, useRef, useState} from 'react';
 import {NativeSyntheticEvent, TextInput, TextInputChangeEventData, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RegisterComplete} from './components/registerComplete';
