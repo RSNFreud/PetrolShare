@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
+import {PresetType} from '../types';
 import {Input} from '@components/layout/input';
 import {FormValues, defaultValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 
 type PropsType = {
-    presetData?: {presetName: string; presetDistance: number};
+    presetData?: PresetType;
 };
 
 const styles = StyleSheet.create({
@@ -29,7 +30,7 @@ export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
     const [data, setData] = useState<{presetName: FormValues; presetDistance: FormValues}>({
         presetName: presetData ? {...defaultValues, value: presetData.presetName} : defaultValues,
         presetDistance: presetData
-            ? {...defaultValues, value: String(presetData.presetDistance)}
+            ? {...defaultValues, value: String(presetData.distance)}
             : defaultValues,
     });
 

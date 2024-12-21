@@ -1,9 +1,10 @@
 import React, {useContext, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFetchPresets} from './hooks';
 import {PresetBox} from './components/presetBox';
 import {PresetPopup} from './components/presetPopup';
+import {PresetType} from './types';
 import {Breadcrumbs} from '@components/layout/breadcrumbs';
 import {Text} from '@components/layout/text';
 import {FullHeightLoader} from '@components/layout/fullHeightLoader';
@@ -54,12 +55,12 @@ const TopBreadcrumbs = () => (
 
 export const Presets = () => {
     const {data, isLoading} = useFetchPresets();
-    const [selectedPreset, setSelectedPreset] = useState<number>();
+    const [selectedPreset, setSelectedPreset] = useState<PresetType | null>();
     const {setPopupData} = useContext(AppContext);
 
     const distanceFormat = useSelector(getDistanceFormat);
 
-    const openPopup = (presetData?: {presetName: string; presetDistance: number}) => {
+    const openPopup = (presetData?: PresetType) => {
         setPopupData({
             isVisible: true,
             content: <PresetPopup presetData={presetData} />,
@@ -80,9 +81,9 @@ export const Presets = () => {
             </>
         );
 
-    const handleSelect = (presetID: number) => {
-        if (selectedPreset === presetID) return setSelectedPreset(0);
-        setSelectedPreset(presetID);
+    const handleSelect = (preset: PresetType) => {
+        if (selectedPreset?.presetID === preset.presetID) return setSelectedPreset(null);
+        setSelectedPreset(preset);
     };
 
     return (
@@ -104,22 +105,32 @@ export const Presets = () => {
                         </Text>
                         <View style={styles.horizontalLine} />
                     </View>
-                    <View>
+                    <ScrollView>
                         {data.map(preset => (
                             <PresetBox
-                                selected={selectedPreset === preset.presetID}
-                                onSelect={() => handleSelect(preset.presetID)}
+                                selected={selectedPreset?.presetID === preset.presetID}
+                                onSelect={() => handleSelect(preset)}
                                 text={`${preset.presetName} (${preset.distance} ${distanceFormat})`}
                                 key={preset.presetID}
                                 onEdit={() =>
                                     openPopup({
                                         presetName: preset.presetName,
-                                        presetDistance: preset.distance,
+                                        distance: preset.distance,
+                                        presetID: preset.presetID,
                                     })
                                 }
                             />
                         ))}
-                    </View>
+                    </ScrollView>
+                    <Button disabled={!selectedPreset?.distance}>
+                        {selectedPreset?.distance ? (
+                            <>
+                                Add Distance ({selectedPreset?.distance} {distanceFormat})
+                            </>
+                        ) : (
+                            'Select Distance'
+                        )}
+                    </Button>
                 </>
             ) : (
                 <View style={styles.box}>
