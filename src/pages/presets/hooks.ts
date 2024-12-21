@@ -10,7 +10,7 @@ export const useFetchPresets = (): {
     refetch: () => void;
 } => {
     const authenticationKey = useSelector(getAuthKey);
-    const {data, isLoading, refetch} = useQuery({
+    const {data, refetch, isLoading} = useQuery({
         enabled: Boolean(authenticationKey),
         queryKey: ['PRESETS'],
         queryFn: async () => {

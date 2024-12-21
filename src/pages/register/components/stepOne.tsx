@@ -1,6 +1,6 @@
 import {TextInput, View} from 'react-native';
 import {z} from 'zod';
-import {FC, useRef} from 'react';
+import React, {FC, useRef} from 'react';
 import {useRouter} from 'expo-router';
 import {commonStyles} from './commonStyles';
 import {Input} from '@components/layout/input';

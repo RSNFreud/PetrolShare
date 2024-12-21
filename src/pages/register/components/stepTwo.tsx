@@ -1,5 +1,5 @@
 import {StyleSheet, TextInput, View} from 'react-native';
-import {FC, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {z} from 'zod';
 import {useSelector} from 'react-redux';
 import {register} from '../reducers/register';

@@ -8,6 +8,7 @@ type PropsType = ComponentProps<typeof TouchableOpacity> & {
     variant?: 'ghost' | 'filled';
     color?: 'red';
     loading?: boolean;
+    icon?: React.ReactNode;
 };
 
 const styles = StyleSheet.create({
@@ -29,6 +30,7 @@ export const Button: FC<PropsType> = ({
     loading,
     disabled,
     color,
+    icon,
     ...rest
 }) => {
     const [isLoading, setIsLoading] = useState(loading);
@@ -68,6 +70,7 @@ export const Button: FC<PropsType> = ({
 
     return (
         <ButtonBase style={combinedStyles} disabled={isLoading || disabled} {...rest}>
+            {icon}
             <Text bold style={{fontSize: 18, color: textColor()}}>
                 {isLoading ? <ActivityIndicator size="small" color="#fff" /> : children}
             </Text>
