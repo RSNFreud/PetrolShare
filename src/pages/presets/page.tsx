@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {useFetchPresets} from './hooks';
@@ -54,6 +54,7 @@ const TopBreadcrumbs = () => (
 
 export const Presets = () => {
     const {data, isLoading} = useFetchPresets();
+    const [selectedPreset, setSelectedPreset] = useState<number>();
     const {setPopupData} = useContext(AppContext);
 
     const distanceFormat = useSelector(getDistanceFormat);
@@ -79,6 +80,11 @@ export const Presets = () => {
             </>
         );
 
+    const handleSelect = (presetID: number) => {
+        if (selectedPreset === presetID) return setSelectedPreset(0);
+        setSelectedPreset(presetID);
+    };
+
     return (
         <>
             <TopBreadcrumbs />
@@ -101,6 +107,8 @@ export const Presets = () => {
                     <View>
                         {data.map(preset => (
                             <PresetBox
+                                selected={selectedPreset === preset.presetID}
+                                onSelect={() => handleSelect(preset.presetID)}
                                 text={`${preset.presetName} (${preset.distance} ${distanceFormat})`}
                                 key={preset.presetID}
                                 onEdit={() =>

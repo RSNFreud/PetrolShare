@@ -30,28 +30,34 @@ const styles = StyleSheet.create({
         borderRadius: 2,
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'stretch',
     },
     button: {
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
         width: 52,
-        height: 38,
+        alignSelf: 'stretch',
     },
     verticalLine: {
         width: 1,
         height: 28,
         backgroundColor: Colors.border,
     },
+    selected: {
+        borderColor: Colors.tertiary,
+    },
 });
 
 type PropsType = {
     text: string;
+    selected?: boolean;
     onEdit: () => void;
+    onSelect: () => void;
 };
-export const PresetBox: FC<PropsType> = ({text, onEdit}) => {
+export const PresetBox: FC<PropsType> = ({text, onEdit, selected, onSelect}) => {
     return (
-        <View style={styles.container}>
+        <ButtonBase style={[styles.container, selected ? styles.selected : []]} onPress={onSelect}>
             <Text bold style={styles.text}>
                 {text}
             </Text>
@@ -64,6 +70,6 @@ export const PresetBox: FC<PropsType> = ({text, onEdit}) => {
                     <Delete color="red" />
                 </ButtonBase>
             </View>
-        </View>
+        </ButtonBase>
     );
 };
