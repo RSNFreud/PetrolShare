@@ -12,6 +12,7 @@ export const input = (
     props: {
         placeholder,
         label,
+        submitBehavior: 'submit',
         id,
         ...props,
     },

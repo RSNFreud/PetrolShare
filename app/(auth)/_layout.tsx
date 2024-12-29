@@ -15,7 +15,7 @@ const AuthLayout: FC = () => {
                 <Slot />
             </SafeAreaView>
         );
-    return <Redirect href="login" />;
+    return <Redirect href="/login" />;
 };
 
 export default AuthLayout;

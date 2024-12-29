@@ -1,5 +1,5 @@
 import {Animated, Dimensions, Keyboard, Modal, Pressable, StyleSheet, View} from 'react-native';
-import {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Constants from 'expo-constants';
 import {Text} from './text';
 import {ButtonBase} from './buttonBase';
@@ -70,7 +70,6 @@ export const Popup = () => {
         const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
             setKeyboardPadding(0);
         });
-
         return () => {
             showSubscriptionAndroid.remove();
             hideSubscriptionAndroid.remove();
