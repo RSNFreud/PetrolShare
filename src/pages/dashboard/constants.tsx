@@ -42,6 +42,7 @@ export const POPUP_IDS = {
     SPECIFIC_DISTANCE: 'Specific Distance',
     ODOMETER: 'odometer',
     ASSIGN_DISTANCE: 'assign_distance',
+    PRESET: 'preset',
 };
 
 export type GetMemberType = {fullName: string; userID: number}[];

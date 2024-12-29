@@ -1,4 +1,4 @@
-import React, {createRef, useRef, useState} from 'react';
+import React, {createRef, useContext, useRef, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import {z} from 'zod';
 import {PresetType} from '../types';
@@ -6,9 +6,14 @@ import {Input} from '@components/layout/input';
 import {FormValues, defaultValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
+import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {ENDPOINTS} from '@constants/api-routes';
+import {AppContext} from '@components/appContext/context';
+import {Text} from '@components/layout/text';
 
 type PropsType = {
     presetData?: PresetType;
+    fetchPresets: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -17,7 +22,7 @@ const styles = StyleSheet.create({
 
 const validation = z.object({
     presetName: commonValidation,
-    presetDistance: stringToNumberValidation,
+    distance: stringToNumberValidation,
 });
 
 const formOptions = [
@@ -29,17 +34,20 @@ const formOptions = [
     {
         label: 'Preset Distance:',
         placeholder: 'Enter distance',
-        id: 'presetDistance',
+        id: 'distance',
     },
 ];
 
-export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
-    const [data, setData] = useState<{presetName: FormValues; presetDistance: FormValues}>({
+export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => {
+    const {setPopupData} = useContext(AppContext);
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState<{presetName: FormValues; distance: FormValues}>({
         presetName: presetData ? {...defaultValues, value: presetData.presetName} : defaultValues,
-        presetDistance: presetData
+        distance: presetData
             ? {...defaultValues, value: String(presetData.distance)}
             : defaultValues,
     });
+
     const inputRefs = useRef(formOptions?.map(() => createRef<TextInput>()));
 
     const handleKeyboardSubmit = (index: number) => {
@@ -50,7 +58,7 @@ export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
         handleSubmit();
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const result = validation.safeParse(
             Object.fromEntries(Object.entries(data).map(([key, value]) => [key, value.value])),
         );
@@ -63,12 +71,45 @@ export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
                     value: data.presetName.value,
                     error: error.fieldErrors.presetName?.[0] || '',
                 },
-                presetDistance: {
-                    value: data.presetDistance.value,
-                    error: error.fieldErrors.presetDistance?.[0] || '',
+                distance: {
+                    value: data.distance.value,
+                    error: error.fieldErrors.distance?.[0] || '',
                 },
             });
             return;
+        }
+        setIsLoading(true);
+
+        const isEdit = presetData?.presetID;
+
+        const res = await sendPostRequest(isEdit ? ENDPOINTS.EDIT_PRESET : ENDPOINTS.ADD_PRESET, {
+            ...presetData,
+            presetName: data.presetName.value,
+            distance: data.distance.value,
+        });
+        setIsLoading(false);
+
+        if (res?.ok) {
+            setPopupData({
+                content: (
+                    <Text style={{lineHeight: 26}}>
+                        {isEdit ? (
+                            <>
+                                Preset updated successfully! The distance has been saved and is now
+                                ready to be used. You can update the preset again by clicking the
+                                pencil icon next to it.
+                            </>
+                        ) : (
+                            <>
+                                Preset added successfully! The distance has been saved and is now
+                                ready to be used. You can update the preset by clicking the pencil
+                                icon next to it.
+                            </>
+                        )}
+                    </Text>
+                ),
+            });
+            fetchPresets();
         }
     };
 
@@ -81,8 +122,8 @@ export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
                         label={label}
                         innerRef={inputRefs?.current?.[index]}
                         placeholder={placeholder}
-                        value={data[id as 'presetName' | 'presetDistance'].value}
-                        error={data[id as 'presetName' | 'presetDistance'].error}
+                        value={data[id as 'presetName' | 'distance'].value}
+                        error={data[id as 'presetName' | 'distance'].error}
                         onChangeText={text =>
                             setData(prevData => ({...prevData, [id]: {value: text}}))
                         }
@@ -91,7 +132,9 @@ export const PresetPopup: React.FC<PropsType> = ({presetData}) => {
                     />
                 ))}
             </View>
-            <Button onPress={handleSubmit}>{presetData ? 'Edit Preset' : 'Save Preset'}</Button>
+            <Button onPress={handleSubmit} loading={isLoading}>
+                {presetData ? 'Edit Preset' : 'Save Preset'}
+            </Button>
         </>
     );
 };

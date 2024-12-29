@@ -1,13 +1,12 @@
 import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
 import {Button} from '@components/layout/button';
 import {Text} from '@components/layout/text';
 import {ENDPOINTS} from '@constants/api-routes';
 import {updateData} from '@pages/login/reducers/auth';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
-import {getAuthKey} from 'src/selectors/common';
 
 const styles = StyleSheet.create({
     title: {
@@ -31,11 +30,10 @@ const styles = StyleSheet.create({
 
 export const ResetDistance = () => {
     const {setPopupData} = useContext(AppContext);
-    const authenticationKey = useSelector(getAuthKey);
     const dispatch = useDispatch();
 
     const handleReset = async () => {
-        await sendPostRequest(ENDPOINTS.RESET_DISTANCE, {authenticationKey});
+        await sendPostRequest(ENDPOINTS.RESET_DISTANCE);
         dispatch(updateData());
         setPopupData({
             content: (

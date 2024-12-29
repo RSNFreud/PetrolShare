@@ -13,6 +13,7 @@ const initialState: UserType = {
     groupID: '',
     error: '',
     userID: '',
+    distance: '',
 };
 
 type ResponseType = {

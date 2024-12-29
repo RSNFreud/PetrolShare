@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/react-native';
+import {getItem} from './common';
 import {API_ADDRESS, EMAIL_ADDRESS} from '@constants/api-routes';
+import {STORAGE_KEYS} from '@constants/storage-keys';
 
 type PropsType = {
     url: string;
@@ -9,7 +11,9 @@ type PropsType = {
     isPost?: boolean;
 };
 
-export const sendPostRequest = async (url: string, body: object, isEmail?: boolean) => {
+export const sendPostRequest = async (url: string, body?: object, isEmail?: boolean) => {
+    const authKey = getItem(STORAGE_KEYS.authKey);
+
     try {
         return await sendRequestToBackend({
             url,
@@ -18,7 +22,7 @@ export const sendPostRequest = async (url: string, body: object, isEmail?: boole
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(body),
+                body: JSON.stringify({...body, authenticationKey: authKey}),
             },
             isEmail: Boolean(isEmail),
         });
