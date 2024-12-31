@@ -159,6 +159,7 @@ export const Presets = () => {
                                 onSelect={() => handleSelect(preset)}
                                 text={`${preset.presetName} (${preset.distance} ${distanceFormat})`}
                                 key={preset.presetID}
+                                presetID={preset.presetID}
                                 onEdit={() =>
                                     openPopup({
                                         presetName: preset.presetName,
@@ -166,6 +167,7 @@ export const Presets = () => {
                                         presetID: preset.presetID,
                                     })
                                 }
+                                onDelete={() => refetch()}
                             />
                         ))}
                     </ScrollView>

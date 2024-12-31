@@ -1,6 +1,6 @@
 import React, {createRef, useContext, useRef, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
-import {z} from 'zod';
+import {z, ZodFormattedError} from 'zod';
 import {PresetType} from '../types';
 import {Input} from '@components/layout/input';
 import {FormValues, defaultValues} from '@constants/common';
@@ -10,6 +10,7 @@ import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/api-routes';
 import {AppContext} from '@components/appContext/context';
 import {Text} from '@components/layout/text';
+import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
 
 type PropsType = {
     presetData?: PresetType;
@@ -59,23 +60,18 @@ export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => 
     };
 
     const handleSubmit = async () => {
-        const result = validation.safeParse(
-            Object.fromEntries(Object.entries(data).map(([key, value]) => [key, value.value])),
-        );
+        const values = returnValuesFromObject(data);
+        const result = validation.safeParse(values);
 
         if (!result.success) {
-            const error = result.error.flatten();
+            const errors = result.error?.format() as ZodFormattedError<
+                {
+                    [x: string]: any;
+                },
+                string
+            >;
 
-            setData({
-                presetName: {
-                    value: data.presetName.value,
-                    error: error.fieldErrors.presetName?.[0] || '',
-                },
-                distance: {
-                    value: data.distance.value,
-                    error: error.fieldErrors.distance?.[0] || '',
-                },
-            });
+            setData(returnErrorObject(data, errors) as typeof data);
             return;
         }
         setIsLoading(true);
@@ -88,29 +84,27 @@ export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => 
             distance: data.distance.value,
         });
         setIsLoading(false);
-
-        if (res?.ok) {
-            setPopupData({
-                content: (
-                    <Text style={{lineHeight: 26}}>
-                        {isEdit ? (
-                            <>
-                                Preset updated successfully! The distance has been saved and is now
-                                ready to be used. You can update the preset again by clicking the
-                                pencil icon next to it.
-                            </>
-                        ) : (
-                            <>
-                                Preset added successfully! The distance has been saved and is now
-                                ready to be used. You can update the preset by clicking the pencil
-                                icon next to it.
-                            </>
-                        )}
-                    </Text>
-                ),
-            });
-            fetchPresets();
-        }
+        if (!res?.ok) return;
+        setPopupData({
+            content: (
+                <Text style={{lineHeight: 26}}>
+                    {isEdit ? (
+                        <>
+                            Preset updated successfully! The distance has been saved and is now
+                            ready to be used. You can update the preset again by clicking the pencil
+                            icon next to it.
+                        </>
+                    ) : (
+                        <>
+                            Preset added successfully! The distance has been saved and is now ready
+                            to be used. You can update the preset by clicking the pencil icon next
+                            to it.
+                        </>
+                    )}
+                </Text>
+            ),
+        });
+        fetchPresets();
     };
 
     return (

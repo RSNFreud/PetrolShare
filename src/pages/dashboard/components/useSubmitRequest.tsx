@@ -11,6 +11,7 @@ import {updateData} from '@pages/login/reducers/auth';
 import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
+import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -71,18 +72,18 @@ export const useSubmitRequest = (
         )
             return;
         setData('odemeterStart', String(initialOdometer));
-        if (!hasShownAlert)
-            setAlertBoxData({
-                isVisible: true,
-                content: <OdometerAlert isChecked={isChecked} setIsChecked={handleCheckbox} />,
-                title: 'Distance recovered!',
-                buttons: [
-                    {
-                        text: 'OK',
-                        onClick: closeOdometerAlert,
-                    },
-                ],
-            });
+        if (hasShownAlert) return;
+        setAlertBoxData({
+            isVisible: true,
+            content: <OdometerAlert isChecked={isChecked} setIsChecked={handleCheckbox} />,
+            title: 'Distance recovered!',
+            buttons: [
+                {
+                    text: 'OK',
+                    onClick: closeOdometerAlert,
+                },
+            ],
+        });
     }, [id, formData?.odemeterStart, hasShownAlert, isChecked]);
 
     useEffect(() => {
@@ -109,30 +110,12 @@ export const useSubmitRequest = (
         setData: (data: {[key: string]: {value: string}}) => void,
     ) => {
         if (!data.validation) return;
-        const values = Object.entries(formData).reduce(
-            (prevData, [key, value]) => ({
-                ...prevData,
-                [key]: value.value,
-            }),
-            {},
-        );
-
+        const values = returnValuesFromObject(formData);
         const validate = data.validation.safeParse(values);
 
         const errors = validate.error?.format();
 
-        const newValues = Object.entries(formData).reduce(
-            (prevData, [key, value]) => ({
-                ...prevData,
-                [key]: {
-                    value: value.value,
-                    error: errors ? errors[key]?._errors[0] : '',
-                },
-            }),
-            {} as {[key: string]: {value: string}},
-        );
-
-        setData(newValues);
+        setData(returnErrorObject(formData, errors));
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
             dispatch(
                 setOdometerData({

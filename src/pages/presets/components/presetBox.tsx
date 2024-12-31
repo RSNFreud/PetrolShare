@@ -1,10 +1,14 @@
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
 import {Pencil} from 'src/icons/pencil';
 import {Delete} from 'src/icons/delete';
+import {AppContext} from '@components/appContext/context';
+import {DeletePopup} from '@components/deletePopup';
+import {ENDPOINTS} from '@constants/api-routes';
+import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 
 const styles = StyleSheet.create({
     container: {
@@ -53,9 +57,50 @@ type PropsType = {
     text: string;
     selected?: boolean;
     onEdit: () => void;
+    onDelete: () => void;
     onSelect: () => void;
+    presetID: number;
 };
-export const PresetBox: FC<PropsType> = ({text, onEdit, selected, onSelect}) => {
+export const PresetBox: FC<PropsType> = ({
+    text,
+    onEdit,
+    selected,
+    onSelect,
+    onDelete,
+    presetID,
+}) => {
+    const {setPopupData} = useContext(AppContext);
+
+    const deletePreset = async () => {
+        const res = await sendPostRequest(ENDPOINTS.DELETE_PRESET, {presetID});
+        if (!res?.ok) return;
+        onDelete();
+
+        setPopupData({
+            isVisible: true,
+            content: (
+                <Text style={{lineHeight: 26}}>
+                    The preset has been successfully deleted and all associated records have been
+                    removed.
+                </Text>
+            ),
+        });
+    };
+
+    const handleDelete = () => {
+        setPopupData({
+            title: 'Delete Preset',
+            isVisible: true,
+            content: (
+                <DeletePopup
+                    title="Are you sure you want to delete this preset?"
+                    content="Once deleted, the preset and its settings will be permanently removed and cannot be recovered."
+                    onDelete={deletePreset}
+                />
+            ),
+        });
+    };
+
     return (
         <ButtonBase style={[styles.container, selected ? styles.selected : []]} onPress={onSelect}>
             <Text bold style={styles.text}>
@@ -66,7 +111,7 @@ export const PresetBox: FC<PropsType> = ({text, onEdit, selected, onSelect}) => 
                     <Pencil color="white" />
                 </ButtonBase>
                 <View style={styles.verticalLine} />
-                <ButtonBase style={styles.button}>
+                <ButtonBase style={styles.button} onPress={handleDelete}>
                     <Delete color="red" />
                 </ButtonBase>
             </View>
