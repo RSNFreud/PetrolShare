@@ -12,8 +12,6 @@ type PropsType = {
 };
 
 export const sendPostRequest = async (url: string, body?: object, isEmail?: boolean) => {
-    const authKey = getItem(STORAGE_KEYS.authKey);
-
     try {
         return await sendRequestToBackend({
             url,
@@ -22,7 +20,7 @@ export const sendPostRequest = async (url: string, body?: object, isEmail?: bool
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({...body, authenticationKey: authKey}),
+                body: JSON.stringify(body),
             },
             isEmail: Boolean(isEmail),
         });
@@ -32,9 +30,15 @@ export const sendPostRequest = async (url: string, body?: object, isEmail?: bool
 export const sendRequestToBackend = async ({url, data, onError, isEmail}: PropsType) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const authKey = getItem(STORAGE_KEYS.authKey);
+
     try {
         const res = await fetch(`${isEmail ? EMAIL_ADDRESS : API_ADDRESS}/${url}`, {
             ...data,
+            headers: {
+                ...data?.headers,
+                Authorization: `Bearer ${authKey}`,
+            },
             signal: controller.signal,
         });
         return res;

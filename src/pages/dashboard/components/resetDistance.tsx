@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
 import {Button} from '@components/layout/button';
 import {Text} from '@components/layout/text';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {updateData} from '@pages/login/reducers/auth';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 

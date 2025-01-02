@@ -4,7 +4,7 @@ import {GetMemberType, POPUP_IDS} from '../constants';
 import {PopupType} from '../page';
 import {setOdometerData} from '../reducers/odometer';
 import {OdometerAlert} from './odometerAlert';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 import {ApplicationStoreType} from 'src/reducers';
 import {updateData} from '@pages/login/reducers/auth';
@@ -25,10 +25,10 @@ const getAPIURL = (id: string) => {
     }
 };
 
-const getUsername = async (authKey: string, userID: string) => {
+const getUsername = async (userID: string) => {
     try {
         const res = await sendRequestToBackend({
-            url: `${ENDPOINTS.GET_MEMBERS}?authenticationKey=${authKey}`,
+            url: `${ENDPOINTS.GET_MEMBERS}`,
         });
         if (res?.ok) {
             const data = (await res.json()) as GetMemberType;
@@ -52,17 +52,15 @@ export const useSubmitRequest = (
 
     const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const dispatch = useDispatch();
-    const {authenticationKey, currentMileage, distance, initialOdometer, hasShownAlert} =
-        useSelector(
-            (store: ApplicationStoreType) => ({
-                authenticationKey: store.auth.authenticationKey,
-                currentMileage: store.auth.currentMileage,
-                distance: store.auth.distance,
-                initialOdometer: store.odometer.odometerStart,
-                hasShownAlert: store.odometer.recoverMessageShown,
-            }),
-            shallowEqual,
-        );
+    const {currentMileage, distance, initialOdometer, hasShownAlert} = useSelector(
+        (store: ApplicationStoreType) => ({
+            currentMileage: store.auth.currentMileage,
+            distance: store.auth.distance,
+            initialOdometer: store.odometer.odometerStart,
+            hasShownAlert: store.odometer.recoverMessageShown,
+        }),
+        shallowEqual,
+    );
 
     useEffect(() => {
         if (
@@ -133,7 +131,7 @@ export const useSubmitRequest = (
     const handleSubmit = async (values: {[key: string]: string}, data: PopupType) => {
         const {id} = data;
         const url = getAPIURL(id);
-        let parsedData: {[key: string]: string} = {authenticationKey};
+        let parsedData: {[key: string]: string} = {};
         if (!url) return;
         setIsLoading(true);
 
@@ -178,7 +176,7 @@ export const useSubmitRequest = (
             if (id === POPUP_IDS.ASSIGN_DISTANCE) {
                 successText = successText
                     .replace(/\$distance/, `${parsedData.distance} ${distance}`)
-                    .replace(/\$username/, await getUsername(authenticationKey, values?.username));
+                    .replace(/\$username/, await getUsername(values?.username));
             }
             showSuccessPopup(successText);
         }

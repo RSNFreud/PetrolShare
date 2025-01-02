@@ -7,7 +7,7 @@ import {FormValues, defaultValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {AppContext} from '@components/appContext/context';
 import {Text} from '@components/layout/text';
 import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';

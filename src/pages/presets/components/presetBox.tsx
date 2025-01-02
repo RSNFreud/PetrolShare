@@ -7,7 +7,7 @@ import {Pencil} from 'src/icons/pencil';
 import {Delete} from 'src/icons/delete';
 import {AppContext} from '@components/appContext/context';
 import {DeletePopup} from '@components/deletePopup';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 
 const styles = StyleSheet.create({

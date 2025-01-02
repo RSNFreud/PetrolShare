@@ -1,14 +1,13 @@
 import {createAction, createAsyncThunk, createReducer} from '@reduxjs/toolkit';
-import {ENDPOINTS} from '@constants/api-routes';
-import {STORAGE_KEYS} from '@constants/storage-keys';
-import {getItem} from 'src/hooks/common';
 import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
+import {ENDPOINTS} from '@constants/endpoints';
+import {setItem} from 'src/hooks/common';
+import {STORAGE_KEYS} from '@constants/storage-keys';
 
 const initialState: UserType = {
     isLoading: false,
     emailAddress: '',
     fullName: '',
-    authenticationKey: '',
     currentMileage: '',
     groupID: '',
     error: '',
@@ -20,7 +19,6 @@ type ResponseType = {
     emailAddress: string;
     fullName: string;
     userID: string;
-    authenticationKey: string;
     currentMileage: string;
     groupID: string;
     distance?: string;
@@ -44,6 +42,25 @@ export const login = createAsyncThunk<
     });
 
     if (response?.ok) {
+        const data = await response.json();
+        setItem(STORAGE_KEYS.authKey, data?.authenticationKey);
+        return data;
+    }
+
+    const errorMessage = await response?.text();
+
+    throw new Error(
+        errorMessage ||
+            'We are having trouble connecting to our authentication servers. Please try again later...',
+    );
+});
+
+export const fetchData = createAsyncThunk<ResponseType | undefined>('FETCH_DATA', async () => {
+    const response = await sendRequestToBackend({
+        url: `${ENDPOINTS.GET_DATA}}`,
+    });
+
+    if (response?.ok) {
         return await response.json();
     }
 
@@ -55,37 +72,13 @@ export const login = createAsyncThunk<
     );
 });
 
-export const fetchData = createAsyncThunk<ResponseType | undefined, {authenticationKey: string}>(
-    'FETCH_DATA',
-    async ({authenticationKey}) => {
-        const response = await sendRequestToBackend({
-            url: `${ENDPOINTS.GET_DATA}?authenticationKey=${authenticationKey}`,
-        });
-
-        if (response?.ok) {
-            return await response.json();
-        }
-
-        const errorMessage = await response?.text();
-
-        throw new Error(
-            errorMessage ||
-                'We are having trouble connecting to our authentication servers. Please try again later...',
-        );
-    },
-);
-
 export const fetchSelf = createAsyncThunk<ResponseType | undefined>('FETCH_SELF@AUTH', async () => {
-    const authKey = getItem(STORAGE_KEYS.authKey);
-
-    if (!authKey) return {};
-
     const response = await sendRequestToBackend({
-        url: `${ENDPOINTS.VERIFY_KEY}?authenticationKey=${authKey}`,
+        url: ENDPOINTS.VERIFY_KEY,
     });
 
     if (response?.ok) {
-        return {...(await response.json()), authenticationKey: authKey};
+        return {...(await response.json())};
     }
 
     const errorMessage = await response?.text();

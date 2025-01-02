@@ -13,6 +13,9 @@ function* setLoadedState() {
 }
 
 export default function* loadingSaga() {
-    yield all([takeEvery(fetchSelf.fulfilled.type, setLoadedState)]);
+    yield all([
+        takeEvery(fetchSelf.fulfilled.type, setLoadedState),
+        takeEvery(fetchSelf.rejected.type, setLoadedState),
+    ]);
     yield all([takeEvery(login.fulfilled.type, setLoadingState)]);
 }

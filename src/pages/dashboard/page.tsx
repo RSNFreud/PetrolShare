@@ -100,16 +100,19 @@ export type PopupType = {
 
 export const Dashboard = () => {
     const {navigate} = useRouter();
-    const {userData, hasSavedOdometer, authkey} = useSelector(
+    const {userData, hasSavedOdometer} = useSelector(
         (store: ApplicationStoreType) => ({
             userData: store.auth,
-            authkey: store.auth.authenticationKey,
             hasSavedOdometer: Boolean(store.odometer.odometerStart),
         }),
         shallowEqual,
     );
-    const {setPopupData} = useContext(AppContext);
-    const memberList = useMemberRequest(authkey, userData.userID);
+    const {setPopupData, popupData} = useContext(AppContext);
+    const [selectedPopupID, setSelectedPopupID] = React.useState<string | null>(null);
+    const memberList = useMemberRequest(
+        userData.userID,
+        popupData.isVisible && selectedPopupID === POPUP_IDS.ASSIGN_DISTANCE,
+    );
     const data = getMenuOptions();
 
     const validatePopupData = async (popup: PopupType): Promise<PopupType> => {
@@ -131,6 +134,7 @@ export const Dashboard = () => {
     };
 
     const onClick = async ({label, popup, link, customPopupId}: MenuType) => {
+        setSelectedPopupID(popup?.id || null);
         switch (true) {
             case Boolean(popup):
                 const popupData = await validatePopupData(popup as PopupType);

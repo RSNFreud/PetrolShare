@@ -1,14 +1,15 @@
 import {useQuery} from '@tanstack/react-query';
 import {GetMemberType} from './constants';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 
-export const useMemberRequest = (authKey: string, userID: string) => {
+export const useMemberRequest = (userID: string, active: boolean) => {
     const {data} = useQuery({
         queryKey: ['GET_MEMBERS'],
+        enabled: active,
         queryFn: async () => {
             const res = await sendRequestToBackend({
-                url: `${ENDPOINTS.GET_MEMBERS}?authenticationKey=${authKey}`,
+                url: `${ENDPOINTS.GET_MEMBERS}`,
             });
 
             if (res?.ok) {
@@ -23,7 +24,7 @@ export const useMemberRequest = (authKey: string, userID: string) => {
             }
             return [];
         },
-        refetchInterval: 2000,
+        refetchInterval: 10000,
     });
     return data;
 };

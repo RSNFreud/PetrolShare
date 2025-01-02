@@ -15,7 +15,7 @@ import {Plus} from 'src/icons/plus';
 import {getDistanceFormat} from 'src/selectors/common';
 import {AppContext} from '@components/appContext/context';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {updateData} from '@pages/login/reducers/auth';
 import {ApplicationStoreType} from 'src/reducers';
 

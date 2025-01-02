@@ -6,7 +6,7 @@ import {ThankYou} from './thankYou';
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
-import {ENDPOINTS} from '@constants/api-routes';
+import {ENDPOINTS} from '@constants/endpoints';
 import {MISSING_VALUE} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
 

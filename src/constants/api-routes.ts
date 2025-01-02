@@ -1,19 +1,5 @@
-export const API_ADDRESS = 'https://petrolshare.freud-online.co.uk/api';
+export const API_ADDRESS = process.env.EXPO_PUBLIC_USE_LOCAL_API
+    ? 'http://10.0.2.2:3434/api'
+    : 'https://petrolshare.freud-online.co.uk/api';
 export const APP_ADDRESS = 'https://petrolshare.freud-online.co.uk/';
 export const EMAIL_ADDRESS = `https://petrolshare.freud-online.co.uk/email`;
-
-export const ENDPOINTS = {
-    FORGOT_PASSWORD: 'user/forgot-password',
-    LOGIN: 'user/login',
-    VERIFY_KEY: 'user/verify',
-    REGISTER: 'user/register',
-    GET_DATA: 'user/get',
-    ADD_DISTANCE: 'distance/add',
-    ASSIGN_DISTANCE: 'distance/assign',
-    GET_MEMBERS: 'group/get-members',
-    RESET_DISTANCE: 'distance/reset',
-    GET_PRESETS: 'preset/get',
-    ADD_PRESET: 'preset/add',
-    EDIT_PRESET: 'preset/edit',
-    DELETE_PRESET: 'preset/delete',
-};
