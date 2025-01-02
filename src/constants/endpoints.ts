@@ -2,9 +2,8 @@ export const ENDPOINTS = {
     // USER
     FORGOT_PASSWORD: 'user/forgot-password',
     LOGIN: 'user/login',
-    VERIFY_KEY: 'user/verify',
     REGISTER: 'user/register',
-    GET_DATA: 'user/get',
+    GET_DATA: 'user/fetch',
     // DISTANCE
     ADD_DISTANCE: 'distance/add',
     ASSIGN_DISTANCE: 'distance/assign',

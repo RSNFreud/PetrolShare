@@ -74,7 +74,7 @@ export const fetchData = createAsyncThunk<ResponseType | undefined>('FETCH_DATA'
 
 export const fetchSelf = createAsyncThunk<ResponseType | undefined>('FETCH_SELF@AUTH', async () => {
     const response = await sendRequestToBackend({
-        url: ENDPOINTS.VERIFY_KEY,
+        url: ENDPOINTS.GET_DATA,
     });
 
     if (response?.ok) {
