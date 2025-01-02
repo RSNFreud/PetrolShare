@@ -1,5 +1,5 @@
 import {router} from 'expo-router';
-import {all, put, takeEvery, takeLatest} from 'redux-saga/effects';
+import {all, delay, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {fetchData, fetchSelf, login, logOut, updateData} from '../reducers/auth';
 import {STORAGE_KEYS} from '@constants/storage-keys';
@@ -17,6 +17,7 @@ function* deleteAuthKey() {
 }
 
 function* redirectToHome() {
+    delay(200);
     yield router.replace('/');
 }
 

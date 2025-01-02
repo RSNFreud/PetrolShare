@@ -20,7 +20,7 @@ export const sendPostRequest = async (url: string, body?: object, isEmail?: bool
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(body),
+                body: JSON.stringify(body || {}),
             },
             isEmail: Boolean(isEmail),
         });
