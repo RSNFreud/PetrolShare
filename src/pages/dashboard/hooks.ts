@@ -9,7 +9,7 @@ export const useMemberRequest = (userID: string, active: boolean) => {
         enabled: active,
         queryFn: async () => {
             const res = await sendRequestToBackend({
-                url: `${ENDPOINTS.GET_MEMBERS}`,
+                url: ENDPOINTS.GET_MEMBERS,
             });
 
             if (res?.ok) {

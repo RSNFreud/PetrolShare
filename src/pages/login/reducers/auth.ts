@@ -57,7 +57,7 @@ export const login = createAsyncThunk<
 
 export const fetchData = createAsyncThunk<ResponseType | undefined>('FETCH_DATA', async () => {
     const response = await sendRequestToBackend({
-        url: `${ENDPOINTS.GET_DATA}}`,
+        url: ENDPOINTS.GET_DATA,
     });
 
     if (response?.ok) {

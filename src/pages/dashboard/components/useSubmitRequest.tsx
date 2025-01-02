@@ -28,7 +28,7 @@ const getAPIURL = (id: string) => {
 const getUsername = async (userID: string) => {
     try {
         const res = await sendRequestToBackend({
-            url: `${ENDPOINTS.GET_MEMBERS}`,
+            url: ENDPOINTS.GET_MEMBERS,
         });
         if (res?.ok) {
             const data = (await res.json()) as GetMemberType;
