@@ -2817,10 +2817,10 @@
   dependencies:
     web-streams-polyfill "^3.1.1"
 
-"@revenuecat/purchases-typescript-internal@6.3.0":
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-6.3.0.tgz#18d7246a4e90e70fe6fb3ca6005329527b8bf5a7"
-  integrity sha512-HcG5wYwc5f2rNpgu+Mq2X6Yon3MJ1kbPw9K6nOozuHxwYCN4vkmGjXqao+HXH+r8hl8OeA16tIlR24CzB6x/Jw==
+"@revenuecat/purchases-typescript-internal@13.33.0":
+  version "13.33.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-13.33.0.tgz#42f034485eaaa4b8b25ab4f3b54cfae84b434db1"
+  integrity sha512-3GhSzWDqEDXtZ8BTPJVc4SHebyNaCZHP+oB+DBMCKB1ZpuEKW/A2+42orUoKWfKHnIo8uTM65RV9Mdxpg4P/AA==
 
 "@rnx-kit/chromium-edge-launcher@^1.0.0":
   version "1.0.0"
@@ -11161,12 +11161,12 @@ react-native-mmkv@^2.10.2:
   resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-2.10.2.tgz#73f06bb710388f67bade031e7b8e42a6d2358e40"
   integrity sha512-hNrZzwvIFyogJkqf//rVSw7EwceYqkx/jl3hb5tzct6qqwEmS1L9ybvnDjzDkaMyDeouQIqAnsdnb6AuDSrgQQ==
 
-react-native-purchases@^6.7.0:
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-6.7.0.tgz#15bdc187e306c5ccde281d219378c0966d44a77e"
-  integrity sha512-ITjGOSoA+WBJm6cPrMf7WNZVCZI3Vgkkg3GvbwZrVN5dKw9shO00yvEkhpH0tCZknydM/dqE7P78ZbN4QVxJSA==
+react-native-purchases@^8.11.2:
+  version "8.11.2"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-8.11.2.tgz#ce03f7b0ecc7383863ae5335a19b3a43424eb426"
+  integrity sha512-9M/IHyivJR3DPcNwxHPSL+9oDWhGrnfPZGRuy3bm8x4lCn54wQqoLofIJbibc9x8oF0LY0u6pTcppZYyIOBzmQ==
   dependencies:
-    "@revenuecat/purchases-typescript-internal" "6.3.0"
+    "@revenuecat/purchases-typescript-internal" "13.33.0"
 
 react-native-safe-area-context@4.10.1:
   version "4.10.1"
