@@ -5,7 +5,8 @@ import {sendPostRequest} from './sendRequestToBackend';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldShowAlert: true,
+        shouldShowList: true,
+        shouldShowBanner: true,
         shouldPlaySound: false,
         shouldSetBadge: false,
     }),
