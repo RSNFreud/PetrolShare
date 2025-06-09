@@ -228,12 +228,16 @@ export const App = () => {
         const notifData = lastNotif?.notification.request.content.data;
         const routeName = notifData?.route;
         const invoiceID = notifData?.invoiceID;
-        if (loading || !ref.isReady() || !store.isLoggedIn) return;
+
+        if (loading || !ref.isReady()) return;
         if (!invoiceID || !routeName) {
             sendCustomEvent('closeSplash');
             return;
         }
 
+        if (!store.isLoggedIn) {
+            return;
+        }
         const route = CommonActions.navigate({
             name: routeName,
             params: {id: invoiceID},
