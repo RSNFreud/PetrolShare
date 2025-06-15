@@ -17,9 +17,7 @@ export const sendPostRequest = async (url: string, body?: object, isEmail?: bool
             url,
             data: {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(body || {}),
             },
             isEmail: Boolean(isEmail),
@@ -37,16 +35,12 @@ export const sendRequestToBackend = async ({url, data, onError, isEmail}: PropsT
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     const authKey = getItem(STORAGE_KEYS.authKey);
-
     try {
         const res = await fetch_retry(
             `${isEmail ? EMAIL_ADDRESS : API_ADDRESS}/${url}`,
             {
                 ...data,
-                headers: {
-                    ...data?.headers,
-                    Authorization: `Bearer ${authKey}`,
-                },
+                headers: {...data?.headers, Authorization: `Bearer ${authKey}`},
                 signal: controller.signal,
             },
             3,

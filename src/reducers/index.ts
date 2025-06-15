@@ -10,7 +10,7 @@ import {odometerData} from '@pages/dashboard/reducers/odometer';
 const storage = new MMKV();
 
 const reduxPersistStorage = {
-    setItem: (key: string, value: string | number | boolean | Uint8Array) => {
+    setItem: (key: string, value: boolean | string | number | ArrayBuffer) => {
         storage.set(key, value);
         return Promise.resolve(true);
     },
@@ -24,10 +24,7 @@ const reduxPersistStorage = {
     },
 };
 
-const persistConfig = {
-    key: 'root',
-    storage: reduxPersistStorage,
-};
+const persistConfig = {key: 'root', storage: reduxPersistStorage};
 
 const persistedReducer = persistReducer(persistConfig, userPersistData);
 

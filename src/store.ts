@@ -1,20 +1,18 @@
 import {configureStore} from '@reduxjs/toolkit';
-import createSagaMiddleware from 'redux-saga';
 import {useDispatch} from 'react-redux';
 import {persistStore} from 'redux-persist';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import rootSaga from './sagas';
 import {reducers} from './reducers';
 
-const sagaMiddleware = createSagaMiddleware();
+const createSagaMiddleware = require('redux-saga');
+const sagaMiddleware = createSagaMiddleware.default();
 
 export const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-            },
+            serializableCheck: {ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']},
         }).concat(sagaMiddleware),
     devTools: false,
     enhancers: getDefaultEnhancers => getDefaultEnhancers().concat(devToolsEnhancer()),
