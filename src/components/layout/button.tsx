@@ -36,8 +36,7 @@ export const Button: FC<PropsType> = ({
     const [isLoading, setIsLoading] = useState(loading);
 
     useEffect(() => {
-        if (loading) setIsLoading(loading);
-        setTimeout(() => setIsLoading(false), 300);
+        setIsLoading(loading);
     }, [loading]);
 
     const backgroundColour = () => {
@@ -61,10 +60,7 @@ export const Button: FC<PropsType> = ({
 
     const combinedStyles: ComponentProps<typeof TouchableOpacity>['style'] = [
         styles.button,
-        {
-            backgroundColor: backgroundColour(),
-            borderColor: borderColor(),
-        },
+        {backgroundColor: backgroundColour(), borderColor: borderColor()},
         style,
     ];
 

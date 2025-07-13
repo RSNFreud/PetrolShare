@@ -7,17 +7,11 @@ import {Button} from '@components/layout/button';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 
-type PropsType = {
-    data: PopupType;
-};
+type PropsType = {data: PopupType};
 
 const styles = StyleSheet.create({
-    container: {
-        gap: 20,
-    },
-    input: {
-        gap: 15,
-    },
+    container: {gap: 20},
+    input: {gap: 15},
     box: {
         paddingHorizontal: 15,
         paddingVertical: 10,
@@ -26,10 +20,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderStyle: 'solid',
     },
-    text: {
-        fontSize: 16,
-        lineHeight: 21,
-    },
+    text: {fontSize: 16, lineHeight: 21},
 });
 
 export const PopupWrapper: FC<PropsType> = ({data}) => {
@@ -40,10 +31,7 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
         const newValues = Object.entries(formData).reduce(
             (prevData, [key, value]) => ({
                 ...prevData,
-                [key]: {
-                    value: value.value,
-                    error: errors ? errors?.[key] : '',
-                },
+                [key]: {value: value.value, error: errors ? errors?.[key] : ''},
             }),
             {} as {[key: string]: {value: string}},
         );
@@ -59,10 +47,7 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
     useEffect(() => {
         if (!data.children) return;
         const inputs = data.children?.reduce(
-            (original, input) => ({
-                ...original,
-                [input.props.id]: defaultValues,
-            }),
+            (original, input) => ({...original, [input.props.id]: defaultValues}),
             {},
         );
         setFormData(inputs);

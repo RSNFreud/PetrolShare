@@ -8,10 +8,7 @@ import {Cross} from 'src/icons/cross';
 import {AppContext} from '@components/appContext/context';
 
 const styles = StyleSheet.create({
-    overlay: {
-        backgroundColor: 'rgba(35, 35, 35, 0.8)',
-        height: Dimensions.get('window').height,
-    },
+    overlay: {backgroundColor: 'rgba(35, 35, 35, 0.8)', height: Dimensions.get('window').height},
     header: {
         paddingLeft: 18,
         paddingVertical: 5,
@@ -41,11 +38,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
     },
-    content: {
-        paddingVertical: 30,
-        paddingHorizontal: 18,
-        backgroundColor: Colors.secondary,
-    },
+    content: {paddingVertical: 30, paddingHorizontal: 18, backgroundColor: Colors.secondary},
 });
 
 const TIME_TO_CLOSE = 300;
@@ -141,7 +134,7 @@ export const Popup = () => {
                 stickyHeaderIndices={[0]}
                 keyboardShouldPersistTaps="always"
             >
-                <>
+                <View>
                     <View style={styles.header}>
                         <Text bold>{popupData.title}</Text>
                         <ButtonBase style={styles.close} onPress={handleClose}>
@@ -149,7 +142,7 @@ export const Popup = () => {
                         </ButtonBase>
                     </View>
                     <View style={styles.content}>{popupData.content}</View>
-                </>
+                </View>
             </Animated.ScrollView>
         </Modal>
     );

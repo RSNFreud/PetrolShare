@@ -27,9 +27,7 @@ const getAPIURL = (id: string) => {
 
 const getUsername = async (userID: string) => {
     try {
-        const res = await sendRequestToBackend({
-            url: ENDPOINTS.GET_MEMBERS,
-        });
+        const res = await sendRequestToBackend({url: ENDPOINTS.GET_MEMBERS});
         if (res?.ok) {
             const data = (await res.json()) as GetMemberType;
 
@@ -75,12 +73,7 @@ export const useSubmitRequest = (
             isVisible: true,
             content: <OdometerAlert isChecked={isChecked} setIsChecked={handleCheckbox} />,
             title: 'Distance recovered!',
-            buttons: [
-                {
-                    text: 'OK',
-                    onClick: closeOdometerAlert,
-                },
-            ],
+            buttons: [{text: 'OK', onClick: closeOdometerAlert}],
         });
     }, [id, formData?.odemeterStart, hasShownAlert, isChecked]);
 
@@ -103,6 +96,15 @@ export const useSubmitRequest = (
         setPopupData({content: <Text style={{lineHeight: 24}}>{text}</Text>});
     };
 
+    const handleOdometerDraft = (data: PopupType) => {
+        const odometerStart = formData['odemeterStart']?.value;
+        if (!odometerStart) return;
+
+        dispatch(setOdometerData({odometerStart: Number(formData?.odemeterStart.value)}));
+        showSuccessPopup(
+            'Your odometer reading has been saved. You can access it anytime by clicking the "Record Odometer" button.',
+        );
+    };
     const handleValidate = (
         data: PopupType,
         setData: (data: {[key: string]: {value: string}}) => void,
@@ -115,15 +117,7 @@ export const useSubmitRequest = (
 
         setData(returnErrorObject(formData, errors));
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
-            dispatch(
-                setOdometerData({
-                    odometerStart: Number(formData?.odemeterStart.value),
-                }),
-            );
-            showSuccessPopup(
-                'Your odometer reading has been saved. You can access it anytime by clicking the "Record Odometer" button.',
-            );
-            return;
+            return handleOdometerDraft(data);
         }
         if (validate.success) handleSubmit(values, data);
     };
@@ -139,9 +133,7 @@ export const useSubmitRequest = (
             case POPUP_IDS.ODOMETER:
                 const distance = Number(values.odemeterEnd) - Number(values.odemeterStart);
                 if (distance <= 0) {
-                    setErrors({
-                        odemeterEnd: 'Please enter a distance above 0!',
-                    });
+                    setErrors({odemeterEnd: 'Please enter a distance above 0!'});
                     return;
                 }
                 parsedData.distance = String(distance);
