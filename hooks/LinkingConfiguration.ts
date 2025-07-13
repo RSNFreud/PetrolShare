@@ -54,7 +54,7 @@ const linking: any = {
 
         // Listen to expo push notifications
         const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-            const url = response.notification.request.content.data.url;
+            const url = response.notification.request.content.data.url as string;
             listener(url);
         });
 

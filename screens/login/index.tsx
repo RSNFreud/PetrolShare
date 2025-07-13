@@ -16,10 +16,7 @@ import testID from '../../hooks/testID';
 export default () => {
     const [visible, setVisible] = useState(false);
     const navigation = useRouter();
-    const [formData, setFormData] = useState<{
-        emailAddress: string;
-        password: string;
-    }>({
+    const [formData, setFormData] = useState<{emailAddress: string; password: string}>({
         emailAddress: '',
         password: '',
     });
@@ -35,10 +32,7 @@ export default () => {
     const {signIn, isLoggedIn} = useContext(AuthContext);
 
     const handleSubmit = () => {
-        const errors: ErrorType = {
-            emailAddress: '',
-            password: '',
-        };
+        const errors: ErrorType = {emailAddress: '', password: ''};
 
         Object.entries(formData).map(([key, value]) => {
             errors[key] = value ? '' : 'Please fill out this field!';
@@ -67,11 +61,7 @@ export default () => {
 
         if (!signedIn.valid) {
             setLoading(false);
-            setFormErrors({
-                emailAddress: '',
-                password: '',
-                verification: signedIn.message || '',
-            });
+            setFormErrors({emailAddress: '', password: '', verification: signedIn.message || ''});
         } else router.navigate('/');
     };
 
@@ -79,9 +69,7 @@ export default () => {
         try {
             const res = await sendPostRequest(
                 `resend`,
-                {
-                    emailAddress: formData.emailAddress,
-                },
+                {emailAddress: formData.emailAddress},
                 true,
             );
 
@@ -186,12 +174,7 @@ export default () => {
                 style={{paddingBottom: 30}}
                 android_disableSound
             >
-                <Text
-                    style={{
-                        fontSize: 16,
-                        textDecorationLine: 'underline',
-                    }}
-                >
+                <Text style={{fontSize: 16, textDecorationLine: 'underline'}}>
                     Forgot my password...
                 </Text>
             </Pressable>
@@ -199,6 +182,7 @@ export default () => {
 
             <Seperator style={{marginVertical: 30}} />
             <Button
+                // @ts-expect-error
                 handleClick={() => navigation.navigate('register')}
                 variant="ghost"
                 text="Register"

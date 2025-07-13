@@ -11,7 +11,7 @@ type PropsType = {
     password?: boolean;
     value?: string;
     placeholder: string;
-    style?: TextInput['props']['style'];
+    style?: View['props']['style'];
     inputStyle?: TextInput['props']['style'];
     handleInput?: (e: string) => void;
     nativeID?: string;
@@ -111,12 +111,7 @@ export default ({
                 </View>
                 {!!errorMessage && (
                     <Text
-                        style={{
-                            marginTop: 10,
-                            fontSize: 14,
-                            fontWeight: '400',
-                            color: '#FA4F4F',
-                        }}
+                        style={{marginTop: 10, fontSize: 14, fontWeight: '400', color: '#FA4F4F'}}
                     >
                         {errorMessage}
                     </Text>

@@ -58,12 +58,7 @@ export const Register = React.memo(() => {
         if (Object.values(errors).filter(e => (e as string).length).length === 0) submitAction();
     };
 
-    const stageProps = {
-        stage,
-        direction,
-        isLoading,
-        previousStage,
-    };
+    const stageProps = {stage, direction, isLoading, previousStage};
 
     const nextPage = () => {
         if (isLoading) setIsLoading(false);
@@ -106,10 +101,7 @@ export const Register = React.memo(() => {
                 nextPage();
             } else {
                 previousPage();
-                setFormErrors({
-                    ...formErrors,
-                    emailAddress: 'This email address already exists!',
-                });
+                setFormErrors({...formErrors, emailAddress: 'This email address already exists!'});
             }
         }
     };
@@ -145,6 +137,7 @@ export const Register = React.memo(() => {
                 />
                 <Button
                     variant="ghost"
+                    // @ts-expect-error
                     handleClick={() => navigation.navigate('login')}
                     text="Cancel"
                 />
@@ -196,6 +189,7 @@ export const Register = React.memo(() => {
                 </>
             </Box>
             <Button
+                // @ts-expect-error
                 handleClick={() => navigation.navigate('')}
                 style={{marginTop: 25}}
                 text="Back to Login"
@@ -207,13 +201,7 @@ export const Register = React.memo(() => {
         <Layout>
             <FlexFull>
                 <StepBar stage={stage} />
-                <View
-                    style={{
-                        position: 'relative',
-                        flex: 1,
-                        minHeight: '100%',
-                    }}
-                >
+                <View style={{position: 'relative', flex: 1, minHeight: '100%'}}>
                     {Steps.map((children, count) => (
                         <Stage {...stageProps} pageNumber={count} key={'stage ' + count}>
                             {children}

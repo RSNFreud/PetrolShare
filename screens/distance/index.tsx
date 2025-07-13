@@ -2,7 +2,7 @@ import Popup from '@components/Popup';
 import {LongButton} from '@components/Themed';
 import {useRouter} from 'expo-router';
 import {sendPostRequest} from 'hooks/sendFetchRequest';
-import React, {useContext, useState} from 'react';
+import React, {JSX, useContext, useState} from 'react';
 import Toast from 'react-native-toast-message';
 
 import AssignDistance from './assignDistance';
@@ -36,10 +36,7 @@ export default ({onUpdate}: {onUpdate?: () => void}) => {
 
         if (draft && draft != null) {
             setData({...JSON.parse(draft)});
-            Toast.show({
-                type: 'default',
-                text1: 'Recovered draft data!',
-            });
+            Toast.show({type: 'default', text1: 'Recovered draft data!'});
             setIsDraft(true);
             openPopup(
                 <Odometer
@@ -78,10 +75,7 @@ export default ({onUpdate}: {onUpdate?: () => void}) => {
         );
     };
     const sendAlert = (text: string) => {
-        Toast.show({
-            text1: text,
-            type: 'default',
-        });
+        Toast.show({text1: text, type: 'default'});
     };
 
     const handleClose = (alert?: string) => {
@@ -132,6 +126,7 @@ export default ({onUpdate}: {onUpdate?: () => void}) => {
             <LongButton
                 text="Presets"
                 icon={<List width="20" height="20" />}
+                // @ts-expect-error
                 handleClick={() => navigate('addPreset')}
             />
             <LongButton

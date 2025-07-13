@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import {Dimensions, ImageBackground, Animated, Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 
+// @ts-expect-error
 import SplashImage from '../assets/images/splash.png';
 import Colors from '../constants/Colors';
 

@@ -4,9 +4,7 @@ import {Animated, ScrollView} from 'react-native';
 
 import {TabHeader, TabType} from './tabHeader';
 
-type PropsType = {
-    tabs: TabType[];
-};
+type PropsType = {tabs: TabType[]};
 
 export default ({tabs}: PropsType) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -29,10 +27,7 @@ export default ({tabs}: PropsType) => {
     };
 
     const sendAnalytics = async (name: string) => {
-        await analytics().logScreenView({
-            screen_name: name,
-            screen_class: name,
-        });
+        await analytics().logEvent('change_tab', {screen_name: name});
     };
 
     const switchTab = (e: string) => {

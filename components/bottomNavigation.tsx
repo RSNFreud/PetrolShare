@@ -81,6 +81,7 @@ export default ({state, descriptors, navigation}: BottomTabBarProps) => {
                 const isFocused = state.index === index;
 
                 const onPress = () => {
+                    // @ts-expect-error
                     navigate(route.name !== 'index' ? route.name : '/');
                 };
 

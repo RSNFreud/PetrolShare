@@ -48,31 +48,13 @@ export default () => {
             {params && params['id'] ? (
                 <Breadcrumbs
                     links={[
-                        {
-                            name: 'Dashboard',
-                            screenName: '/',
-                        },
-                        {
-                            name: 'Payments',
-                            screenName: 'invoices',
-                        },
-                        {
-                            name: 'Payments #' + params['id'],
-                        },
+                        {name: 'Dashboard', screenName: '/'},
+                        {name: 'Payments', screenName: 'invoices'},
+                        {name: 'Payments #' + params['id']},
                     ]}
                 />
             ) : (
-                <Breadcrumbs
-                    links={[
-                        {
-                            name: 'Dashboard',
-                            screenName: '/',
-                        },
-                        {
-                            name: 'Payments',
-                        },
-                    ]}
-                />
+                <Breadcrumbs links={[{name: 'Dashboard', screenName: '/'}, {name: 'Payments'}]} />
             )}
 
             {params && params['id'] ? (
@@ -100,6 +82,7 @@ export default () => {
                                         <TouchableBase
                                             handleClick={() =>
                                                 navigate({
+                                                    // @ts-expect-error
                                                     pathname: 'invoices',
                                                     params: {id: e['invoiceID']},
                                                 })

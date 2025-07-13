@@ -23,41 +23,21 @@ export default function AppLayout() {
 
     return (
         <Tabs
-            screenOptions={{
-                header: () => <></>,
-            }}
-            sceneContainerStyle={{backgroundColor: Colors.background}}
+            screenOptions={{header: () => <></>, sceneStyle: {backgroundColor: Colors.background}}}
             tabBar={props => <BottomNavigation {...props} />}
             initialRouteName="index"
         >
             <Tabs.Screen
                 name="index"
-                options={{
-                    tabBarLabel: 'Home',
-                    tabBarIcon: () => <House />,
-                }}
+                options={{tabBarLabel: 'Home', tabBarIcon: () => <House />}}
             />
             <Tabs.Screen
                 name="invoices"
-                options={{
-                    tabBarLabel: 'Invoices',
-                    tabBarIcon: () => <Invoice />,
-                }}
+                options={{tabBarLabel: 'Invoices', tabBarIcon: () => <Invoice />}}
             />
             <Tabs.Screen
                 name="history"
-                options={{
-                    tabBarLabel: 'History',
-                    tabBarIcon: () => <History />,
-                }}
-            />
-            <Tabs.Screen
-                name="schedules"
-                options={{
-                    tabBarLabel: 'Schedules',
-                    tabBarIcon: () => <Calendar />,
-                    href: null,
-                }}
+                options={{tabBarLabel: 'History', tabBarIcon: () => <History />}}
             />
             <Tabs.Screen
                 // Name of the route to hide.

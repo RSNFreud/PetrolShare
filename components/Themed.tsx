@@ -16,22 +16,14 @@ import Button, {ButtonType} from './button';
 import {Text} from './text';
 import ChevronRight from '../assets/icons/chevronRight';
 import Colors from '../constants/Colors';
+import {JSX} from 'react';
 
 export type TextProps = DefaultText['props'];
 export type ViewProps = DefaultView['props'];
 
 export const Seperator = ({style}: ViewProps) => {
     return (
-        <DefaultView
-            style={[
-                {
-                    height: 1,
-                    width: '100%',
-                    backgroundColor: Colors.border,
-                },
-                style,
-            ]}
-        />
+        <DefaultView style={[{height: 1, width: '100%', backgroundColor: Colors.border}, style]} />
     );
 };
 
@@ -76,12 +68,7 @@ export const Breadcrumbs = ({
     return (
         <DefaultView
             style={[
-                {
-                    display: 'flex',
-                    marginBottom: 30,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                },
+                {display: 'flex', marginBottom: 30, flexDirection: 'row', alignItems: 'center'},
                 style,
             ]}
         >
@@ -89,11 +76,7 @@ export const Breadcrumbs = ({
                 return (
                     <DefaultView
                         key={`${e.name}-c`}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
+                        style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
                     >
                         {c + 1 === links.length ? (
                             <Text style={{fontWeight: '400', fontSize: 16}}>{e.name}</Text>
@@ -102,10 +85,9 @@ export const Breadcrumbs = ({
                                 <TouchableWithoutFeedback
                                     onPress={() =>
                                         navigation.navigate({
+                                            // @ts-expect-error
                                             pathname: e.screenName || e.name,
-                                            params: {
-                                                showToast: undefined,
-                                            },
+                                            params: {showToast: undefined},
                                         })
                                     }
                                 >
@@ -170,11 +152,7 @@ export const LongButton = ({
     marginBottom,
     style,
     ...rest
-}: ButtonType & {
-    marginBottom?: number;
-    text: string;
-    last?: boolean;
-}) => {
+}: ButtonType & {marginBottom?: number; text: string; last?: boolean}) => {
     return (
         <Button
             style={[

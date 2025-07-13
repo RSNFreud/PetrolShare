@@ -3,6 +3,7 @@ import {TouchableOpacity, TextProps, ActivityIndicator} from 'react-native';
 
 import {Text} from './text';
 import Colors from '../constants/Colors';
+import {ComponentProps, JSX} from 'react';
 
 export type VariantType = 'regular' | 'ghost';
 export type ColorType = 'blue' | 'red';
@@ -16,7 +17,7 @@ export type ButtonType = {
     variant?: VariantType;
     size?: SizeType;
     handleClick?: () => void;
-    style?: TouchableOpacity['props']['style'];
+    style?: ComponentProps<typeof TouchableOpacity>['style'];
     noText?: boolean;
     textStyle?: TextProps['style'];
     disabled?: boolean;
@@ -26,7 +27,7 @@ export type ButtonType = {
 
 type BaseType = {
     children: React.ReactNode;
-    style?: TouchableOpacity['props']['style'];
+    style?: ComponentProps<typeof TouchableOpacity>['style'];
     disabled?: boolean;
     handleClick?: () => void;
     analyticsLabel?: string;
@@ -42,10 +43,7 @@ export const TouchableBase = ({
     const onClick = () => {
         if (analyticsLabel)
             try {
-                analytics().logSelectContent({
-                    content_type: 'button',
-                    item_id: analyticsLabel,
-                });
+                analytics().logEvent('button_clicked', {item_id: analyticsLabel});
             } catch {}
         if (handleClick) handleClick();
     };

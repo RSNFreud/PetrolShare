@@ -22,33 +22,14 @@ import {Alert, convertToDate, convertToSentenceCase, currencyPosition} from '../
 import {AuthContext} from '../../hooks/context';
 import {sendRequestToBackend} from 'hooks/sendRequestToBackend';
 
-type PropsType = {
-    invoiceID: number | string;
-    isPublic?: boolean;
-};
+type PropsType = {invoiceID: number | string; isPublic?: boolean};
 
 const SummaryItem = ({title, value, width}: {title: string; value: string; width: number}) => (
     <View style={{opacity: width === 0 ? 0 : 1}}>
-        <Text
-            style={{
-                color: 'white',
-                fontSize: 14,
-                fontWeight: '300',
-                lineHeight: 21,
-                width,
-            }}
-        >
+        <Text style={{color: 'white', fontSize: 14, fontWeight: '300', lineHeight: 21, width}}>
             {title}
         </Text>
-        <Text
-            style={{
-                color: 'white',
-                fontSize: 16,
-                fontWeight: '700',
-                lineHeight: 24,
-                width,
-            }}
-        >
+        <Text style={{color: 'white', fontSize: 16, fontWeight: '700', lineHeight: 24, width}}>
             {value}
         </Text>
     </View>
@@ -71,10 +52,7 @@ export default ({invoiceID, isPublic}: PropsType) => {
     const handleUpdate = () => {
         handleClose();
         getInvoice();
-        Toast.show({
-            type: 'default',
-            text1: 'Successfully updated distances!',
-        });
+        Toast.show({type: 'default', text1: 'Successfully updated distances!'});
     };
 
     const handleClose = () => {
@@ -92,6 +70,7 @@ export default ({invoiceID, isPublic}: PropsType) => {
         } else if (res) {
             if (isPublic) return;
             Alert('Invalid Payment', 'This payment log does not exist!');
+            // @ts-expect-error
             navigate.navigate('invoices');
         }
     };
@@ -110,10 +89,8 @@ export default ({invoiceID, isPublic}: PropsType) => {
     const sendLink = async () => {
         if (!invoiceID) return;
         if (Platform.OS === 'web')
-            navigate.navigate({
-                pathname: 'PublicInvoice',
-                params: {uniqueURL: data.uniqueURL},
-            });
+            // @ts-expect-error
+            navigate.navigate({pathname: 'PublicInvoice', params: {uniqueURL: data.uniqueURL}});
         else
             Share.share({
                 message: `I have filled up with petrol! Please see the following link to see how much you owe! ${APP_ADDRESS}payments/public/${data.uniqueURL}`,

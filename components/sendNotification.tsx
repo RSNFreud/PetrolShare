@@ -1,5 +1,6 @@
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import {SchedulableTriggerInputTypes} from 'expo-notifications';
 import {sendPostRequest} from 'hooks/sendFetchRequest';
 import {Platform} from 'react-native';
 
@@ -8,6 +9,8 @@ Notifications.setNotificationHandler({
         shouldShowAlert: true,
         shouldPlaySound: false,
         shouldSetBadge: false,
+        shouldShowBanner: false,
+        shouldShowList: false,
     }),
 });
 
@@ -18,7 +21,7 @@ export const schedulePushNotification = async (title?: string, body?: string) =>
             body: 'Here is the notification body',
             data: {route: 'invoices', invoiceID: 417},
         },
-        trigger: {seconds: 2},
+        trigger: {seconds: 2, type: SchedulableTriggerInputTypes.TIME_INTERVAL},
     });
 };
 
@@ -50,10 +53,7 @@ export const registerForPushNotificationsAsync = async (emailAddress: string) =>
 
         if (!token) return;
 
-        await sendPostRequest('notify/register', {
-            emailAddress,
-            notificationKey: token,
-        });
+        await sendPostRequest('notify/register', {emailAddress, notificationKey: token});
     } else {
         // alert("Must use physical device for Push Notifications");
     }
@@ -62,7 +62,5 @@ export const registerForPushNotificationsAsync = async (emailAddress: string) =>
 };
 
 export const deregisterForPushNotifications = async (emailAddress: string) => {
-    await sendPostRequest('notify/deregister', {
-        emailAddress,
-    });
+    await sendPostRequest('notify/deregister', {emailAddress});
 };

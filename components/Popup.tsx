@@ -1,5 +1,5 @@
 import Constants from 'expo-constants';
-import {useEffect, useRef, useState} from 'react';
+import {JSX, useEffect, useRef, useState} from 'react';
 import {
     Animated,
     DimensionValue,
@@ -239,14 +239,8 @@ export default ({
                 </View>
                 <ScrollView
                     keyboardShouldPersistTaps="always"
-                    style={{
-                        marginTop: 51,
-                        flex: 1,
-                    }}
-                    contentContainerStyle={{
-                        paddingVertical: 30,
-                        paddingHorizontal: 25,
-                    }}
+                    style={{marginTop: 51, flex: 1}}
+                    contentContainerStyle={{paddingVertical: 30, paddingHorizontal: 25}}
                 >
                     {children}
                 </ScrollView>

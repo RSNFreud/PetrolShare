@@ -20,18 +20,17 @@ export default () => {
     const {width} = useWindowDimensions();
 
     useEffect(() => {
-        if (Platform.OS === 'web') return;
-        if (retrieveData?.groupID)
-            Purchases.logIn(retrieveData?.groupID).then(({customerInfo}) => {
-                if (typeof customerInfo.entitlements.active['premium'] !== 'undefined') {
-                    subscribe();
-                } else if (
-                    typeof customerInfo.entitlements.active['premium'] === 'undefined' &&
-                    retrieveData.premium
-                ) {
-                    unsubscribe();
-                }
-            });
+        if (Platform.OS === 'web' || !retrieveData?.groupID) return;
+        Purchases.logIn(retrieveData?.groupID).then(({customerInfo}) => {
+            if (typeof customerInfo.entitlements.active['premium'] !== 'undefined') {
+                subscribe();
+            } else if (
+                typeof customerInfo.entitlements.active['premium'] === 'undefined' &&
+                retrieveData.premium
+            ) {
+                unsubscribe();
+            }
+        });
     }, [retrieveData?.groupID]);
 
     useEffect(() => {
@@ -67,11 +66,11 @@ export default () => {
     };
 
     useEffect(() => {
-        if (Platform.OS === 'web') return;
+        if (Platform.OS === 'web' || !retrieveData?.groupID) return;
         Purchases.addCustomerInfoUpdateListener(info => {
             if (info.entitlements.active['premium']?.isActive) subscribe();
         });
-    }, []);
+    }, [retrieveData?.groupID]);
 
     const openPayment = async () => {
         if (Platform.OS === 'web') return;

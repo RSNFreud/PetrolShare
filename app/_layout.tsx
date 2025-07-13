@@ -9,6 +9,7 @@ import {CommonActions} from '@react-navigation/native';
 import * as Sentry from '@sentry/react-native';
 import Colors from 'constants/Colors';
 import {useFonts} from 'expo-font';
+import {isRunningInExpoGo} from 'expo';
 import * as Notifications from 'expo-notifications';
 import {Slot, useLocalSearchParams, useNavigationContainerRef, usePathname} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
@@ -52,17 +53,16 @@ const ToastConfig = {
     ),
 };
 
-const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+const navigationIntegration = Sentry.reactNavigationIntegration({
+    enableTimeToInitialDisplay: !isRunningInExpoGo(),
+});
 Sentry.init({
     dsn: 'https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.sentry.io/4506003538575360',
     // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
     // We recommend adjusting this value in production.
     tracesSampleRate: 1.0,
-    integrations: [
-        new Sentry.ReactNativeTracing({
-            routingInstrumentation,
-        }),
-    ],
+    integrations: [navigationIntegration],
+    enableNativeFramesTracking: !isRunningInExpoGo(),
 });
 
 export const App = () => {
@@ -79,10 +79,7 @@ export const App = () => {
     const pathname = usePathname();
     const routeParams = useLocalSearchParams();
     const ref = useNavigationContainerRef();
-    const [loadingStatus, setLoadingStatus] = useState({
-        fonts: fontsLoaded,
-        auth: false,
-    });
+    const [loadingStatus, setLoadingStatus] = useState({fonts: fontsLoaded, auth: false});
     const {isChecking, isUpdateAvailable, isDownloading} = useUpdates();
     const lastNotif = Notifications.useLastNotificationResponse();
 
@@ -151,11 +148,7 @@ export const App = () => {
         const ogData = getItem('userData');
 
         // If not signed in show login
-        if (!ogData)
-            return setLoadingStatus(loadingStatus => ({
-                ...loadingStatus,
-                auth: true,
-            }));
+        if (!ogData) return setLoadingStatus(loadingStatus => ({...loadingStatus, auth: true}));
 
         // If auth key missing also show login
         const parsed = JSON.parse(ogData);
@@ -178,10 +171,7 @@ export const App = () => {
                 const userData = await data.json();
                 setItem('userData', JSON.stringify({...parsed, ...userData}));
                 setUserData({...parsed, ...userData});
-                setLoadingStatus(loadingStatus => ({
-                    ...loadingStatus,
-                    auth: true,
-                }));
+                setLoadingStatus(loadingStatus => ({...loadingStatus, auth: true}));
                 return;
             }
             if (data.status === 400 && (await data.text()).includes('deactivated')) {
@@ -193,10 +183,7 @@ export const App = () => {
             store.signOut();
         }
 
-        setLoadingStatus(loadingStatus => ({
-            ...loadingStatus,
-            auth: true,
-        }));
+        setLoadingStatus(loadingStatus => ({...loadingStatus, auth: true}));
     };
 
     const fetchData = async () => {
@@ -226,7 +213,7 @@ export const App = () => {
 
     useEffect(() => {
         const notifData = lastNotif?.notification.request.content.data;
-        const routeName = notifData?.route;
+        const routeName = notifData?.route as string;
         const invoiceID = notifData?.invoiceID;
 
         if (loading || !ref.isReady()) return;
@@ -238,10 +225,7 @@ export const App = () => {
         if (!store.isLoggedIn) {
             return;
         }
-        const route = CommonActions.navigate({
-            name: routeName,
-            params: {id: invoiceID},
-        });
+        const route = CommonActions.navigate(routeName, {id: invoiceID});
         sendCustomEvent('closeSplash');
 
         ref.dispatch(route);
@@ -249,7 +233,7 @@ export const App = () => {
 
     useEffect(() => {
         if (ref) {
-            routingInstrumentation.registerNavigationContainer(ref);
+            navigationIntegration.registerNavigationContainer(ref);
         }
     }, [ref]);
 
@@ -262,10 +246,7 @@ export const App = () => {
         }
 
         EventRegister.addEventListener('sendAlert', e => {
-            Toast.show({
-                type: 'default',
-                text1: e,
-            });
+            Toast.show({type: 'default', text1: e});
         });
 
         return () => {
@@ -279,11 +260,7 @@ export const App = () => {
             <SplashScreenComponent />
             {isServerError && <NetworkError onRetry={checkIfAuth} />}
             <Animated.View
-                style={{
-                    flex: 1,
-                    opacity: loading ? 0 : 1,
-                    backgroundColor: Colors.background,
-                }}
+                style={{flex: 1, opacity: loading ? 0 : 1, backgroundColor: Colors.background}}
             >
                 <View
                     style={{

@@ -12,10 +12,7 @@ type PropsType = {
 export default ({icon, text, active, handleClick}: PropsType) => {
     const onClick = () => {
         try {
-            analytics().logSelectContent({
-                content_type: 'button',
-                item_id: text,
-            });
+            analytics().logEvent('button_clicked', {item_id: text});
         } catch {}
         handleClick(text);
     };

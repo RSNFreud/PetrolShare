@@ -10,18 +10,12 @@ import {View} from 'react-native';
 
 import {convertToSentenceCase, getGroupData} from '../../hooks';
 import {AuthContext} from '../../hooks/context';
-type PropsType = {
-    onClose?: () => void;
-};
+type PropsType = {onClose?: () => void};
 
 export default React.memo(({onClose}: PropsType) => {
     const [open, setOpen] = useState(false);
     const navigate = useRouter();
-    const [data, setData] = useState({
-        litersFilled: '',
-        totalPrice: '',
-        odometer: '',
-    });
+    const [data, setData] = useState({litersFilled: '', totalPrice: '', odometer: ''});
 
     const [errors, setErrors] = useState({
         odometer: '',
@@ -71,6 +65,7 @@ export default React.memo(({onClose}: PropsType) => {
             const data = await res.json();
             setLoading(false);
             setOpen(false);
+            // @ts-expect-error
             navigate.navigate({pathname: 'invoices', params: {id: data}});
         } else {
             setErrors({
@@ -87,13 +82,7 @@ export default React.memo(({onClose}: PropsType) => {
 
     return (
         <Popup visible={open} handleClose={handleClose} title="Add Petrol">
-            <Box
-                style={{
-                    paddingHorizontal: 15,
-                    paddingVertical: 15,
-                    marginBottom: 30,
-                }}
-            >
+            <Box style={{paddingHorizontal: 15, paddingVertical: 15, marginBottom: 30}}>
                 <Text>
                     By clicking the Add Petrol button below, a payment log will be generated from
                     the distance tracked in your current session.
@@ -140,13 +129,7 @@ export default React.memo(({onClose}: PropsType) => {
                             paddingVertical: 15,
                         }}
                     >
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                fontWeight: '400',
-                                color: '#7B1D1D',
-                            }}
-                        >
+                        <Text style={{fontSize: 14, fontWeight: '400', color: '#7B1D1D'}}>
                             {errors.submit}
                         </Text>
                     </View>
