@@ -1,7 +1,4 @@
-// This replaces `const { getDefaultConfig } = require('expo/metro-config');`
-const {getSentryExpoConfig} = require('@sentry/react-native/metro');
-
-// This replaces `const config = getDefaultConfig(__dirname);`
+const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 
 const config = getSentryExpoConfig(__dirname);
 

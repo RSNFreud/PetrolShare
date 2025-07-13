@@ -18,17 +18,9 @@ import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
 
-const styles = StyleSheet.create({
-    icon: {
-        height: 20,
-        width: 'auto',
-        color: 'white',
-    },
-});
+const styles = StyleSheet.create({icon: {height: 20, width: 'auto', color: 'white'}});
 
-export const CUSTOM_POPUPS_ID = {
-    RESET_DISTANCE: 'resetDistance',
-};
+export const CUSTOM_POPUPS_ID = {RESET_DISTANCE: 'resetDistance'};
 
 export type MenuType = {
     icon: React.ReactNode;
@@ -47,10 +39,7 @@ export const POPUP_IDS = {
 
 export type GetMemberType = {fullName: string; userID: number}[];
 
-export const getMenuOptions = (): {
-    header: string;
-    items: MenuType[];
-}[] => [
+export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
     {
         header: 'Distance',
         items: [
@@ -66,9 +55,7 @@ export const getMenuOptions = (): {
                         }),
                     ],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
-                    validation: z.object({
-                        distance: stringToNumberValidation,
-                    }),
+                    validation: z.object({distance: stringToNumberValidation}),
                     successText:
                         '$distance has been successfully added to your account! Your current total distance is now $total_distance.',
                 },
@@ -95,9 +82,7 @@ export const getMenuOptions = (): {
                             .optional()
                             .pipe(
                                 z
-                                    .number({
-                                        invalid_type_error: 'Please enter a valid number',
-                                    })
+                                    .number({error: 'Please enter a valid number'})
                                     .nonnegative(MISSING_VALUE)
                                     .optional(),
                             ),

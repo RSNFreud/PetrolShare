@@ -11,13 +11,6 @@
     "plugins": [
       "./withAndroidVerifiedLinksWorkaround",
       [
-        "@sentry/react-native",
-        {
-          "organization": "freud-dev",
-          "project": "petrolshare"
-        }
-      ],
-      [
         "expo-splash-screen",
         {
           "backgroundColor": "#1E2336",
@@ -27,6 +20,7 @@
       "expo-router",
       "expo-font",
       "expo-asset",
+      "expo-web-browser",
       "expo-secure-store",
       "@react-native-firebase/app",
       [
@@ -35,6 +29,14 @@
           "ios": {
             "useFrameworks": "static"
           }
+        }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "petrolshare",
+          "organization": "freud-dev"
         }
       ]
     ],
