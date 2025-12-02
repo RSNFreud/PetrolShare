@@ -1,7 +1,7 @@
 import {StackActions} from '@react-navigation/native';
 import {useNavigation, usePathname} from 'expo-router';
 import {useContext, useEffect, useState} from 'react';
-import {TouchableWithoutFeedback, View} from 'react-native';
+import {Platform, TouchableWithoutFeedback, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {TouchableBase} from './button';
@@ -18,6 +18,8 @@ export default ({isGuestMode}: {isGuestMode?: boolean}) => {
     const {isLoggedIn, updateData} = useContext(AuthContext);
     const [settingsVisible, setSettingsVisible] = useState(false);
     const pathname = usePathname();
+
+    const shouldShowSettings = Platform.OS !== 'web' && !isGuestMode && isLoggedIn;
 
     useEffect(() => {
         setSettingsVisible(false);
@@ -77,7 +79,7 @@ export default ({isGuestMode}: {isGuestMode?: boolean}) => {
                     PetrolShare
                 </Text>
             </TouchableWithoutFeedback>
-            {isLoggedIn && !isGuestMode && (
+            {shouldShowSettings && (
                 <>
                     <TouchableBase
                         analyticsLabel="Settings"

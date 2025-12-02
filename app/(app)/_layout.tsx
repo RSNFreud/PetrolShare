@@ -8,9 +8,13 @@ import Colors from 'constants/Colors';
 import {Redirect, Tabs} from 'expo-router';
 import {useSession} from 'hooks/context';
 import React from 'react';
+import {Platform} from 'react-native';
+import NotFoundScreen from 'screens/NotFoundScreen';
 
 export default function AppLayout() {
     const {isLoggedIn, isLoading, isServerError} = useSession();
+
+    if (Platform.OS === 'web') return <NotFoundScreen />;
 
     if (isLoading) {
         return <SplashScreen />;

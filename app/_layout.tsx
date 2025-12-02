@@ -23,6 +23,7 @@ import {Animated, View, Dimensions, Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import Purchases from 'react-native-purchases';
 import Toast from 'react-native-toast-message';
+import NotFoundScreen from 'screens/desktopScreen';
 
 const ToastConfig = {
     default: ({text1}: {text1?: string}) => (
@@ -81,7 +82,7 @@ export const App = () => {
     const ref = useNavigationContainerRef();
     const [loadingStatus, setLoadingStatus] = useState({fonts: fontsLoaded, auth: false});
     const {isChecking, isUpdateAvailable, isDownloading} = useUpdates();
-    const lastNotif = Notifications.useLastNotificationResponse();
+    const lastNotif = Platform.OS === 'web' ? null : Notifications.useLastNotificationResponse();
 
     const store = React.useMemo(
         () => ({
@@ -255,6 +256,36 @@ export const App = () => {
         };
     }, []);
 
+    const conditionalRender = () => {
+        if (Platform.OS !== 'web')
+            return (
+                <>
+                    <AuthContext.Provider value={store}>
+                        {store.isLoggedIn && <Premium />}
+                        <Header />
+                        <Slot />
+                        <AlertBox />
+                        <Toast config={ToastConfig} />
+                    </AuthContext.Provider>
+                    <StatusBar
+                        style="light"
+                        backgroundColor={pathname != '/' ? Colors.background : Colors.secondary}
+                    />
+                </>
+            );
+
+        if (Dimensions.get('window').width > 720) return <NotFoundScreen />;
+
+        return (
+            <>
+                <Header isGuestMode />
+                <View style={{paddingHorizontal: 25}}>
+                    <Slot />
+                </View>
+            </>
+        );
+    };
+
     return (
         <>
             <SplashScreenComponent />
@@ -270,17 +301,7 @@ export const App = () => {
                         flex: 1,
                     }}
                 >
-                    <AuthContext.Provider value={store}>
-                        {store.isLoggedIn && <Premium />}
-                        <Header />
-                        <Slot />
-                        <AlertBox />
-                        <Toast config={ToastConfig} />
-                    </AuthContext.Provider>
-                    <StatusBar
-                        style="light"
-                        backgroundColor={pathname != '/' ? Colors.background : Colors.secondary}
-                    />
+                    {conditionalRender()}
                 </View>
             </Animated.View>
         </>
