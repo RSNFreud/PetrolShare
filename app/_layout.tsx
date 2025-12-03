@@ -213,6 +213,10 @@ export const App = () => {
     }, [loadingStatus, isChecking, isUpdateAvailable, isDownloading]);
 
     useEffect(() => {
+        if (Platform.OS === 'web') {
+            sendCustomEvent('closeSplash');
+            return;
+        }
         const notifData = lastNotif?.notification.request.content.data;
         const routeName = notifData?.route as string;
         const invoiceID = notifData?.invoiceID;
@@ -279,9 +283,11 @@ export const App = () => {
         return (
             <>
                 <Header isGuestMode />
-                <View style={{paddingHorizontal: 25}}>
-                    <Slot />
-                </View>
+                <AuthContext.Provider value={store}>
+                    <View style={{paddingHorizontal: 25}}>
+                        <Slot />
+                    </View>
+                </AuthContext.Provider>
             </>
         );
     };

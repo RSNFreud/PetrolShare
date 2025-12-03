@@ -115,9 +115,9 @@ export default ({invoiceID, isPublic}: PropsType) => {
     const globalProps = {
         isPublic,
         groupData: {
-            distance: retrieveData?.distance || '',
-            currency: retrieveData?.currency || '',
-            petrol: retrieveData?.petrol || '',
+            distance: retrieveData?.distance || data?.distance || '',
+            currency: retrieveData?.currency || data?.currency || '',
+            petrol: retrieveData?.petrol || data?.petrol || '',
             fullName: retrieveData?.fullName,
         },
         invoiceID: invoiceID || '',
@@ -157,12 +157,15 @@ export default ({invoiceID, isPublic}: PropsType) => {
                     <SummaryItem
                         width={itemWidth}
                         title="Amount Paid:"
-                        value={currencyPosition(data.totalPrice, retrieveData?.currency || '')}
+                        value={currencyPosition(
+                            data.totalPrice,
+                            retrieveData?.currency || data?.currency || '',
+                        )}
                     />
                     <SummaryItem
                         width={itemWidth}
                         title="Total Distance:"
-                        value={`${data.totalDistance} ${retrieveData?.distance}`}
+                        value={`${data.totalDistance} ${retrieveData?.distance || data?.distance || ''}`}
                     />
                 </View>
                 {data.pricePerLiter ? (
@@ -178,7 +181,7 @@ export default ({invoiceID, isPublic}: PropsType) => {
                             title={`Price Per ${convertToSentenceCase(retrieveData?.petrol || '')}`}
                             value={currencyPosition(
                                 data.pricePerLiter,
-                                retrieveData?.currency || '',
+                                retrieveData?.currency || data?.currency || '',
                             )}
                         />
                     </View>
