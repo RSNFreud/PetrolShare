@@ -1,5 +1,5 @@
 import {persistReducer} from 'redux-persist';
-import {MMKV} from 'react-native-mmkv';
+import {createMMKV} from 'react-native-mmkv';
 import {combineReducers} from 'redux';
 import {userPersistData} from './userPersistData';
 import {loadingScreen} from './loadingScreen';
@@ -7,7 +7,7 @@ import {registerReducer as register} from '@pages/register/reducers/register';
 import {auth} from '@pages/login/reducers/auth';
 import {odometerData} from '@pages/dashboard/reducers/odometer';
 
-const storage = new MMKV();
+const storage = createMMKV();
 
 const reduxPersistStorage = {
     setItem: (key: string, value: boolean | string | number | ArrayBuffer) => {
@@ -19,7 +19,7 @@ const reduxPersistStorage = {
         return Promise.resolve(value);
     },
     removeItem: (key: string) => {
-        storage.delete(key);
+        storage.remove(key);
         return Promise.resolve();
     },
 };

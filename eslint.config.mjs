@@ -1,9 +1,10 @@
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import {FlatCompat} from '@eslint/eslintrc';
+import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import prettier from 'eslint-plugin-prettier';
-import {tanstackConfig} from '@tanstack/config/eslint';
+import { tanstackConfig } from '@tanstack/config/eslint';
+import tseslint from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,13 +16,21 @@ const compat = new FlatCompat({
 
 export default [
     {
-        ignores: ['*/schedules/*', '**/archive/**/*'],
+        ignores: ['*/schedules/*', '**/archive/**/*', 'node_modules'],
     },
     ...compat.extends('expo', 'prettier'),
+    {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+            },
+        },
+    },
     {
         plugins: {
             prettier,
             tanstackConfig,
+            tseslint
         },
 
         rules: {
@@ -31,6 +40,7 @@ export default [
             'react-hooks/exhaustive-deps': 'off',
             'prettier/prettier': 'error',
             'import/order': 'error',
+            "@typescript-eslint/no-deprecated": "warn"
         },
     },
 ];

@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
-import {MMKV} from 'react-native-mmkv';
+import {createMMKV} from 'react-native-mmkv';
 import {ZodFormattedError} from 'zod';
 import {FormValues} from '@constants/common';
 
@@ -8,7 +8,7 @@ export const sendCustomEvent = (event: string, data?: any) => {
     EventRegister.emit(event, data);
 };
 
-const storage = new MMKV();
+const storage = createMMKV();
 
 export const getItem = (key: string) => {
     if (Platform.OS === 'web') return window.localStorage.getItem(key);
@@ -22,7 +22,7 @@ export const setItem = (key: string, data: string) => {
 
 export const deleteItem = (key: string) => {
     if (Platform.OS === 'web') return window.localStorage.removeItem(key);
-    else return storage.delete(key);
+    else return storage.remove(key);
 };
 
 export const convertToSentanceCase = (str: string): string => {
