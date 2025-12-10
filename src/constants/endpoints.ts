@@ -15,4 +15,6 @@ export const ENDPOINTS = {
     ADD_PRESET: 'preset/add',
     EDIT_PRESET: 'preset/edit',
     DELETE_PRESET: 'preset/delete',
+    // PETROL
+    ADD_PETROL: 'petrol/add',
 };

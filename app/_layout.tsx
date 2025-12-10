@@ -6,6 +6,8 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {StatusBar} from 'expo-status-bar';
 import {onlineManager, QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import * as Sentry from '@sentry/react-native';
+import {KeyboardProvider} from 'react-native-keyboard-controller';
 import * as Network from 'expo-network';
 import {Popup} from '@components/layout/popup';
 import {persistor, store} from 'src/store';
@@ -13,22 +15,21 @@ import {AppProvider} from '@components/appContext/provider';
 import {Alertbox} from '@components/layout/alertBox';
 
 import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
-import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
-  dsn: 'https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.us.sentry.io/4506003538575360',
+    dsn: 'https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.us.sentry.io/4506003538575360',
 
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-  sendDefaultPii: true,
+    // Adds more context data to events (IP address, cookies, user, etc.)
+    // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+    sendDefaultPii: true,
 
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+    // Configure Session Replay
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
 
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
+    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+    // spotlight: __DEV__,
 });
 
 onlineManager.setEventListener(setOnline => {
@@ -60,20 +61,22 @@ export default Sentry.wrap(function RootLayout() {
             <QueryClientProvider client={queryClient}>
                 <PersistGate loading={null} persistor={persistor}></PersistGate>
                 <AppProvider>
-                    <SplashScreenComponent />
-                    <ScrollView
-                        style={{paddingHorizontal: 18}}
-                        contentContainerStyle={{
-                            paddingBottom: 18,
-                            flex: 1,
-                        }}
-                        automaticallyAdjustKeyboardInsets={true}
-                        keyboardShouldPersistTaps="always"
-                    >
-                        <Slot />
-                    </ScrollView>
-                    <Popup />
-                    <Alertbox />
+                    <KeyboardProvider>
+                        <SplashScreenComponent />
+                        <ScrollView
+                            style={{paddingHorizontal: 18}}
+                            contentContainerStyle={{
+                                paddingBottom: 18,
+                                flex: 1,
+                            }}
+                            automaticallyAdjustKeyboardInsets={true}
+                            keyboardShouldPersistTaps="always"
+                        >
+                            <Slot />
+                        </ScrollView>
+                        <Popup />
+                        <Alertbox />
+                    </KeyboardProvider>
                 </AppProvider>
                 <StatusBar style="light" />
             </QueryClientProvider>

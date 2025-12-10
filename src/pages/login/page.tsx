@@ -6,7 +6,6 @@ import {RegisterComplete} from './components/registerComplete';
 import {Header} from '@components/layout/baseHeader';
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
-import {Text} from '@components/layout/text';
 import {ForgotPassword} from '@pages/forgotPassword/page';
 import {styles, validation} from 'src/pages/login/helpers';
 import {login, resetError} from '@pages/login/reducers/auth';
@@ -15,6 +14,7 @@ import {FormValues, defaultValues} from '@constants/common';
 import {useAppDispatch} from 'src/store';
 import {resetSuccessPopup} from '@pages/register/reducers/register';
 import {AppContext} from '@components/appContext/context';
+import {ErrorBox} from '@components/layout/errorBox';
 
 export const LoginPage: FC = () => {
     const [data, setData] = useState<{email: FormValues; password: FormValues}>({
@@ -100,11 +100,7 @@ export const LoginPage: FC = () => {
                         onSubmitEditing={handleSubmit}
                     />
                 </View>
-                {error && (
-                    <View style={styles.errorBox}>
-                        <Text style={styles.error}>{error}</Text>
-                    </View>
-                )}
+                {error && <ErrorBox content={error} />}
                 <ForgotPassword emailAddress={data.email.value} handleInput={handleInput} />
                 <Button onPress={handleSubmit} loading={isLoading}>
                     Login

@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 
 export type PopupType = {
     id: string;
-    children?: {
+    children: {
         component: React.FC<any>;
         props: {
             id: string;

@@ -6,6 +6,7 @@ import {defaultValues, FormValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
+import {ErrorBox} from '@components/layout/errorBox';
 
 type PropsType = {data: PopupType};
 
@@ -21,6 +22,9 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
     },
     text: {fontSize: 16, lineHeight: 21},
+    buttonContainer: {
+        gap: 16,
+    },
 });
 
 export const PopupWrapper: FC<PropsType> = ({data}) => {
@@ -50,7 +54,7 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
             (original, input) => ({...original, [input.props.id]: defaultValues}),
             {},
         );
-        setFormData(inputs);
+        setFormData({...inputs, general: defaultValues});
     }, [data.children]);
 
     const handleKeyboardSubmit = (index: number) => {
@@ -97,21 +101,24 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
                     })}
                 </View>
             )}
-            {data.buttons && (
-                <View>
-                    {data.buttons.map(button => (
-                        <Button
-                            loading={isLoading}
-                            key={button.label}
-                            onPress={() =>
-                                button.isSubmitButton ? handleValidate(data, setFormData) : null
-                            }
-                        >
-                            {getButtonText(button)}
-                        </Button>
-                    ))}
-                </View>
-            )}
+            <View style={styles.buttonContainer}>
+                {data.buttons && (
+                    <View>
+                        {data.buttons.map(button => (
+                            <Button
+                                loading={isLoading}
+                                key={button.label}
+                                onPress={() =>
+                                    button.isSubmitButton ? handleValidate(data, setFormData) : null
+                                }
+                            >
+                                {getButtonText(button)}
+                            </Button>
+                        ))}
+                    </View>
+                )}
+                {formData['general']?.error && <ErrorBox content={formData['general'].error} />}
+            </View>
         </View>
     );
 };

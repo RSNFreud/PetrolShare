@@ -1,4 +1,6 @@
-import {Animated, Dimensions, Keyboard, Modal, Pressable, StyleSheet, View} from 'react-native';
+import {Animated, Dimensions, Modal, Pressable, StyleSheet, View} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Constants from 'expo-constants';
 import {Text} from './text';
@@ -47,33 +49,10 @@ export const Popup = () => {
     const {popupData, setPopupData} = useContext(AppContext);
     const [isPopupOpen, setIsPopupOpen] = useState(popupData.isVisible);
     const position = useRef(new Animated.Value(1000)).current;
-    const [keyboardPadding, setKeyboardPadding] = useState(0);
     const heightAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        const showSubscriptionAndroid = Keyboard.addListener('keyboardDidShow', e => {
-            setKeyboardPadding(e.endCoordinates.height);
-        });
-        const hideSubscriptionAndroid = Keyboard.addListener('keyboardDidHide', e => {
-            setKeyboardPadding(0);
-        });
-        const showSubscription = Keyboard.addListener('keyboardWillShow', e => {
-            setKeyboardPadding(e.endCoordinates.height);
-        });
-        const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
-            setKeyboardPadding(0);
-        });
-        return () => {
-            showSubscriptionAndroid.remove();
-            hideSubscriptionAndroid.remove();
-            showSubscription.remove();
-            hideSubscription.remove();
-        };
-    }, []);
-
-    useEffect(() => {
-        const maxPopupHeight =
-            Dimensions.get('window').height * 0.9 - Constants.statusBarHeight - keyboardPadding;
+        const maxPopupHeight = Dimensions.get('window').height * 0.9 - Constants.statusBarHeight;
         Animated.sequence([
             Animated.timing(heightAnim, {
                 toValue: maxPopupHeight,
@@ -82,7 +61,7 @@ export const Popup = () => {
                 useNativeDriver: false,
             }),
         ]).start();
-    }, [keyboardPadding]);
+    }, []);
 
     useEffect(() => {
         if (popupData.isVisible) {
@@ -129,21 +108,26 @@ export const Popup = () => {
             onRequestClose={handleClose}
         >
             <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
-            <Animated.ScrollView
+            <Animated.View
                 style={[styles.popup, {transform: [{translateY: position}], maxHeight: heightAnim}]}
-                stickyHeaderIndices={[0]}
-                keyboardShouldPersistTaps="always"
             >
-                <View>
-                    <View style={styles.header}>
-                        <Text bold>{popupData.title}</Text>
-                        <ButtonBase style={styles.close} onPress={handleClose}>
-                            <Cross color="white" />
-                        </ButtonBase>
+                <KeyboardAwareScrollView
+                    stickyHeaderIndices={[0]}
+                    scrollToOverflowEnabled={false}
+                    overScrollMode="never"
+                    keyboardShouldPersistTaps="always"
+                >
+                    <View>
+                        <View style={styles.header}>
+                            <Text bold>{popupData.title}</Text>
+                            <ButtonBase style={styles.close} onPress={handleClose}>
+                                <Cross color="white" />
+                            </ButtonBase>
+                        </View>
                     </View>
                     <View style={styles.content}>{popupData.content}</View>
-                </View>
-            </Animated.ScrollView>
+                </KeyboardAwareScrollView>
+            </Animated.View>
         </Modal>
     );
 };

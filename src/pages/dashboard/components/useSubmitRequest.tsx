@@ -1,5 +1,7 @@
 import {useContext, useEffect, useState} from 'react';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
+import {useRouter} from 'expo-router';
+import {Keyboard} from 'react-native';
 import {GetMemberType, POPUP_IDS} from '../constants';
 import {PopupType} from '../page';
 import {setOdometerData} from '../reducers/odometer';
@@ -20,6 +22,8 @@ const getAPIURL = (id: string) => {
             return ENDPOINTS.ADD_DISTANCE;
         case POPUP_IDS.ASSIGN_DISTANCE:
             return ENDPOINTS.ASSIGN_DISTANCE;
+        case POPUP_IDS.PETROL:
+            return ENDPOINTS.ADD_PETROL;
         default:
             break;
     }
@@ -47,6 +51,7 @@ export const useSubmitRequest = (
 ) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    const {navigate} = useRouter();
 
     const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const dispatch = useDispatch();
@@ -96,7 +101,7 @@ export const useSubmitRequest = (
         setPopupData({content: <Text style={{lineHeight: 24}}>{text}</Text>});
     };
 
-    const handleOdometerDraft = (data: PopupType) => {
+    const handleOdometerDraft = () => {
         const odometerStart = formData['odemeterStart']?.value;
         if (!odometerStart) return;
 
@@ -117,7 +122,7 @@ export const useSubmitRequest = (
 
         setData(returnErrorObject(formData, errors));
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
-            return handleOdometerDraft(data);
+            return handleOdometerDraft();
         }
         if (validate.success) handleSubmit(values, data);
     };
@@ -128,6 +133,7 @@ export const useSubmitRequest = (
         let parsedData: {[key: string]: string} = {};
         if (!url) return;
         setIsLoading(true);
+        Keyboard.dismiss();
 
         switch (id) {
             case POPUP_IDS.ODOMETER:
@@ -144,6 +150,11 @@ export const useSubmitRequest = (
             case POPUP_IDS.ASSIGN_DISTANCE:
                 parsedData.distance = values?.totalDistance;
                 parsedData.userID = values?.username;
+                break;
+            case POPUP_IDS.PETROL:
+                parsedData.totalPrice = values?.totalCost;
+                parsedData.litersFilled = values?.litersFilled;
+                parsedData.odometer = values?.currentOdometer;
                 break;
             default:
                 break;
@@ -170,7 +181,26 @@ export const useSubmitRequest = (
                     .replace(/\$distance/, `${parsedData.distance} ${distance}`)
                     .replace(/\$username/, await getUsername(values?.username));
             }
+            if (id === POPUP_IDS.PETROL) {
+                const data = await res.json();
+                setPopupData({isVisible: false});
+                navigate(`/invoices?id=${data}`);
+                return;
+            }
             showSuccessPopup(successText);
+        } else {
+            setTimeout(() => setIsLoading(false), 300);
+
+            switch (id) {
+                case POPUP_IDS.PETROL:
+                    setErrors({
+                        general:
+                            'You have no distance tracked in your session for us to generate a payment for.',
+                    });
+                    return;
+                default:
+                    break;
+            }
         }
     };
 

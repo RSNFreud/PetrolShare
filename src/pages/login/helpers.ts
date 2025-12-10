@@ -8,15 +8,6 @@ export const styles = StyleSheet.create({
     container: {
         gap: 25,
     },
-    errorBox: {
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: '#EECFCF',
-        borderRadius: 4,
-    },
-    error: {
-        color: '#7B1D1D',
-    },
     seperator: {
         height: 1,
         backgroundColor: Colors.border,
