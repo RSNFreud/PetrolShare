@@ -50,7 +50,7 @@ export const Breadcrumbs: FC<PropsType> = ({pages}) => {
         <View style={styles.container}>
             {pages.map(({label, href}, index) => (
                 <React.Fragment key={label}>
-                    {renderLabel(label, index !== pages.length - 1, href)}
+                    {renderLabel(label, index === pages.length - 1, href)}
                     {index !== pages.length - 1 && (
                         <View style={styles.chevron}>
                             <Chevron color="white" style={styles.chevron} />

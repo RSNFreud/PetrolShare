@@ -154,7 +154,7 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
                         'A request to add $distance has been sent to $username! They’ll get a notification to accept it, and once they do, it’ll be assigned. For now, it’s in draft mode.',
                 },
             },
-            {icon: <Invoice style={styles.icon} />, label: 'Invoices'},
+            {icon: <Invoice style={styles.icon} />, label: 'Invoices', link: 'invoices'},
             {icon: <History style={styles.icon} />, label: 'History'},
         ],
     },

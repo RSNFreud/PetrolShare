@@ -17,4 +17,6 @@ export const ENDPOINTS = {
     DELETE_PRESET: 'preset/delete',
     // PETROL
     ADD_PETROL: 'petrol/add',
+    // INVOICES
+    GET_INVOICES: 'invoices/get',
 };

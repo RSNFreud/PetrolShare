@@ -1,10 +1,3 @@
-import {View} from 'react-native';
-import {Text} from '@components/layout/text';
-
-const Invoices = () => (
-    <View>
-        <Text>Invoices Screen</Text>
-    </View>
-);
+import {Invoices} from '@pages/invoices/page';
 
 export default Invoices;
