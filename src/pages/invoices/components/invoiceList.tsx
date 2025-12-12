@@ -61,7 +61,7 @@ const getDate = (date: string) =>
 
 export const InvoiceList: FC = () => {
     const {isLoading, data} = useFetchInvoices();
-    const {navigate} = useRouter();
+    const {push} = useRouter();
 
     if (isLoading)
         return (
@@ -88,7 +88,7 @@ export const InvoiceList: FC = () => {
                             <ButtonBase
                                 key={invoiceID}
                                 style={styles.listContainer}
-                                onPress={() => navigate(`/invoices?id=${invoiceID}`)}
+                                onPress={() => push(`/invoices?id=${invoiceID}`)}
                             >
                                 <Text style={styles.text} bold>
                                     Invoice #{invoiceID}

@@ -2,7 +2,7 @@ import {FC} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useSearchParams} from 'expo-router/build/hooks';
 import {useFetchSingleInvoice} from '../hooks/useFetchSingleInvoice';
-import {InvoiceData} from './invoiceData';
+import {InvoiceDataBox} from './invoiceDataBox';
 import {Breadcrumbs} from '@components/layout/breadcrumbs';
 import {Colors} from '@constants/colors';
 
@@ -30,7 +30,7 @@ export const Invoice: FC = () => {
             />
             {data && (
                 <>
-                    <InvoiceData invoice={data} />
+                    <InvoiceDataBox invoice={data} />
                 </>
             )}
             {isLoading && (

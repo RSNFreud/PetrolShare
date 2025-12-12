@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import {Redirect, Slot} from 'expo-router';
 import {FC} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
@@ -11,7 +10,7 @@ const AuthLayout: FC = () => {
     if (isLoggedIn)
         return (
             <SafeAreaProvider>
-                <SafeAreaView style={{paddingTop: Constants.statusBarHeight, flex: 1}}>
+                <SafeAreaView style={{flex: 1}}>
                     <Header />
                     <Slot />
                 </SafeAreaView>

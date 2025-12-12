@@ -51,7 +51,7 @@ const getData = (
     {label: 'Total Distance:', value: 'totalDistance', format: 'distance'},
 ];
 
-export const InvoiceData: FC<PropsType> = ({invoice}) => {
+export const InvoiceDataBox: FC<PropsType> = ({invoice}) => {
     const convertValue = (value: string | number, format?: FormatType) => {
         switch (format) {
             case 'date':
