@@ -8,8 +8,9 @@ export const useFetchSingleInvoice = (invoiceID: string | null) => {
         queryKey: ['invoices', invoiceID],
         queryFn: async () => {
             const res = await sendRequestToBackend({
-                url: `${ENDPOINTS.GET_INVOICES}?invoiceID=${invoiceID}`,
+                url: `${ENDPOINTS.GET_INVOICES}/${invoiceID}`,
             });
+
             if (res?.ok) {
                 return (await res.json()) as InvoiceType;
             }

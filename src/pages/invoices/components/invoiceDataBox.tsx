@@ -2,6 +2,7 @@ import {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {chunk} from 'remeda';
 import {InvoiceType} from '../types';
+import {convertValue, FormatType} from '../libs/convertValue';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 
@@ -35,8 +36,6 @@ const styles = StyleSheet.create({
     },
 });
 
-type FormatType = 'date' | 'currency' | 'distance';
-
 const getData = (
     petrol: string | undefined,
 ): {label: string; value: keyof InvoiceType; format?: FormatType}[] => [
@@ -52,21 +51,6 @@ const getData = (
 ];
 
 export const InvoiceDataBox: FC<PropsType> = ({invoice}) => {
-    const convertValue = (value: string | number, format?: FormatType) => {
-        switch (format) {
-            case 'date':
-                return new Intl.DateTimeFormat('en-GB', {}).format(new Date(Number(value)));
-            case 'currency':
-                return `${Number(value).toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: invoice.currency,
-                })}`;
-            case 'distance':
-                return `${value} ${invoice.distance}`;
-            default:
-                return value;
-        }
-    };
     const rows = chunk(getData(invoice.petrol), 2);
     return (
         <View style={styles.container}>
@@ -77,7 +61,7 @@ export const InvoiceDataBox: FC<PropsType> = ({invoice}) => {
                             <View key={label} style={styles.item}>
                                 <Text style={styles.label}>{label}</Text>
                                 <Text style={styles.value}>
-                                    {convertValue(invoice?.[value], format)}
+                                    {convertValue(invoice?.[value], format, invoice)}
                                 </Text>
                             </View>
                         );
