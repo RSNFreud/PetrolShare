@@ -1,7 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
-import {GetMemberType} from './constants';
-import {ENDPOINTS} from '@constants/endpoints';
 import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
+import {GetMemberType} from '@pages/dashboard/constants';
+import {ENDPOINTS} from '@constants/endpoints';
 
 export const useMemberRequest = (userID: string, active: boolean) => {
     const {data} = useQuery({

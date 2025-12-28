@@ -6,12 +6,12 @@ import {useRouter} from 'expo-router';
 import {CUSTOM_POPUPS_ID, getCustomPopups, getMenuOptions, MenuType, POPUP_IDS} from './constants';
 import {PopupWrapper} from './components/dashboardPopup';
 import {dropdown, input} from './components/popupHelpers';
-import {useMemberRequest} from './hooks';
 import {ApplicationStoreType} from 'src/reducers';
 import {AppContext} from '@components/appContext/context';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 import {ButtonBase} from '@components/layout/buttonBase';
+import {useMemberRequest} from 'src/hooks/useMemberRequest';
 
 const styles = StyleSheet.create({
     userCard: {

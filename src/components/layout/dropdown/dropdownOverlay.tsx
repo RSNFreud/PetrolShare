@@ -19,7 +19,7 @@ type PropsType = {
     onRequestClose: () => void;
     onSubmitEditing?: () => void;
     onClick?: (value: string) => void;
-    items: {value: string; label: string}[];
+    items?: {value: string; label: string}[];
     value?: string;
 };
 

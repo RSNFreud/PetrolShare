@@ -49,7 +49,7 @@ type PropsType = {
     placeholder: string;
     value?: string;
     error?: string;
-    items: {value: string; label: string}[];
+    items?: {value: string; label: string}[];
     onRequestOpen: () => void;
 };
 
@@ -61,8 +61,8 @@ export const DropdownBase: FC<PropsType> = ({
     onRequestOpen,
     items,
 }) => {
-    const selectedItem = items.find(item => item.value === value);
-    const isDisabled = !items.length;
+    const selectedItem = items?.find(item => item.value === value);
+    const isDisabled = !items?.length;
     return (
         <>
             <View>

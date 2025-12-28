@@ -9,7 +9,7 @@ type PropsType = {
     onChangeText?: (value: string) => void;
     onSubmitEditing?: () => void;
     hasSearchBar?: boolean;
-    items: {value: string; label: string}[];
+    items?: {value: string; label: string}[];
 };
 
 export const Dropdown: FC<PropsType> = ({
