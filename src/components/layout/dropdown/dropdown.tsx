@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {Keyboard} from 'react-native';
 import {DropdownBase} from './dropdownBase';
 import {DropdownOverlay} from './dropdownOverlay';
@@ -27,6 +27,11 @@ export const Dropdown: FC<PropsType> = ({
         setIsOpen(false);
         onChangeText?.(value);
     };
+
+    useEffect(() => {
+        if (!items || items.length > 1) return;
+        onChangeText?.(items[0].value);
+    }, [items]);
 
     return (
         <>

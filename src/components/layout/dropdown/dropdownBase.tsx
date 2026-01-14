@@ -62,7 +62,8 @@ export const DropdownBase: FC<PropsType> = ({
     items,
 }) => {
     const selectedItem = items?.find(item => item.value === value);
-    const isDisabled = !items?.length;
+    const isDisabled = !items || items?.length < 2;
+
     return (
         <>
             <View>
