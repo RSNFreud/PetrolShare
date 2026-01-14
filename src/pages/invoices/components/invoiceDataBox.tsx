@@ -1,12 +1,11 @@
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {chunk} from 'remeda';
 import {InvoiceType} from '../types';
 import {convertValue, FormatType} from '../libs/convertValue';
+import {InvoiceContext} from './context';
 import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
-
-type PropsType = {invoice: InvoiceType};
 
 const styles = StyleSheet.create({
     container: {
@@ -50,8 +49,11 @@ const getData = (
     {label: 'Total Distance:', value: 'totalDistance', format: 'distance'},
 ];
 
-export const InvoiceDataBox: FC<PropsType> = ({invoice}) => {
-    const rows = chunk(getData(invoice.petrol), 2);
+export const InvoiceDataBox: FC = () => {
+    const {invoice} = useContext(InvoiceContext);
+    const rows = chunk(getData(invoice?.petrol), 2);
+    if (!invoice) return null;
+
     return (
         <View style={styles.container}>
             {rows.map((row, index) => (

@@ -4,6 +4,7 @@ import {useSearchParams} from 'expo-router/build/hooks';
 import {useFetchSingleInvoice} from '../hooks/useFetchSingleInvoice';
 import {InvoiceLogs} from './invoiceLogs';
 import {InvoiceDataBox} from './invoiceDataBox';
+import {InvoiceContext} from './context';
 import {Breadcrumbs} from '@components/layout/breadcrumbs';
 import {Colors} from '@constants/colors';
 import {Button} from '@components/layout/button';
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
 
 export const Invoice: FC = () => {
     const invoiceID = useSearchParams().get('id');
-    const {data, isLoading} = useFetchSingleInvoice(invoiceID);
+    const {data, isLoading, refetch} = useFetchSingleInvoice(invoiceID);
 
     return (
         <>
@@ -43,13 +44,11 @@ export const Invoice: FC = () => {
                 ]}
             />
             {data && (
-                <>
-                    <InvoiceDataBox invoice={data} />
-                    <InvoiceLogs
-                        invoiceID={invoiceID}
-                        invoiceData={data.invoiceData}
-                        invoiceGroupData={data}
-                    />
+                <InvoiceContext.Provider
+                    value={{refetchInvoices: refetch, invoice: data, invoiceID}}
+                >
+                    <InvoiceDataBox />
+                    <InvoiceLogs />
                     <Button
                         onPress={() =>
                             Share.share({
@@ -62,7 +61,7 @@ export const Invoice: FC = () => {
                     >
                         Share
                     </Button>
-                </>
+                </InvoiceContext.Provider>
             )}
             {(isLoading || !data) && (
                 <View style={styles.fullPageContainer}>

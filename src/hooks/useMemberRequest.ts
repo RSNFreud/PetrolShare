@@ -5,7 +5,7 @@ import {ENDPOINTS} from '@constants/endpoints';
 
 export const useMemberRequest = (userID: string, active: boolean) => {
     const {data} = useQuery({
-        queryKey: ['GET_MEMBERS'],
+        queryKey: ['GET_MEMBERS', userID],
         enabled: active,
         queryFn: async () => {
             const res = await sendRequestToBackend({
@@ -25,6 +25,8 @@ export const useMemberRequest = (userID: string, active: boolean) => {
             return [];
         },
         refetchInterval: 10000,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
     return data;
 };

@@ -20,4 +20,5 @@ export const ENDPOINTS = {
     // INVOICES
     GET_INVOICES: 'invoices/get',
     SEND_REMINDER: 'invoices/alert',
+    ASSIGN_INVOICE_DISTANCE: 'invoices/assign',
 };

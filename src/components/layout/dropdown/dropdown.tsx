@@ -1,4 +1,5 @@
 import {FC, useState} from 'react';
+import {Keyboard} from 'react-native';
 import {DropdownBase} from './dropdownBase';
 import {DropdownOverlay} from './dropdownOverlay';
 
@@ -33,7 +34,10 @@ export const Dropdown: FC<PropsType> = ({
                 value={value}
                 items={items}
                 {...rest}
-                onRequestOpen={() => setIsOpen(true)}
+                onRequestOpen={() => {
+                    Keyboard.dismiss();
+                    setIsOpen(true);
+                }}
             />
             <DropdownOverlay
                 isVisible={isOpen}

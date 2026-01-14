@@ -1,16 +1,10 @@
-import {FC} from 'react';
+import {FC, useContext} from 'react';
 import {useSelector} from 'react-redux';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {InvoiceGroupDataType} from '../libs/convertValue';
 import {Log} from './log';
+import {InvoiceContext} from './context';
 import {Colors} from '@constants/colors';
 import {getUserData} from 'src/selectors/common';
-
-type PropsType = {
-    invoiceData: string;
-    invoiceID: string | null;
-    invoiceGroupData: InvoiceGroupDataType;
-};
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -36,8 +30,9 @@ export type DataType = {
     paymentDue: number;
 };
 
-export const InvoiceLogs: FC<PropsType> = ({invoiceData, invoiceGroupData, invoiceID}) => {
-    const parsedData = JSON.parse(invoiceData) as DataType[];
+export const InvoiceLogs: FC = () => {
+    const {invoice} = useContext(InvoiceContext);
+    const parsedData = JSON.parse(invoice?.invoiceData || '') as DataType[];
 
     const {userID} = useSelector(getUserData);
 
@@ -47,7 +42,7 @@ export const InvoiceLogs: FC<PropsType> = ({invoiceData, invoiceGroupData, invoi
         <ScrollView style={styles.wrapper}>
             {currentUserData && (
                 <>
-                    <Log data={currentUserData} groupData={invoiceGroupData} isCurrentUser />
+                    <Log data={currentUserData} isCurrentUser />
                     <View style={styles.horizontalLine} />
                 </>
             )}
@@ -55,12 +50,7 @@ export const InvoiceLogs: FC<PropsType> = ({invoiceData, invoiceGroupData, invoi
                 {parsedData
                     .filter(data => parseInt(data.userID) !== parseInt(userID))
                     .map(data => (
-                        <Log
-                            key={data.userID}
-                            data={data}
-                            invoiceID={invoiceID}
-                            groupData={invoiceGroupData}
-                        />
+                        <Log key={data.userID} data={data} />
                     ))}
             </View>
         </ScrollView>

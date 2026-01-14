@@ -1,6 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import {useState, ReactNode, ComponentProps, useContext} from 'react';
-import {InvoiceGroupDataType, convertValue} from '../libs/convertValue';
+import {convertValue, InvoiceGroupDataType} from '../libs/convertValue';
+import {InvoiceContext} from './context';
 import {AssignDistance} from './assignDistance';
 import {DataType} from './invoiceLogs';
 import {ButtonBase} from '@components/layout/buttonBase';
@@ -49,18 +50,9 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Log = ({
-    data,
-    groupData,
-    isCurrentUser,
-    invoiceID,
-}: {
-    data: DataType;
-    groupData: InvoiceGroupDataType;
-    isCurrentUser?: boolean;
-    invoiceID?: string | null;
-}) => {
+export const Log = ({data, isCurrentUser}: {data: DataType; isCurrentUser?: boolean}) => {
     const [isPressed, setIsPressed] = useState(false);
+    const {invoice, invoiceID, refetchInvoices} = useContext(InvoiceContext);
     const {setPopupData} = useContext(AppContext);
     const {children, props} = ((): {
         children: ReactNode;
@@ -81,7 +73,14 @@ export const Log = ({
                         setPopupData({
                             isVisible: true,
                             title: 'Assign Distance',
-                            content: <AssignDistance data={data} />,
+                            content: (
+                                <AssignDistance
+                                    data={data}
+                                    invoiceID={invoiceID}
+                                    groupData={invoice as InvoiceGroupDataType}
+                                    refetchInvoices={refetchInvoices}
+                                />
+                            ),
                         });
                     },
                 },
@@ -116,14 +115,12 @@ export const Log = ({
             <View style={styles.boxContent}>
                 <View style={styles.flex}>
                     <Text style={styles.text} bold>
-                        {convertValue(data.paymentDue, 'currency', groupData)}
+                        {convertValue(data.paymentDue, 'currency', invoice)}
                     </Text>
-                    <Text style={styles.text}>
-                        {convertValue(data.liters, 'petrol', groupData)}
-                    </Text>
+                    <Text style={styles.text}>{convertValue(data.liters, 'petrol', invoice)}</Text>
                 </View>
                 <Text style={styles.text}>
-                    {data.fullName} ({convertValue(data.distance, 'distance', groupData)})
+                    {data.fullName} ({convertValue(data.distance, 'distance', invoice)})
                 </Text>
             </View>
             {!isCurrentUser && (
