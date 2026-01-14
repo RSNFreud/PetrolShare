@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 
 export const Log = ({data, isCurrentUser}: {data: DataType; isCurrentUser?: boolean}) => {
     const [isPressed, setIsPressed] = useState(false);
-    const {invoice, invoiceID, refetchInvoices} = useContext(InvoiceContext);
+    const {invoice, invoiceID, refetchInvoices, isPublic} = useContext(InvoiceContext);
     const {setPopupData} = useContext(AppContext);
     const {children, props} = ((): {
         children: ReactNode;
@@ -123,7 +123,7 @@ export const Log = ({data, isCurrentUser}: {data: DataType; isCurrentUser?: bool
                     {data.fullName} ({convertValue(data.distance, 'distance', invoice)})
                 </Text>
             </View>
-            {!isCurrentUser && (
+            {!isCurrentUser && !isPublic && (
                 <>
                     <ButtonBase style={styles.button} {...props}>
                         {children}

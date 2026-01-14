@@ -1,6 +1,5 @@
 import {useFonts} from 'expo-font';
 import {Slot, SplashScreen} from 'expo-router';
-import {useState} from 'react';
 import {ScrollView} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
@@ -43,18 +42,13 @@ onlineManager.setEventListener(setOnline => {
 SplashScreen.hideAsync();
 
 export default Sentry.wrap(function RootLayout() {
-    const [fontsLoaded] = useFonts({
+    useFonts({
         'Roboto-Regular': require('src/assets/fonts/Roboto-Regular.ttf'),
         'Roboto-Bold': require('src/assets/fonts/Roboto-Bold.ttf'),
         'Roboto-Medium': require('src/assets/fonts/Roboto-Medium.ttf'),
         'Roboto-Light': require('src/assets/fonts/Roboto-Light.ttf'),
     });
-    const [loading, setLoading] = useState(true);
     const queryClient = new QueryClient();
-
-    if (!loading) {
-        return null;
-    }
 
     return (
         <Provider store={store}>

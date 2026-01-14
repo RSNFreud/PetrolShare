@@ -19,6 +19,7 @@ export const ENDPOINTS = {
     ADD_PETROL: 'petrol/add',
     // INVOICES
     GET_INVOICES: 'invoices/get',
+    GET_PUBLIC_INVOICES: 'invoices/public/get',
     SEND_REMINDER: 'invoices/alert',
     ASSIGN_INVOICE_DISTANCE: 'invoices/assign',
 };

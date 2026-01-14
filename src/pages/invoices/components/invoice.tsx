@@ -30,37 +30,43 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Invoice: FC = () => {
+type PropsType = {isPublic?: boolean};
+
+export const Invoice: FC<PropsType> = ({isPublic}) => {
     const invoiceID = useSearchParams().get('id');
-    const {data, isLoading, refetch} = useFetchSingleInvoice(invoiceID);
+    const {data, isLoading, refetch} = useFetchSingleInvoice(invoiceID, isPublic);
 
     return (
         <>
-            <Breadcrumbs
-                pages={[
-                    {label: 'Dashboard', href: '/'},
-                    {label: 'Invoices', href: '/invoices'},
-                    {label: `Invoice #${invoiceID}`},
-                ]}
-            />
+            {!isPublic && (
+                <Breadcrumbs
+                    pages={[
+                        {label: 'Dashboard', href: '/'},
+                        {label: 'Invoices', href: '/invoices'},
+                        {label: `Invoice #${invoiceID}`},
+                    ]}
+                />
+            )}
             {data && (
                 <InvoiceContext.Provider
-                    value={{refetchInvoices: refetch, invoice: data, invoiceID}}
+                    value={{refetchInvoices: refetch, invoice: data, invoiceID, isPublic}}
                 >
                     <InvoiceDataBox />
                     <InvoiceLogs />
-                    <Button
-                        onPress={() =>
-                            Share.share({
-                                message: `I have filled up with petrol! Please see the following link to see how much you owe! ${APP_ADDRESS}payments/public/${data.uniqueURL}`,
-                                title: 'Share Petrol Invoice',
-                            })
-                        }
-                        style={styles.floatingButton}
-                        icon={<ShareIcon color={'white'} width={22} height={18} />}
-                    >
-                        Share
-                    </Button>
+                    {!isPublic && (
+                        <Button
+                            onPress={() =>
+                                Share.share({
+                                    message: `I have filled up with petrol! Please see the following link to see how much you owe! ${APP_ADDRESS}payments/public/${data.uniqueURL}`,
+                                    title: 'Share Petrol Invoice',
+                                })
+                            }
+                            style={styles.floatingButton}
+                            icon={<ShareIcon color={'white'} width={22} height={18} />}
+                        >
+                            Share
+                        </Button>
+                    )}
                 </InvoiceContext.Provider>
             )}
             {(isLoading || !data) && (
