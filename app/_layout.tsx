@@ -14,6 +14,7 @@ import {AppProvider} from '@components/appContext/provider';
 import {Alertbox} from '@components/layout/alertBox';
 
 import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
+import {Colors} from '@constants/colors';
 
 Sentry.init({
     dsn: 'https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.us.sentry.io/4506003538575360',
@@ -58,7 +59,7 @@ export default Sentry.wrap(function RootLayout() {
                     <KeyboardProvider>
                         <SplashScreenComponent />
                         <ScrollView
-                            style={{paddingHorizontal: 18}}
+                            style={{paddingHorizontal: 18, backgroundColor: Colors.background}}
                             contentContainerStyle={{
                                 paddingBottom: 18,
                                 flex: 1,
