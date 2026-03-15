@@ -1,5 +1,5 @@
 export type FormatType = 'date' | 'currency' | 'distance' | 'petrol';
-export type InvoiceGroupDataType = {currency: string; distance: string; petrol: string};
+export type InvoiceGroupDataType = {currency?: string; distance?: string; petrol?: string};
 
 export const convertValue = (
     value: string | number,

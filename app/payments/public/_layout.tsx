@@ -14,7 +14,7 @@ const Layout: FC = () => {
             <SafeAreaView style={{flex: 1}}>
                 <Text style={styles.logo} bold>
                     PetrolShare
-                </Text>{' '}
+                </Text>
                 <Slot />
             </SafeAreaView>
         </SafeAreaProvider>

@@ -155,7 +155,7 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
                 },
             },
             {icon: <Invoice style={styles.icon} />, label: 'Invoices', link: 'invoices'},
-            {icon: <History style={styles.icon} />, label: 'History'},
+            {icon: <History style={styles.icon} />, label: 'History', link: 'history'},
         ],
     },
     {
