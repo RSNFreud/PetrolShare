@@ -23,6 +23,9 @@
       "expo-web-browser",
       "expo-secure-store",
       "@react-native-firebase/app",
+      "@react-native-community/datetimepicker",
+      "@sentry/react-native",
+      "expo-sharing",
       [
         "expo-build-properties",
         {
