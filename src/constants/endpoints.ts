@@ -24,4 +24,6 @@ export const ENDPOINTS = {
     ASSIGN_INVOICE_DISTANCE: 'invoices/assign',
     // LOGS
     GET_LOGS: 'logs/get',
+    EDIT_LOG: 'logs/edit',
+    DELETE_LOG: 'logs/delete',
 };

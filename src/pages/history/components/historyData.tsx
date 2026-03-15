@@ -1,7 +1,7 @@
-import {FC, ReactNode} from 'react';
-import {useSelector} from 'react-redux';
+import {FC, ReactNode, useContext} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {FlatSession} from '../hooks/useFetchLogs';
+import {FlatSession, LogType} from '../hooks/useFetchLogs';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
 import {convertValue} from '@pages/invoices/libs/convertValue';
@@ -9,10 +9,17 @@ import {getUserData} from 'src/selectors/common';
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Pencil} from 'src/icons/pencil';
 import {Delete} from 'src/icons/delete';
+import {AppContext} from '@components/appContext/context';
+import {EditInvoice} from './editLog';
+import {DeletePopup} from '@components/deletePopup';
+import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {ENDPOINTS} from '@constants/endpoints';
+import {updateData} from '@pages/login/reducers/auth';
 
 type PropsType = {
     data?: FlatSession;
     isEditable: boolean;
+    refetch: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -62,14 +69,70 @@ const styles = StyleSheet.create({
     },
 });
 
-export const HistoryData: FC<PropsType> = ({data, isEditable}) => {
+export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
     const {distance, userID} = useSelector(getUserData);
+    const {setPopupData} = useContext(AppContext);
+    const dispatch = useDispatch();
 
-    const Button = ({children, isDisabled}: {children: ReactNode; isDisabled: boolean}) => (
-        <ButtonBase disabled={isDisabled} style={[{opacity: isDisabled ? 0.5 : 1}, styles.button]}>
+    const Button = ({
+        children,
+        isDisabled,
+        onPress,
+    }: {
+        children: ReactNode;
+        isDisabled: boolean;
+        onPress?: () => void;
+    }) => (
+        <ButtonBase
+            disabled={isDisabled}
+            style={[{opacity: isDisabled ? 0.5 : 1}, styles.button]}
+            onPress={onPress}
+        >
             {children}
         </ButtonBase>
     );
+
+    const handleRefetch = () => {
+        refetch();
+        dispatch(updateData());
+    };
+
+    const handleEdit = (log: LogType) => {
+        setPopupData({
+            content: <EditInvoice log={log} onUpdate={handleRefetch} />,
+            isVisible: true,
+            title: 'Edit Distance',
+        });
+    };
+
+    const deleteLog = async (logID: string) => {
+        const res = await sendPostRequest(ENDPOINTS.DELETE_LOG, {logID});
+        if (res?.ok) {
+            setPopupData({
+                content: (
+                    <Text style={{lineHeight: 24}}>
+                        The log has been successfully deleted and all associated records have been
+                        removed.
+                    </Text>
+                ),
+            });
+            handleRefetch();
+        }
+    };
+
+    const handleDelete = (log: LogType) => {
+        setPopupData({
+            content: (
+                <DeletePopup
+                    title="Are you sure you want to delete this log?"
+                    content="Once deleted, the log will be permanently removed and cannot be recovered."
+                    onDelete={() => deleteLog(log.logID)}
+                />
+            ),
+            title: 'Delete Log',
+            isVisible: true,
+        });
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -91,14 +154,20 @@ export const HistoryData: FC<PropsType> = ({data, isEditable}) => {
                     </View>
                     {isEditable && (
                         <View style={styles.buttonContainer}>
-                            <Button isDisabled={log.userID !== String(userID)}>
+                            <Button
+                                isDisabled={log.userID !== String(userID)}
+                                onPress={() => handleEdit(log)}
+                            >
                                 <Pencil width={12} height={12} color={'white'} />
                                 <Text bold style={styles.smText}>
                                     Edit
                                 </Text>
                             </Button>
                             <View style={styles.verticalLine} />
-                            <Button isDisabled={log.userID !== String(userID)}>
+                            <Button
+                                isDisabled={log.userID !== String(userID)}
+                                onPress={() => handleDelete(log)}
+                            >
                                 <Delete width={11} height={12} color={'white'} />
                                 <Text bold style={[{color: Colors.red}, styles.smText]}>
                                     Delete

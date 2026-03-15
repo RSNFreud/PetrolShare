@@ -1,6 +1,6 @@
 import React, {createRef, useContext, useRef, useState} from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
-import {z, ZodFormattedError} from 'zod';
+import {z} from 'zod';
 import {PresetType} from '../types';
 import {Input} from '@components/layout/input';
 import {FormValues, defaultValues} from '@constants/common';
@@ -64,12 +64,7 @@ export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => 
         const result = validation.safeParse(values);
 
         if (!result.success) {
-            const errors = result.error?.format() as ZodFormattedError<
-                {
-                    [x: string]: any;
-                },
-                string
-            >;
+            const {properties: errors} = z.treeifyError(result.error);
 
             setData(returnErrorObject(data, errors) as typeof data);
             return;

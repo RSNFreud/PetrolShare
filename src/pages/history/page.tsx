@@ -3,9 +3,10 @@ import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {useFetchLogs} from './hooks/useFetchLogs';
 import {Navigation} from './components/navigation';
 import {Summary} from './components/summary';
-import {HistoryData} from './components/history';
+import {HistoryData} from './components/historyData';
 import {Breadcrumbs} from '@components/layout/breadcrumbs';
 import {Colors} from '@constants/colors';
+import {NoLogsFound} from './components/noLogsFound';
 
 const styles = StyleSheet.create({
     fullPageContainer: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
 });
 
 export const History = () => {
-    const {isLoading, data} = useFetchLogs();
+    const {isLoading, data, refetch} = useFetchLogs();
     const [page, setPage] = useState(0);
 
     if (isLoading)
@@ -36,8 +37,14 @@ export const History = () => {
         <>
             <Breadcrumbs pages={[{label: 'Dashboard', href: '/'}, {label: 'History'}]} />
             <Navigation page={page} data={currentData} changePage={setPage} />
-            <Summary data={currentData} />
-            <HistoryData data={currentData} isEditable={page === 0} />
+            {currentData?.logs.length ? (
+                <>
+                    <Summary data={currentData} />
+                    <HistoryData data={currentData} isEditable={page === 0} refetch={refetch} />
+                </>
+            ) : (
+                <NoLogsFound />
+            )}
         </>
     );
 };

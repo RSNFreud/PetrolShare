@@ -14,6 +14,7 @@ import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
 import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
+import z from 'zod';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -118,9 +119,11 @@ export const useSubmitRequest = (
         const values = returnValuesFromObject(formData);
         const validate = data.validation.safeParse(values);
 
-        const errors = validate.error?.format();
+        if (!validate.success) {
+            const {properties: errors} = z.treeifyError(validate.error);
+            setData(returnErrorObject(formData, errors));
+        }
 
-        setData(returnErrorObject(formData, errors));
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
             return handleOdometerDraft();
         }

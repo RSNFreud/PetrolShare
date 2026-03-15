@@ -1,7 +1,6 @@
 import {Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import {createMMKV} from 'react-native-mmkv';
-import {ZodFormattedError} from 'zod';
 import {FormValues} from '@constants/common';
 
 export const sendCustomEvent = (event: string, data?: any) => {
@@ -40,21 +39,14 @@ export const returnValuesFromObject = (formData: {[key: string]: FormValues}) =>
 
 export const returnErrorObject = (
     formData: {[key: string]: FormValues},
-    errors:
-        | ZodFormattedError<
-              {
-                  [x: string]: any;
-              },
-              string
-          >
-        | undefined,
+    errors: {[key: string]: {errors: string[]} | undefined} | undefined,
 ) =>
     Object.entries(formData).reduce(
         (prevData, [key, value]) => ({
             ...prevData,
             [key]: {
                 value: value.value,
-                error: errors ? errors[key]?._errors[0] : '',
+                error: errors ? errors[key]?.errors[0] : '',
             },
         }),
         {} as {[key: string]: {value: string}},

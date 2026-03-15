@@ -9,12 +9,14 @@ import * as Sentry from '@sentry/react-native';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import * as Network from 'expo-network';
 import {Popup} from '@components/layout/popup';
-import {persistor, store} from 'src/store';
+import {persistor, sagaMiddleware, store} from 'src/store';
 import {AppProvider} from '@components/appContext/provider';
 import {Alertbox} from '@components/layout/alertBox';
 
 import {SplashScreen as SplashScreenComponent} from '@components/layout/splashScreen';
 import {Colors} from '@constants/colors';
+import {useEffect} from 'react';
+import rootSaga from 'src/sagas';
 
 Sentry.init({
     dsn: 'https://9262fe64d3f987c3fdb7f20c0d506641@o4506003486277632.ingest.us.sentry.io/4506003538575360',
@@ -50,6 +52,10 @@ export default Sentry.wrap(function RootLayout() {
         'Roboto-Light': require('src/assets/fonts/Roboto-Light.ttf'),
     });
     const queryClient = new QueryClient();
+
+    useEffect(() => {
+        sagaMiddleware.run(rootSaga);
+    }, []);
 
     return (
         <Provider store={store}>

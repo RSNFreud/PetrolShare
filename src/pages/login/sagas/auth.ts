@@ -1,11 +1,12 @@
 import {router} from 'expo-router';
-import {all, delay, put, takeEvery, takeLatest} from 'redux-saga/effects';
+import {all, call, delay, fork, put, takeEvery, takeLatest} from 'redux-saga/effects';
 import {PayloadAction} from '@reduxjs/toolkit';
 import {fetchData, fetchSelf, login, logOut, updateData} from '../reducers/auth';
 import {STORAGE_KEYS} from '@constants/storage-keys';
-import {deleteItem} from 'src/hooks/common';
+import {deleteItem, getItem} from 'src/hooks/common';
 import {registerForPushNotificationsAsync} from 'src/hooks/notifications';
 import {setPersistData} from 'src/reducers/userPersistData';
+import {setLoading} from 'src/reducers/loadingScreen';
 
 function* registerNotifs({payload}: ReturnType<typeof login.fulfilled>) {
     const email = payload?.emailAddress;
@@ -36,13 +37,24 @@ function* getUpdatedData() {
     yield put(fetchData());
 }
 
+function* fetchSelfData() {
+    const authKey = getItem(STORAGE_KEYS.authKey);
+
+    if (!authKey) {
+        yield put(setLoading(false));
+        return;
+    }
+
+    yield put(fetchSelf());
+}
+
 export default function* authSaga() {
     yield takeLatest(login.pending.type, storeUserData);
     yield takeLatest(updateData, getUpdatedData);
-    yield put(fetchSelf());
     yield all([
         takeLatest(login.fulfilled.type, handleLoginFulfilled),
         takeEvery(fetchSelf.fulfilled.type, handleLoginFulfilled),
         takeLatest(logOut, deleteAuthKey),
+        fork(fetchSelfData),
     ]);
 }

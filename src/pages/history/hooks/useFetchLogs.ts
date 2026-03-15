@@ -2,19 +2,21 @@ import {useQuery} from '@tanstack/react-query';
 import {ENDPOINTS} from '@constants/endpoints';
 import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 
+export type LogType = {
+    fullName: string;
+    distance: number;
+    date: string;
+    logID: string;
+    pending: boolean;
+    userID: string;
+};
+
 export type FlatSession = {
     sessionID: string;
     sessionActive?: boolean;
     sessionStart?: string;
     sessionEnd?: string;
-    logs: {
-        fullName: string;
-        distance: number;
-        date: string;
-        logID: string;
-        pending: boolean;
-        userID: string;
-    }[];
+    logs: LogType[];
 };
 
 export const useFetchLogs = () => {
@@ -26,6 +28,7 @@ export const useFetchLogs = () => {
                 return (await res.json()) as FlatSession[];
             }
         },
-        refetchOnMount: true,
+        staleTime: 0,
+        gcTime: 0,
     });
 };

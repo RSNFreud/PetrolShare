@@ -1,7 +1,7 @@
 import {FC, useContext, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import z, {ZodFormattedError} from 'zod';
+import z from 'zod';
 import {convertValue, InvoiceGroupDataType} from '../libs/convertValue';
 import {DataType} from './invoiceLogs';
 import {Input} from '@components/layout/input';
@@ -55,12 +55,7 @@ export const AssignDistance: FC<PropsType> = ({data, invoiceID, groupData, refet
         const result = validation.safeParse(values);
 
         if (!result.success) {
-            const errors = result.error?.format() as ZodFormattedError<
-                {
-                    [x: string]: any;
-                },
-                string
-            >;
+            const {properties: errors} = z.treeifyError(result.error);
 
             setData(returnErrorObject(formData, errors) as typeof formData);
             return;

@@ -17,10 +17,12 @@ import {Plus} from 'src/icons/plus';
 import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
+import {CreateGroup} from './components/createGroup';
+import {GroupSettings} from './components/groupSettings';
 
 const styles = StyleSheet.create({icon: {height: 20, width: 'auto', color: 'white'}});
 
-export const CUSTOM_POPUPS_ID = {RESET_DISTANCE: 'resetDistance'};
+export const CUSTOM_POPUPS_ID = {RESET_DISTANCE: 'resetDistance', CREATE_GROUP: 'createGroup'};
 
 export type MenuType = {
     icon: React.ReactNode;
@@ -28,6 +30,7 @@ export type MenuType = {
     popup?: PopupType;
     link?: string;
     customPopupId?: (typeof CUSTOM_POPUPS_ID)[keyof typeof CUSTOM_POPUPS_ID];
+    isInviteUser?: boolean;
 };
 
 export const POPUP_IDS = {
@@ -161,8 +164,16 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
     {
         header: 'Group',
         items: [
-            {icon: <AddUser style={styles.icon} />, label: 'Invite User'},
-            {icon: <Pencil style={styles.icon} />, label: 'Create Group'},
+            {
+                icon: <AddUser style={styles.icon} />,
+                label: 'Invite User',
+                isInviteUser: true,
+            },
+            {
+                icon: <Pencil style={styles.icon} />,
+                label: 'Create Group',
+                customPopupId: CUSTOM_POPUPS_ID.CREATE_GROUP,
+            },
             {icon: <Plus style={styles.icon} />, label: 'Join Group'},
             {icon: <Cog style={styles.icon} />, label: 'Group Settings'},
         ],
@@ -175,7 +186,8 @@ export const getCustomPopups = (
     switch (popupID) {
         case CUSTOM_POPUPS_ID.RESET_DISTANCE:
             return <ResetDistance />;
-
+        case CUSTOM_POPUPS_ID.CREATE_GROUP:
+            return <GroupSettings isCreating />;
         default:
             break;
     }

@@ -7,6 +7,7 @@ type PropsType = {
     label: string;
     placeholder: string;
     value?: string;
+    error?: string;
     onChangeText?: (value: string) => void;
     onSubmitEditing?: () => void;
     hasSearchBar?: boolean;
@@ -29,7 +30,7 @@ export const Dropdown: FC<PropsType> = ({
     };
 
     useEffect(() => {
-        if (!items || items.length > 1) return;
+        if (!items?.length || items.length > 1) return;
         onChangeText?.(items[0].value);
     }, [items]);
 

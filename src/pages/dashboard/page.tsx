@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Share, StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
 import {z} from 'zod';
 import {useRouter} from 'expo-router';
@@ -12,6 +12,8 @@ import {Colors} from '@constants/colors';
 import {Text} from '@components/layout/text';
 import {ButtonBase} from '@components/layout/buttonBase';
 import {useMemberRequest} from 'src/hooks/useMemberRequest';
+import {getUserData} from 'src/selectors/common';
+import {APP_ADDRESS} from '@constants/api-routes';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -102,7 +104,7 @@ export const Dashboard = () => {
     const {navigate} = useRouter();
     const {userData, hasSavedOdometer} = useSelector(
         (store: ApplicationStoreType) => ({
-            userData: store.auth,
+            userData: getUserData(store),
             hasSavedOdometer: Boolean(store.odometer.odometerStart),
         }),
         shallowEqual,
@@ -133,7 +135,7 @@ export const Dashboard = () => {
         }
     };
 
-    const onClick = async ({label, popup, link, customPopupId}: MenuType) => {
+    const onClick = async ({label, popup, link, customPopupId, isInviteUser}: MenuType) => {
         setSelectedPopupID(popup?.id || null);
         switch (true) {
             case Boolean(popup):
@@ -154,6 +156,12 @@ export const Dashboard = () => {
                     content: getCustomPopups(
                         customPopupId as (typeof CUSTOM_POPUPS_ID)[keyof typeof CUSTOM_POPUPS_ID],
                     ),
+                });
+                break;
+            case isInviteUser:
+                Share.share({
+                    message: `Hey! Let’s track our petrol expenses together on PetrolShare.\nUse this link to join my group:\n${APP_ADDRESS}short/referral?groupID=${userData.groupID}`,
+                    title: 'Invite to PetrolShare',
                 });
                 break;
             default:

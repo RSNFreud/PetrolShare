@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import {
     Dimensions,
     FlatList,
@@ -86,18 +86,14 @@ export const DropdownOverlay: FC<PropsType> = ({
     value,
     hasSearchBar,
 }) => {
+    const [searchText, setSearchText] = useState('');
+    const filteredItems = useMemo(() => {
+        return items?.filter(item => item.label.toLowerCase().includes(searchText.toLowerCase()));
+    }, [items, searchText]);
+
     const handleClick = (value: string) => {
         onSubmitEditing?.();
         onClick?.(value);
-    };
-
-    const renderSearchbox = () => {
-        if (!hasSearchBar) return null;
-        return (
-            <View style={styles.searchBox}>
-                <Input placeholder="Enter name" style={styles.input} />
-            </View>
-        );
     };
 
     return (
@@ -108,13 +104,21 @@ export const DropdownOverlay: FC<PropsType> = ({
                 </TouchableWithoutFeedback>
             </View>
             <View style={styles.dropdownContainer}>
+                {hasSearchBar && (
+                    <View style={styles.searchBox}>
+                        <Input
+                            placeholder="Enter name"
+                            style={styles.input}
+                            value={searchText}
+                            onChangeText={setSearchText}
+                        />
+                    </View>
+                )}
                 <FlatList
-                    data={items}
+                    data={filteredItems}
                     keyExtractor={({value}) => value}
                     extraData={value}
                     keyboardShouldPersistTaps="handled"
-                    ListHeaderComponent={renderSearchbox}
-                    stickyHeaderIndices={hasSearchBar ? [0] : undefined}
                     showsVerticalScrollIndicator
                     renderItem={({item}) => (
                         <View>
