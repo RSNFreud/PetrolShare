@@ -36,7 +36,12 @@ export const History = () => {
     return (
         <>
             <Breadcrumbs pages={[{label: 'Dashboard', href: '/'}, {label: 'History'}]} />
-            <Navigation page={page} data={currentData} changePage={setPage} />
+            <Navigation
+                page={page}
+                data={currentData}
+                changePage={setPage}
+                isOnePage={data?.length === 1}
+            />
             {currentData?.logs.length ? (
                 <>
                     <Summary data={currentData} />

@@ -13,6 +13,7 @@ export const ENDPOINTS = {
     EDIT_SETTINGS: 'group/update',
     JOIN_GROUP: 'user/change-group',
     VALIDATE_GROUP: 'group/validate-id',
+    CREATE_GROUP: 'group/create',
     // PRESET
     GET_PRESETS: 'preset/get',
     ADD_PRESET: 'preset/add',

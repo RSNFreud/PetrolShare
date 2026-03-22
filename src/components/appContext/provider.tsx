@@ -1,5 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 import {AlertBoxType, AppContext, PopupType, initialState} from './context';
+import {useSelector} from 'react-redux';
+import {getUserData} from 'src/selectors/common';
 
 type PropsType = {
     children: React.ReactNode;
@@ -8,6 +10,7 @@ type PropsType = {
 export const AppProvider: FC<PropsType> = ({children}) => {
     const [popupData, setPopupData] = useState<PopupType>(initialState.popupData);
     const [alertBoxData, setAlertBoxData] = useState<AlertBoxType>(initialState.alertBoxData);
+    const userData = useSelector(getUserData);
 
     useEffect(() => {
         return () => {
@@ -18,6 +21,7 @@ export const AppProvider: FC<PropsType> = ({children}) => {
     return (
         <AppContext.Provider
             value={{
+                isNewUser: !userData.groupID,
                 popupData,
                 setPopupData: data =>
                     setPopupData(originalValues => ({...originalValues, ...data})),

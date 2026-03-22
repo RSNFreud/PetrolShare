@@ -15,6 +15,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {updateData} from '@pages/login/reducers/auth';
 import {Text} from '@components/layout/text';
 import {getUserData} from 'src/selectors/common';
+import {GroupInformation} from '../groupInformation';
+import {ReturnToMenu} from '../returnToMenu';
 
 type PropsType = {
     isCreating?: boolean;
@@ -30,7 +32,7 @@ const validation = (page: number) =>
     });
 
 export const GroupSettings: FC<PropsType> = ({isCreating}) => {
-    const {setPopupData} = useContext(AppContext);
+    const {setPopupData, isNewUser} = useContext(AppContext);
     const [page, setPage] = useState(0);
     const dispatch = useDispatch();
     const [data, setData] = useState<DataType>({
@@ -71,12 +73,33 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
         });
     };
 
+    const createGroup = async () => {
+        const isValid = validate(validation(page), data, setData);
+
+        if (!isValid) return;
+        const parsedData = returnValuesFromObject(data);
+        const res = await sendRequest(ENDPOINTS.CREATE_GROUP, parsedData);
+
+        if (!res?.ok) return;
+
+        const groupID = await res.text();
+        dispatch(updateData());
+
+        setPopupData({
+            content: <GroupInformation groupID={groupID} isGroupCreation />,
+            stickyButton: null,
+            minContentHeight: 0,
+        });
+    };
+
     const getButtons = () => {
         switch (page) {
             case 2:
                 return (
                     <>
-                        <Button>Create New Group</Button>
+                        <Button onPress={createGroup} loading={isLoading}>
+                            Create New Group
+                        </Button>
                         <Button variant="ghost" onPress={() => setPopupData({isVisible: false})}>
                             Cancel
                         </Button>
@@ -85,7 +108,10 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
             case 1:
                 return (
                     <>
-                        <Button onPress={handleContinue} loading={isLoading}>
+                        <Button
+                            onPress={isNewUser ? createGroup : handleContinue}
+                            loading={isLoading}
+                        >
                             {isCreating ? 'Continue' : 'Save Settings'}
                         </Button>
                         <Button variant="ghost" onPress={() => setPage(0)}>
@@ -97,9 +123,16 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                 return (
                     <>
                         <Button onPress={handleContinue}>Continue</Button>
-                        <Button variant="ghost" onPress={() => setPopupData({isVisible: false})}>
-                            Cancel
-                        </Button>
+                        {isNewUser ? (
+                            <ReturnToMenu />
+                        ) : (
+                            <Button
+                                variant="ghost"
+                                onPress={() => setPopupData({isVisible: false})}
+                            >
+                                Cancel
+                            </Button>
+                        )}
                     </>
                 );
         }

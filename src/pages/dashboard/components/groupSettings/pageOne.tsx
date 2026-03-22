@@ -41,7 +41,7 @@ export const GroupPageOne: FC<CommonPropsType & {isCreating?: boolean}> = ({
             {isCreating && (
                 <DescriptionBox content="To finish creating your group, please fill out the following options." />
             )}
-            <View style={[styles.radioContainer, {marginBottom: isCreating ? 20 : 0}]}>
+            <View style={[styles.radioContainer, {marginTop: isCreating ? 20 : 0}]}>
                 {OPTIONS.map(option => (
                     <RadioList
                         key={option.value}

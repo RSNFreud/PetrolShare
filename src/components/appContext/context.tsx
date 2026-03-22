@@ -29,6 +29,7 @@ export type AlertBoxType = {
 };
 
 type AppContextType = {
+    isNewUser: boolean;
     popupData: PopupType;
     setPopupData: (data: {[K in keyof PopupType]?: PopupType[K]}) => void;
     alertBoxData: AlertBoxType;
@@ -36,6 +37,7 @@ type AppContextType = {
 };
 
 export const initialState: AppContextType = {
+    isNewUser: false,
     popupData: {
         isVisible: false,
         title: '',

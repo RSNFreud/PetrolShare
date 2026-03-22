@@ -9,8 +9,10 @@ export const useFetchInvoices = () => {
         queryFn: async () => {
             const res = await sendRequestToBackend({url: ENDPOINTS.GET_INVOICES});
             if (res?.ok) {
-                return (await res.json()) as InvoiceListType;
+                const data: InvoiceListType = await res.json();
+                return data || [];
             }
+            return [];
         },
         refetchOnMount: true,
     });

@@ -1,5 +1,5 @@
 import {StyleSheet, View} from 'react-native';
-import React, {FC} from 'react';
+import React, {ComponentProps, FC} from 'react';
 import {FlatSession} from '../hooks/useFetchLogs';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
@@ -10,6 +10,7 @@ type PropsType = {
     page: number;
     data?: FlatSession;
     changePage: (page: number) => void;
+    isOnePage: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Navigation: FC<PropsType> = ({page, data, changePage}) => {
+export const Navigation: FC<PropsType> = ({page, data, changePage, isOnePage}) => {
     const isFirstPage = page === 0;
 
     if (!data || !data.sessionStart) return null;
@@ -48,24 +49,26 @@ export const Navigation: FC<PropsType> = ({page, data, changePage}) => {
         return new Date(Number(date)).toLocaleDateString();
     };
 
+    const Button: FC<
+        ComponentProps<typeof ButtonBase> & {icon?: ComponentProps<typeof Chevron>}
+    > = ({icon, disabled, onPress}) => (
+        <ButtonBase
+            disabled={disabled}
+            style={[styles.button, {backgroundColor: isFirstPage ? '#242B42' : Colors.secondary}]}
+            onPress={onPress}
+        >
+            <Chevron color={isFirstPage ? '#7A7E93' : 'white'} style={icon?.style} />
+        </ButtonBase>
+    );
+
     return (
         <View style={styles.container}>
-            <ButtonBase style={styles.button} onPress={() => changePage(page + 1)}>
-                <Chevron color={'white'} style={styles.previous} />
-            </ButtonBase>
+            <Button icon={{style: styles.previous}} disabled={isOnePage} />
+
             <Text style={styles.text}>
                 {getDate(data.sessionStart)} - {getDate(data.sessionEnd || '')}
             </Text>
-            <ButtonBase
-                disabled={page === 0}
-                style={[
-                    styles.button,
-                    {backgroundColor: isFirstPage ? '#242B42' : Colors.secondary},
-                ]}
-                onPress={() => changePage(page - 1)}
-            >
-                <Chevron color={isFirstPage ? '#7A7E93' : 'white'} />
-            </ButtonBase>
+            <Button disabled={page === 0} onPress={() => changePage(page - 1)} />
         </View>
     );
 };

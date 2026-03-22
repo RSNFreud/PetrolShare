@@ -3,7 +3,7 @@ import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
 import {defaultValues} from '@constants/common';
 import {ENDPOINTS} from '@constants/endpoints';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {DataType, returnValuesFromObject, validate} from 'src/hooks/common';
 import {useValidationRequest} from 'src/hooks/useValidationRequest';
@@ -12,6 +12,7 @@ import z from 'zod';
 import {ErrorBox} from '@components/layout/errorBox';
 import {ConfirmLeave} from './confirmLeave';
 import {GroupInformation} from './groupInformation';
+import {ReturnToMenu} from './returnToMenu';
 
 const styles = StyleSheet.create({
     container: {
@@ -35,7 +36,7 @@ export const JoinGroup = () => {
     const [data, setData] = useState<DataType>({groupID: defaultValues});
 
     const [validationError, setValidationError] = useState('');
-    const {setPopupData} = useContext(AppContext);
+    const {setPopupData, isNewUser} = useContext(AppContext);
 
     const handleJoinGroup = async () => {
         const parsedData = returnValuesFromObject(data);
@@ -44,6 +45,12 @@ export const JoinGroup = () => {
 
         setPopupData({content: <GroupInformation groupID={parsedData.groupID} />});
     };
+
+    const JoinGroup = () => (
+        <Button loading={isLoading} onPress={handleSubmit}>
+            Join Group
+        </Button>
+    );
 
     const Buttons = () => (
         <View style={styles.buttonContainer}>
@@ -77,6 +84,19 @@ export const JoinGroup = () => {
         }
     };
 
+    useEffect(() => {
+        if (!isNewUser) return;
+
+        setPopupData({
+            stickyButton: (
+                <>
+                    <JoinGroup />
+                    <ReturnToMenu />
+                </>
+            ),
+        });
+    }, [isNewUser, isLoading, data]);
+
     return (
         <View style={styles.container}>
             <View style={styles.groupInput}>
@@ -89,9 +109,7 @@ export const JoinGroup = () => {
                 />
                 {validationError && <ErrorBox content={validationError} />}
             </View>
-            <Button loading={isLoading} onPress={handleSubmit}>
-                Join Group
-            </Button>
+            {!isNewUser && <JoinGroup />}
         </View>
     );
 };

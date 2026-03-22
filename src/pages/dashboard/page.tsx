@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Share, StyleSheet, View} from 'react-native';
 import {shallowEqual, useSelector} from 'react-redux';
 import {z} from 'zod';
@@ -14,6 +14,7 @@ import {ButtonBase} from '@components/layout/buttonBase';
 import {useMemberRequest} from 'src/hooks/useMemberRequest';
 import {getUserData} from 'src/selectors/common';
 import {APP_ADDRESS} from '@constants/api-routes';
+import {StartScreen} from './components/startScreen';
 
 const styles = StyleSheet.create({
     userCard: {
@@ -109,7 +110,7 @@ export const Dashboard = () => {
         }),
         shallowEqual,
     );
-    const {setPopupData, popupData} = useContext(AppContext);
+    const {setPopupData, popupData, isNewUser} = useContext(AppContext);
     const [selectedPopupID, setSelectedPopupID] = React.useState<string | null>(null);
     const memberList = useMemberRequest(
         userData.userID,
@@ -179,13 +180,27 @@ export const Dashboard = () => {
         }
     };
 
+    useEffect(() => {
+        if (userData.groupID) return;
+
+        setPopupData({
+            hasClose: false,
+            title: 'Welcome',
+            isVisible: true,
+            minContentHeight: 456,
+            content: <StartScreen />,
+        });
+    }, [userData]);
+
     return (
         <>
             <View style={styles.userCard}>
                 <Text style={styles.username}>{userData.fullName}</Text>
-                <Text style={styles.distance}>
-                    {userData.currentMileage || 0} {userData.distance}
-                </Text>
+                {!isNewUser && (
+                    <Text style={styles.distance}>
+                        {userData.currentMileage || 0} {userData.distance}
+                    </Text>
+                )}
             </View>
             <View style={styles.menuContainer}>
                 {data?.map(menuTab => (

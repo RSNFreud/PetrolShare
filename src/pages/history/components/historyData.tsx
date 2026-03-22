@@ -149,7 +149,7 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
                     {isEditable && (
                         <View style={styles.buttonContainer}>
                             <Button
-                                disabled={log.userID !== String(userID)}
+                                disabled={String(log.userID) !== String(userID)}
                                 onPress={() => handleEdit(log)}
                             >
                                 <Pencil width={12} height={12} color={'white'} />
@@ -159,7 +159,7 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
                             </Button>
                             <View style={styles.verticalLine} />
                             <Button
-                                disabled={log.userID !== String(userID)}
+                                disabled={String(log.userID) !== String(userID)}
                                 onPress={() => handleDelete(log)}
                             >
                                 <Delete width={11} height={12} color={'white'} />
