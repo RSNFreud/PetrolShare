@@ -36,6 +36,7 @@ export const InvoiceLogs: FC = () => {
 
     const {userID} = useSelector(getUserData);
 
+    const otherUserData = parsedData.filter(data => parseInt(data.userID) !== parseInt(userID));
     const currentUserData = parsedData.find(data => parseInt(data.userID) === parseInt(userID));
 
     return (
@@ -43,15 +44,13 @@ export const InvoiceLogs: FC = () => {
             {currentUserData && (
                 <>
                     <Log data={currentUserData} isCurrentUser />
-                    <View style={styles.horizontalLine} />
+                    {Boolean(otherUserData.length) && <View style={styles.horizontalLine} />}
                 </>
             )}
             <View style={styles.logs}>
-                {parsedData
-                    .filter(data => parseInt(data.userID) !== parseInt(userID))
-                    .map(data => (
-                        <Log key={data.userID} data={data} />
-                    ))}
+                {otherUserData.map(data => (
+                    <Log key={data.userID} data={data} />
+                ))}
             </View>
         </ScrollView>
     );

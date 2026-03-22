@@ -1,4 +1,4 @@
-import {FC, ReactNode, useContext} from 'react';
+import {ComponentProps, FC, useContext} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {FlatSession, LogType} from '../hooks/useFetchLogs';
@@ -12,9 +12,9 @@ import {Delete} from 'src/icons/delete';
 import {AppContext} from '@components/appContext/context';
 import {EditInvoice} from './editLog';
 import {DeletePopup} from '@components/deletePopup';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/endpoints';
 import {updateData} from '@pages/login/reducers/auth';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 type PropsType = {
     data?: FlatSession;
@@ -73,19 +73,13 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
     const {distance, userID} = useSelector(getUserData);
     const {setPopupData} = useContext(AppContext);
     const dispatch = useDispatch();
+    const {sendRequest} = useValidationRequest();
 
-    const Button = ({
-        children,
-        isDisabled,
-        onPress,
-    }: {
-        children: ReactNode;
-        isDisabled: boolean;
-        onPress?: () => void;
-    }) => (
+    const Button = ({children, onPress, disabled, ...rest}: ComponentProps<typeof ButtonBase>) => (
         <ButtonBase
-            disabled={isDisabled}
-            style={[{opacity: isDisabled ? 0.5 : 1}, styles.button]}
+            {...rest}
+            disabled={disabled}
+            style={[{opacity: disabled ? 0.5 : 1}, styles.button]}
             onPress={onPress}
         >
             {children}
@@ -106,7 +100,7 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
     };
 
     const deleteLog = async (logID: string) => {
-        const res = await sendPostRequest(ENDPOINTS.DELETE_LOG, {logID});
+        const res = await sendRequest(ENDPOINTS.DELETE_LOG, {logID});
         if (res?.ok) {
             setPopupData({
                 content: (
@@ -155,7 +149,7 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
                     {isEditable && (
                         <View style={styles.buttonContainer}>
                             <Button
-                                isDisabled={log.userID !== String(userID)}
+                                disabled={log.userID !== String(userID)}
                                 onPress={() => handleEdit(log)}
                             >
                                 <Pencil width={12} height={12} color={'white'} />
@@ -165,7 +159,7 @@ export const HistoryData: FC<PropsType> = ({data, isEditable, refetch}) => {
                             </Button>
                             <View style={styles.verticalLine} />
                             <Button
-                                isDisabled={log.userID !== String(userID)}
+                                disabled={log.userID !== String(userID)}
                                 onPress={() => handleDelete(log)}
                             >
                                 <Delete width={11} height={12} color={'white'} />

@@ -4,24 +4,14 @@ import {PopupType} from '../page';
 import {useSubmitRequest} from './useSubmitRequest';
 import {defaultValues, FormValues} from '@constants/common';
 import {Button} from '@components/layout/button';
-import {Colors} from '@constants/colors';
-import {Text} from '@components/layout/text';
 import {ErrorBox} from '@components/layout/errorBox';
+import {DescriptionBox} from '@components/layout/descriptionBox';
 
 type PropsType = {data: PopupType};
 
 const styles = StyleSheet.create({
     container: {gap: 20},
     input: {gap: 15},
-    box: {
-        paddingHorizontal: 15,
-        paddingVertical: 10,
-        borderRadius: 4,
-        borderColor: Colors.border,
-        borderWidth: 1,
-        borderStyle: 'solid',
-    },
-    text: {fontSize: 16, lineHeight: 21},
     buttonContainer: {
         gap: 16,
     },
@@ -78,11 +68,7 @@ export const PopupWrapper: FC<PropsType> = ({data}) => {
 
     return (
         <View style={styles.container}>
-            {data.pretext && (
-                <View style={styles.box}>
-                    <Text style={styles.text}>{data.pretext}</Text>
-                </View>
-            )}
+            {data.pretext && <DescriptionBox content={data.pretext} />}
             {data.children && (
                 <View style={styles.input}>
                     {data.children.map((child, index) => {

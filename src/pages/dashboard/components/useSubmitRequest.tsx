@@ -1,20 +1,19 @@
 import {useContext, useEffect, useState} from 'react';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
-import {useRouter} from 'expo-router';
 import {Keyboard} from 'react-native';
 import {GetMemberType, POPUP_IDS} from '../constants';
 import {PopupType} from '../page';
 import {setOdometerData} from '../reducers/odometer';
 import {OdometerAlert} from './odometerAlert';
 import {ENDPOINTS} from '@constants/endpoints';
-import {sendPostRequest, sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
+import {sendRequestToBackend} from 'src/hooks/sendRequestToBackend';
 import {ApplicationStoreType} from 'src/reducers';
 import {updateData} from '@pages/login/reducers/auth';
 import {Text} from '@components/layout/text';
 import {FormValues} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
-import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
-import z from 'zod';
+import {returnValuesFromObject, validate} from 'src/hooks/common';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 const getAPIURL = (id: string) => {
     switch (id) {
@@ -23,8 +22,6 @@ const getAPIURL = (id: string) => {
             return ENDPOINTS.ADD_DISTANCE;
         case POPUP_IDS.ASSIGN_DISTANCE:
             return ENDPOINTS.ASSIGN_DISTANCE;
-        case POPUP_IDS.PETROL:
-            return ENDPOINTS.ADD_PETROL;
         default:
             break;
     }
@@ -50,9 +47,7 @@ export const useSubmitRequest = (
     id: string,
     formData: {[key: string]: FormValues},
 ) => {
-    const [isLoading, setIsLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    const {navigate} = useRouter();
 
     const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const dispatch = useDispatch();
@@ -65,6 +60,7 @@ export const useSubmitRequest = (
         }),
         shallowEqual,
     );
+    const {sendRequest, isLoading} = useValidationRequest();
 
     useEffect(() => {
         if (
@@ -116,18 +112,13 @@ export const useSubmitRequest = (
         setData: (data: {[key: string]: {value: string}}) => void,
     ) => {
         if (!data.validation) return;
-        const values = returnValuesFromObject(formData);
-        const validate = data.validation.safeParse(values);
-
-        if (!validate.success) {
-            const {properties: errors} = z.treeifyError(validate.error);
-            setData(returnErrorObject(formData, errors));
-        }
+        const isValid = validate(data.validation, formData, setData);
 
         if (data.id === POPUP_IDS.ODOMETER && !formData['odemeterEnd']?.value) {
             return handleOdometerDraft();
         }
-        if (validate.success) handleSubmit(values, data);
+
+        if (isValid) handleSubmit(returnValuesFromObject(formData), data);
     };
 
     const handleSubmit = async (values: {[key: string]: string}, data: PopupType) => {
@@ -135,7 +126,6 @@ export const useSubmitRequest = (
         const url = getAPIURL(id);
         let parsedData: {[key: string]: string} = {};
         if (!url) return;
-        setIsLoading(true);
         Keyboard.dismiss();
 
         switch (id) {
@@ -154,57 +144,31 @@ export const useSubmitRequest = (
                 parsedData.distance = values?.totalDistance;
                 parsedData.userID = values?.username;
                 break;
-            case POPUP_IDS.PETROL:
-                parsedData.totalPrice = values?.totalCost;
-                parsedData.litersFilled = values?.litersFilled;
-                parsedData.odometer = values?.currentOdometer;
-                break;
             default:
+                parsedData = values;
                 break;
         }
 
-        const res = await sendPostRequest(url, parsedData);
+        await sendRequest(url, parsedData);
 
-        if (res?.ok) {
-            setTimeout(() => setIsLoading(false), 300);
-            dispatch(updateData());
+        await dispatch(updateData());
 
-            let successText = data.successText;
+        let successText = data.successText;
 
-            if (id === POPUP_IDS.ODOMETER || id === POPUP_IDS.SPECIFIC_DISTANCE) {
-                successText = successText
-                    .replace(/\$distance/, `${parsedData.distance} ${distance}`)
-                    .replace(
-                        /\$total_distance/,
-                        `${Number(currentMileage) + Number(parsedData.distance)} ${distance}`,
-                    );
-            }
-            if (id === POPUP_IDS.ASSIGN_DISTANCE) {
-                successText = successText
-                    .replace(/\$distance/, `${parsedData.distance} ${distance}`)
-                    .replace(/\$username/, await getUsername(values?.username));
-            }
-            if (id === POPUP_IDS.PETROL) {
-                const data = await res.json();
-                setPopupData({isVisible: false});
-                navigate(`/invoices?id=${data}`);
-                return;
-            }
-            showSuccessPopup(successText);
-        } else {
-            setTimeout(() => setIsLoading(false), 300);
-
-            switch (id) {
-                case POPUP_IDS.PETROL:
-                    setErrors({
-                        general:
-                            'You have no distance tracked in your session for us to generate a payment for.',
-                    });
-                    return;
-                default:
-                    break;
-            }
+        if (id === POPUP_IDS.ODOMETER || id === POPUP_IDS.SPECIFIC_DISTANCE) {
+            successText = successText
+                .replace(/\$distance/, `${parsedData.distance} ${distance}`)
+                .replace(
+                    /\$total_distance/,
+                    `${Number(currentMileage) + Number(parsedData.distance)} ${distance}`,
+                );
         }
+        if (id === POPUP_IDS.ASSIGN_DISTANCE) {
+            successText = successText
+                .replace(/\$distance/, `${parsedData.distance} ${distance}`)
+                .replace(/\$username/, await getUsername(values?.username));
+        }
+        showSuccessPopup(successText);
     };
 
     return {isLoading, handleValidate};

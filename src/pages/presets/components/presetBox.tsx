@@ -8,7 +8,7 @@ import {Delete} from 'src/icons/delete';
 import {AppContext} from '@components/appContext/context';
 import {DeletePopup} from '@components/deletePopup';
 import {ENDPOINTS} from '@constants/endpoints';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 const styles = StyleSheet.create({
     container: {
@@ -70,9 +70,10 @@ export const PresetBox: FC<PropsType> = ({
     presetID,
 }) => {
     const {setPopupData} = useContext(AppContext);
+    const {sendRequest} = useValidationRequest();
 
     const deletePreset = async () => {
-        const res = await sendPostRequest(ENDPOINTS.DELETE_PRESET, {presetID});
+        const res = await sendRequest(ENDPOINTS.DELETE_PRESET, {presetID});
         if (!res?.ok) return;
         onDelete();
 

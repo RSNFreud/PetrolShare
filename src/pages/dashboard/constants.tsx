@@ -2,7 +2,7 @@ import {z} from 'zod';
 import {StyleSheet} from 'react-native';
 import {PopupType} from './page';
 import {ResetDistance} from './components/resetDistance';
-import {descriptionBox, input, seperator} from './components/popupHelpers';
+import {input} from './components/popupHelpers';
 import {MISSING_VALUE} from '@constants/common';
 import {AddUser} from 'src/icons/add-user';
 import {Cog} from 'src/icons/cog';
@@ -17,12 +17,19 @@ import {Plus} from 'src/icons/plus';
 import {ResetArrow} from 'src/icons/reset-arrow';
 import {Road} from 'src/icons/road';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
-import {CreateGroup} from './components/createGroup';
+import {Petrol as PetrolScreen} from './components/petrol';
 import {GroupSettings} from './components/groupSettings';
+import {JoinGroup} from './components/joinGroup';
 
 const styles = StyleSheet.create({icon: {height: 20, width: 'auto', color: 'white'}});
 
-export const CUSTOM_POPUPS_ID = {RESET_DISTANCE: 'resetDistance', CREATE_GROUP: 'createGroup'};
+export const CUSTOM_POPUPS_ID = {
+    RESET_DISTANCE: 'reset_distance',
+    CREATE_GROUP: 'create_group',
+    PETROL: 'petrol',
+    GROUP_SETTINGS: 'group_settings',
+    JOIN_GROUP: 'join_group',
+};
 
 export type MenuType = {
     icon: React.ReactNode;
@@ -34,11 +41,10 @@ export type MenuType = {
 };
 
 export const POPUP_IDS = {
-    SPECIFIC_DISTANCE: 'Specific Distance',
+    SPECIFIC_DISTANCE: 'specific_distance',
     ODOMETER: 'odometer',
     ASSIGN_DISTANCE: 'assign_distance',
     PRESET: 'preset',
-    PETROL: 'petrol',
 };
 
 export type GetMemberType = {fullName: string; userID: number}[];
@@ -101,6 +107,8 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
                 icon: <Road style={styles.icon} />,
                 label: 'Assign Distance',
                 popup: {
+                    pretext:
+                        'To apply distance to another user, enter the distance amount. This will prompt the other user to accept the applied distance.',
                     id: POPUP_IDS.ASSIGN_DISTANCE,
                     children: [],
                     buttons: [{label: 'Add Distance', isSubmitButton: true}],
@@ -125,37 +133,7 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
             {
                 icon: <Petrol style={styles.icon} />,
                 label: 'Add Petrol',
-                popup: {
-                    id: POPUP_IDS.PETROL,
-                    children: [
-                        descriptionBox(
-                            'Clicking the "Add Petrol" button will generate a payment log based on the distance tracked during your current session.',
-                        ),
-                        seperator(5),
-                        input('Total Cost', 'Enter total cost of refueling', 'totalCost', {
-                            keyboardType: 'numeric',
-                        }),
-                        input('Liters Filled', 'Enter amount of liters filled', 'litersFilled', {
-                            keyboardType: 'numeric',
-                        }),
-                        input(
-                            'Current Odometer',
-                            'Enter the current odometer value',
-                            'currentOdometer',
-                            {
-                                keyboardType: 'numeric',
-                            },
-                        ),
-                    ],
-                    buttons: [{label: 'Add Petrol', isSubmitButton: true}],
-                    validation: z.object({
-                        totalCost: stringToNumberValidation,
-                        litersFilled: stringToNumberValidation,
-                        currentOdometer: stringToNumberValidation,
-                    }),
-                    successText:
-                        'A request to add $distance has been sent to $username! They’ll get a notification to accept it, and once they do, it’ll be assigned. For now, it’s in draft mode.',
-                },
+                customPopupId: CUSTOM_POPUPS_ID.PETROL,
             },
             {icon: <Invoice style={styles.icon} />, label: 'Invoices', link: 'invoices'},
             {icon: <History style={styles.icon} />, label: 'History', link: 'history'},
@@ -174,8 +152,16 @@ export const getMenuOptions = (): {header: string; items: MenuType[]}[] => [
                 label: 'Create Group',
                 customPopupId: CUSTOM_POPUPS_ID.CREATE_GROUP,
             },
-            {icon: <Plus style={styles.icon} />, label: 'Join Group'},
-            {icon: <Cog style={styles.icon} />, label: 'Group Settings'},
+            {
+                icon: <Plus style={styles.icon} />,
+                label: 'Join Group',
+                customPopupId: CUSTOM_POPUPS_ID.JOIN_GROUP,
+            },
+            {
+                icon: <Cog style={styles.icon} />,
+                label: 'Group Settings',
+                customPopupId: CUSTOM_POPUPS_ID.GROUP_SETTINGS,
+            },
         ],
     },
 ];
@@ -188,6 +174,12 @@ export const getCustomPopups = (
             return <ResetDistance />;
         case CUSTOM_POPUPS_ID.CREATE_GROUP:
             return <GroupSettings isCreating />;
+        case CUSTOM_POPUPS_ID.PETROL:
+            return <PetrolScreen />;
+        case CUSTOM_POPUPS_ID.GROUP_SETTINGS:
+            return <GroupSettings />;
+        case CUSTOM_POPUPS_ID.JOIN_GROUP:
+            return <JoinGroup />;
         default:
             break;
     }

@@ -6,12 +6,12 @@ import {AssignDistance} from './assignDistance';
 import {DataType} from './invoiceLogs';
 import {ButtonBase} from '@components/layout/buttonBase';
 import {ENDPOINTS} from '@constants/endpoints';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {Bell} from 'src/icons/bell';
 import {Road} from 'src/icons/road';
 import {Text} from '@components/layout/text';
 import {Colors} from '@constants/colors';
 import {AppContext} from '@components/appContext/context';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 const styles = StyleSheet.create({
     text: {
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
 
 export const Log = ({data, isCurrentUser}: {data: DataType; isCurrentUser?: boolean}) => {
     const [isPressed, setIsPressed] = useState(false);
+    const {sendRequest} = useValidationRequest();
     const {invoice, invoiceID, refetchInvoices, isPublic} = useContext(InvoiceContext);
     const {setPopupData} = useContext(AppContext);
     const {children, props} = ((): {
@@ -98,7 +99,7 @@ export const Log = ({data, isCurrentUser}: {data: DataType; isCurrentUser?: bool
                 disabled: isPressed,
                 onPress: () => {
                     setIsPressed(true);
-                    sendPostRequest(ENDPOINTS.SEND_REMINDER, {
+                    sendRequest(ENDPOINTS.SEND_REMINDER, {
                         userID: data.userID,
                         invoiceID,
                     });

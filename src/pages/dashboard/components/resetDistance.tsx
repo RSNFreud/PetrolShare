@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppContext} from '@components/appContext/context';
@@ -6,8 +6,8 @@ import {Button} from '@components/layout/button';
 import {Text} from '@components/layout/text';
 import {ENDPOINTS} from '@constants/endpoints';
 import {updateData} from '@pages/login/reducers/auth';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {getDistanceFormat, getUserData} from 'src/selectors/common';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 const styles = StyleSheet.create({
     title: {fontSize: 18, lineHeight: 27, marginBottom: 10},
@@ -20,14 +20,13 @@ export const ResetDistance = () => {
     const {setPopupData} = useContext(AppContext);
     const distance = useSelector(getDistanceFormat);
     const {groupID} = useSelector(getUserData);
-    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
+    const {sendRequest, isLoading} = useValidationRequest();
 
     const handleReset = async () => {
-        setIsLoading(true);
-        const res = await sendPostRequest(ENDPOINTS.RESET_DISTANCE, {groupID});
+        const res = await sendRequest(ENDPOINTS.RESET_DISTANCE, {groupID});
         let content = <></>;
-        if (!res?.ok) {
+        if (!res) {
             content = <>We couldn't reset the distance right now. Please try again shortly.</>;
         } else {
             content = (
@@ -37,7 +36,6 @@ export const ResetDistance = () => {
             );
         }
         setPopupData({content: <Text style={{lineHeight: 24}}>{content}</Text>});
-        setIsLoading(false);
         dispatch(updateData());
     };
 

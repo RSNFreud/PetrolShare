@@ -17,6 +17,8 @@ export type PopupType = {
     hasClose: boolean;
     content?: React.ReactNode;
     isVisible: boolean;
+    minContentHeight?: number | null;
+    stickyButton?: React.ReactNode;
 };
 
 export type AlertBoxType = {

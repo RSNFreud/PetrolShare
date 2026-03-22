@@ -3,14 +3,14 @@ import {View, StyleSheet, TextInput} from 'react-native';
 import {z} from 'zod';
 import {PresetType} from '../types';
 import {Input} from '@components/layout/input';
-import {FormValues, defaultValues} from '@constants/common';
+import {defaultValues} from '@constants/common';
 import {Button} from '@components/layout/button';
 import {commonValidation, stringToNumberValidation} from 'src/utils/validation';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/endpoints';
 import {AppContext} from '@components/appContext/context';
 import {Text} from '@components/layout/text';
-import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
+import {DataType, validate} from 'src/hooks/common';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 type PropsType = {
     presetData?: PresetType;
@@ -41,8 +41,8 @@ const formOptions = [
 
 export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => {
     const {setPopupData} = useContext(AppContext);
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<{presetName: FormValues; distance: FormValues}>({
+    const {sendRequest, isLoading} = useValidationRequest();
+    const [data, setData] = useState<DataType>({
         presetName: presetData ? {...defaultValues, value: presetData.presetName} : defaultValues,
         distance: presetData
             ? {...defaultValues, value: String(presetData.distance)}
@@ -60,25 +60,19 @@ export const PresetPopup: React.FC<PropsType> = ({presetData, fetchPresets}) => 
     };
 
     const handleSubmit = async () => {
-        const values = returnValuesFromObject(data);
-        const result = validation.safeParse(values);
+        const isValid = validate(validation, data, setData);
 
-        if (!result.success) {
-            const {properties: errors} = z.treeifyError(result.error);
-
-            setData(returnErrorObject(data, errors) as typeof data);
+        if (!isValid) {
             return;
         }
-        setIsLoading(true);
 
         const isEdit = presetData?.presetID;
 
-        const res = await sendPostRequest(isEdit ? ENDPOINTS.EDIT_PRESET : ENDPOINTS.ADD_PRESET, {
+        const res = await sendRequest(isEdit ? ENDPOINTS.EDIT_PRESET : ENDPOINTS.ADD_PRESET, {
             ...presetData,
             presetName: data.presetName.value,
             distance: data.distance.value,
         });
-        setIsLoading(false);
         if (!res?.ok) return;
         setPopupData({
             content: (

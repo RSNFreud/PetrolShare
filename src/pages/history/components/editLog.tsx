@@ -4,16 +4,16 @@ import {FC, useContext, useState} from 'react';
 import {Button} from '@components/layout/button';
 import {StyleSheet, View} from 'react-native';
 import {defaultValues} from '@constants/common';
-import z, {set} from 'zod';
+import z from 'zod';
 import {commonValidation} from 'src/utils/validation';
-import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/endpoints';
 import {AppContext} from '@components/appContext/context';
 import {convertValue} from '@pages/invoices/libs/convertValue';
 import {useSelector} from 'react-redux';
 import {getUserData} from 'src/selectors/common';
 import {Text} from '@components/layout/text';
+import {DataType, validate} from 'src/hooks/common';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 type PropsType = {
     log: LogType;
@@ -31,29 +31,23 @@ const validation = z.object({
 });
 
 export const EditInvoice: FC<PropsType> = ({log, onUpdate}) => {
-    const [data, setData] = useState({
+    const [data, setData] = useState<DataType>({
         distance: defaultValues,
     });
     const {setPopupData} = useContext(AppContext);
-    const [isLoading, setIsLoading] = useState(false);
     const {distance} = useSelector(getUserData);
+    const {isLoading, sendRequest} = useValidationRequest();
 
     const updateDistance = async () => {
-        const values = returnValuesFromObject(data);
-        const result = validation.safeParse(values);
+        const isValid = validate(validation, data, setData);
 
-        if (!result.success) {
-            const {properties: errors} = z.treeifyError(result.error);
-
-            setData(returnErrorObject(data, errors) as typeof data);
+        if (!isValid) {
             return;
         }
-        setIsLoading(true);
-        const res = await sendPostRequest(ENDPOINTS.EDIT_LOG, {
+        const res = await sendRequest(ENDPOINTS.EDIT_LOG, {
             logID: log.logID,
             distance: data.distance.value,
         });
-        setIsLoading(false);
         if (res?.ok) {
             setPopupData({
                 content: (

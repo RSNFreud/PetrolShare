@@ -8,6 +8,7 @@ import {ButtonBase} from './buttonBase';
 import {Colors} from '@constants/colors';
 import {Cross} from 'src/icons/cross';
 import {AppContext} from '@components/appContext/context';
+import {PopupFooter} from './popupFooter';
 
 const styles = StyleSheet.create({
     overlay: {backgroundColor: 'rgba(35, 35, 35, 0.8)', height: Dimensions.get('window').height},
@@ -40,7 +41,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
     },
-    content: {paddingVertical: 30, paddingHorizontal: 18, backgroundColor: Colors.secondary},
+    content: {
+        paddingVertical: 30,
+        paddingHorizontal: 18,
+        backgroundColor: Colors.secondary,
+        flex: 1,
+    },
+    stickyButtonContainer: {
+        padding: 16,
+        backgroundColor: Colors.primary,
+        borderTopColor: Colors.border,
+        gap: 10,
+    },
 });
 
 const TIME_TO_CLOSE = 300;
@@ -93,7 +105,7 @@ export const Popup = () => {
                 useNativeDriver: false,
             }),
         ]).start(_e => {
-            setPopupData({isVisible: false});
+            setPopupData({isVisible: false, stickyButton: null, minContentHeight: null});
             setIsPopupOpen(false);
             position.setValue(1000);
         });
@@ -107,26 +119,45 @@ export const Popup = () => {
             transparent
             onRequestClose={handleClose}
         >
-            <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
+            {popupData.hasClose ? (
+                <Pressable android_disableSound style={styles.overlay} onPress={handleClose} />
+            ) : (
+                <View style={styles.overlay} />
+            )}
             <Animated.View
-                style={[styles.popup, {transform: [{translateY: position}], maxHeight: heightAnim}]}
+                style={[
+                    styles.popup,
+                    {
+                        transform: [{translateY: position}],
+                        maxHeight: heightAnim,
+                        ...(popupData.minContentHeight && {
+                            minHeight: popupData.minContentHeight || 0,
+                        }),
+                    },
+                ]}
             >
                 <KeyboardAwareScrollView
                     stickyHeaderIndices={[0]}
                     scrollToOverflowEnabled={false}
                     overScrollMode="never"
                     keyboardShouldPersistTaps="always"
+                    style={{backgroundColor: Colors.secondary}}
                 >
                     <View>
                         <View style={styles.header}>
                             <Text bold>{popupData.title}</Text>
-                            <ButtonBase style={styles.close} onPress={handleClose}>
-                                <Cross color="white" />
-                            </ButtonBase>
+                            {popupData.hasClose ? (
+                                <ButtonBase style={styles.close} onPress={handleClose}>
+                                    <Cross color="white" />
+                                </ButtonBase>
+                            ) : (
+                                <View style={styles.close} />
+                            )}
                         </View>
                     </View>
                     <View style={styles.content}>{popupData.content}</View>
                 </KeyboardAwareScrollView>
+                {popupData.stickyButton && <PopupFooter>{popupData.stickyButton}</PopupFooter>}
             </Animated.View>
         </Modal>
     );

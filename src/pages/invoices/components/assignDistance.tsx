@@ -9,13 +9,13 @@ import {Dropdown} from '@components/layout/dropdown/dropdown';
 import {getUserData} from 'src/selectors/common';
 import {useMemberRequest} from 'src/hooks/useMemberRequest';
 import {Button} from '@components/layout/button';
-import {FormValues, MISSING_VALUE, defaultValues} from '@constants/common';
+import {MISSING_VALUE, defaultValues} from '@constants/common';
 import {commonValidation} from 'src/utils/validation';
-import {returnErrorObject, returnValuesFromObject} from 'src/hooks/common';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
+import {DataType as FormDataType, validate} from 'src/hooks/common';
 import {ENDPOINTS} from '@constants/endpoints';
 import {AppContext} from '@components/appContext/context';
 import {Text} from '@components/layout/text';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 type PropsType = {
     data: DataType;
@@ -35,8 +35,9 @@ export const AssignDistance: FC<PropsType> = ({data, invoiceID, groupData, refet
     const {userID} = useSelector(getUserData);
     const {setPopupData} = useContext(AppContext);
     const members = useMemberRequest(userID, true);
-    const [isLoading, setIsLoading] = useState(false);
-    const [formData, setData] = useState<{user: FormValues; distance: FormValues}>({
+    const {sendRequest, isLoading} = useValidationRequest();
+
+    const [formData, setData] = useState<FormDataType>({
         user: defaultValues,
         distance: defaultValues,
     });
@@ -51,17 +52,12 @@ export const AssignDistance: FC<PropsType> = ({data, invoiceID, groupData, refet
     });
 
     const handleSubmit = async () => {
-        const values = returnValuesFromObject(formData);
-        const result = validation.safeParse(values);
+        const isValid = validate(validation, formData, setData);
 
-        if (!result.success) {
-            const {properties: errors} = z.treeifyError(result.error);
-
-            setData(returnErrorObject(formData, errors) as typeof formData);
+        if (!isValid) {
             return;
         }
-        setIsLoading(true);
-        const res = await sendPostRequest(ENDPOINTS.ASSIGN_INVOICE_DISTANCE, {
+        const res = await sendRequest(ENDPOINTS.ASSIGN_INVOICE_DISTANCE, {
             invoiceID,
             userID: formData.user.value,
             distance: formData.distance.value,
@@ -80,7 +76,6 @@ export const AssignDistance: FC<PropsType> = ({data, invoiceID, groupData, refet
             });
             refetchInvoices();
         }
-        setIsLoading(false);
     };
 
     return (

@@ -10,6 +10,9 @@ export const ENDPOINTS = {
     // GROUP
     GET_MEMBERS: 'group/get-members',
     RESET_DISTANCE: 'group/reset',
+    EDIT_SETTINGS: 'group/update',
+    JOIN_GROUP: 'user/change-group',
+    VALIDATE_GROUP: 'group/validate-id',
     // PRESET
     GET_PRESETS: 'preset/get',
     ADD_PRESET: 'preset/add',
@@ -17,6 +20,7 @@ export const ENDPOINTS = {
     DELETE_PRESET: 'preset/delete',
     // PETROL
     ADD_PETROL: 'petrol/add',
+    CHECK_VALIDITY: 'petrol/check-validity',
     // INVOICES
     GET_INVOICES: 'invoices/get',
     GET_PUBLIC_INVOICES: 'invoices/public/get',

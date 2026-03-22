@@ -14,10 +14,10 @@ import {Button} from '@components/layout/button';
 import {Plus} from 'src/icons/plus';
 import {getDistanceFormat} from 'src/selectors/common';
 import {AppContext} from '@components/appContext/context';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/endpoints';
 import {updateData} from '@pages/login/reducers/auth';
 import {ApplicationStoreType} from 'src/reducers';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
 
 const styles = StyleSheet.create({
     box: {
@@ -61,7 +61,7 @@ const TopBreadcrumbs = () => (
 export const Presets = () => {
     const {data, isLoading: isDataLoading, refetch} = useFetchPresets();
     const [selectedPreset, setSelectedPreset] = useState<PresetType | null>();
-    const [isLoading, setIsLoading] = useState(false);
+    const {sendRequest, isLoading} = useValidationRequest();
     const {navigate} = useRouter();
     const {setPopupData} = useContext(AppContext);
     const dispatch = useDispatch();
@@ -109,13 +109,11 @@ export const Presets = () => {
     };
 
     const handleSubmit = async () => {
-        setIsLoading(true);
-        const res = await sendPostRequest(ENDPOINTS.ADD_DISTANCE, {
+        const res = await sendRequest(ENDPOINTS.ADD_DISTANCE, {
             distance: selectedPreset?.distance,
         });
 
         if (res?.ok) {
-            setTimeout(() => setIsLoading(false), 300);
             dispatch(updateData());
             const newDistance = Number(distance) + Number(selectedPreset?.distance);
             navigate('/');

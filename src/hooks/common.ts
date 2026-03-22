@@ -2,6 +2,7 @@ import {Platform} from 'react-native';
 import {EventRegister} from 'react-native-event-listeners';
 import {createMMKV} from 'react-native-mmkv';
 import {FormValues} from '@constants/common';
+import z from 'zod';
 
 export const sendCustomEvent = (event: string, data?: any) => {
     EventRegister.emit(event, data);
@@ -34,10 +35,10 @@ export const returnValuesFromObject = (formData: {[key: string]: FormValues}) =>
             ...prevData,
             [key]: value.value,
         }),
-        {},
+        {} as {[key: string]: string},
     );
 
-export const returnErrorObject = (
+const returnErrorObject = (
     formData: {[key: string]: FormValues},
     errors: {[key: string]: {errors: string[]} | undefined} | undefined,
 ) =>
@@ -51,3 +52,17 @@ export const returnErrorObject = (
         }),
         {} as {[key: string]: {value: string}},
     );
+
+export type DataType = {[key: string]: FormValues};
+
+export const validate = (rules: z.ZodObject, data: DataType, setData: (data: DataType) => void) => {
+    const values = returnValuesFromObject(data);
+    const result = rules.safeParse(values);
+    if (!result.success) {
+        const {properties: errors} = z.treeifyError(result.error);
+
+        setData(returnErrorObject(data, errors) as typeof data);
+        return false;
+    }
+    return true;
+};

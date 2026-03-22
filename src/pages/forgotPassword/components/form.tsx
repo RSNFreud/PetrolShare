@@ -1,14 +1,15 @@
-import {NativeSyntheticEvent, TextInputChangeEventData, View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TextInputChangeEvent} from 'react-native';
 import {FC, useContext, useState} from 'react';
 import {z} from 'zod';
 import {ForgotPasswordType} from '../page';
 import {ThankYou} from './thankYou';
 import {Button} from '@components/layout/button';
 import {Input} from '@components/layout/input';
-import {sendPostRequest} from 'src/hooks/sendRequestToBackend';
 import {ENDPOINTS} from '@constants/endpoints';
 import {MISSING_VALUE} from '@constants/common';
 import {AppContext} from '@components/appContext/context';
+import {useValidationRequest} from 'src/hooks/useValidationRequest';
+import {DataType, validate} from 'src/hooks/common';
 
 const validation = z
     .object({
@@ -24,39 +25,31 @@ const styles = StyleSheet.create({
 
 export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
     const {setPopupData} = useContext(AppContext);
-    const [formState, setFormState] = useState({email: emailAddress, isLoading: false, error: ''});
+    const [formState, setFormState] = useState<DataType>({email: {value: emailAddress, error: ''}});
+    const {isLoading, sendRequest} = useValidationRequest();
 
-    const setEmail = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+    const setEmail = (e: TextInputChangeEvent) => {
         const value = e.nativeEvent.text;
-        setFormState(rest => ({...rest, email: value, error: ''}));
+        setFormState(rest => ({...rest, email: {value, error: ''}}));
         handleInput(e, 'email');
     };
 
     const sendEmail = async () => {
-        const validate = validation.safeParse({email: formState.email});
+        const isValid = validate(validation, formState, setFormState);
 
-        if (!validate.success) {
-            const errorMessage = validate.error.format().email?._errors[0] || '';
-            return setFormState(prevState => ({
-                ...prevState,
-                error: errorMessage,
-            }));
+        if (!isValid) {
+            return;
         }
 
-        setFormState(rest => ({...rest, error: '', isLoading: true}));
-        const res = await sendPostRequest(ENDPOINTS.FORGOT_PASSWORD, {
+        const res = await sendRequest(ENDPOINTS.FORGOT_PASSWORD, {
             emailAddress: formState.email,
         });
         if (res?.ok) {
             setPopupData({content: <ThankYou />});
-            setTimeout(() => setFormState(rest => ({...rest, isLoading: false})), 300);
             return;
         }
         const text = await res?.text();
-        setTimeout(
-            () => setFormState(rest => ({...rest, error: text || '', isLoading: false})),
-            300,
-        );
+        setFormState(prev => ({...prev, email: {...prev.email, error: text || ''}}));
     };
 
     return (
@@ -64,11 +57,11 @@ export const Form: FC<ForgotPasswordType> = ({emailAddress, handleInput}) => {
             <Input
                 label="Email Address:"
                 placeholder="name@mail.com"
-                value={formState.email}
-                error={formState.error}
+                value={formState.email.value}
+                error={formState.email.error}
                 onChange={setEmail}
             />
-            <Button onPress={sendEmail} loading={formState.isLoading}>
+            <Button onPress={sendEmail} loading={isLoading}>
                 Send Recovery Email
             </Button>
         </View>
