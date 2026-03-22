@@ -31,9 +31,15 @@ const validation = (page: number) =>
         }),
     });
 
+enum SCREEN {
+    default = 0,
+    pageOne = 1,
+    pageTwo = 2,
+}
+
 export const GroupSettings: FC<PropsType> = ({isCreating}) => {
     const {setPopupData, isNewUser} = useContext(AppContext);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(SCREEN.default);
     const dispatch = useDispatch();
     const [data, setData] = useState<DataType>({
         distance: defaultValues,
@@ -78,6 +84,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
 
         if (!isValid) return;
         const parsedData = returnValuesFromObject(data);
+
         const res = await sendRequest(ENDPOINTS.CREATE_GROUP, parsedData);
 
         if (!res?.ok) return;
@@ -86,7 +93,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
         dispatch(updateData());
 
         setPopupData({
-            content: <GroupInformation groupID={groupID} isGroupCreation />,
+            content: <GroupInformation groupID={groupID} isGroupCreation isSticky />,
             stickyButton: null,
             minContentHeight: 0,
         });
@@ -94,7 +101,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
 
     const getButtons = () => {
         switch (page) {
-            case 2:
+            case SCREEN.pageTwo:
                 return (
                     <>
                         <Button onPress={createGroup} loading={isLoading}>
@@ -105,7 +112,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                         </Button>
                     </>
                 );
-            case 1:
+            case SCREEN.pageOne:
                 return (
                     <>
                         <Button
@@ -119,7 +126,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                         </Button>
                     </>
                 );
-            default:
+            case SCREEN.default:
                 return (
                     <>
                         <Button onPress={handleContinue}>Continue</Button>
@@ -135,6 +142,8 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                         )}
                     </>
                 );
+            default:
+                return null;
         }
     };
 

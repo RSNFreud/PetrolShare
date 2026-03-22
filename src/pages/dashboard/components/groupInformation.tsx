@@ -3,7 +3,7 @@ import {Button} from '@components/layout/button';
 import {ButtonBase} from '@components/layout/buttonBase';
 import {Text} from '@components/layout/text';
 import {APP_ADDRESS} from '@constants/api-routes';
-import {FC, useContext} from 'react';
+import {FC, useContext, useEffect} from 'react';
 import {Share, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {Share as ShareIcon} from 'src/icons/share';
@@ -11,6 +11,7 @@ import {getUserData} from 'src/selectors/common';
 
 type PropsType = {
     groupID: string;
+    isSticky?: boolean;
     isGroupCreation?: boolean;
 };
 
@@ -33,9 +34,19 @@ const styles = StyleSheet.create({
     },
 });
 
-export const GroupInformation: FC<PropsType> = ({groupID, isGroupCreation}) => {
+export const GroupInformation: FC<PropsType> = ({groupID, isGroupCreation, isSticky}) => {
     const userInfo = useSelector(getUserData);
     const {setPopupData} = useContext(AppContext);
+
+    const StartDriving = () => (
+        <Button onPress={() => setPopupData({isVisible: false})}>Start Driving</Button>
+    );
+
+    useEffect(() => {
+        if (!isSticky) return;
+
+        setPopupData({stickyButton: <StartDriving />});
+    }, [isSticky]);
     return (
         <>
             <View style={styles.container}>
@@ -66,7 +77,7 @@ export const GroupInformation: FC<PropsType> = ({groupID, isGroupCreation}) => {
                     button.
                 </Text>
             </View>
-            <Button onPress={() => setPopupData({isVisible: false})}>Start Driving</Button>
+            {!isSticky && <StartDriving />}
         </>
     );
 };
