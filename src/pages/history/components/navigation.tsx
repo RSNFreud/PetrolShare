@@ -10,7 +10,7 @@ type PropsType = {
     page: number;
     data?: FlatSession;
     changePage: (page: number) => void;
-    isOnePage: boolean;
+    maxPage: number;
 };
 
 const styles = StyleSheet.create({
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const Navigation: FC<PropsType> = ({page, data, changePage, isOnePage}) => {
+export const Navigation: FC<PropsType> = ({page, data, changePage, maxPage}) => {
     const isFirstPage = page === 0;
 
     if (!data || !data.sessionStart) return null;
@@ -63,7 +63,7 @@ export const Navigation: FC<PropsType> = ({page, data, changePage, isOnePage}) =
 
     return (
         <View style={styles.container}>
-            <Button icon={{style: styles.previous}} disabled={isOnePage} />
+            <Button icon={{style: styles.previous}} disabled={maxPage === page} />
 
             <Text style={styles.text}>
                 {getDate(data.sessionStart)} - {getDate(data.sessionEnd || '')}

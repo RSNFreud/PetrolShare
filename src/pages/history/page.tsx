@@ -40,7 +40,7 @@ export const History = () => {
                 page={page}
                 data={currentData}
                 changePage={setPage}
-                isOnePage={data?.length === 1}
+                maxPage={data?.length || 0}
             />
             {currentData?.logs.length ? (
                 <>
