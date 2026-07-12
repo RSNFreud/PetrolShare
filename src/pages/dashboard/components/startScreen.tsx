@@ -5,6 +5,7 @@ import {useContext, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 import {GroupSettings} from './groupSettings';
 import {JoinGroup} from './joinGroup';
+import {PageContext, PageManager} from '@components/layout/pageManager';
 
 const styles = StyleSheet.create({
     title: {
@@ -16,37 +17,32 @@ const styles = StyleSheet.create({
     },
 });
 
-export const StartScreen = () => {
+export const StartScreenContent = () => {
     const {setPopupData} = useContext(AppContext);
+    const {setPage, page} = useContext(PageContext);
 
-    const setScreen = (screen: 'join' | 'create') => {
-        switch (screen) {
-            case 'create':
-                return <GroupSettings isCreating />;
-            case 'join':
-            default:
-                return <JoinGroup />;
-        }
-    };
-
-    const handleButtonPress = (screen: 'join' | 'create') => {
-        setPopupData({
-            content: setScreen(screen),
-        });
+    const handleButtonPress = (screen: number) => {
+        setPage(screen);
     };
 
     useEffect(() => {
+        if (page !== 0) return;
         setPopupData({
             stickyButton: (
                 <>
-                    <Button onPress={() => handleButtonPress('create')}>Create Group</Button>
-                    <Button onPress={() => handleButtonPress('join')}>Join Group</Button>
+                    <Button onPress={() => handleButtonPress(1)}>Create Group</Button>
+                    <Button onPress={() => handleButtonPress(2)}>Join Group</Button>
                 </>
             ),
+            minContentHeight: 456,
         });
-    }, []);
+    }, [page]);
 
-    return (
+    return null;
+};
+
+export const StartScreen = () => {
+    const Default = () => (
         <>
             <Text style={styles.title} bold>
                 Welcome to PetrolShare!
@@ -57,5 +53,11 @@ export const StartScreen = () => {
                 dashboard), or choose "Create Group."
             </Text>
         </>
+    );
+
+    return (
+        <PageManager pages={[<Default />, <GroupSettings isCreating />, <JoinGroup />]}>
+            <StartScreenContent />
+        </PageManager>
     );
 };

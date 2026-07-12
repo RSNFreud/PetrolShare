@@ -5,6 +5,8 @@ import {Button} from '@components/layout/button';
 import {Text} from '@components/layout/text';
 import {logOut} from '@pages/login/reducers/auth';
 import {AppContext} from '@components/appContext/context';
+import {PageContext} from '@components/layout/pageManager';
+import {SETTINGS} from './constants';
 
 const styles = StyleSheet.create({
     title: {
@@ -28,9 +30,11 @@ const styles = StyleSheet.create({
 export const Logout = () => {
     const {setPopupData} = useContext(AppContext);
     const dispatch = useDispatch();
+    const {setPage} = useContext(PageContext);
 
     const handleNo = () => {
-        setPopupData({isVisible: false});
+        setPage(SETTINGS.DEFAULT);
+        setPopupData({title: 'Settings'});
     };
 
     const handleYes = () => {
@@ -51,7 +55,7 @@ export const Logout = () => {
                 <Button color="red" style={styles.btn} onPress={handleYes}>
                     Yes
                 </Button>
-                <Button variant="ghost" style={styles.btn} onPress={handleNo}>
+                <Button style={styles.btn} onPress={handleNo}>
                     No
                 </Button>
             </View>

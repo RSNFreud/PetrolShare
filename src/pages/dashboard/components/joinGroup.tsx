@@ -12,7 +12,9 @@ import z from 'zod';
 import {ErrorBox} from '@components/layout/errorBox';
 import {ConfirmLeave} from './confirmLeave';
 import {GroupInformation} from './groupInformation';
-import {ReturnToMenu} from './returnToMenu';
+import {PageContext} from '@components/layout/pageManager';
+import {useDispatch} from 'react-redux';
+import {updateData} from '@pages/login/reducers/auth';
 
 const styles = StyleSheet.create({
     container: {
@@ -37,17 +39,23 @@ export const JoinGroup = () => {
 
     const [validationError, setValidationError] = useState('');
     const {setPopupData, isNewUser} = useContext(AppContext);
+    const {setPage} = useContext(PageContext);
+
+    const dispatch = useDispatch();
 
     const handleJoinGroup = async () => {
         const parsedData = returnValuesFromObject(data);
         const res = await sendRequest(ENDPOINTS.JOIN_GROUP, parsedData);
         if (!res?.ok) return;
 
-        setPopupData({content: <GroupInformation groupID={parsedData.groupID} />});
+        setPopupData({
+            content: <GroupInformation groupID={parsedData.groupID} isSticky={isNewUser} />,
+        });
+        dispatch(updateData());
     };
 
     const JoinGroup = () => (
-        <Button loading={isLoading} onPress={handleSubmit}>
+        <Button loading={isLoading} onPress={isNewUser ? handleJoinGroup : handleSubmit}>
             Join Group
         </Button>
     );
@@ -91,7 +99,9 @@ export const JoinGroup = () => {
             stickyButton: (
                 <>
                     <JoinGroup />
-                    <ReturnToMenu />
+                    <Button variant="ghost" onPress={() => setPage(0)}>
+                        Return to Menu
+                    </Button>
                 </>
             ),
         });

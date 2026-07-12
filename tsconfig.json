@@ -3,11 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@pages/*": ["src/pages/*"]
-    },
-    "baseUrl": "."
+      "@components/*": ["./src/components/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@pages/*": ["./src/pages/*"],
+      "src/*": ["./src/*"],
+    }
   },
   "exclude": [
     "node_modules",

@@ -16,7 +16,7 @@ import {updateData} from '@pages/login/reducers/auth';
 import {Text} from '@components/layout/text';
 import {getUserData} from 'src/selectors/common';
 import {GroupInformation} from '../groupInformation';
-import {ReturnToMenu} from '../returnToMenu';
+import {PageContext, PageManager} from '@components/layout/pageManager';
 
 type PropsType = {
     isCreating?: boolean;
@@ -39,7 +39,7 @@ enum SCREEN {
 
 export const GroupSettings: FC<PropsType> = ({isCreating}) => {
     const {setPopupData, isNewUser} = useContext(AppContext);
-    const [page, setPage] = useState(SCREEN.default);
+    const {page, setPage} = useContext(PageContext);
     const dispatch = useDispatch();
     const [data, setData] = useState<DataType>({
         distance: defaultValues,
@@ -59,7 +59,7 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
         if (!isValid) return;
 
         if (isCreating || page !== 1) {
-            setPage(prevPage => prevPage + 1);
+            setPage(page + 1);
             return;
         }
         const parsedData = returnValuesFromObject(data);
@@ -131,7 +131,9 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                     <>
                         <Button onPress={handleContinue}>Continue</Button>
                         {isNewUser ? (
-                            <ReturnToMenu />
+                            <Button variant="ghost" onPress={() => setPage(0)}>
+                                Return to Menu
+                            </Button>
                         ) : (
                             <Button
                                 variant="ghost"
@@ -171,17 +173,6 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
         });
     }, [userData]);
 
-    const renderComponent = () => {
-        switch (page) {
-            case 2:
-                return <ConfirmLeave />;
-            case 1:
-                return <GroupPageTwo data={data} setData={handleInput} />;
-            default:
-                return <GroupPageOne isCreating={isCreating} data={data} setData={handleInput} />;
-        }
-    };
-
     return (
         <>
             {!isCreating && (
@@ -190,7 +181,21 @@ export const GroupSettings: FC<PropsType> = ({isCreating}) => {
                     content="By changing group settings you will reset your current tracked session."
                 />
             )}
-            {renderComponent()}
+            <PageManager
+                pages={[
+                    <GroupPageOne isCreating={isCreating} data={data} setData={handleInput} />,
+                    <GroupPageTwo data={data} setData={handleInput} />,
+                    <ConfirmLeave />,
+                ]}
+            />
         </>
+    );
+};
+
+export const GroupSettingsWrapper: FC<PropsType> = props => {
+    return (
+        <PageManager pages={[<GroupSettings {...props} />]}>
+            <GroupSettings />
+        </PageManager>
     );
 };

@@ -4,6 +4,8 @@ export const ENDPOINTS = {
     LOGIN: 'user/login',
     REGISTER: 'user/register',
     GET_DATA: 'user/fetch',
+    CHANGE_DETAILS: 'user/change-details',
+    CHANGE_PASSWORD: 'user/change-password',
     // DISTANCE
     ADD_DISTANCE: 'distance/add',
     ASSIGN_DISTANCE: 'distance/assign',
