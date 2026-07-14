@@ -63,7 +63,7 @@ export const Navigation: FC<PropsType> = ({page, data, changePage, maxPage}) => 
 
     return (
         <View style={styles.container}>
-            <Button icon={{style: styles.previous}} disabled={maxPage === page} />
+            <Button icon={{style: styles.previous}} disabled={maxPage - 1 === page} />
 
             <Text style={styles.text}>
                 {getDate(data.sessionStart)} - {getDate(data.sessionEnd || '')}
