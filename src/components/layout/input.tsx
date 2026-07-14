@@ -15,14 +15,14 @@ type PropsType = ComponentProps<typeof TextInput> & {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 16,
-        height: 52,
+        height: 48,
         borderColor: Colors.border,
         borderWidth: 1,
         borderStyle: 'solid',
         borderRadius: 4,
         backgroundColor: Colors.primary,
         color: 'white',
-        fontSize: 18,
+        fontSize: 16,
         lineHeight: 20,
         alignItems: 'center',
     },
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     },
     label: {
         marginBottom: 6,
+        fontSize: 16,
     },
     passwordToggle: {
         position: 'absolute',

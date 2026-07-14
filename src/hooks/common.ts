@@ -64,5 +64,7 @@ export const validate = (rules: z.ZodObject, data: DataType, setData: (data: Dat
         setData(returnErrorObject(data, errors) as typeof data);
         return false;
     }
+    setData(returnErrorObject(data, {}) as typeof data);
+
     return true;
 };

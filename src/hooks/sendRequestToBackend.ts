@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native';
 import {getItem} from './common';
 import {API_ADDRESS, EMAIL_ADDRESS} from '@constants/api-routes';
 import {STORAGE_KEYS} from '@constants/storage-keys';
+import {fetch} from 'expo/fetch';
 
 type PropsType = {
     url: string;

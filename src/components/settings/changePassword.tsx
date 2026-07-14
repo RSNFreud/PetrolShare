@@ -4,7 +4,7 @@ import {DescriptionBox} from '@components/layout/descriptionBox';
 import {Input} from '@components/layout/input';
 import {PageContext} from '@components/layout/pageManager';
 import {Colors} from '@constants/colors';
-import {FormValues, defaultValues} from '@constants/common';
+import {defaultValues} from '@constants/common';
 import {useContext, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {SETTINGS} from './constants';
@@ -13,8 +13,9 @@ import z from 'zod';
 import {commonValidation} from 'src/utils/validation';
 import {DataType, returnValuesFromObject, validate} from 'src/hooks/common';
 import {ENDPOINTS} from '@constants/endpoints';
-import {updateData} from '@pages/login/reducers/auth';
+import {logOut} from '@pages/login/reducers/auth';
 import {useDispatch} from 'react-redux';
+import {Text} from '@components/layout/text';
 
 const styles = StyleSheet.create({
     seperator: {
@@ -46,7 +47,7 @@ const validation = z
 
 export const ChangePassword = () => {
     const dispatch = useDispatch();
-    const {setPopupData} = useContext(AppContext);
+    const {setPopupData, setAlertBoxData} = useContext(AppContext);
     const {sendRequest, isLoading} = useValidationRequest();
     const {setPage} = useContext(PageContext);
     const [data, setData] = useState<DataType>({
@@ -68,14 +69,24 @@ export const ChangePassword = () => {
             setData(prev => ({
                 ...prev,
                 currentPassword: {
-                    error: err || 'Something went wrong!',
+                    error: err,
                     value: prev.currentPassword.value,
                 },
             }));
             return;
         }
-
-        dispatch(updateData());
+        dispatch(logOut());
+        setAlertBoxData({
+            isVisible: true,
+            title: 'Password Changed',
+            content: <Text>Your password has been changed successfully.</Text>,
+            buttons: [
+                {
+                    text: 'OK',
+                },
+            ],
+        });
+        setPopupData({isVisible: false});
     };
 
     return (
